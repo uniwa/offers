@@ -1,0 +1,16 @@
+# cakephp defaults
+/app/Config
+/app/tmp
+/lib/Cake/Console/Templates/skel/tmp/
+/plugins
+/vendors
+.DS_Store
+tags
+
+# swaps and editors
+*~
+*.swp
+*.kate-swp
+*.bak
+.~*
+

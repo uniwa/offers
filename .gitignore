@@ -1,5 +1,6 @@
 # cakephp defaults
-/app/Config
+/app/Config/*
+!/app/Config/routes.php
 /app/tmp
 /lib/Cake/Console/Templates/skel/tmp/
 /plugins

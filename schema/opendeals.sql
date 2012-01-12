@@ -134,7 +134,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`students` (
   `firstname` MEDIUMTEXT NOT NULL ,
   `lastname` MEDIUMTEXT NOT NULL ,
   `receive_email` TINYINT(1)  NOT NULL DEFAULT FALSE ,
-  `token` MEDIUMTEXT NOT NULL ,
+  `token` MEDIUMTEXT NULL DEFAULT NULL ,
   `avatar` BLOB NULL ,
   `user_id` INT NOT NULL ,
   PRIMARY KEY (`id`) ,

@@ -6,7 +6,7 @@ declare -a data
 declare -a samples
 
 data=( "insert_categories.sql" "insert_offer_types.sql" )
-samples=( "insert_sample_users.sql" )
+samples=( "insert_sample_users.sql" "insert_sample_companies.sql" )
 
 echo -n "Enter your mysql user to connecto to db (enter for root) > "
 read dbuser

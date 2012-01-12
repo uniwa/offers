@@ -12,7 +12,7 @@ USE `opendeals` ;
 DROP TABLE IF EXISTS `opendeals`.`offer_categories` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`offer_categories` (
-  `id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `name` MEDIUMTEXT NOT NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
@@ -24,7 +24,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `opendeals`.`offer_types` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`offer_types` (
-  `id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `name` MEDIUMTEXT NOT NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
@@ -36,7 +36,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `opendeals`.`users` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`users` (
-  `id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `username` MEDIUMTEXT NOT NULL ,
   `password` MEDIUMTEXT NOT NULL ,
   `email` MEDIUMTEXT NOT NULL ,
@@ -52,7 +52,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `opendeals`.`companies` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
-  `id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `name` MEDIUMTEXT NOT NULL ,
   `logo` BLOB NOT NULL ,
   `address` MEDIUMTEXT NOT NULL ,
@@ -125,7 +125,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `opendeals`.`students` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`students` (
-  `id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `firstname` MEDIUMTEXT NOT NULL ,
   `lastname` MEDIUMTEXT NOT NULL ,
   `receive_email` TINYINT(1)  NOT NULL DEFAULT FALSE ,
@@ -148,7 +148,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `opendeals`.`coupons` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`coupons` (
-  `id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `serial_number` TEXT NOT NULL ,
   `created` DATETIME NOT NULL ,
   `is_used` TINYINT(1)  NOT NULL DEFAULT 0 ,

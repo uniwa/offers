@@ -3,7 +3,7 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 
 DROP SCHEMA IF EXISTS `opendeals` ;
-CREATE SCHEMA IF NOT EXISTS `opendeals` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+CREATE SCHEMA IF NOT EXISTS `opendeals` DEFAULT CHARACTER SET utf8 ;
 USE `opendeals` ;
 
 -- -----------------------------------------------------
@@ -12,10 +12,11 @@ USE `opendeals` ;
 DROP TABLE IF EXISTS `opendeals`.`offer_categories` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`offer_categories` (
-  `id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `name` MEDIUMTEXT NOT NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -24,10 +25,11 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `opendeals`.`offer_types` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`offer_types` (
-  `id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `name` MEDIUMTEXT NOT NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -36,14 +38,15 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `opendeals`.`users` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`users` (
-  `id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `username` MEDIUMTEXT NOT NULL ,
   `password` MEDIUMTEXT NOT NULL ,
   `email` MEDIUMTEXT NOT NULL ,
   `is_banned` TINYINT(1)  NOT NULL DEFAULT FALSE ,
   `role` MEDIUMTEXT NOT NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -52,7 +55,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `opendeals`.`companies` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
-  `id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `name` MEDIUMTEXT NOT NULL ,
   `logo` BLOB NOT NULL ,
   `address` MEDIUMTEXT NOT NULL ,
@@ -74,7 +77,8 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
     REFERENCES `opendeals`.`users` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -116,7 +120,8 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
     REFERENCES `opendeals`.`companies` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -125,7 +130,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `opendeals`.`students` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`students` (
-  `id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `firstname` MEDIUMTEXT NOT NULL ,
   `lastname` MEDIUMTEXT NOT NULL ,
   `receive_email` TINYINT(1)  NOT NULL DEFAULT FALSE ,
@@ -139,7 +144,8 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`students` (
     REFERENCES `opendeals`.`users` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -148,7 +154,7 @@ ENGINE = InnoDB;
 DROP TABLE IF EXISTS `opendeals`.`coupons` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`coupons` (
-  `id` INT NOT NULL ,
+  `id` INT NOT NULL AUTO_INCREMENT ,
   `serial_number` TEXT NOT NULL ,
   `created` DATETIME NOT NULL ,
   `is_used` TINYINT(1)  NOT NULL DEFAULT 0 ,
@@ -167,7 +173,8 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`coupons` (
     REFERENCES `opendeals`.`students` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 

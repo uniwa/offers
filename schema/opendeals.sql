@@ -3,7 +3,7 @@ SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL';
 
 DROP SCHEMA IF EXISTS `opendeals` ;
-CREATE SCHEMA IF NOT EXISTS `opendeals` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci ;
+CREATE SCHEMA IF NOT EXISTS `opendeals` DEFAULT CHARACTER SET utf8 ;
 USE `opendeals` ;
 
 -- -----------------------------------------------------
@@ -15,7 +15,8 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offer_categories` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` MEDIUMTEXT NOT NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -27,7 +28,8 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offer_types` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` MEDIUMTEXT NOT NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -43,7 +45,8 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`users` (
   `is_banned` TINYINT(1)  NOT NULL DEFAULT FALSE ,
   `role` MEDIUMTEXT NOT NULL ,
   PRIMARY KEY (`id`) )
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -74,7 +77,8 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
     REFERENCES `opendeals`.`users` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -116,7 +120,8 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
     REFERENCES `opendeals`.`companies` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -139,7 +144,8 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`students` (
     REFERENCES `opendeals`.`users` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -167,7 +173,8 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`coupons` (
     REFERENCES `opendeals`.`students` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
 
 
 

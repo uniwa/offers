@@ -1,6 +1,5 @@
 # cakephp defaults
-/app/Config/*
-!/app/Config/routes.php
+/app/Config/*.php
 /app/tmp
 /lib/Cake/Console/Templates/skel/tmp/
 .DS_Store

@@ -1,8 +1,9 @@
-<?
+<?php
 
 class UsersController extends AppController {
 
     function login() {
+
 
         if( $this->Auth->login() ) {
 

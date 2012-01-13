@@ -4,13 +4,14 @@ class UsersController extends AppController {
 
     function login() {
 
+        if( $this->request->is( 'post' ) ) {
+            if( $this->Auth->login() ) {
 
-        if( $this->Auth->login() ) {
+                return $this->redirect( $this->Auth->redirect() );
+            } else {
 
-            return $this->redirect( $this->Auth->redirect() );
-        } else {
-
-            $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"), 'default', array(), 'auth' );  
+                $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"), 'default', array(), 'auth' );  
+            }
         }
     }
 

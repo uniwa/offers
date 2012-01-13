@@ -9,11 +9,13 @@ class UsersController extends AppController {
             return $this->redirect( $this->Auth->redirect() );
         } else {
 
-            $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη") );  
+            $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"), 'default', array(), 'auth' );  
         }
     }
 
     function logout() {
+
+        $this->redirect( $this->Auth->logout() );
 
     }
 }

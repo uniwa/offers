@@ -2,6 +2,13 @@
 
 class UsersController extends AppController {
 
+    function beforeFilter() {
+       // parent::bforeFilter();
+
+        $this->Auth->allow('register');
+
+    }
+
     function login() {
 
         if( $this->request->is( 'post' ) ) {
@@ -26,7 +33,7 @@ class UsersController extends AppController {
         if( $this->request->is('post') ) 
         {
             $this->User->create();
-            if( $this->User->save($this->request->data) {
+            if( $this->User->save($this->request->data) ) {
                 $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
                 $this->redirect(array('action' => 'index'));
                 $this->Auth->login( $this->request->data['User']);

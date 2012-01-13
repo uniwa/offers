@@ -6,9 +6,10 @@ class CompaniesController extends AppController {
 
     function index() {
 
-        $results = $this->Company->find('all');
+        $options['conditions'] = array('Company.is_enabled' => 1,
+                                       'User.is_banned' => 0);
+        $results = $this->Company->find('all', $options);
 
         $this->set('companies', $results);
-//         pr($result);die();
     }
 }

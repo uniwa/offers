@@ -3,7 +3,7 @@
 class CompaniesController extends AppController {
 
     public $name = 'Companies';
-
+    public $helpers = array('Html');
 
     function index() {
 

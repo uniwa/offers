@@ -13,16 +13,24 @@ class UsersController extends AppController {
 
         if( $this->request->is( 'post' ) ) {
 
-            if( $this->Auth->login() && $this->isCompanyEnabled( $this->request->data ) ) {
-           
-                return $this->redirect( $this->Auth->redirect() );
+            if( $this->isCompanyEnabled( $this->request->data ) ) {  
+
+                if( $this->Auth->login() ) {
+               
+                    return $this->redirect( $this->Auth->redirect() );
+                } else {
+
+                    $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"), 'default', array(), 'auth' );  
+                }
             } else {
 
-                $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"), 'default', array(), 'auth' );  
+                $this->Session->setFlash(__("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"), 'default', array(), 'auth' );
             }
         }
     }
 
+    //This function returns company state result( is_enabled )
+    //plus returns true if user is not company owner or is not exist
     private function isCompanyEnabled( $data ) {
 
         $username = $data['User']['username'];
@@ -31,9 +39,10 @@ class UsersController extends AppController {
         );
 
 
-        //checks if user is not company owner 
-        $notCompanyOwner = (boolean)($currentUser['0']['User']['role'] != 'company');
-        if( $notCompanyOwner  ) {
+        //checks if current user not found  
+        //or checks if user is not company owner 
+        //and returns true to continue in login method
+        if( empty( $currentUser ) || $currentUser['0']['User']['role'] != 'company'  ) {
 
             return true;
         }

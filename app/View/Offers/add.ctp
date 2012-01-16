@@ -1,6 +1,9 @@
 <?php
 
-echo $this->Form->create('Offer', array('type' => 'POST'));
+echo $this->Form->create('Offer', array(
+                            'type' => 'POST',
+                            'enctype' => 'multipart/form-data'
+                        ));
 
 echo $this->Form->input('title', array('label' => 'Τίτλος'));
 echo $this->Form->input('description', array(

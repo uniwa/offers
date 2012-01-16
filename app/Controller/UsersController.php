@@ -12,14 +12,37 @@ class UsersController extends AppController {
     function login() {
 
         if( $this->request->is( 'post' ) ) {
-            if( $this->Auth->login() ) {
 
+            if( $this->Auth->login() && $this->isCompanyEnabled( $this->request->data ) ) {
+           
                 return $this->redirect( $this->Auth->redirect() );
             } else {
 
                 $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"), 'default', array(), 'auth' );  
             }
         }
+    }
+
+    private function isCompanyEnabled( $data ) {
+
+        $username = $data['User']['username'];
+        $currentUser = $this->User->find( 'all', 
+            array( 'conditions' => array( 'username' => $username ) )
+        );
+
+
+        //checks if user is not company owner 
+        $notCompanyOwner = (boolean)($currentUser['0']['User']['role'] != 'company');
+        if( $notCompanyOwner  ) {
+
+            return true;
+        }
+
+        $companyState = (boolean)$currentUser['0']['Company']['is_enabled'];
+        //writes in Auth.User array company's state
+        $this->Session->write( 'Auth.User.is_enabled', $companyState);
+
+        return $companyState;
     }
 
     function logout() {

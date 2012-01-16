@@ -30,17 +30,22 @@ class UsersController extends AppController {
 
     function register() {
 
-        if( $this->request->is('post') ) 
-        {
-            $this->User->create();
-            if( $this->User->save($this->request->data) ) {
-                $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
-                $this->redirect(array('action' => 'index'));
-                $this->Auth->login( $this->request->data['User']);
-                $this->redirect('/user/home');
+        if( $this->request->is('post') ) {
+
+            if( !empty( $this->request->data ) ) {
+
+                //is_enabled aand is_banned is by default false
+                //set registered User's role
+                $this->request->data['User']['role'] =  'company';
+                //Use this to avoid valdation errors
+                unset($this->User->Company->validate['user_id']);
+                if( $this->User->saveAssociated($this->request->data) ){
+                    $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
+                    $this->redirect(array('action' => 'index'));
+                }
             } else {
 
-                $this->Session->setFlash(__('Η εγγραφή δεν μπορεί να ολοκληρωθεί'));
+                $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
             }
         }
     }

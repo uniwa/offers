@@ -16,11 +16,6 @@ class AppController extends Controller{
 
     function generateHash($size = 32) {
 
-        if ($size > 32) $size = 32;
-
-        $hash = md5(date('c'));
-        $hash = substr($hash, 0, $size);
-
-        return $hash;
+        return substr(md5(date('c')), 0, $size > 32 ? 32 : $size);
     }
 }

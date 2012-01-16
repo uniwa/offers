@@ -2,6 +2,12 @@
 
 $comp = $company['Company'];
 
+if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
+    echo $this->Html->link('Ανάρτηση Προσφοράς',
+                           array('controller' => 'offers', 'action' => 'add'));
+    echo '<br/>';
+}
+
 echo 'Επιχείρηση '.$comp['id'].'<br/>';
 
 if (isset($comp['name']))

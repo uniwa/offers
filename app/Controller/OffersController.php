@@ -6,6 +6,7 @@ class OffersController extends AppController {
     public $helpers = array('Form');
     public $uses = array('Offer', 'Company');
 
+
     public function add() {
         $this->set('offerTypes', $this->Offer->OfferType->find('list'));
         $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
@@ -28,7 +29,7 @@ class OffersController extends AppController {
             if (is_uploaded_file($this->data['Offer']['photo']['tmp_name'])) {
                 $photo = fread(fopen($this->data['Offer']['photo']['tmp_name'], 'r'),
                                      $this->data['Offer']['photo']['size']);
-                $this->request->data['Offer']['photo'] = $photo;
+                $this->request->data['Offer']['photo'] = base64_encode($photo);
             } else {
                 $this->request->data['Offer']['photo'] = null;
             }

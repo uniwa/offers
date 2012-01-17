@@ -30,7 +30,7 @@ class User extends AppModel {
 
                 'rule'=>array( 'between', 2, 16 ),
                 'required'=>true,
-                'message' => 'εισάγετε από δύο μέχρι δεκαέξι χαρακτήρες'
+                'message' => 'Ο κωδικός πρέπει να είναι μεταξύ 2 και 16 χαρακτήρων'
             )
         ),
 
@@ -45,14 +45,16 @@ class User extends AppModel {
 
             'length' => array (
 
-                'rule' => array('minLength', 8),
-                'allowEmpty' => true
+                'rule' => array('between', 8, 16),
+                'allowEmpty' => true,
+                'message' => 'Ο κωδικός πρέπει να είναι μεταξύ 8 και 16 χαρακτήρων'
             ),
 
             'alphanumeric' => array(
 
                 'rule' => '/^[\d\w!@#\$%&\*\^\+\?-_.,]+$/',
-                'allowEmpty' => true
+                'allowEmpty' => true,
+                'message' => 'Υπάρχει κάποιος μη αποδεκτός χαρακτήρας'
             )
             
         ),

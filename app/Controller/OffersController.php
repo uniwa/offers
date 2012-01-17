@@ -36,7 +36,7 @@ class OffersController extends AppController {
             if ($this->Offer->save($this->data)) {
                 $this->Session->setFlash('Η προσφορά αποθηκεύτηκε');
             } else {
-                pr($this->data); die();
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα');
             }
         }
     }

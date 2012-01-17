@@ -23,7 +23,7 @@ class OffersController extends AppController {
 
         if (empty($offer))
             throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
-//         pr($offers); die();
+//         pr($offer); die();
     }
 
 

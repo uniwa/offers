@@ -9,7 +9,7 @@ class CompaniesController extends AppController {
 
         $options['conditions'] = array('Company.is_enabled' => 1,
                                        'User.is_banned' => 0);
-        $this->Company->recursive = 0;
+        $options['recursive'] = 0;
         $results = $this->Company->find('all', $options);
 
         $this->set('companies', $results);
@@ -21,7 +21,7 @@ class CompaniesController extends AppController {
         $options['conditions'] = array('Company.id' => $id,
                                        'Company.is_enabled' => 1,
                                        'User.is_banned' => 0);
-        $this->Company->recursive = 1;
+        $options['recursive'] = 1;
         $company = $this->Company->find('first', $options);
 
         $this->set('company', $company);

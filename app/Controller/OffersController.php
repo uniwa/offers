@@ -7,6 +7,26 @@ class OffersController extends AppController {
     public $uses = array('Offer', 'Company');
 
 
+    public function view($id = null) {
+
+        $options['conditions'] = array(
+                                    'Offer.id' => $id,
+        //TODO uncomment the next line when the offer activation logic is
+        // implemented
+        //                            'Offer.is_draft' => 0,
+                                    'Company.is_enabled' => 1
+                                 );
+        //TODO check if the company's user is_banned before showing the offer
+        $options['recursive'] = 0;
+        $offer = $this->Offer->find('first', $options);
+        $this->set('offer', $offer);
+
+        if (empty($offer))
+            throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
+//         pr($offers); die();
+    }
+
+
     public function add() {
         $this->set('offerTypes', $this->Offer->OfferType->find('list'));
         $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));

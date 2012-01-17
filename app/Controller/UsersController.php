@@ -66,19 +66,21 @@ class UsersController extends AppController {
 
             if( !empty( $this->request->data ) ) {
 
-                //is_enabled aand is_banned is by default false
-                //set registered User's role
-                $this->request->data['User']['role'] =  'company';
-                //Use this to avoid valdation errors
-                unset($this->User->Company->validate['user_id']);
-                if( $this->User->saveAssociated($this->request->data) ){
-                    $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
-                    $this->redirect(array('action' => 'index'));
-                }
-            } else {
+                 
+                    //is_enabled and is_banned is by default false
+                    //set registered User's role
+                    $this->request->data['User']['role'] =  'company';
+                    //Use this to avoid valdation errors
+                    unset($this->User->Company->validate['user_id']);
+                    if( $this->User->saveAssociated($this->request->data) ){
 
-                $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
+                        $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
+                        $this->redirect(array('action' => 'index'));
+                    }
+
+                    $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
             }
+        
         }
     }
 }

@@ -16,14 +16,13 @@ class OffersController extends AppController {
             $this->request->data['Offer']['is_active'] = 0;
             $this->request->data['Offer']['current_quantity'] = 0;
             $this->request->data['Offer']['is_draft'] = 1;
-            $company_id = $this->Company->find('first', array(
-                                    'fields' => array('Company.id'),
-                                    'conditions' => array(
-                                        'Company.user_id' =>
-                                                    $this->Auth->User('id')
-                                    ),
-                                    'recursive' => -1
-                                ));
+
+            $options['fields'] = array('Company.id');
+            $options['conditions'] = array(
+                'Company.user_id' => $this->Auth->User('id')
+            );
+            $options['recursive'] = -1;
+            $company_id = $this->Company->find('first', $options);
             $this->request->data['Offer']['company_id'] = $company_id['Company']['id'];
 
             if (is_uploaded_file($this->data['Offer']['photo']['tmp_name'])) {

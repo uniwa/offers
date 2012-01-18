@@ -177,7 +177,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`students` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_students_images`
-    FOREIGN KEY (`user_id` )
+    FOREIGN KEY (`image_id` )
     REFERENCES `opendeals`.`images` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)

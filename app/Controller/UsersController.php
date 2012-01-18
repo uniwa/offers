@@ -7,6 +7,12 @@ class UsersController extends AppController {
 
         $this->Auth->allow('register');
 
+        //in case user try to get  register when is logged in
+        if( $this->Auth->user() && $this->request['action'] == 'register') {
+    
+                throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
+        }
+
     }
 
     function login() {

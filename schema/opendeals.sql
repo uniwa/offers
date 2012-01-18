@@ -75,7 +75,6 @@ DROP TABLE IF EXISTS `opendeals`.`companies` ;
 CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` MEDIUMTEXT NOT NULL ,
-  `logo` BLOB NOT NULL ,
   `address` MEDIUMTEXT NOT NULL ,
   `postalcode` VARCHAR(5) NULL DEFAULT NULL ,
   `phone` VARCHAR(10) NOT NULL ,
@@ -88,11 +87,18 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
   `latitude` DOUBLE NULL DEFAULT NULL ,
   `is_enabled` TINYINT(1)  NOT NULL DEFAULT FALSE ,
   `user_id` INT NOT NULL ,
+  `image_id` INT NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_companies_users1` (`user_id` ASC) ,
+  INDEX `fk_companies_images1` (`image_id` ASC) ,
   CONSTRAINT `fk_companies_users1`
     FOREIGN KEY (`user_id` )
     REFERENCES `opendeals`.`users` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_companies_images1`
+    FOREIGN KEY (`image_id` )
+    REFERENCES `opendeals`.`images` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

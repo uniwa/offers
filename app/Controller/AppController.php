@@ -14,4 +14,10 @@ class AppController extends Controller{
         )
     );
 
+    public function beforeFilter() {
+
+        //clear authError default message
+        $this->Auth->authError = " ";
+    }
+
 }

@@ -88,6 +88,7 @@ DROP TABLE IF EXISTS `opendeals`.`offers` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   `id` INT NOT NULL AUTO_INCREMENT ,
+  `title` TEXT NOT NULL ,
   `description` TEXT NULL DEFAULT NULL ,
   `starting` DATETIME NOT NULL ,
   `ending` DATETIME NULL DEFAULT NULL ,

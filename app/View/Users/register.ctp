@@ -10,6 +10,7 @@
         echo $this->Form->input('User.repeat_password', array( 'label' => 'Επάναληψη κωδικού πρόσβασης', 'type' => 'password'));
         echo $this->Form->input('User.email', array( 'label' => 'e-mail') );
         echo $this->Form->input('Company.name', array( 'label' => 'Όνομα επιχείρησης') );
+        echo $this->Form->input('Company.service_type', array( 'label' => 'Προσφερόμενη υπηρεσία') );
         echo $this->Form->input('Company.logo', array( 'label' => 'Λογότυπο', 'type' => 'file' ) );
         echo $this->Form->input('Company.address', array( 'label' => 'Διεύθυνση') );
         echo $this->Form->input('Company.postalcode', array( 'label' => 'Ταχυδρομικός κώδικας') );

@@ -7,9 +7,7 @@ class AppController extends Controller{
         'Session',
         'Auth' => array(
             'authenticate' => array(
-                'Form' => array(
-                    'scope' => array( 'User.is_banned' => 0 )
-                )
+                'Form'
             )
         )
     );

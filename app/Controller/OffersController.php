@@ -4,7 +4,7 @@ class OffersController extends AppController {
 
     public $name = 'Offers';
     public $helpers = array('Form');
-    public $uses = array('Offer', 'Company');
+    public $uses = array('Offer', 'Company', 'Image');
 
 
     public function view($id = null) {
@@ -45,12 +45,23 @@ class OffersController extends AppController {
             $company_id = $this->Company->find('first', $options);
             $this->request->data['Offer']['company_id'] = $company_id['Company']['id'];
 
-            if (is_uploaded_file($this->data['Offer']['photo']['tmp_name'])) {
-                $photo = fread(fopen($this->data['Offer']['photo']['tmp_name'], 'r'),
-                                     $this->data['Offer']['photo']['size']);
-                $this->request->data['Offer']['photo'] = base64_encode($photo);
+            // if the user uploaded an image then save it and store
+            // the generated image's id in 'Offer.image_id' field
+            // TODO image validation
+            if (is_uploaded_file($this->data['Offer']['image']['tmp_name'])) {
+                $file = fread(fopen($this->data['Offer']['image']['tmp_name'], 'r'),
+                                     $this->data['Offer']['image']['size']);
+
+                $photo = array();
+                $photo['Image'] = $this->data['Offer']['image'];
+                $photo['Image']['data'] = base64_encode($file);
+
+                if ($this->Image->save($photo))
+                    $this->request->data['Offer']['image_id'] = $this->Image->id;
+                else
+                    $this->request->data['Offer']['image_id'] = null;
             } else {
-                $this->request->data['Offer']['photo'] = null;
+                $this->request->data['Offer']['image_id'] = null;
             }
 
             if ($this->Offer->save($this->data)) {

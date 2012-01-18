@@ -16,7 +16,7 @@
         echo $this->Form->input('Company.phone', array( 'label' => 'Τηλέφωνο') );
         echo $this->Form->input('Comnpany.fax', array( 'label' => 'Fax') );
         echo $this->Form->input('Company.afm', array( 'label' => 'Α.Φ.Μ') );
-        echo $this->Form->input('Comapny.doy', array( 'label' => 'ΔΟΥ') );
+        echo $this->Form->input('Company.doy', array( 'label' => 'ΔΟΥ') );
         echo $this->Form->input('Company.working_hours', array( 'label' => 'Ώρες Λειτουργίας') );
     ?>
     </fieldset>

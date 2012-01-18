@@ -33,6 +33,24 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
+-- Table `opendeals`.`images`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `opendeals`.`images` ;
+
+CREATE TABLE IF NOT EXISTS `opendeals`.`images` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `name` MEDIUMTEXT NOT NULL ,
+  `type` MEDIUMTEXT NOT NULL ,
+  `size` INT NOT NULL DEFAULT 0,
+  `error`INT NULL DEFAULT NULL ,
+  `tmp_name` MEDIUMTEXT NULL DEFAULT NULL ,
+  `data` BLOB NOT NULL,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
 -- Table `opendeals`.`users`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `opendeals`.`users` ;

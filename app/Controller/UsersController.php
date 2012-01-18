@@ -3,7 +3,7 @@
 class UsersController extends AppController {
 
     function beforeFilter() {
-        parent::bforeFilter();
+        parent::beforeFilter();
 
         $this->Auth->allow('register');
 

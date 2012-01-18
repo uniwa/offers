@@ -27,6 +27,25 @@ class Company extends AppModel {
 
         ),
 
+        'service_type' => array(
+
+            'not_empty' => array(
+                'rule' => 'notEmpty',
+                'message' => 'Παρακαλώ εισάγετε το είδος της προσφερόμενης υπηρεσίας .',
+                'required' => true
+            ),
+            'maxsize' => array(
+                'rule' => array('maxLength', 100),
+                'allowEmpty' => false,
+                'message' => 'Μπορείτε να εισάγετε μέχρι 100 χαρακτήρες.'
+            ),
+            'valid' => array(
+                'rule' => '/^[\w\dαβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΆάΈέΎΉήύΊίΌόΏώϊϋΐΰς,. &]+$/',
+                'allowEmpty' => false,
+                'message' => 'Η επωνυμία περιέχει έναν μη έγκυρο χαρακτήρα.'
+            )
+
+        ),
         'address' => array(
             'size' => array(                
                 'rule' => array('maxLength', 45),                                                     

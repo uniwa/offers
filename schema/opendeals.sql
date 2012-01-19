@@ -43,7 +43,6 @@ CREATE TABLE IF NOT EXISTS `opendeals`.`images` (
   `type` MEDIUMTEXT NOT NULL ,
   `size` INT NOT NULL DEFAULT 0,
   `error`INT NULL DEFAULT NULL ,
-  `tmp_name` MEDIUMTEXT NULL DEFAULT NULL ,
   `data` BLOB NOT NULL,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB

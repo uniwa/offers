@@ -32,4 +32,4 @@ if (isset($offer['Offer']['current_quantity'])) {
 }
 
 if (isset($offer['Image']['id']))
-    echo '<img src="/coupons/images/view/'.$offer['Image']['id'].'" alt="it works!"/><br/>';
+    echo $this->Html->image('/images/view/'.$offer['Image']['id']);

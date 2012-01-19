@@ -40,9 +40,16 @@ if (isset($comp['doy']))
 if (isset($comp['working_hours']))
     echo 'Ωράριο λειτουργίας : '.$comp['working_hours'].'<br/>';
 
+if (isset($company['Image']['id']))
+    echo $this->Html->image('/images/view/'.$company['Image']['id']);
+
 echo '<br/>Προσφορές επιχείρησης:<br/>';
 
 foreach ($company['Offer'] as $offer)
 {
-    echo $offer['title'].'<br/>';
+    echo $this->Html->link($offer['title'], array(
+                                                'controller' => 'offers',
+                                                'action' => 'view',
+                                                $offer['id'])
+                          ).'<br/>';
 }

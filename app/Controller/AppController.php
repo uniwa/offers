@@ -7,6 +7,7 @@ class AppController extends Controller{
         'Session',
         'Auth' => array(
             'authenticate' => array(
+                'Ldap',
                 'Form'
             )
         )

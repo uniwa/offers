@@ -49,7 +49,7 @@ class LdapAuthenticate extends BaseAuthenticate {
                                 
             
             $model->saveAssociated( $new_user, array( 'validate' => false ) );
-            return $new_user;
+            return $new_user['User'];
         }
 
         //return user data and Auth component 

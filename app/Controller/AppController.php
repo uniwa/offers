@@ -5,7 +5,10 @@ class AppController extends Controller{
     public $components = array(
         'Session',
         'Auth' => array(
-            'authenticate' => array('Form')
+            'authenticate' => array(
+                'Ldap',
+                'Form'
+            )
         )
     );
 

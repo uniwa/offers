@@ -8,10 +8,9 @@ class LdapAuthenticate extends BaseAuthenticate {
 
     public function authenticate(CakeRequest $request, CakeResponse $response) {
 
-        $info = null;
+        $username = $request['data']['User']['username'];
+        $password = $request['data']['User']['password'];
         $ldap = new LdapUtil();
-
-        var_dump( $request ); die();
 
         if( $ldap->auth( $username, $password ) ) {
 

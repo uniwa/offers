@@ -94,7 +94,7 @@ class LdapUtil {
         ldap_bind( $this->ldap, $this->ldapUser, $this->ldapPassword );
         $result = ldap_search( $this->ldap, $this->baseDN, $filter, $attributes );
         $entries = ldap_get_entries( $this->ldap, $result );
-
+        $entries = $entries[0]['username'] = $username;
         return $this->formatInfo( $entries );
     }
 
@@ -102,6 +102,7 @@ class LdapUtil {
 
         $info = array();
 
+        $info['username'] = $entries[0]['username'];
         $info['first_name'] =  $entries[0]['givenname;lang-el'][0];
         $info['last_name'] = $entries[0]['sn;lang-el'][0];
         $info['name'] = $entries[0]['cn;lang-el'][0];

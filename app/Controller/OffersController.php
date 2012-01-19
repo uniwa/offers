@@ -20,7 +20,7 @@ class OffersController extends AppController {
         $options['recursive'] = 0;
         $offer = $this->Offer->find('first', $options);
         $this->set('offer', $offer);
-
+// pr($offer); die();
         if (empty($offer))
             throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
 //         pr($offer); die();

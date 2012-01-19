@@ -12,7 +12,9 @@ class ImagesController extends AppController {
         if (empty($image)) {
             throw new NotFoundException('Η συγκεκριμένη εικόνα δεν βρέθηκε');
         } else {
-            header('Content-type: '.$image['Image']['type']);
+            header('Content-Type: '.$image['Image']['type']);
+            header('Content-Disposition: filename='.$image['Image']['name']);
+            header('Content-Length: '.$image['Image']['size']);
             echo base64_decode($image['Image']['data']);
             exit();
         }

@@ -2,6 +2,8 @@
 
 class UsersController extends AppController {
 
+    public $uses = array('User', 'Image');
+
     function beforeFilter() {
         parent::beforeFilter();
 
@@ -9,7 +11,7 @@ class UsersController extends AppController {
 
         //in case user try to get  register when is logged in
         if( $this->Auth->user() && $this->request['action'] == 'register') {
-    
+
                 throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
         }
 
@@ -19,14 +21,14 @@ class UsersController extends AppController {
 
         if( $this->request->is( 'post' ) ) {
 
-            if( $this->isCompanyEnabled( $this->request->data ) ) {  
+            if( $this->isCompanyEnabled( $this->request->data ) ) {
 
                 if( $this->Auth->login() ) {
-               
+
                     return $this->redirect( $this->Auth->redirect() );
                 } else {
 
-                    $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"), 'default', array(), 'auth' );  
+                    $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"), 'default', array(), 'auth' );
                 }
             } else {
 
@@ -40,13 +42,13 @@ class UsersController extends AppController {
     private function isCompanyEnabled( $data ) {
 
         $username = $data['User']['username'];
-        $currentUser = $this->User->find( 'all', 
+        $currentUser = $this->User->find( 'all',
             array( 'conditions' => array( 'username' => $username ) )
         );
 
 
-        //checks if current user not found  
-        //or checks if user is not company owner 
+        //checks if current user not found
+        //or checks if user is not company owner
         //and returns true to continue in login method
         if( empty( $currentUser ) || $currentUser['0']['User']['role'] != 'company'  ) {
 
@@ -68,25 +70,36 @@ class UsersController extends AppController {
 
     function register() {
 
-        if( $this->request->is('post') ) {
+        if( !empty( $this->request->data ) ) {
 
-            if( !empty( $this->request->data ) ) {
+            //is_enabled and is_banned is by default false
+            //set registered User's role
+            $this->request->data['User']['role'] =  'company';
+            //Use this to avoid valdation errors
+            unset($this->User->Company->validate['user_id']);
+            if (is_uploaded_file($this->data['Company']['image']['tmp_name'])) {
+                $file = fread(fopen($this->data['Company']['image']['tmp_name'], 'r'),
+                                    $this->data['Company']['image']['size']);
 
-                 
-                    //is_enabled and is_banned is by default false
-                    //set registered User's role
-                    $this->request->data['User']['role'] =  'company';
-                    //Use this to avoid valdation errors
-                    unset($this->User->Company->validate['user_id']);
-                    if( $this->User->saveAssociated($this->request->data) ){
+                $photo = array();
+                $photo['Image'] = $this->data['Company']['image'];
+                $photo['Image']['data'] = base64_encode($file);
 
-                        $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
-                        $this->redirect(array('action' => 'index'));
-                    }
-
-                    $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
+                if ($this->Image->save($photo))
+                    $this->request->data['Company']['image_id'] = $this->Image->id;
+                else
+                    $this->request->data['Company']['image_id'] = null;
+            } else {
+                $this->request->data['Company']['image_id'] = null;
             }
-        
+
+            if( $this->User->saveAssociated($this->request->data) ){
+
+                $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
+                $this->redirect(array('action' => 'index'));
+            }
+
+            $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
         }
     }
 }

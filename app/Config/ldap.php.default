@@ -1,9 +1,12 @@
 // $APPDIR/app/Config/ldap.php
 // ldap configuration
 
+<?php
+
 $config['Ldap']['server'] = '';
 $config['Ldap']['port'] = '';
 $config['Ldap']['suffix'] = '';
 $config['Ldap']['baseDN'] = '';
 $config['Ldap']['user'] = '';
 $config['Ldap']['password'] = '';
+

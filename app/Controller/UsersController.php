@@ -101,5 +101,14 @@ class UsersController extends AppController {
 
             $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
         }
+
+        App::uses( 'Day', 'app/Model');
+        App::uses( 'Hour', 'app/Model');
+
+        $day = new Day();
+        $hour = new Hour();
+
+        $this->set( "hours", $hour->find('list') );
+        $this->set( "days", $day->find('list') );
     }
 }

@@ -24,7 +24,11 @@
         echo $this->Form->input('Company.fax', array( 'label' => 'Fax') );
         echo $this->Form->input('Company.afm', array( 'label' => 'Α.Φ.Μ') );
         echo $this->Form->input('Company.doy', array( 'label' => 'ΔΟΥ') );
-        echo $this->Form->input('Company.working_hours', array( 'label' => 'Ώρες Λειτουργίας') );
+
+        //TODO use javascript
+        echo "Ωράριο λειτουργίας";
+        echo $this->Form->input( 'Day', array( 'label'=>'Ημέρα' );
+        echo $this->Form->input( 'Hour', array( 'label'=>'Ωρα' );
     ?>
     </fieldset>
 <?php echo $this->Form->end(__('Υποβολή'));?>

@@ -49,7 +49,7 @@ class LdapUtil {
          * Bind ldap directory with user's credentials
          * if user has not ldap acount returns false
          **/
-       @$good = ldap_bind( $this->ldap, 'uid='.$user.','.$this->baseDN, $pass );
+        @$good = ldap_bind( $this->ldap, 'uid='.$user.','.$this->baseDN, $pass );
         if( $good === true ) {
 
             return true;

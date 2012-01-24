@@ -151,12 +151,10 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   `offer_category_id` INT NOT NULL ,
   `offer_type_id` INT NOT NULL ,
   `company_id` INT NOT NULL ,
-  `image_id` INT NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_offers_offer_categories` (`offer_category_id` ASC) ,
   INDEX `fk_offers_offer_types1` (`offer_type_id` ASC) ,
   INDEX `fk_offers_companies1` (`company_id` ASC) ,
-  INDEX `fk_offers_images` (`image_id` ASC) ,
   CONSTRAINT `fk_offers_offer_categories`
     FOREIGN KEY (`offer_category_id` )
     REFERENCES `opendeals`.`offer_categories` (`id` )
@@ -170,11 +168,6 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   CONSTRAINT `fk_offers_companies1`
     FOREIGN KEY (`company_id` )
     REFERENCES `opendeals`.`companies` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_offers_images`
-    FOREIGN KEY (`image_id` )
-    REFERENCES `opendeals`.`images` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

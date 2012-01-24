@@ -214,7 +214,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`coupons` (
   `serial_number` TEXT NOT NULL ,
   `created` DATETIME NOT NULL ,
   `is_used` TINYINT(1)  NOT NULL DEFAULT 0 ,
-  `offer_id` INT NULL DEFAULT NULL ,
+  `offer_id` INT NOT NULL ,
   `student_id` INT NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_coupons_offers1` (`offer_id` ASC) ,

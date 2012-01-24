@@ -1,7 +1,6 @@
+<?php
 // $APPDIR/app/Config/ldap.php
 // ldap configuration
-
-<?php
 
 $config['Ldap']['server'] = '';
 $config['Ldap']['port'] = '';

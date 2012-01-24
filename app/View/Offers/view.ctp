@@ -23,8 +23,8 @@ if (isset($offer['Offer']['ending']))
 if (isset($offer['Offer']['expiration_date']))
     echo 'Ισχύει έως: '.$offer['Offer']['expiration_date'].'<br/>';
 
-if (isset($offer['Offer']['current_quantity'])) {
-    echo 'Δεσμευμένα κουπόνια: '.$offer['Offer']['current_quantity'].
+if (isset($offer['Offer']['coupon_count']) && $offer['Offer']['coupon_count'] >= 0) {
+    echo 'Δεσμευμένα κουπόνια: '.$offer['Offer']['coupon_count'].
          (isset($offer['Offer']['total_quantity'])
             ? ' από '.$offer['Offer']['total_quantity']
             : '') .

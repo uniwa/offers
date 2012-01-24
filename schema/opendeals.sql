@@ -145,7 +145,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   `expiration_date` DATETIME NULL DEFAULT NULL ,
   `is_active` TINYINT(1)  NOT NULL DEFAULT FALSE ,
   `total_quantity` INT NOT NULL DEFAULT 0 ,
-  `current_quantity` INT NOT NULL DEFAULT 0 ,
+  `coupon_count` INT NOT NULL DEFAULT 0 ,
   `tags` MEDIUMTEXT NULL ,
   `is_draft` TINYINT(1)  NOT NULL DEFAULT TRUE ,
   `offer_category_id` INT NOT NULL ,

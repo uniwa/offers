@@ -56,8 +56,22 @@ CREATE TABLE IF NOT EXISTS `opendeals`.`images` (
   `type` MEDIUMTEXT NOT NULL ,
   `size` INT NOT NULL DEFAULT 0,
   `error`INT NULL DEFAULT NULL ,
-  `data` BLOB NOT NULL,
-  PRIMARY KEY (`id`) )
+  `data` BLOB NOT NULL ,
+  `offer_id` INT NULL DEFAULT NULL ,
+  `image_category_id` INT NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_images_offers` (`offer_id` ASC) ,
+  INDEX `fk_images_image_categories` (`image_category_id` ASC) ,
+  CONSTRAINT `fk_images_offers`
+    FOREIGN KEY (`offer_id`)
+    REFERENCES `opendeals`.`offers` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_images_image_categories`
+    FOREIGN KEY (`image_category_id`)
+    REFERENCES `opendeals`.`image_categories` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 

@@ -84,6 +84,9 @@ class UsersController extends AppController {
                 $photo = array();
                 $photo['Image'] = $this->data['Company']['image'];
                 $photo['Image']['data'] = base64_encode($file);
+                // id == 3 means avatar type
+                // TODO change the hardcoded fail
+                $photo['Image']['image_category_id'] = 3;
 
                 if ($this->Image->save($photo))
                     $this->request->data['Company']['image_id'] = $this->Image->id;

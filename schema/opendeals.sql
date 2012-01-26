@@ -234,20 +234,6 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `opendeals`.`hours`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `opendeals`.`hours` ;
-
-CREATE  TABLE IF NOT EXISTS `opendeals`.`hours` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `value` TIME NOT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8
-COLLATE = utf8_general_ci;
-
-
--- -----------------------------------------------------
 -- Table `opendeals`.`days`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `opendeals`.`days` ;
@@ -269,21 +255,15 @@ DROP TABLE IF EXISTS `opendeals`.`working_hours` ;
 CREATE  TABLE IF NOT EXISTS `opendeals`.`working_hours` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `days_id` INT NOT NULL ,
-  `hour_id` INT NOT NULL ,
+  `starting` TIME NOT NULL ,
+  `ending` TIME NOT NULL ,
   `company_id` INT NULL ,
-  `open_closed` TINYINT(1)  NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_working_hours_days1` (`days_id` ASC) ,
-  INDEX `fk_working_hours_hours1` (`hour_id` ASC) ,
   INDEX `fk_working_hours_companies1` (`company_id` ASC) ,
   CONSTRAINT `fk_working_hours_days1`
     FOREIGN KEY (`days_id` )
     REFERENCES `opendeals`.`days` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_working_hours_hours1`
-    FOREIGN KEY (`hour_id` )
-    REFERENCES `opendeals`.`hours` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_working_hours_companies1`

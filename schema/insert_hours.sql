@@ -26,3 +26,4 @@ INSERT INTO `hours` (`id`,`value`) VALUES (NULL,'20:00:00');
 INSERT INTO `hours` (`id`,`value`) VALUES (NULL,'21:00:00');
 INSERT INTO `hours` (`id`,`value`) VALUES (NULL,'22:00:00');
 INSERT INTO `hours` (`id`,`value`) VALUES (NULL,'23:00:00');
+

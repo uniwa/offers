@@ -2,7 +2,7 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Image', 'Hour', 'Day');
+    public $uses = array('User', 'Image', 'Day');
 
     function beforeFilter() {
         parent::beforeFilter();
@@ -70,13 +70,18 @@ class UsersController extends AppController {
 
     function register() {
 
-        if( !empty( $this->request->data ) ) {
 
+        if( !empty( $this->request->data ) ) {
+            $dataSource = $this->getDataSource();
+            
+        pr( $this->request->data ); die();
             //is_enabled and is_banned is by default false
             //set registered User's role
             $this->request->data['User']['role'] =  'company';
             //Use this to avoid valdation errors
             unset($this->User->Company->validate['user_id']);
+
+            $dataSource->begin();
             if (is_uploaded_file($this->data['Company']['image']['tmp_name'])) {
                 $file = fread(fopen($this->data['Company']['image']['tmp_name'], 'r'),
                                     $this->data['Company']['image']['size']);
@@ -88,13 +93,14 @@ class UsersController extends AppController {
                 // TODO change the hardcoded fail
                 $photo['Image']['image_category_id'] = 3;
 
-                if ($this->Image->save($photo))
-                    $this->request->data['Company']['image_id'] = $this->Image->id;
-                else
-                    $this->request->data['Company']['image_id'] = null;
+                $is_image_saved = $this->Image->save($photo)
+                $this->request->data['Company']['image_id'] = $this->Image->id;
+                
             } else {
                 $this->request->data['Company']['image_id'] = null;
             }
+
+
 
             if( $this->User->saveAssociated($this->request->data) ){
 
@@ -106,7 +112,8 @@ class UsersController extends AppController {
         }
 
 
-        $this->set( "hours", $this->Hour->find('list') );
         $this->set( "days", $this->Day->find('list') );
     }
+
+
 }

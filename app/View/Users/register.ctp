@@ -25,11 +25,31 @@
         echo $this->Form->input('Company.afm', array( 'label' => 'Α.Φ.Μ') );
         echo $this->Form->input('Company.doy', array( 'label' => 'ΔΟΥ') );
 
-        //TODO use javascript
-        echo "Ωράριο λειτουργίας";
-        echo $this->Form->input( 'Day', array( 'label'=>'Ημέρα' );
-        echo $this->Form->input( 'Hour', array( 'label'=>'Ωρα' );
     ?>
+        <table boreder="1">
+            <tr>
+                Ωράριο λειτουργίας
+            </tr>
+
+            <tr>
+            <th>ΗΜΕΡΑ</th>
+            <th>Ώρα έναρξης</th>
+            <th>Ώρα λήξης</th>
+            </tr>
+            <tr>
+                <td>
+                    <?php echo $this->Form->input( 'Company.WorkingHour.day_id', array( 'label'=>'Ημέρα' ));?>
+                </td>
+                <td>
+                    <?php echo $this->Form->input( 'Company.WorkingHour.starting', 
+                            array( 'label'=>'Ωρα', 'type'=>'time', 'timeFormat'=>24, 'interval'=>15 ));?>
+                </td>
+                <td>
+                    <?php echo $this->Form->input( 'Company.WorkingHour.ending', 
+                            array( 'label'=>'Ωρα', 'type'=>'time', 'timeFormat'=>24, 'interval'=>15));?>
+                </td>
+        </table>
+    
     </fieldset>
 <?php echo $this->Form->end(__('Υποβολή'));?>
 </div>

@@ -1,6 +1,6 @@
 <?php
 
 class WorkingHour extends AppModel{
-    $name = "WorkingHour";
-    $belongsTo = array( 'Company', 'Day', 'Hour');
+    public $name = "WorkingHour";
+    public $belongsTo = array( 'Company', 'Day');
 }

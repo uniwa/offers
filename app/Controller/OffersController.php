@@ -17,13 +17,11 @@ class OffersController extends AppController {
                                     'Company.is_enabled' => 1
                                  );
         //TODO check if the company's user is_banned before showing the offer
-        $options['recursive'] = 0;
+        $options['recursive'] = 1;
         $offer = $this->Offer->find('first', $options);
         $this->set('offer', $offer);
-// pr($offer); die();
         if (empty($offer))
             throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
-//         pr($offer); die();
     }
 
 
@@ -45,29 +43,48 @@ class OffersController extends AppController {
             $company_id = $this->Company->find('first', $options);
             $this->request->data['Offer']['company_id'] = $company_id['Company']['id'];
 
-            // if the user uploaded an image then save it and store
-            // the generated image's id in 'Offer.image_id' field
-            // TODO image validation
+            // if the user uploaded an image, store the required information
+            // in $photo, so as to save it later
+            // TODO autogenerate thumbnails for mobile app
+            $photo = array();
             if (is_uploaded_file($this->data['Offer']['image']['tmp_name'])) {
-                $file = fread(fopen($this->data['Offer']['image']['tmp_name'], 'r'),
-                                     $this->data['Offer']['image']['size']);
+                if ($this->isImage($this->data['Offer']['image']['type'])) {
 
-                $photo = array();
-                $photo['Image'] = $this->data['Offer']['image'];
-                $photo['Image']['data'] = base64_encode($file);
-
-                if ($this->Image->save($photo))
-                    $this->request->data['Offer']['image_id'] = $this->Image->id;
-                else
-                    $this->request->data['Offer']['image_id'] = null;
-            } else {
-                $this->request->data['Offer']['image_id'] = null;
+                    $file = fread(fopen($this->data['Offer']['image']['tmp_name'], 'r'),
+                                  $this->data['Offer']['image']['size']);
+                    $this->isImage($this->data['Offer']['image']['type']);
+                    $photo['Image'] = $this->data['Offer']['image'];
+                    $photo['Image']['data'] = base64_encode($file);
+                    //TODO change the hardcoded image category
+                    $photo['Image']['image_category_id'] = 1;
+                } else {
+                    $this->Session->setFlash('Μη αποδεκτός τύπος αρχείου εικόνας.');
+                    return;
+                }
             }
 
+            unset($this->request->data['Offer']['image']);
+
+            $transaction = $this->Offer->getDataSource();
+            $transaction->begin();
+
+            $error = false;
             if ($this->Offer->save($this->data)) {
-                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε');
+                if (!empty($photo)) {
+                    $photo['Image']['offer_id'] = $this->Offer->id;
+                    if (!$this->Image->save($photo))
+                        $error = true;
+                }
             } else {
+                $error = true;
+            }
+
+            if ($error === true) {
+                $transaction->rollback();
                 $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα');
+            } else {
+                $transaction->commit();
+                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε');
             }
         }
     }

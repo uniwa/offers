@@ -5,8 +5,8 @@ dbname="opendeals"
 declare -a data
 declare -a samples
 
-data=( "insert_categories.sql" "insert_offer_types.sql" )
-samples=( "insert_sample_users.sql" "insert_sample_students.sql" "insert_sample_companies.sql" 
+data=( "insert_offer_categories.sql" "insert_offer_types.sql" "insert_image_categories.sql" )
+samples=( "insert_sample_users.sql" "insert_sample_students.sql" "insert_sample_companies.sql"
           "insert_sample_offers.sql" )
 
 echo -n "Enter your mysql user to connecto to db (enter for root) > "

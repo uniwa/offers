@@ -35,16 +35,43 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `opendeals`.`images`
 -- -----------------------------------------------------
+DROP TABLE IF EXISTS `opendeals`.`image_categories` ;
+
+CREATE TABLE IF NOT EXISTS `opendeals`.`image_categories` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `name` MEDIUMTEXT NOT NULL,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `opendeals`.`images`
+-- -----------------------------------------------------
 DROP TABLE IF EXISTS `opendeals`.`images` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`images` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` MEDIUMTEXT NOT NULL ,
   `type` MEDIUMTEXT NOT NULL ,
-  `size` INT NOT NULL DEFAULT 0 ,
-  `error` INT NULL DEFAULT NULL ,
+  `size` INT NOT NULL DEFAULT 0,
+  `error`INT NULL DEFAULT NULL ,
   `data` BLOB NOT NULL ,
-  PRIMARY KEY (`id`) )
+  `offer_id` INT NULL DEFAULT NULL ,
+  `image_category_id` INT NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_images_offers` (`offer_id` ASC) ,
+  INDEX `fk_images_image_categories` (`image_category_id` ASC) ,
+  CONSTRAINT `fk_images_offers`
+    FOREIGN KEY (`offer_id`)
+    REFERENCES `opendeals`.`offers` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_images_image_categories`
+    FOREIGN KEY (`image_category_id`)
+    REFERENCES `opendeals`.`image_categories` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -117,18 +144,17 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   `expiration_date` DATETIME NULL DEFAULT NULL ,
   `is_active` TINYINT(1) NOT NULL DEFAULT FALSE ,
   `total_quantity` INT NOT NULL DEFAULT 0 ,
-  `current_quantity` INT NOT NULL DEFAULT 0 ,
-  `tags` MEDIUMTEXT NULL DEFAULT NULL ,
-  `is_draft` TINYINT(1) NOT NULL DEFAULT TRUE ,
+  `coupon_count` INT NOT NULL DEFAULT 0 ,
+  `tags` MEDIUMTEXT NULL ,
+  `is_draft` TINYINT(1)  NOT NULL DEFAULT TRUE ,
   `offer_category_id` INT NOT NULL ,
   `offer_type_id` INT NOT NULL ,
   `company_id` INT NOT NULL ,
-  `image_id` INT NULL DEFAULT NULL ,
+  `image_count` INT NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_offers_offer_categories` (`offer_category_id` ASC) ,
   INDEX `fk_offers_offer_types1` (`offer_type_id` ASC) ,
   INDEX `fk_offers_companies1` (`company_id` ASC) ,
-  INDEX `fk_offers_images` (`image_id` ASC) ,
   CONSTRAINT `fk_offers_offer_categories`
     FOREIGN KEY (`offer_category_id` )
     REFERENCES `opendeals`.`offer_categories` (`id` )
@@ -142,11 +168,6 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   CONSTRAINT `fk_offers_companies1`
     FOREIGN KEY (`company_id` )
     REFERENCES `opendeals`.`companies` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_offers_images`
-    FOREIGN KEY (`image_id` )
-    REFERENCES `opendeals`.`images` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
@@ -192,7 +213,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`coupons` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `serial_number` TEXT NOT NULL ,
   `created` DATETIME NOT NULL ,
-  `is_used` TINYINT(1) NOT NULL DEFAULT 0 ,
+  `is_used` TINYINT(1)  NOT NULL DEFAULT 0 ,
   `offer_id` INT NOT NULL ,
   `student_id` INT NOT NULL ,
   PRIMARY KEY (`id`) ,

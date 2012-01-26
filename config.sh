@@ -1,12 +1,20 @@
 #!/bin/bash
 
-cp app/Config/bootstrap.php.default app/Config/bootstrap.php
-cp app/Config/core.php.default app/Config/core.php
-cp app/Config/database.php.default app/Config/database.php
-
 # create required tmp files
-mkdir -p app/tmp/{cache,logs,sessions,tests}
-mkdir -p app/tmp/cache/{models,persistent,views}
+if [[ ! -d app/tmp/cache ]]; then
+    mkdir -p app/tmp/{cache,logs,sessions,tests}
+    mkdir -p app/tmp/cache/{models,persistent,views}
+fi
 
-# print some helpful messages
-echo "Configure app/Config/database.php file."
+files=( bootstrap.php core.php database.php ldap.php )
+
+for file in "${files[@]}"; do
+    filepath="app/Config/${file}"
+    if [[ ! -e "${filepath}" ]]; then
+        cp "${filepath}.default" "${filepath}"
+        if [[ "${file}" != "bootstrap.php" && "${file}" != "core.php" ]]; then
+            echo "Configure ${filepath}."
+        fi
+    fi
+done
+

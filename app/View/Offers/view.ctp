@@ -31,5 +31,6 @@ if (isset($offer['Offer']['coupon_count']) && $offer['Offer']['coupon_count'] >=
          '<br/>';
 }
 
-if (isset($offer['Image']['id']))
-    echo $this->Html->image('/images/view/'.$offer['Image']['id']);
+if (!empty($offer['Image']))
+    foreach ($offer['Image'] as $image)
+        echo $this->Html->image('/images/view/'.$image['id']);

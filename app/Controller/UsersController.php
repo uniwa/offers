@@ -2,7 +2,7 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Image');
+    public $uses = array('User', 'Image', 'Hour', 'Day');
 
     function beforeFilter() {
         parent::beforeFilter();
@@ -102,13 +102,8 @@ class UsersController extends AppController {
             $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
         }
 
-        App::uses( 'Day', 'app/Model');
-        App::uses( 'Hour', 'app/Model');
 
-        $day = new Day();
-        $hour = new Hour();
-
-        $this->set( "hours", $hour->find('list') );
-        $this->set( "days", $day->find('list') );
+        $this->set( "hours", $this->Hour->find('list') );
+        $this->set( "days", $this->Day->find('list') );
     }
 }

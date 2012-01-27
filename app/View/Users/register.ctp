@@ -38,16 +38,30 @@
             </tr>
             <tr>
                 <td>
-                    <?php echo $this->Form->input( 'Company.WorkingHour.day_id', array( 'label'=>'Ημέρα' ));?>
+                    <?php echo $this->Form->input( 'WorkingHour.0.day_id', array( 'label'=>'Ημέρα' ));?>
                 </td>
                 <td>
-                    <?php echo $this->Form->input( 'Company.WorkingHour.starting', 
-                            array( 'label'=>'Ωρα', 'type'=>'time', 'timeFormat'=>24, 'interval'=>15 ));?>
+                    <?php echo $this->Form->input( 'WorkingHour.0.starting', 
+                            array( 'label'=>null, 'type'=>'time', 'timeFormat'=>24, 'interval'=>15 ));?>
                 </td>
                 <td>
-                    <?php echo $this->Form->input( 'Company.WorkingHour.ending', 
-                            array( 'label'=>'Ωρα', 'type'=>'time', 'timeFormat'=>24, 'interval'=>15));?>
+                    <?php echo $this->Form->input( 'WorkingHour.0.ending', 
+                            array( 'label'=>null, 'type'=>'time', 'timeFormat'=>24, 'interval'=>15));?>
                 </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php echo $this->Form->input( 'WorkingHour.1.day_id', array( 'label'=>'Ημέρα' ));?>
+                </td>
+                <td>
+                    <?php echo $this->Form->input( 'WorkingHour.1.starting', 
+                            array( 'label'=>null, 'type'=>'time', 'timeFormat'=>24, 'interval'=>15 ));?>
+                </td>
+                <td>
+                    <?php echo $this->Form->input( 'WorkingHour.1.ending', 
+                            array( 'label'=>null, 'type'=>'time', 'timeFormat'=>24, 'interval'=>15));?>
+                </td>
+            </tr>
         </table>
     
     </fieldset>

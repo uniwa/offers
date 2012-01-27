@@ -2,7 +2,7 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Image', 'Day');
+    public $uses = array('User', 'Image', 'Day', 'WorkingHour');
 
     function beforeFilter() {
         parent::beforeFilter();
@@ -72,17 +72,16 @@ class UsersController extends AppController {
 
 
         if( !empty( $this->request->data ) ) {
-            $dataSource = $this->getDataSource();
             
-        pr( $this->request->data ); die();
+            $dataSource = $this->User->getDataSource();            
             //is_enabled and is_banned is by default false
             //set registered User's role
             $this->request->data['User']['role'] =  'company';
             //Use this to avoid valdation errors
             unset($this->User->Company->validate['user_id']);
 
-            $dataSource->begin();
-            if (is_uploaded_file($this->data['Company']['image']['tmp_name'])) {
+            $this->User->begin();
+            /*if (is_uploaded_file($this->data['Company']['image']['tmp_name'])) {
                 $file = fread(fopen($this->data['Company']['image']['tmp_name'], 'r'),
                                     $this->data['Company']['image']['size']);
 
@@ -98,21 +97,66 @@ class UsersController extends AppController {
                 
             } else {
                 $this->request->data['Company']['image_id'] = null;
+            }*/
+
+            $workingHour = $this->request->data['WorkingHour'];            
+            unset( $this->request->data['WorkingHour']);
+
+            if($is_usr_comp_saved = $this->User->saveAssociated($this->request->data, array('atomic'=>false)) ) {
+
+                $workingHour = $this->fixWorkingHourformat($this->User->Company->id, $workingHour);
             }
 
+            if( $this->WorkingHour->saveMany( $workingHour ) && $is_usr_comp_saved ){
 
-
-            if( $this->User->saveAssociated($this->request->data) ){
-
+                $dataSource->commit();
                 $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
                 $this->redirect(array('action' => 'index'));
             }
-
+            $dataSource->rollback();
             $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
         }
 
 
         $this->set( "days", $this->Day->find('list') );
+    }
+
+    private function fixWorkingHourFormat( $c_id, $workingHour ) {
+
+        if( !isset( $c_id ) ){
+            return null;
+        }
+
+        $wHours = array();
+
+        //creates the working hour format, compatible with mysql
+        foreach( $workingHour as $wh ){
+
+            $day = $wh['day_id'];
+            $s_hour = $wh['starting']['hour'];
+            $s_min = $wh['starting']['min'];
+            $e_hour = $wh['ending']['hour'];
+            $e_min = $wh['ending']['min'];
+
+            $starting = "$s_hour:$s_min:00";
+            $ending = "$e_hour:$e_min:00";
+
+            $hour =array( 'WorkingHour' => 
+                array( 
+                    'day_id'=> $day,
+                    'starting'=>$starting,
+                    'ending'=>$ending,
+                    'company_id' =>$c_id
+                )
+            
+            );
+
+            $wHours.array_push( $wHours, $hour );
+            
+
+        }
+
+        return $wHours; 
     }
 
 

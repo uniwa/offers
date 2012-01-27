@@ -43,13 +43,46 @@ if (isset($comp['working_hours']))
 if (isset($company['Image']['id']))
     echo $this->Html->image('/images/view/'.$company['Image']['id']);
 
-echo '<br/>Προσφορές επιχείρησης:<br/>';
+// display Drafts only for the owner of this company
+if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
+    if (empty($company['Offer']['Draft'])) {
+        echo 'Δεν υπάρχουν αποθηκευμένες προσφορές.<br/>';
+    } else {
+        echo 'Αποθηκευμένες προσφορές:<br/>';
+        foreach ($company['Offer']['Draft'] as $draft) {
+            echo $this->Html->link($draft['title'],
+                                   array('controller' => 'offers',
+                                         'action' => 'view', $draft['id'])
+                                  );
+            echo '<br/>';
+        }
+    }
+}
 
-foreach ($company['Offer'] as $offer)
-{
-    echo $this->Html->link($offer['title'], array(
-                                                'controller' => 'offers',
-                                                'action' => 'view',
-                                                $offer['id'])
-                          ).'<br/>';
+// display Active offers
+if (empty($company['Offer']['Active'])) {
+    echo 'Δεν υπάρχουν ενεργές προσφορές.<br/>';
+} else {
+    echo 'Ενεργές προσφορές:<br/>';
+    foreach ($company['Offer']['Active'] as $active) {
+        echo $this->Html->link($draft['title'],
+                               array('controller' => 'offers',
+                                     'action' => 'view', $draft['id'])
+                              );
+        echo '<br/>';
+    }
+}
+
+// display Inactive offers
+if (empty($company['Offer']['Inactive'])) {
+    echo 'Δεν υπάρχουν παλαιότερες προσφορές.<br/>';
+} else {
+    echo 'Παλαιότερες προσφορές:<br/>';
+    foreach ($company['Offer']['Inactive'] as $active) {
+        echo $this->Html->link($draft['title'],
+                               array('controller' => 'offers',
+                                     'action' => 'view', $draft['id'])
+                              );
+        echo '<br/>';
+    }
 }

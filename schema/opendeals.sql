@@ -254,15 +254,15 @@ DROP TABLE IF EXISTS `opendeals`.`working_hours` ;
 
 CREATE  TABLE IF NOT EXISTS `opendeals`.`working_hours` (
   `id` INT NOT NULL AUTO_INCREMENT ,
-  `days_id` INT NOT NULL ,
+  `day_id` INT NOT NULL ,
   `starting` TIME NOT NULL ,
   `ending` TIME NOT NULL ,
   `company_id` INT NULL ,
   PRIMARY KEY (`id`) ,
-  INDEX `fk_working_hours_days1` (`days_id` ASC) ,
+  INDEX `fk_working_hours_days1` (`day_id` ASC) ,
   INDEX `fk_working_hours_companies1` (`company_id` ASC) ,
   CONSTRAINT `fk_working_hours_days1`
-    FOREIGN KEY (`days_id` )
+    FOREIGN KEY (`day_id` )
     REFERENCES `opendeals`.`days` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,

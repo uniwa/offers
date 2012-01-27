@@ -80,7 +80,7 @@ class UsersController extends AppController {
             //Use this to avoid valdation errors
             unset($this->User->Company->validate['user_id']);
 
-            $this->User->begin();
+            $dataSource->begin();
             /*if (is_uploaded_file($this->data['Company']['image']['tmp_name'])) {
                 $file = fread(fopen($this->data['Company']['image']['tmp_name'], 'r'),
                                     $this->data['Company']['image']['size']);
@@ -102,12 +102,14 @@ class UsersController extends AppController {
             $workingHour = $this->request->data['WorkingHour'];            
             unset( $this->request->data['WorkingHour']);
 
-            if($is_usr_comp_saved = $this->User->saveAssociated($this->request->data, array('atomic'=>false)) ) {
+            $saved_user = $this->User->save( $this->request->data['User'] );
+            $this->User->Company->set('user_id', $saved_user['User']['id']);
+            $saved_comp = $this->User->Company->save( $this->request->data['Company']);
+            $workingHour = $this->setCompanyId( $this->User->Company->id, $workingHour );
+           
+            $saved_hours = $this->WorkingHour->saveMany( $workingHour ); 
 
-                $workingHour = $this->fixWorkingHourformat($this->User->Company->id, $workingHour);
-            }
-
-            if( $this->WorkingHour->saveMany( $workingHour ) && $is_usr_comp_saved ){
+            if( $saved_user && $saved_comp && $saved_hours ){
 
                 $dataSource->commit();
                 $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
@@ -121,43 +123,18 @@ class UsersController extends AppController {
         $this->set( "days", $this->Day->find('list') );
     }
 
-    private function fixWorkingHourFormat( $c_id, $workingHour ) {
+    //sets Company id from saved company
+    private function setCompanyId( $c_id, $workingHour ) {
 
-        if( !isset( $c_id ) ){
+        if( empty( $c_id ) ){
             return null;
         }
-
-        $wHours = array();
-
         //creates the working hour format, compatible with mysql
-        foreach( $workingHour as $wh ){
-
-            $day = $wh['day_id'];
-            $s_hour = $wh['starting']['hour'];
-            $s_min = $wh['starting']['min'];
-            $e_hour = $wh['ending']['hour'];
-            $e_min = $wh['ending']['min'];
-
-            $starting = "$s_hour:$s_min:00";
-            $ending = "$e_hour:$e_min:00";
-
-            $hour =array( 'WorkingHour' => 
-                array( 
-                    'day_id'=> $day,
-                    'starting'=>$starting,
-                    'ending'=>$ending,
-                    'company_id' =>$c_id
-                )
-            
-            );
-
-            $wHours.array_push( $wHours, $hour );
-            
-
+        foreach( $workingHour as &$wh ){
+ 
+            $wh['company_id'] = $c_id;      
         }
 
-        return $wHours; 
+        return $workingHour;
     }
-
-
 }

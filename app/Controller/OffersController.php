@@ -52,7 +52,6 @@ class OffersController extends AppController {
 
                     $file = fread(fopen($this->data['Offer']['image']['tmp_name'], 'r'),
                                   $this->data['Offer']['image']['size']);
-                    $this->isImage($this->data['Offer']['image']['type']);
                     $photo['Image'] = $this->data['Offer']['image'];
                     $photo['Image']['data'] = base64_encode($file);
                     //TODO change the hardcoded image category

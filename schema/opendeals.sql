@@ -50,7 +50,7 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `opendeals`.`images` ;
 
-CREATE TABLE IF NOT EXISTS `opendeals`.`images` (
+CREATE  TABLE IF NOT EXISTS `opendeals`.`images` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` MEDIUMTEXT NOT NULL ,
   `type` MEDIUMTEXT NOT NULL ,
@@ -84,9 +84,9 @@ DROP TABLE IF EXISTS `opendeals`.`users` ;
 CREATE  TABLE IF NOT EXISTS `opendeals`.`users` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `username` MEDIUMTEXT NOT NULL ,
-  `password` MEDIUMTEXT NULL DEFAULT NULL ,
+  `password` MEDIUMTEXT NOT NULL ,
   `email` MEDIUMTEXT NOT NULL ,
-  `is_banned` TINYINT(1)  NOT NULL DEFAULT FALSE ,
+  `is_banned` TINYINT(1) NOT NULL DEFAULT FALSE ,
   `role` MEDIUMTEXT NOT NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
@@ -107,12 +107,11 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
   `fax` VARCHAR(10) NULL DEFAULT NULL ,
   `service_type` MEDIUMTEXT NOT NULL ,
   `afm` VARCHAR(9) NOT NULL ,
-  `doy` MEDIUMTEXT NULL ,
-  `working_hours` MEDIUMTEXT NULL DEFAULT NULL ,
+  `doy` MEDIUMTEXT NULL DEFAULT NULL ,
   `longitude` DOUBLE NULL DEFAULT NULL ,
   `latitude` DOUBLE NULL DEFAULT NULL ,
-  `is_enabled` TINYINT(1)  NOT NULL DEFAULT FALSE ,
-  `user_id` INT NOT NULL ,
+  `is_enabled` TINYINT(1) NOT NULL DEFAULT FALSE ,
+  `user_id` INT NULL ,
   `image_id` INT NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_companies_users1` (`user_id` ASC) ,
@@ -143,7 +142,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   `starting` DATETIME NOT NULL ,
   `ending` DATETIME NULL DEFAULT NULL ,
   `expiration_date` DATETIME NULL DEFAULT NULL ,
-  `is_active` TINYINT(1)  NOT NULL DEFAULT FALSE ,
+  `is_active` TINYINT(1) NOT NULL DEFAULT FALSE ,
   `total_quantity` INT NOT NULL DEFAULT 0 ,
   `coupon_count` INT NOT NULL DEFAULT 0 ,
   `tags` MEDIUMTEXT NULL ,
@@ -184,9 +183,9 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`students` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `firstname` MEDIUMTEXT NOT NULL ,
   `lastname` MEDIUMTEXT NOT NULL ,
-  `receive_email` TINYINT(1)  NOT NULL DEFAULT FALSE ,
+  `receive_email` TINYINT(1) NOT NULL DEFAULT FALSE ,
   `token` MEDIUMTEXT NULL DEFAULT NULL ,
-  `user_id` INT NOT NULL ,
+  `user_id` INT NULL ,
   `image_id` INT NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_students_users1` (`user_id` ASC) ,
@@ -234,8 +233,50 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
+-- -----------------------------------------------------
+-- Table `opendeals`.`days`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `opendeals`.`days` ;
+
+CREATE  TABLE IF NOT EXISTS `opendeals`.`days` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `name` MEDIUMTEXT NOT NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
+
+
+-- -----------------------------------------------------
+-- Table `opendeals`.`working_hours`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `opendeals`.`working_hours` ;
+
+CREATE  TABLE IF NOT EXISTS `opendeals`.`working_hours` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `day_id` INT NOT NULL ,
+  `starting` TIME NOT NULL ,
+  `ending` TIME NOT NULL ,
+  `company_id` INT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_working_hours_days1` (`day_id` ASC) ,
+  INDEX `fk_working_hours_companies1` (`company_id` ASC) ,
+  CONSTRAINT `fk_working_hours_days1`
+    FOREIGN KEY (`day_id` )
+    REFERENCES `opendeals`.`days` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_working_hours_companies1`
+    FOREIGN KEY (`company_id` )
+    REFERENCES `opendeals`.`companies` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
+
+
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-

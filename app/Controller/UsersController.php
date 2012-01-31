@@ -2,7 +2,7 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Image');
+    public $uses = array('User', 'Image', 'Day', 'WorkingHour');
 
     function beforeFilter() {
         parent::beforeFilter();
@@ -70,14 +70,18 @@ class UsersController extends AppController {
 
     function register() {
 
-        if( !empty( $this->request->data ) ) {
 
+        if( !empty( $this->request->data ) ) {
+            
+            $dataSource = $this->User->getDataSource();            
             //is_enabled and is_banned is by default false
             //set registered User's role
             $this->request->data['User']['role'] =  'company';
             //Use this to avoid valdation errors
             unset($this->User->Company->validate['user_id']);
-            if (is_uploaded_file($this->data['Company']['image']['tmp_name'])) {
+
+            $dataSource->begin();
+            /*if (is_uploaded_file($this->data['Company']['image']['tmp_name'])) {
                 $file = fread(fopen($this->data['Company']['image']['tmp_name'], 'r'),
                                     $this->data['Company']['image']['size']);
 
@@ -88,21 +92,49 @@ class UsersController extends AppController {
                 // TODO change the hardcoded fail
                 $photo['Image']['image_category_id'] = 3;
 
-                if ($this->Image->save($photo))
-                    $this->request->data['Company']['image_id'] = $this->Image->id;
-                else
-                    $this->request->data['Company']['image_id'] = null;
+                $is_image_saved = $this->Image->save($photo)
+                $this->request->data['Company']['image_id'] = $this->Image->id;
+                
             } else {
                 $this->request->data['Company']['image_id'] = null;
-            }
+            }*/
 
-            if( $this->User->saveAssociated($this->request->data) ){
+            $workingHour = $this->request->data['WorkingHour'];            
+            unset( $this->request->data['WorkingHour']);
 
+            $saved_user = $this->User->save( $this->request->data['User'] );
+            $this->User->Company->set('user_id', $saved_user['User']['id']);
+            $saved_comp = $this->User->Company->save( $this->request->data['Company']);
+            $workingHour = $this->setCompanyId( $this->User->Company->id, $workingHour );
+           
+            $saved_hours = $this->WorkingHour->saveMany( $workingHour ); 
+
+            if( $saved_user && $saved_comp && $saved_hours ){
+
+                $dataSource->commit();
                 $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
                 $this->redirect(array('action' => 'index'));
             }
-
+            $dataSource->rollback();
             $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
         }
+
+
+        $this->set( "days", $this->Day->find('list') );
+    }
+
+    //sets Company id from saved company
+    private function setCompanyId( $c_id, $workingHour ) {
+
+        if( empty( $c_id ) ){
+            return null;
+        }
+        //creates the working hour format, compatible with mysql
+        foreach( $workingHour as &$wh ){
+ 
+            $wh['company_id'] = $c_id;      
+        }
+
+        return $workingHour;
     }
 }

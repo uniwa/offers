@@ -24,8 +24,46 @@
         echo $this->Form->input('Company.fax', array( 'label' => 'Fax') );
         echo $this->Form->input('Company.afm', array( 'label' => 'Α.Φ.Μ') );
         echo $this->Form->input('Company.doy', array( 'label' => 'ΔΟΥ') );
-        echo $this->Form->input('Company.working_hours', array( 'label' => 'Ώρες Λειτουργίας') );
+
     ?>
+        <table boreder="1">
+            <tr>
+                Ωράριο λειτουργίας
+            </tr>
+
+            <tr>
+            <th>ΗΜΕΡΑ</th>
+            <th>Ώρα έναρξης</th>
+            <th>Ώρα λήξης</th>
+            </tr>
+            <tr>
+                <td>
+                    <?php echo $this->Form->input( 'WorkingHour.0.day_id', array( 'label'=>'Ημέρα' ));?>
+                </td>
+                <td>
+                    <?php echo $this->Form->input( 'WorkingHour.0.starting', 
+                            array( 'label'=>null, 'type'=>'time', 'timeFormat'=>24, 'interval'=>15 ));?>
+                </td>
+                <td>
+                    <?php echo $this->Form->input( 'WorkingHour.0.ending', 
+                            array( 'label'=>null, 'type'=>'time', 'timeFormat'=>24, 'interval'=>15));?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <?php echo $this->Form->input( 'WorkingHour.1.day_id', array( 'label'=>'Ημέρα' ));?>
+                </td>
+                <td>
+                    <?php echo $this->Form->input( 'WorkingHour.1.starting', 
+                            array( 'label'=>null, 'type'=>'time', 'timeFormat'=>24, 'interval'=>15 ));?>
+                </td>
+                <td>
+                    <?php echo $this->Form->input( 'WorkingHour.1.ending', 
+                            array( 'label'=>null, 'type'=>'time', 'timeFormat'=>24, 'interval'=>15));?>
+                </td>
+            </tr>
+        </table>
+    
     </fieldset>
 <?php echo $this->Form->end(__('Υποβολή'));?>
 </div>

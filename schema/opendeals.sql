@@ -10,7 +10,6 @@ USE `opendeals` ;
 -- Table `opendeals`.`offer_categories`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `opendeals`.`offer_categories` ;
-
 CREATE  TABLE IF NOT EXISTS `opendeals`.`offer_categories` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `name` MEDIUMTEXT NOT NULL ,
@@ -243,8 +242,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`days` (
   `name` MEDIUMTEXT NOT NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8
-COLLATE = utf8_general_ci;
+DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -272,9 +270,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`working_hours` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8
-COLLATE = utf8_general_ci;
-
+DEFAULT CHARACTER SET = utf8;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

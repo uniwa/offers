@@ -256,9 +256,11 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`working_hours` (
   `starting` TIME NOT NULL ,
   `ending` TIME NOT NULL ,
   `company_id` INT NULL ,
+  `offer_id` INT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_working_hours_days1` (`day_id` ASC) ,
   INDEX `fk_working_hours_companies1` (`company_id` ASC) ,
+  INDEX `fk_working_hours_offers1` (`offer_id` ASC) ,
   CONSTRAINT `fk_working_hours_days1`
     FOREIGN KEY (`day_id` )
     REFERENCES `opendeals`.`days` (`id` )
@@ -267,6 +269,11 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`working_hours` (
   CONSTRAINT `fk_working_hours_companies1`
     FOREIGN KEY (`company_id` )
     REFERENCES `opendeals`.`companies` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_working_hours_offers1`
+    FOREIGN KEY (`offer_id` )
+    REFERENCES `opendeals`.`offers` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

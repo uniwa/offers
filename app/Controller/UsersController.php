@@ -2,7 +2,7 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Image', 'Day', 'WorkingHour', 'Image');
+    public $uses = array('User', 'Image', 'Day', 'WorkHour', 'Image');
 
     function beforeFilter() {
         parent::beforeFilter();
@@ -107,15 +107,15 @@ class UsersController extends AppController {
             }
             // end of avatar stuff
 
-            $workingHour = $this->request->data['WorkingHour'];
-            unset( $this->request->data['WorkingHour']);
+            $workHour = $this->request->data['WorkHour'];
+            unset( $this->request->data['WorkHour']);
 
             $saved_user = $this->User->save( $this->request->data['User'] );
             $this->User->Company->set('user_id', $saved_user['User']['id']);
             $saved_comp = $this->User->Company->save( $this->request->data['Company']);
-            $workingHour = $this->setCompanyId( $this->User->Company->id, $workingHour );
+            $workHour = $this->setCompanyId( $this->User->Company->id, $workHour );
 
-            $saved_hours = $this->WorkingHour->saveMany( $workingHour );
+            $saved_hours = $this->WorkHour->saveMany( $workHour );
 
             if( $saved_user && $saved_comp && $saved_hours ){
 
@@ -132,17 +132,17 @@ class UsersController extends AppController {
     }
 
     //sets Company id from saved company
-    private function setCompanyId( $c_id, $workingHour ) {
+    private function setCompanyId( $c_id, $workHour ) {
 
         if( empty( $c_id ) ){
             return null;
         }
-        //creates the working hour format, compatible with mysql
-        foreach( $workingHour as &$wh ){
+        //creates the work hour format, compatible with mysql
+        foreach( $workHour as &$wh ){
 
             $wh['company_id'] = $c_id;
         }
 
-        return $workingHour;
+        return $workHour;
     }
 }

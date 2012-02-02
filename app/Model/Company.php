@@ -4,7 +4,7 @@ class Company extends AppModel {
 
     public $name = 'Company';
     public $belongsTo = array('User', 'Image');
-    public $hasMany = array( 'Offer', 'WorkingHour' );
+    public $hasMany = array( 'Offer', 'WorkHour' );
 
     public $validate = array(
 
@@ -47,10 +47,10 @@ class Company extends AppModel {
 
         ),
         'address' => array(
-            'size' => array(                
-                'rule' => array('maxLength', 45),                                                     
+            'size' => array(
+                'rule' => array('maxLength', 45),
                 'message' => 'Η διεύθυνση μπορεί να περιέχει μέχρι 45 χαρακτήρες.',
-                'allowEmpty' => true,'required' => false          
+                'allowEmpty' => true,'required' => false
             ),
             'valid' => array(
                 'rule' => '/^[\w\dαβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΆάΈέΎΉήύΊίΌόΏώϊϋΐΰς,. &]+$/',

@@ -32,7 +32,7 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `opendeals`.`images`
+-- Table `opendeals`.`image_categories`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `opendeals`.`image_categories` ;
 
@@ -110,7 +110,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
   `longitude` DOUBLE NULL DEFAULT NULL ,
   `latitude` DOUBLE NULL DEFAULT NULL ,
   `is_enabled` TINYINT(1) NOT NULL DEFAULT FALSE ,
-  `user_id` INT NULL ,
+  `user_id` INT NOT NULL ,
   `image_id` INT NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_companies_users1` (`user_id` ASC) ,
@@ -184,7 +184,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`students` (
   `lastname` MEDIUMTEXT NOT NULL ,
   `receive_email` TINYINT(1) NOT NULL DEFAULT FALSE ,
   `token` MEDIUMTEXT NULL DEFAULT NULL ,
-  `user_id` INT NULL ,
+  `user_id` INT NOT NULL ,
   `image_id` INT NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_students_users1` (`user_id` ASC) ,

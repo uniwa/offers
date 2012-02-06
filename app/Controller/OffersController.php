@@ -7,13 +7,23 @@ class OffersController extends AppController {
     public $uses = array('Offer', 'Company', 'Image');
 
 
+    public function index() {
+        $options['conditions'] = array(
+                                    'Offer.is_draft' => 0,
+                                    'Offer.is_active' => 1);
+        $options['recursive'] = -1;
+        $offers = $this->Offer->find('all', $options);
+        $this->set('offers', $offers);
+    }
+
+
     public function view($id = null) {
 
         $options['conditions'] = array(
                                     'Offer.id' => $id,
         //TODO uncomment the next line when the offer activation logic is
         // implemented
-        //                            'Offer.is_draft' => 0,
+//                                     'Offer.is_draft' => 0,
                                     'Company.is_enabled' => 1
                                  );
         //TODO check if the company's user is_banned before showing the offer

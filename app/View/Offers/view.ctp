@@ -1,5 +1,21 @@
 <?php
 
+if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
+    $offer['Offer']['is_draft'] == 1)
+{
+    echo $this->Html->link('Διαγραφή', array(
+                                        'controller' => 'offers',
+                                        'action' => 'delete',
+                                        $offer['Offer']['id'])).'<br/>';
+
+    echo $this->Html->link('Επεξεργασία', array(
+                                            'controller' => 'offers',
+                                            'action' => 'edit',
+                                            $offer['Offer']['id'])).'<br/>';
+
+}
+
+
 echo 'Προσφορά '.$offer['Offer']['id'].'<br/>';
 
 if (isset($offer['Company']['name']))

@@ -35,6 +35,28 @@ echo $this->Form->input('ending', array(
                             'timeFormat' => 24,
                             'interval' => 15
                        ));
+
+// this field should be available to the user only when
+// the offer_category is "happyhour"
+echo 'Happy Hour only<br/>';
+echo $this->Form->input('WorkHour.0.day_id', array('label'=>'Ημέρα'));
+echo $this->Form->input('WorkHour.0.starting',
+                        array(
+                            'label' => null,
+                            'type' => 'time',
+                            'timeFormat' => 24,
+                            'interval' => 15
+                        ));
+
+echo $this->Form->input('WorkHour.0.ending',
+                        array(
+                            'label'=>null,
+                            'type' => 'time',
+                            'timeFormat' => 24,
+                            'interval'=>15
+                        ));
+echo 'Happy Hour only end<br/>';
+
 echo $this->Form->input('expiration_date', array(
                             'label' => 'Η προσφορά ισχύει μέχρι',
                             'type' => 'date',

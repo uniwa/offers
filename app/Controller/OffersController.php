@@ -4,7 +4,7 @@ class OffersController extends AppController {
 
     public $name = 'Offers';
     public $helpers = array('Form');
-    public $uses = array('Offer', 'Company', 'Image', 'WorkHour');
+    public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day');
 
 
     public function index() {
@@ -36,15 +36,21 @@ class OffersController extends AppController {
 
 
     public function add() {
+
+        // required to fill the select boxes with the correct values
         $this->set('offerTypes', $this->Offer->OfferType->find('list'));
         $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
+        $this->set('days', $this->Day->find('list'));
 
         if (!empty($this->data)) {
 
+            // set the required default values
             $this->request->data['Offer']['is_active'] = 0;
             $this->request->data['Offer']['current_quantity'] = 0;
             $this->request->data['Offer']['is_draft'] = 1;
 
+            // find the id of the Company related to the logged user
+            // and assign it to Offer.company_id
             $options['fields'] = array('Company.id');
             $options['conditions'] = array(
                 'Company.user_id' => $this->Auth->User('id')
@@ -79,10 +85,23 @@ class OffersController extends AppController {
 
             $error = false;
             if ($this->Offer->save($this->data)) {
+
+                // try to save images
                 if (!empty($photo)) {
                     $photo['Image']['offer_id'] = $this->Offer->id;
                     if (!$this->Image->save($photo))
                         $error = true;
+                }
+
+                // try to save WorkHours only if Offer.category is HappyHour
+                if ($this->data['Offer']['offer_category_id'] == 1) {
+                    for ($i = 0; $i < count($this->data['WorkHour']); $i++) {
+                        $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;
+                        if (!$this->WorkHour->save($this->data['WorkHour'][$i])) {
+                            $error = true;
+                            break;
+                        }
+                    }
                 }
             } else {
                 $error = true;

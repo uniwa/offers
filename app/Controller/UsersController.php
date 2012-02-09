@@ -72,7 +72,7 @@ class UsersController extends AppController {
 
 
         if( !empty( $this->request->data ) ) {
-// pr($this->data);die();
+
             $dataSource = $this->User->getDataSource();
             //is_enabled and is_banned is by default false
             //set registered User's role
@@ -81,6 +81,8 @@ class UsersController extends AppController {
             unset($this->User->Company->validate['user_id']);
 
             $dataSource->begin();
+            //rollback mode 1 in case rollback trigered
+            $rb = 0;
 
             // avatar stuff
             $photo = array();
@@ -98,7 +100,7 @@ class UsersController extends AppController {
                     } else {
                         $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα στην φωτογραφία.');
                         $dataSource->rollback();
-                        return;
+                        $rb = 1;
                     }
                 } else {
                     $this->Session->setFlash('Μη αποδεκτός τύπος αρχείου εικόνας.');
@@ -114,7 +116,7 @@ class UsersController extends AppController {
 
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
                 $dataSource->rollback();            
-                return;
+                $rb = 1;
             }
             
             $this->User->Company->set('user_id', $this->User->id);
@@ -122,7 +124,7 @@ class UsersController extends AppController {
 
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
                 $dataSource->rollback();
-                return;
+                $rb = 1;
             }
 
             $workHour = $this->setCompanyId( $this->User->Company->id, $workHour );
@@ -130,13 +132,14 @@ class UsersController extends AppController {
 
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
                 $dataSource->rollback();
-                return;
-
+                $rb = 1;
             }
- 
+
+           if( !$rb ) { 
             $dataSource->commit();
             $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
             $this->redirect(array('action' => 'index'));               
+           }
             
         }
 

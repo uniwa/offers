@@ -110,21 +110,34 @@ class UsersController extends AppController {
             $workHour = $this->request->data['WorkHour'];
             unset( $this->request->data['WorkHour']);
 
-            $saved_user = $this->User->save( $this->request->data['User'] );
-            $this->User->Company->set('user_id', $saved_user['User']['id']);
-            $saved_comp = $this->User->Company->save( $this->request->data['Company']);
-            $workHour = $this->setCompanyId( $this->User->Company->id, $workHour );
+            if( !$this->User->save( $this->request->data['User'] ) ) {
 
-            $saved_hours = $this->WorkHour->saveMany( $workHour );
-
-            if( $saved_user && $saved_comp && $saved_hours ){
-
-                $dataSource->commit();
-                $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
-                $this->redirect(array('action' => 'index'));
+                $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
+                $dataSource->rollback();            
+                return;
             }
-            $dataSource->rollback();
-            $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
+            
+            $this->User->Company->set('user_id', $this->User->id);
+            if( !$this->User->Company->save( $this->request->data['Company'])){
+
+                $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
+                $dataSource->rollback();
+                return;
+            }
+
+            $workHour = $this->setCompanyId( $this->User->Company->id, $workHour );
+            if( !$this->WorkHour->saveMany( $workHour )){
+
+                $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
+                $dataSource->rollback();
+                return;
+
+            }
+ 
+            $dataSource->commit();
+            $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
+            $this->redirect(array('action' => 'index'));               
+            
         }
 
 

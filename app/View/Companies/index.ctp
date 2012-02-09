@@ -6,7 +6,12 @@ foreach ($companies as $company) {
     echo 'Επιχείρηση '.$company['id'].'<br/>';
 
     if (isset($company['name']))
-        echo 'Όνομα επιχείρησης : '.$company['name'].'<br/>';
+        echo 'Όνομα επιχείρησης : '.
+             $this->Html->link($company['name'],
+                               array(
+                                    'controller' => 'companies',
+                                    'action' => 'view',
+                                    $company['id'])).'<br/>';
 
     if (isset($company['logo']))
         echo 'Λογότυπο : '.$company['logo'].'<br/>';

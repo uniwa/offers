@@ -43,7 +43,7 @@ class OffersController extends AppController {
         $this->set('days', $this->Day->find('list'));
 
         if (!empty($this->data)) {
-
+// pr($this->data); die();
             // set the required default values
             $this->request->data['Offer']['is_active'] = 0;
             $this->request->data['Offer']['current_quantity'] = 0;
@@ -59,22 +59,25 @@ class OffersController extends AppController {
             $company_id = $this->Company->find('first', $options);
             $this->request->data['Offer']['company_id'] = $company_id['Company']['id'];
 
-            // if the user uploaded an image, store the required information
-            // in $photo, so as to save it later
+            // if the user uploaded one or more images, store the required
+            // information in each image, so as to save them later
             // TODO autogenerate thumbnails for mobile app
-            $photo = array();
-            if (is_uploaded_file($this->data['Offer']['image']['tmp_name'])) {
-                if ($this->isImage($this->data['Offer']['image']['type'])) {
+            $photos = array();
+            for ($i = 0; $i < count($this->data['Image']); $i++) {
 
-                    $file = fread(fopen($this->data['Offer']['image']['tmp_name'], 'r'),
-                                  $this->data['Offer']['image']['size']);
-                    $photo['Image'] = $this->data['Offer']['image'];
-                    $photo['Image']['data'] = base64_encode($file);
-                    //TODO change the hardcoded image category
-                    $photo['Image']['image_category_id'] = 1;
-                } else {
-                    $this->Session->setFlash('Μη αποδεκτός τύπος αρχείου εικόνας.');
-                    return;
+                if (is_uploaded_file($this->data['Image'][$i]['tmp_name'])) {
+                    if ($this->isImage($this->data['Image'][$i]['type'])) {
+
+                        $file = fread(fopen($this->data['Image'][$i]['tmp_name'], 'r'),
+                                    $this->data['Image'][$i]['size']);
+                        $photos[$i] = $this->data['Image'][$i];
+                        $photos[$i]['data'] = base64_encode($file);
+                        //TODO change the hardcoded image category
+                        $photos[$i]['image_category_id'] = 1;
+                    } else {
+                        $this->Session->setFlash('Μη αποδεκτός τύπος αρχείου εικόνας.');
+                        return;
+                    }
                 }
             }
 
@@ -87,9 +90,10 @@ class OffersController extends AppController {
             if ($this->Offer->save($this->data)) {
 
                 // try to save images
-                if (!empty($photo)) {
-                    $photo['Image']['offer_id'] = $this->Offer->id;
-                    if (!$this->Image->save($photo))
+                if (!empty($photos)) {
+                    for ($i = 0; $i < count($photos); $i++)
+                        $photos[$i]['offer_id'] = $this->Offer->id;
+                    if (!$this->Image->saveMany($photos))
                         $error = true;
                 }
 

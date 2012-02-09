@@ -71,9 +71,13 @@ echo $this->Form->input('total_quantity', array(
                             'empty' => 'Δεν έχει κουπόνια'
                        ));
 echo $this->Form->input('tags', array('label' => 'Λέξεις κλειδιά'));
-echo $this->Form->input('image', array(
+echo $this->Form->input('Image.0', array(
                             'label' => 'Φωτογραφία',
                             'type' => 'file'
                        ));
 
+echo $this->Form->input('Image.1', array(
+                            'label' => 'Φωτογραφία',
+                            'type' => 'file'
+                       ));
 echo $this->Form->end('Ανάρτηση');

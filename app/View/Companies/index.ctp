@@ -34,9 +34,6 @@ foreach ($companies as $company) {
     if (isset($company['afm']))
         echo 'ΑΦΜ : '.$company['afm'].'<br/>';
 
-    if (isset($company['doy']))
-        echo 'ΔΟΥ : '.$company['doy'].'<br/>';
-
     if (isset($company['working_hours']))
         echo 'Ωράριο λειτουργίας : '.$company['working_hours'].'<br/>';
 

@@ -119,7 +119,6 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
   `fax` VARCHAR(10) NULL DEFAULT NULL ,
   `service_type` MEDIUMTEXT NOT NULL ,
   `afm` VARCHAR(9) NOT NULL ,
-  `doy` MEDIUMTEXT NULL DEFAULT NULL ,
   `longitude` DOUBLE NULL DEFAULT NULL ,
   `latitude` DOUBLE NULL DEFAULT NULL ,
   `is_enabled` TINYINT(1) NOT NULL DEFAULT FALSE ,

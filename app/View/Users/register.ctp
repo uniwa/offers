@@ -23,7 +23,6 @@
         echo $this->Form->input('Company.phone', array( 'label' => 'Τηλέφωνο') );
         echo $this->Form->input('Company.fax', array( 'label' => 'Fax') );
         echo $this->Form->input('Company.afm', array( 'label' => 'Α.Φ.Μ') );
-        echo $this->Form->input('Company.doy', array( 'label' => 'ΔΟΥ') );
 
     ?>
         <table boreder="1">

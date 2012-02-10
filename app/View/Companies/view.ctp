@@ -34,9 +34,6 @@ if (isset($comp['service_type']))
 if (isset($comp['afm']))
     echo 'ΑΦΜ : '.$comp['afm'].'<br/>';
 
-if (isset($comp['doy']))
-    echo 'ΔΟΥ : '.$comp['doy'].'<br/>';
-
 if (isset($comp['working_hours']))
     echo 'Ωράριο λειτουργίας : '.$comp['working_hours'].'<br/>';
 

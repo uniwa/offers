@@ -6,13 +6,26 @@ class OffersController extends AppController {
     public $helpers = array('Form');
     public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day');
 
+    public $paginate = array( 
+        'fields' => array('Offer.title', 'Offer.description'),
+        'limit' => 6,
+        'order'=>array(
+
+            'Offer.starting' => 'desc'
+        )
+    );
+
+    function beforeFilter(){
+        parent::beforeFilter();
+        $this->Auth->allow( 'index' );
+    }
 
     public function index() {
         $options['conditions'] = array(
                                     'Offer.is_draft' => 0,
                                     'Offer.is_active' => 1);
         $options['recursive'] = -1;
-        $offers = $this->Offer->find('all', $options);
+        $offers = $this->paginate('Offer', $options['conditions']);
         $this->set('offers', $offers);
     }
 

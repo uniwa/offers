@@ -6,7 +6,7 @@ class OffersController extends AppController {
     public $helpers = array('Form');
     public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day');
 
-    public $paginate = array( 
+    public $paginate = array(
         'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
         'order'=>array(
@@ -72,34 +72,13 @@ class OffersController extends AppController {
             $company_id = $this->Company->find('first', $options);
             $this->request->data['Offer']['company_id'] = $company_id['Company']['id'];
 
-            // if the user uploaded one or more images, store the required
-            // information in each image, so as to save them later
-            // TODO autogenerate thumbnails for mobile app
-            $photos = array();
-            for ($i = 0; $i < count($this->data['Image']); $i++) {
-
-                if (is_uploaded_file($this->data['Image'][$i]['tmp_name'])) {
-                    if ($this->isImage($this->data['Image'][$i]['type'])) {
-
-                        $file = fread(fopen($this->data['Image'][$i]['tmp_name'], 'r'),
-                                      $this->data['Image'][$i]['size']);
-                        $photos[$i] = $this->data['Image'][$i];
-                        $photos[$i]['data'] = base64_encode($file);
-                        //TODO change the hardcoded image category
-                        $photos[$i]['image_category_id'] = 1;
-                    } else {
-                        $this->Session->setFlash('Μη αποδεκτός τύπος αρχείου εικόνας.');
-                        return;
-                    }
-                }
-            }
-
             $transaction = $this->Offer->getDataSource();
             $transaction->begin();
             $error = false;
 
             if ($this->Offer->save($this->data)) {
 
+                $photos = $this->processImages($this->request->data['Image']);
                 // try to save images
                 if (!empty($photos)) {
                     for ($i = 0; $i < count($photos); $i++)
@@ -187,28 +166,6 @@ class OffersController extends AppController {
             $company_id = $this->Company->find('first', $options);
             $this->request->data['Offer']['company_id'] = $company_id['Company']['id'];
 
-            $photos = array();
-            for ($i = 0; $i < count($this->data['Image']); $i++) {
-                // check whether the image is already saved in DB.
-                // if yes then continue with the next image.
-                if (isset($this->data['Image'][$i]['id'])) continue;
-
-                if (is_uploaded_file($this->data['Image'][$i]['tmp_name'])) {
-                    if ($this->isImage($this->data['Image'][$i]['type'])) {
-
-                        $file = fread(fopen($this->data['Image'][$i]['tmp_name'], 'r'),
-                                      $this->data['Image'][$i]['size']);
-                        $photos[$i] = $this->data['Image'][$i];
-                        $photos[$i]['data'] = base64_encode($file);
-                        //TODO change the hardcoded image category
-                        $photos[$i]['image_category_id'] = 1;
-                    } else {
-                        $this->Session->setFlash('Μη αποδεκτός τύπος αρχείου εικόνας.');
-                        return;
-                    }
-                }
-            }
-// pr($this->data); die();
             $transaction = $this->Offer->getDataSource();
             $transaction->begin();
             $error = false;
@@ -216,6 +173,7 @@ class OffersController extends AppController {
             if ($this->Offer->save($this->data)) {
 
                 // try to save the new images
+                $photos = $this->processImages($this->request->data['Image']);
                 if (!empty($photos)) {
                     for ($i = 0; $i < count($photos); $i++)
                         $photos[$i]['offer_id'] = $this->Offer->id;

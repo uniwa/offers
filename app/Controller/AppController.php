@@ -1,6 +1,5 @@
 <?php
 
-App::uses('ImageException', 'Error');
 App::uses('ImageExtensionException', 'Error');
 App::uses('UploadFileException', 'Error');
 

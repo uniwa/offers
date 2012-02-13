@@ -1,6 +1,7 @@
 <?php
 
 App::uses('ImageException', 'Error');
+App::uses('ImageExtensionException', 'Error');
 
 class AppController extends Controller{
 
@@ -74,7 +75,7 @@ class AppController extends Controller{
                     $photo['Image']['image_category_id'] = $image_category;
                     return $photo;
                 } else {
-                    throw new ImageException('Λάθος τύπος αρχείου εικόνας.');
+                    throw new ImageExtensionException();
                 }
             } else {
                 throw new ImageException('Λάθος στο ανέβασμα του αρχείου.');

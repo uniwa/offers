@@ -1,5 +1,7 @@
 <?php
 
+App::uses('ImageException', 'Error');
+
 class AppController extends Controller{
 
     public $components = array(
@@ -32,5 +34,53 @@ class AppController extends Controller{
         $extension = $extension[1];
 
         return in_array($extension, $valid);
+    }
+
+
+    protected function processImages($images, $image_category = 1) {
+        if (isset($images['tmp_name'])) {
+            $tmp = $this->_processImage($images, $image_category);
+            if (empty($tmp))
+                return $tmp;
+            else
+                return $tmp['Image'];
+        } else {
+            $photos = array();
+            foreach ($images as $image) {
+                $tmp = $this->_processImage($image, $image_category);
+                if (!empty($tmp))
+                    array_push($photos, $this->_processImage($image, $image_category));
+            }
+            if (empty($photos))
+                return $photos;
+            else
+                return  Set::extract('/Image/.', $photos);
+        }
+    }
+
+    private function _processImage($image, $image_category) {
+        if (isset($image['tmp_name']) && $image['tmp_name'] != null) {
+            $photo = array();
+
+            // if image already exists in DB then return empty array
+            if (isset($image['id'])) return $photo;
+
+            if (is_uploaded_file($image['tmp_name'])) {
+                if ($this->isImage($image['type'])) {
+                    $file = fread(fopen($image['tmp_name'], 'r'),
+                                    $image['size']);
+                    $photo['Image'] = $image;
+                    $photo['Image']['data'] = base64_encode($file);
+                    $photo['Image']['image_category_id'] = $image_category;
+                    return $photo;
+                } else {
+                    throw new ImageException('Λάθος τύπος αρχείου εικόνας.');
+                }
+            } else {
+                throw new ImageException('Λάθος στο ανέβασμα του αρχείου.');
+            }
+        } else {
+            return array();
+        }
     }
 }

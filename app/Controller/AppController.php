@@ -2,6 +2,7 @@
 
 App::uses('ImageException', 'Error');
 App::uses('ImageExtensionException', 'Error');
+App::uses('UploadFileException', 'Error');
 
 class AppController extends Controller{
 
@@ -78,7 +79,7 @@ class AppController extends Controller{
                     throw new ImageExtensionException();
                 }
             } else {
-                throw new ImageException('Λάθος στο ανέβασμα του αρχείου.');
+                throw new UploadFileException();
             }
         } else {
             return array();

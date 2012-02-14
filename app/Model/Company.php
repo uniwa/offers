@@ -3,7 +3,7 @@
 class Company extends AppModel {
 
     public $name = 'Company';
-    public $belongsTo = array('User', 'Image');
+    public $belongsTo = array('User', 'Image', 'Municipality');
     public $hasMany = array( 'Offer', 'WorkHour' );
 
     public $validate = array(

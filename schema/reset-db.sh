@@ -8,7 +8,8 @@ declare -a samples
 data=("insert_offer_categories.sql"
       "insert_offer_types.sql"
       "insert_days.sql"
-      "insert_image_categories.sql")
+      "insert_image_categories.sql"
+      "insert_counties.sql")
 samples=("insert_sample_users.sql"
          "insert_sample_students.sql"
          "insert_sample_companies.sql"

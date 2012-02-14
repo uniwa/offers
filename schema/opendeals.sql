@@ -19,6 +19,25 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
+-- Table `opendeals`.`municipalities`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `opendeals`.`municipalities` ;
+CREATE  TABLE IF NOT EXISTS `opendeals`.`municipalities` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `name` MEDIUMTEXT NOT NULL ,
+  `county_id` INT NOT NULL ,
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_municipalities_counties` (`county_id` ASC) ,
+  CONSTRAINT `fk_municipalities_counties`
+    FOREIGN KEY (`county_id`)
+    REFERENCES `opendeals`.`counties` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
 -- Table `opendeals`.`offer_categories`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `opendeals`.`offer_categories` ;

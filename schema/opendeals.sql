@@ -7,6 +7,18 @@ CREATE SCHEMA IF NOT EXISTS `opendeals` DEFAULT CHARACTER SET utf8 ;
 USE `opendeals` ;
 
 -- -----------------------------------------------------
+-- Table `opendeals`.`counties`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `opendeals`.`counties` ;
+CREATE  TABLE IF NOT EXISTS `opendeals`.`counties` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `name` MEDIUMTEXT NOT NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
 -- Table `opendeals`.`offer_categories`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `opendeals`.`offer_categories` ;

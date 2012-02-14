@@ -155,9 +155,11 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
   `is_enabled` TINYINT(1) NOT NULL DEFAULT FALSE ,
   `user_id` INT NOT NULL ,
   `image_id` INT NULL DEFAULT NULL ,
+  `municipality_id` INT NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_companies_users1` (`user_id` ASC) ,
   INDEX `fk_companies_images1` (`image_id` ASC) ,
+  INDEX `fk_companies_municipalities` (`municipality_id` ASC) ,
   CONSTRAINT `fk_companies_users1`
     FOREIGN KEY (`user_id` )
     REFERENCES `opendeals`.`users` (`id` )
@@ -166,6 +168,11 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
   CONSTRAINT `fk_companies_images1`
     FOREIGN KEY (`image_id` )
     REFERENCES `opendeals`.`images` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_companies_municipalities`
+    FOREIGN KEY (`municipality_id` )
+    REFERENCES `opendeals`.`municipalities` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

@@ -2,7 +2,7 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Image', 'Day', 'WorkHour', 'Image');
+    public $uses = array('User', 'Image', 'Day', 'WorkHour', 'Image', 'Municipality');
 
     function beforeFilter() {
         parent::beforeFilter();
@@ -70,6 +70,10 @@ class UsersController extends AppController {
 
     function register() {
 
+        $this->set('municipalities',
+                   $this->Municipality->find('list',
+                                             array('order' => 'Municipality.name ASC')
+                                            ));
 
         if( !empty( $this->request->data ) ) {
 
@@ -115,10 +119,10 @@ class UsersController extends AppController {
             if( !$this->User->save( $this->request->data['User'] ) ) {
 
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
-                $dataSource->rollback();            
+                $dataSource->rollback();
                 $rb = 1;
             }
-            
+
             $this->User->Company->set('user_id', $this->User->id);
             if( !$this->User->Company->save( $this->request->data['Company'])){
 
@@ -135,12 +139,12 @@ class UsersController extends AppController {
                 $rb = 1;
             }
 
-           if( !$rb ) { 
+           if( !$rb ) {
             $dataSource->commit();
             $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
-            $this->redirect(array('action' => 'index'));               
+            $this->redirect(array('action' => 'index'));
            }
-            
+
         }
 
 

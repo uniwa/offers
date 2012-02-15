@@ -21,6 +21,19 @@ class OffersController extends AppController {
     }
 
     public function index() {
+        //get last 3 happy  hour offers
+        $happyOffers = $this->Offer->find( 'all' , array(
+            'conditions'=>array('Offer.offer_category_id' => 1,
+                            'Offer.is_draft' => 0,
+                            'Offer.is_active' => 1,
+                            ),
+            'limit' => 3,
+            'recursive' => -1
+
+        ) );
+
+        $this->set( 'happyOffers', $happyOffers );
+
         $options['conditions'] = array(
                                     'Offer.is_draft' => 0,
                                     'Offer.is_active' => 1);

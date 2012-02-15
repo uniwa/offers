@@ -2,7 +2,7 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Image', 'Day', 'WorkHour', 'Image', 'Municipality');
+    public $uses = array('User', 'Image', 'Day', 'WorkHour', 'Municipality');
 
     function beforeFilter() {
         parent::beforeFilter();
@@ -88,31 +88,6 @@ class UsersController extends AppController {
             //rollback mode 1 in case rollback trigered
             $rb = 0;
 
-            // avatar stuff
-            $photo = array();
-            if (is_uploaded_file($this->data['Company']['image']['tmp_name'])) {
-                if ($this->isImage($this->data['Company']['image']['type'])) {
-
-                    $file = fread(fopen($this->data['Company']['image']['tmp_name'], 'r'),
-                                  $this->data['Company']['image']['size']);
-                    $photo['Image'] = $this->data['Company']['image'];
-                    $photo['Image']['data'] = base64_encode($file);
-                    //TODO change the hardcoded image category
-                    $photo['Image']['image_category_id'] = 3;
-                    if ($this->Image->save($photo)) {
-                        $this->request->data['Company']['image_id'] = $this->Image->id;
-                    } else {
-                        $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα στην φωτογραφία.');
-                        $dataSource->rollback();
-                        $rb = 1;
-                    }
-                } else {
-                    $this->Session->setFlash('Μη αποδεκτός τύπος αρχείου εικόνας.');
-                    return;
-                }
-            }
-            // end of avatar stuff
-
             $workHour = $this->request->data['WorkHour'];
             unset( $this->request->data['WorkHour']);
 
@@ -127,6 +102,14 @@ class UsersController extends AppController {
             if( !$this->User->Company->save( $this->request->data['Company'])){
 
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
+                $dataSource->rollback();
+                $rb = 1;
+            }
+
+            $photos = $this->processImages($this->request->data['Company']['Image'], 3,
+                                           array('company_id' => $this->User->Company->id));
+            if (!$this->Image->saveMany($photos)) {
+                $this->Session->setFlash('Η εγγραφή δεν ολοκληρώθηκε');
                 $dataSource->rollback();
                 $rb = 1;
             }

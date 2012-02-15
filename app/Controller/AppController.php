@@ -83,7 +83,11 @@ class AppController extends Controller{
      * @throws UploadFileException
      */
     private function _processImage($image, $image_category, $foreign_keys) {
-        if (!isset($image['tmp_name']) || isset($image['id'])) return array();
+        if ((isset($image['tmp_name']) && $image['tmp_name'] == null ) ||
+             isset($image['id']))
+            {
+                return array();
+            }
 
         if (!is_uploaded_file($image['tmp_name']))
             throw new UploadFileException();

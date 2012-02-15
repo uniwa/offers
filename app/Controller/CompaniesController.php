@@ -22,7 +22,7 @@ class CompaniesController extends AppController {
         $options['conditions'] = array('Company.id' => $id,
                                        'Company.is_enabled' => 1,
                                        'User.is_banned' => 0);
-        $options['recursive'] = 0;
+        $options['recursive'] = 1;
         $company = $this->Company->find('first', $options);
 
         if (empty($company))

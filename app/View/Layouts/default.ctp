@@ -5,6 +5,15 @@
 <?php echo $this->Html->charset();
 echo $this->Html->css( 'bootstrap');
 ?>
+<style type="text/css">
+  body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+  }
+  .sidebar-nav {
+    padding: 9px 0;
+  }
+</style>
 </head>
 <body>
 
@@ -26,9 +35,9 @@ echo $this->Html->css( 'bootstrap');
 
 			<?php 
 
-				if( $this->Session->check( 'Auth.User' ) ) {
+                if( $this->Session->check( 'Auth.User' ) ) {
 
-					echo "<p class=\"navbar-text pull-right\">Συνδεδεμένος ως <a href=\"#\">$this->Session->read('Auth.User.username')</a></p>";
+					echo "<p class=\"navbar-text pull-right\">Συνδεδεμένος ως <a href=\"#\">{$this->Session->read('Auth.User.username')}</a></p>";
 				} else {
 					echo '<p class="navbar-text pull-right"><a href ="#">Σύνδεση</a></p>';
 
@@ -46,19 +55,16 @@ echo $this->Html->css( 'bootstrap');
 			<?php echo $this->element( 'sidebar' );?>
 			<?php echo $content_for_layout;?>						
 		</div><!--/row-->
-		
-
-   		<hr>
-
-    	<footer>
-    	   	<p>&copy; Τ.Ε.Ι Αθήνας  2012</p>
-  		</footer>
-
+	
    		
 	</div><!--/.fluid-container-->
        
 
+        <hr>
 
+    	<footer>
+    	   	<p>&copy; Τ.Ε.Ι Αθήνας  2012</p>
+  		</footer>
 
 </body>
 </html>

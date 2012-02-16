@@ -28,18 +28,32 @@ class OffersController extends AppController {
                             'Offer.is_active' => 1,
                             ),
             'limit' => 3,
-            'recursive' => -1
+            'recursive' => -1,
+            'order' => 'Offer.starting DESC'
 
         ) );
-
+        //minify description strings
+        $this->minify_desc( $happyOffers, 100 );
         $this->set( 'happyOffers', $happyOffers );
 
         $options['conditions'] = array(
+                                    'Offer.offer_category_id !=' => 1,
                                     'Offer.is_draft' => 0,
                                     'Offer.is_active' => 1);
         $options['recursive'] = -1;
         $offers = $this->paginate('Offer', $options['conditions']);
+
+        $this->minify_desc( $offers, 160 );
         $this->set('offers', $offers);
+    }
+
+    private function minify_desc( &$array, $limit ) {
+
+        foreach( $array as &$rec ) {
+
+            $rec['Offer']['description'] = substr( $rec['Offer']['description'] ,0 , $limit );
+        }
+
     }
 
 

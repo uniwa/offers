@@ -2671,6 +2671,14 @@ button.btn.small, input[type="submit"].btn.small {
   border: 1px solid #ddd;
   border-left-width: 0;
 }
+.pagination .current{
+  float:left;
+  padding: 8px 14px;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  color: #999999;
+  cursor: default;
+}
 .pagination a:hover, .pagination .active a {
   background-color: #f5f5f5;
 }
@@ -2683,13 +2691,25 @@ button.btn.small, input[type="submit"].btn.small {
   background-color: transparent;
   cursor: default;
 }
-.pagination li:first-child a {
+.pagination li:first-child a  {
   border-left-width: 1px;
   -webkit-border-radius: 3px 0 0 3px;
   -moz-border-radius: 3px 0 0 3px;
   border-radius: 3px 0 0 3px;
 }
 .pagination li:last-child a {
+  -webkit-border-radius: 0 3px 3px 0;
+  -moz-border-radius: 0 3px 3px 0;
+  border-radius: 0 3px 3px 0;
+}
+
+.pagination li:first-child   {
+  border-left-width: 1px;
+  -webkit-border-radius: 3px 0 0 3px;
+  -moz-border-radius: 3px 0 0 3px;
+  border-radius: 3px 0 0 3px;
+}
+.pagination li:last-child  {
   -webkit-border-radius: 0 3px 3px 0;
   -moz-border-radius: 0 3px 3px 0;
   border-radius: 0 3px 3px 0;

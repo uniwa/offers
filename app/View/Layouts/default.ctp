@@ -13,7 +13,15 @@ echo $this->Html->css( 'bootstrap');
   .sidebar-nav {
     padding: 9px 0;
   }
+
+  .dropdown-menu {
+    
+    padding: 0 6px;
+  }
 </style>
+<?php echo $this->Html->script('jquery'); ?>
+<?php echo $this->Html->script('dropdown'); ?>
+<?php echo $this->Html->script('global'); ?>
 </head>
 <body>
 
@@ -32,17 +40,43 @@ echo $this->Html->css( 'bootstrap');
 			  <li><a href="#">Όροι χρήσης</a></li>
               <li><a href="#about">Συχνές Ερωτήσεις</a></li>
             </ul>
-
+            <!-- Login functionality with dropdown -->
 			<?php 
 
                 if( $this->Session->check( 'Auth.User' ) ) {
 
 					echo "<p class=\"navbar-text pull-right\">Συνδεδεμένος ως <a href=\"#\">{$this->Session->read('Auth.User.username')}</a></p>";
-				} else {
-					echo '<p class="navbar-text pull-right"><a href ="#">Σύνδεση</a></p>';
+                } else {?>
+                    
+                    <ul class="nav pull-right">
+                    <li class="dropdown" id="login">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#login">
+                        Σύνδεση
+                        <b class="caret"></b>
+                    </a>
 
-				}
-			?>
+                    <ul class="dropdown-menu">
+
+                        <?php echo $this->Session->flash('auth'); ?>
+                        <?php echo $this->Form->create('User', array(
+                            'action'=>'post', 'url'=>array(
+                                                'controller'=>'users', 'action'=>'login') ));?>
+                        <fieldset>
+                        <?php
+                            echo $this->Form->input('username', array( 'label' => 'Όνομα χρήστη', 'type'=>'text'));
+                            echo $this->Form->input('password', array( 'label' => 'Κωδικός χρήστη'));
+                        ?>
+                        </fieldset>
+                        <?php echo $this->Form->end(array( 'label' =>__('Είσοδος'), 'class'=>'btn-primary'));?>
+                        <li class="divider"></li>
+                    </ul>
+                    
+                    </li>
+
+
+                    </ul>
+                   
+        <?php	}?>
 
           </div><!--/.nav-collapse -->
 		 </div>
@@ -64,7 +98,8 @@ echo $this->Html->css( 'bootstrap');
 
     	<footer>
     	   	<p>&copy; Τ.Ε.Ι Αθήνας  2012</p>
-  		</footer>
-
+        </footer>
+<!--will allow all scripts generated in layout elements to be output in one place-->
+<?php echo $this->Js->writeBuffer(); ?>
 </body>
 </html>

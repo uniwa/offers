@@ -2,9 +2,9 @@
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header">Κατηγοριες Προσφορων</li>
-              <li><a href="#">Happy Hour</a></li>
-              <li><a href="#">Προσφορές με κουπόνια</a></li>
-              <li><a href="#">Μέχρι εξαντλήσεως αποθεμάτων</a></li>
+              <li><a href="#"><span class="label label-info">Happy Hour</span></a></li>
+               <li><a href="#"><span class="label label-warning">limited</span></a></li>
+              <li><a href="#"><span class="label label-success">unlimited</span></a></li>
               <li class="nav-header">Ειδη Προσφορων</li>
               <li><a href="#">Φαγητό</a></li>
               <li><a href="#">Διασκέδαση</a></li>

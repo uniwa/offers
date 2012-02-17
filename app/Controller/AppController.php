@@ -11,6 +11,7 @@ class AppController extends Controller{
             )
         )
     );
+    public $helpers = array('Session', 'Form', 'Js' => array('Jquery'));
 
     function beforeFilter() {
 

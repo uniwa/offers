@@ -3,16 +3,14 @@
 class OffersController extends AppController {
 
     public $name = 'Offers';
-    public $helpers = array('Form');
     public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day');
-
     public $paginate = array( 
-        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
         'order'=>array(
 
             'Offer.starting' => 'desc'
-        )
+        ),
+        'recursive' => -1
     );
 
     function beforeFilter(){
@@ -32,17 +30,15 @@ class OffersController extends AppController {
             'order' => 'Offer.starting DESC'
 
         ) );
+
         //minify description strings
         $this->minify_desc( $happyOffers, 100 );
         $this->set( 'happyOffers', $happyOffers );
 
-        $options['conditions'] = array(
+        $offers = $this->paginate('Offer', array(
                                     'Offer.offer_category_id !=' => 1,
                                     'Offer.is_draft' => 0,
-                                    'Offer.is_active' => 1);
-        $options['recursive'] = -1;
-        $offers = $this->paginate('Offer', $options['conditions']);
-
+                                    'Offer.is_active' => 1 ) );
         $this->minify_desc( $offers, 160 );
         $this->set('offers', $offers);
     }

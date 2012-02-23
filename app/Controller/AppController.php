@@ -46,6 +46,7 @@ class AppController extends Controller{
      *
      * @param $images The array of images, or image
      * @param $image_category The category of the image according to table opendeals.image_categories
+     * @param $generate_thumbs Create or not thumbnails for the given images
      * @param $foreign_keys Key => Value array containing required foreign key values
      *
      * @throws ImageExtensionException
@@ -53,6 +54,7 @@ class AppController extends Controller{
      */
     protected function processImages($images,
                                      $image_category = 1,
+                                     $generate_thumbs = true,
                                      $foreign_keys = array())
     {
         if (isset($images['tmp_name'])) {
@@ -61,7 +63,7 @@ class AppController extends Controller{
             $photos = array();
             if (!empty($tmp)) {
                 $photos[] = $tmp;
-                $photos[] = $this->_createThumbnail($tmp);
+                if ($generate_thumbs === true) $photos[] = $this->_createThumbnail($tmp);
             }
 
             return $photos;
@@ -72,7 +74,7 @@ class AppController extends Controller{
                 $tmp = $this->_processImage($image, $image_category, $foreign_keys);
                 if (!empty($tmp)) {
                     $photos[] = $tmp;
-                    $photos[] = $this->_createThumbnail($tmp);
+                    if ($generate_thumbs === true) $photos[] = $this->_createThumbnail($tmp);
                 }
             }
             return $photos;

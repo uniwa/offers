@@ -106,7 +106,8 @@ class UsersController extends AppController {
                 $rb = 1;
             }
 
-            $photos = $this->processImages($this->request->data['Company']['Image'], 3,
+            $photos = $this->processImages($this->request->data['Company']['Image'],
+                                           3, true,
                                            array('company_id' => $this->User->Company->id));
             if (!$this->Image->saveMany($photos)) {
                 $this->Session->setFlash('Η εγγραφή δεν ολοκληρώθηκε');

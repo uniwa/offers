@@ -104,4 +104,55 @@ class AppController extends Controller{
 
         return $image;
     }
+
+    private function _createThumbnail($source_img, $thumb_width = 260) {
+
+        $extension = explode('/', $source_img['type']);
+        $extension = $extension[1];
+
+        switch ($extension) {
+            case 'jpeg':
+                $source = imagecreatefromjpeg($source_img['tmp_name']);
+                break;
+            case 'png':
+                $source = imagecreatefrompng($source_img['tmp_name']);
+                break;
+            case 'gif':
+                $source = imagecreatefromgif($source_img['tmp_name']);
+                break;
+        }
+
+        $width = imagesx($source);
+        $height = imagesy($source);
+        $thumb_height = floor($height * ($thumb_width / $width));
+        $thumb = imagecreatetruecolor($thumb_width, $thumb_height);
+        imagecopyresampled($thumb, $source, 0, 0, 0, 0,
+                           $thumb_width, $thumb_height,
+                           $width, $height);
+
+        ob_start();
+        switch ($extension) {
+            case 'jpeg':
+                imagejpeg($thumb, null, 100);
+                break;
+            case 'png':
+                imagepng($thumb, null, 0, PNG_NO_FILTER);
+                break;
+            case 'gif':
+                imagegif($thumb);
+                break;
+        }
+        $thumb_data = ob_get_contents();
+        $thumb_size = ob_get_length();
+        ob_end_clean();
+
+        $result = $source_img;
+        $result['name'] = 'thumb_'.$result['name'];
+        $result['size'] = $thumb_size;
+        $result['data'] = base64_encode($thumb_data);
+        // thumbnail category
+        $result['image_category_id'] = 2;
+
+        return $result;
+    }
 }

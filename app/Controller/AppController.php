@@ -28,13 +28,13 @@ class AppController extends Controller{
     }
 
 
-    protected function isImage($file_type) {
+    protected function isImage($file_type, $valid = array('jpeg', 'png', 'gif')) {
 
-        $valid = array('jpeg', 'png', 'gif');
-        $extension = explode('/', $file_type);
-        $extension = $extension[1];
-
-        return in_array($extension, $valid);
+        if (strpos($file_type, '/') !== false) {
+            $extension = explode('/', $file_type);
+            return in_array($extension[1], $valid);
+        } else
+            return in_array($file_type, $valid);
     }
 
 

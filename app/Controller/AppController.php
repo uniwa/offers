@@ -55,16 +55,25 @@ class AppController extends Controller{
                                      $image_category = 1,
                                      $foreign_keys = array())
     {
-        if (isset($images['tmp_name']))
+        if (isset($images['tmp_name'])) {
             // if one image
-            return $this->_processImage($images, $image_category, $foreign_keys);
+            $tmp =  $this->_processImage($images, $image_category, $foreign_keys);
+            $photos = array();
+            if (!empty($tmp)) {
+                $photos[] = $tmp;
+                $photos[] = $this->_createThumbnail($tmp);
+            }
 
-        else {
+            return $photos;
+        } else {
             // if many images
             $photos = array();
             foreach ($images as $image) {
                 $tmp = $this->_processImage($image, $image_category, $foreign_keys);
-                if (!empty($tmp)) $photos[] = $tmp;
+                if (!empty($tmp)) {
+                    $photos[] = $tmp;
+                    $photos[] = $this->_createThumbnail($tmp);
+                }
             }
             return $photos;
         }

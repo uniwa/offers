@@ -153,7 +153,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`images` (
   `type` MEDIUMTEXT NOT NULL ,
   `size` INT NOT NULL DEFAULT 0,
   `error`INT NULL DEFAULT NULL ,
-  `data` BLOB NOT NULL ,
+  `data` LONGBLOB NOT NULL ,
   `offer_id` INT NULL DEFAULT NULL ,
   `company_id` INT NULL DEFAULT NULL ,
   `image_category_id` INT NOT NULL ,

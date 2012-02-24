@@ -47,16 +47,30 @@ class AppController extends Controller{
      * @param $images The array of images, or image
      * @param $image_category The category of the image according to table opendeals.image_categories
      * @param $generate_thumbs Create or not thumbnails for the given images
+     * @param $thumb_size An array with the desired width and height of thumbnail
      * @param $foreign_keys Key => Value array containing required foreign key values
      *
      * @throws ImageExtensionException
      * @throws UploadFileException
+     * @throws InvalidArgumentException
+     *
+     * @return Array of images
      */
     protected function processImages($images,
                                      $image_category = 1,
                                      $generate_thumbs = true,
+                                     $thumb_size = null,
                                      $foreign_keys = array())
     {
+        if ($thumb_size === null)
+            $thumb_size = array('width' => 260);
+
+        if (!is_array($thumb_size))
+            throw new InvalidArgumentException('$thumb_size must be array or null.');
+
+        if (!is_array($foreign_keys))
+            throw new InvalidArgumentException('$foreign_keys must be array.');
+
         $photos = array();
         if (isset($images['tmp_name'])) $images = array($images);
 
@@ -65,7 +79,7 @@ class AppController extends Controller{
             if (!empty($tmp)) {
                 $photos[] = $tmp;
                 if ($generate_thumbs === true)
-                    $photos[] = $this->_createThumbnail($tmp);
+                    $photos[] = $this->_createThumbnail($tmp, $thumb_size);
             }
         }
 
@@ -83,13 +97,13 @@ class AppController extends Controller{
      *
      * @throws ImageExtensionException
      * @throws UploadFileException
+     *
+     * @return Array containing image information and data
      */
     private function _processImage($image, $image_category, $foreign_keys) {
         if ((isset($image['tmp_name']) && $image['tmp_name'] == null ) ||
              isset($image['id']))
-            {
-                return array();
-            }
+            return array();
 
         if (!is_uploaded_file($image['tmp_name']))
             throw new UploadFileException();
@@ -107,7 +121,15 @@ class AppController extends Controller{
         return $image;
     }
 
-    private function _createThumbnail($source_img, $thumb_width = 260) {
+    /**
+     * @short generates the thumbnail of the given image
+     *
+     * @param $source_img The image, the thumb of which will be generated
+     * @param $thumb_size Array containing the desired width and height of the thumb
+     *
+     * @return The thumbnail ready to be saved in DB as blob
+     */
+    private function _createThumbnail($source_img, $thumb_size) {
 
         $extension = explode('/', $source_img['type']);
         $extension = $extension[1];
@@ -126,12 +148,28 @@ class AppController extends Controller{
 
         $width = imagesx($source);
         $height = imagesy($source);
-        $thumb_height = floor($height * ($thumb_width / $width));
+
+        if (isset($thumb_size['width']) && isset($thumb_size['height'])) {
+            $thumb_width = $thumb_size['width'];
+            $thumb_height = $thumb_size['height'];
+        }
+        else if (isset($thumb_size['width'])) {
+            $thumb_width = $thumb_size['width'];
+            $thumb_height = floor($height * ($thumb_width / $width));
+        }
+        else if (isset($thumb_size['height'])) {
+            $thumb_height = $thumb_size['height'];
+            $thumb_width = floor($width * ($thumb_height / $height));
+        }
+
+        // create an empty thumbnail and resample the original image to fit its size
         $thumb = imagecreatetruecolor($thumb_width, $thumb_height);
         imagecopyresampled($thumb, $source, 0, 0, 0, 0,
                            $thumb_width, $thumb_height,
                            $width, $height);
 
+        // create a buffer to write the generated thumb in order to avoid
+        // writing on filesystem. Store its size in bytes and the binary data.
         ob_start();
         switch ($extension) {
             case 'jpeg':

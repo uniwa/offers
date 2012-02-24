@@ -27,8 +27,18 @@ class AppController extends Controller{
         return substr(md5(date('c')), 0, $size > 32 ? 32 : $size);
     }
 
-
+    /**
+     * @short checks whether a file is an image based on its extension
+     *
+     * @param $file_type the extension or mimetype of the image
+     * @param $valid An array with the valid image extensions
+     *
+     * @return true or false
+     */
     protected function isImage($file_type, $valid = array('jpeg', 'png', 'gif')) {
+
+        if (!is_array($valid))
+            throw new InvalidArgumentException('$valid must be array.');
 
         if (strpos($file_type, '/') !== false) {
             $extension = explode('/', $file_type);

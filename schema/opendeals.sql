@@ -125,6 +125,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
   `user_id` INT NOT NULL ,
   `municipality_id` INT NOT NULL ,
   `image_count` INT NOT NULL DEFAULT 0 ,
+  `work_hour_count` INT NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`) ,
   INDEX `fk_companies_users1` (`user_id` ASC) ,
   INDEX `fk_companies_municipalities` (`municipality_id` ASC) ,

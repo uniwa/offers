@@ -38,6 +38,18 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
+-- Table `opendeals`.`offer_states`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `opendeals`.`offer_states` ;
+CREATE  TABLE IF NOT EXISTS `opendeals`.`offer_states` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `name` MEDIUMTEXT NOT NULL ,
+  PRIMARY KEY (`id`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
 -- Table `opendeals`.`offer_categories`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `opendeals`.`offer_categories` ;
@@ -202,11 +214,13 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   `offer_type_id` INT NOT NULL ,
   `company_id` INT NOT NULL ,
   `image_count` INT NOT NULL DEFAULT 0 ,
-  `work_hour_count` int NOT NULL DEFAULT 0 ,
+  `work_hour_count` INT NOT NULL DEFAULT 0 ,
+  `offer_state_id` INT NOT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_offers_offer_categories` (`offer_category_id` ASC) ,
   INDEX `fk_offers_offer_types1` (`offer_type_id` ASC) ,
   INDEX `fk_offers_companies1` (`company_id` ASC) ,
+  INDEX `fk_offers_offer_states` (`offer_state_id` ASC) ,
   CONSTRAINT `fk_offers_offer_categories`
     FOREIGN KEY (`offer_category_id` )
     REFERENCES `opendeals`.`offer_categories` (`id` )
@@ -220,6 +234,11 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   CONSTRAINT `fk_offers_companies1`
     FOREIGN KEY (`company_id` )
     REFERENCES `opendeals`.`companies` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_offers_offer_states`
+    FOREIGN KEY (`offer_cstate_id` )
+    REFERENCES `opendeals`.`offer_states` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

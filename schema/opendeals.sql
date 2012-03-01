@@ -237,7 +237,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_offers_offer_states`
-    FOREIGN KEY (`offer_cstate_id` )
+    FOREIGN KEY (`offer_state_id` )
     REFERENCES `opendeals`.`offer_states` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)

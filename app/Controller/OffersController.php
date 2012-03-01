@@ -115,9 +115,7 @@ class OffersController extends AppController {
 
         if ($id == null) throw new BadRequestException();
 
-        $options['conditions'] = array(
-                                    'Offer.id' => $id,
-                                    'Offer.is_draft' => 1);
+        $options['conditions'] = array('Offer.id' => $id);
         $options['recursive'] = 0;
         $offer = $this->Offer->find('first', $options);
 

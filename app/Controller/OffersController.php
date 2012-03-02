@@ -13,6 +13,8 @@ class OffersController extends AppController {
         'recursive' => -1
     );
 
+    public $helpers = array( 'Html' );
+
     function beforeFilter(){
         parent::beforeFilter();
         $this->Auth->allow( 'index' );

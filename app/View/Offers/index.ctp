@@ -1,3 +1,4 @@
+<?php echo $this->element( 'sidebar' );?>
 <div class="span9">
 <div class="hero-unit">
 <div class="row-fluid">

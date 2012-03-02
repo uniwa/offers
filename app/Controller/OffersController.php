@@ -21,9 +21,7 @@ class OffersController extends AppController {
     }
 
     public function index() {
-        $options['conditions'] = array(
-                                    'Offer.is_draft' => 0,
-                                    'Offer.is_active' => 1);
+        $options['conditions'] = array('Offer.offer_state_id' => OfferStates::Active);
         $options['recursive'] = -1;
         $offers = $this->paginate('Offer', $options['conditions']);
         $this->set('offers', $offers);
@@ -36,7 +34,7 @@ class OffersController extends AppController {
                                     'Offer.id' => $id,
         //TODO uncomment the next line when the offer activation logic is
         // implemented
-//                                     'Offer.is_draft' => 0,
+//                                     'Offer.offer_state_id' => OfferStates::Active,
                                     'Company.is_enabled' => 1
                                  );
         //TODO check if the company's user is_banned before showing the offer
@@ -58,9 +56,8 @@ class OffersController extends AppController {
         if (!empty($this->data)) {
 
             // set the required default values
-            $this->request->data['Offer']['is_active'] = 0;
             $this->request->data['Offer']['current_quantity'] = 0;
-            $this->request->data['Offer']['is_draft'] = 1;
+            $this->request->data['Offer']['offer_state_id'] = OfferStates::Draft;
 
             // find the id of the Company related to the logged user
             // and assign it to Offer.company_id
@@ -150,9 +147,8 @@ class OffersController extends AppController {
             $this->request->data = $offer;
         } else {
             // set the required default values
-            $this->request->data['Offer']['is_active'] = 0;
             $this->request->data['Offer']['current_quantity'] = 0;
-            $this->request->data['Offer']['is_draft'] = 1;
+            $this->request->data['Offer']['offer_state_id'] = OfferStates::Draft;
 
             // find the id of the Company related to the logged user
             // and assign it to Offer.company_id
@@ -211,7 +207,7 @@ class OffersController extends AppController {
 
 
     public function delete($id = null) {
-        // An Offer can be delete only if is_draft == 1.
+        // An Offer can be delete only if it's draft.
         // At first, attempt to delete all Images and WorkHours
         // related to this Offer and then delete Offer.
 
@@ -219,7 +215,7 @@ class OffersController extends AppController {
         $offer = $this->Offer->find('first', $options);
 
         if ($this->Auth->User('id') === $offer['Company']['user_id']) {
-            if ($offer['Offer']['is_draft'] == 1) {
+            if ($offer['Offer']['offer_state_id'] == OfferStates::Draft) {
                 $transaction = $this->Offer->getDataSource();
                 $transaction->begin();
                 $error = false;

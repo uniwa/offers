@@ -2,8 +2,9 @@
 <html>
 <head>
 <title><?php echo $title_for_layout?></title>
-<?php echo $this->Html->charset();
-echo $this->Html->css( 'bootstrap');
+<?php 
+    echo $this->Html->charset();
+    echo $this->Html->css( 'bootstrap');
 ?>
 <style type="text/css">
   body {
@@ -45,7 +46,7 @@ echo $this->Html->css( 'bootstrap');
 
                 if( $this->Session->check( 'Auth.User' ) ) {
 
-					echo "<p class=\"navbar-text pull-right\">Συνδεδεμένος ως <a href=\"#\">{$this->Session->read('Auth.User.username')}</a></p>";
+					echo "<p class=\"navbar-text pull-right\">Αποσύνδεση  <a href=\"#\">{$this->Session->read('Auth.User.username')}</a></p>";
                 } else {?>
                     
                     <ul class="nav pull-right">

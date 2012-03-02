@@ -1,7 +1,7 @@
 <?php
 
 if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
-    $offer['Offer']['is_draft'] == 1)
+    $offer['Offer']['offer_state_id'] == OfferStates::Draft)
 {
     echo $this->Html->link('Διαγραφή', array(
                                         'controller' => 'offers',

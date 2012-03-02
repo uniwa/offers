@@ -4,7 +4,7 @@
 <title><?php echo $title_for_layout?></title>
 <?php 
     echo $this->Html->charset();
-    echo $this->Html->css( 'bootstrap');
+    echo $this->Html->css( 'bootstrap' );
 ?>
 <style type="text/css">
   body {
@@ -37,7 +37,7 @@
           <a class="brand" href="#">Coupons</a>
           <div class="nav-collapse">
             <ul class="nav">
-              <li class="active"><a href="#contact">Εγγραφή</a></li>
+            <li class="active"><?php echo $this->Html->link('Εγγραφή', array( 'controller'=>'Users', 'action'=>'register'));?></li>
 			  <li><a href="#">Όροι χρήσης</a></li>
               <li><a href="#about">Συχνές Ερωτήσεις</a></li>
             </ul>
@@ -46,7 +46,9 @@
 
                 if( $this->Session->check( 'Auth.User' ) ) {
 
-					echo "<p class=\"navbar-text pull-right\">Αποσύνδεση  <a href=\"#\">{$this->Session->read('Auth.User.username')}</a></p>";
+                    $username = $this->Session->read( 'Auth.User.username' );
+                    $logout = $this->Html->link( 'Αποσύνδεση ', array( 'controller' => 'Users', 'action' => 'logout') );
+                    echo "<p class=\"navbar-text pull-right\">$logout( $username )</p>";
                 } else {?>
                     
                     <ul class="nav pull-right">
@@ -87,7 +89,6 @@
 	<div class="container-fluid">
 
       	<div class="row-fluid">
-			<?php echo $this->element( 'sidebar' );?>
 			<?php echo $content_for_layout;?>						
 		</div><!--/row-->
 	

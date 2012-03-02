@@ -71,6 +71,8 @@ class UsersController extends AppController {
     function register() {
 
 
+        $this->set( "days", $this->Day->find('list') );
+
         if( !empty( $this->request->data ) ) {
 
             $dataSource = $this->User->getDataSource();
@@ -81,8 +83,6 @@ class UsersController extends AppController {
             unset($this->User->Company->validate['user_id']);
 
             $dataSource->begin();
-            //rollback mode 1 in case rollback trigered
-            $rb = 0;
 
             // avatar stuff
             $photo = array();
@@ -100,7 +100,6 @@ class UsersController extends AppController {
                     } else {
                         $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα στην φωτογραφία.');
                         $dataSource->rollback();
-                        $rb = 1;
                     }
                 } else {
                     $this->Session->setFlash('Μη αποδεκτός τύπος αρχείου εικόνας.');
@@ -116,7 +115,7 @@ class UsersController extends AppController {
 
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
                 $dataSource->rollback();            
-                $rb = 1;
+                return;
             }
             
             $this->User->Company->set('user_id', $this->User->id);
@@ -124,7 +123,7 @@ class UsersController extends AppController {
 
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
                 $dataSource->rollback();
-                $rb = 1;
+                return;
             }
 
             $workHour = $this->setCompanyId( $this->User->Company->id, $workHour );
@@ -132,19 +131,16 @@ class UsersController extends AppController {
 
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
                 $dataSource->rollback();
-                $rb = 1;
+                return;
             }
 
-           if( !$rb ) { 
             $dataSource->commit();
             $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
-            $this->redirect(array('action' => 'index'));               
-           }
+            $this->redirect(array('controller'=>'Offers', 'action' => 'index'));               
             
         }
 
 
-        $this->set( "days", $this->Day->find('list') );
     }
 
     //sets Company id from saved company

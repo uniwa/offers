@@ -3,8 +3,8 @@
 class Company extends AppModel {
 
     public $name = 'Company';
-    public $belongsTo = array('User', 'Image');
-    public $hasMany = array( 'Offer', 'WorkHour' );
+    public $belongsTo = array('User', 'Municipality');
+    public $hasMany = array('Offer', 'WorkHour', 'Image');
 
     public $validate = array(
 
@@ -119,23 +119,6 @@ class Company extends AppModel {
                 'rule' => '/^\d+$/',
                 'message' => 'Το ΑΦΜ πρέπει να περιέχει μόνο ψηφία',
                 'allowEmpty' => true
-            )
-        ),
-
-        'doy' => array(
-
-            'size' => array(
-                'rule' => array('maxLength', 45),
-                'message' => 'Το όνομα της ΔΟΥ μπορεί να είναι μέχρι 45 χαρακτήρες.',
-                'allowEmpty' => true,
-                'required' => false
-            ),
-
-            'valid' => array(
-                'rule' => "/^[\dαβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΆάΈέΎΉήύΊίΌόΏώϊϋΐΰς,. '`]+$/",
-                'message' => 'Το όνομα της ΔΟΥ περιέχει έναν μη έγκυρο χαρακτήρα.',
-                'allowEmpty' => true,
-                'required' => false
             )
         )
     );

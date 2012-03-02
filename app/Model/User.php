@@ -1,15 +1,15 @@
 <?php
-    
+
 class User extends AppModel {
     public $name = 'User';
     public $hasOne = array( 'Company', 'Student' );
 
     public $validate = array(
 
-        'username' => array( 
+        'username' => array(
 
             'notEmpty'=>array(
-                'rule' => array('notEmpty'), 
+                'rule' => array('notEmpty'),
                 'required' => true,
                 'message' => 'Απαιτείται όνομα χρήστη'
             ),
@@ -36,7 +36,7 @@ class User extends AppModel {
 
         'password' => array(
 
-            'notEmpty'=>array( 
+            'notEmpty'=>array(
 
                 'rule' => array('notEmpty'),
                 'required' => true,
@@ -56,7 +56,7 @@ class User extends AppModel {
                 'allowEmpty' => true,
                 'message' => 'Υπάρχει κάποιος μη αποδεκτός χαρακτήρας'
             )
-            
+
         ),
 
         'repeat_password' => array(
@@ -120,7 +120,7 @@ class User extends AppModel {
         return false;
     }
 
-    public function beforeSave( $options = array() ) { 
+    public function beforeSave( $options = array() ) {
 
         $this->data['User']['password'] = AuthComponent::password($this->data['User']['password']);
         return true;

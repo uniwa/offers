@@ -80,4 +80,5 @@ echo $this->Form->input('Image.1', array(
                             'label' => 'Φωτογραφία',
                             'type' => 'file'
                        ));
+echo $this->Form->input('id', array('type' => 'hidden'));
 echo $this->Form->end('Ανάρτηση');

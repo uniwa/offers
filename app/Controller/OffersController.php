@@ -4,7 +4,8 @@ class OffersController extends AppController {
 
     public $name = 'Offers';
     public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day');
-    public $paginate = array( 
+    public $paginate = array(
+        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
         'order'=>array(
 
@@ -39,8 +40,8 @@ class OffersController extends AppController {
 
         $offers = $this->paginate('Offer', array(
                                     'Offer.offer_category_id !=' => 1,
-                                    'Offer.is_draft' => 0,
-                                    'Offer.is_active' => 1 ) );
+                                    'Offer.offer_state_id' => OfferStates::Active
+                                ) );
         $this->minify_desc( $offers, 160 );
         $this->set('offers', $offers);
     }
@@ -61,7 +62,7 @@ class OffersController extends AppController {
                                     'Offer.id' => $id,
         //TODO uncomment the next line when the offer activation logic is
         // implemented
-//                                     'Offer.is_draft' => 0,
+//                                     'Offer.offer_state_id' => OfferStates::Active,
                                     'Company.is_enabled' => 1
                                  );
         //TODO check if the company's user is_banned before showing the offer
@@ -83,9 +84,8 @@ class OffersController extends AppController {
         if (!empty($this->data)) {
 
             // set the required default values
-            $this->request->data['Offer']['is_active'] = 0;
             $this->request->data['Offer']['current_quantity'] = 0;
-            $this->request->data['Offer']['is_draft'] = 1;
+            $this->request->data['Offer']['offer_state_id'] = OfferStates::Draft;
 
             // find the id of the Company related to the logged user
             // and assign it to Offer.company_id
@@ -97,49 +97,29 @@ class OffersController extends AppController {
             $company_id = $this->Company->find('first', $options);
             $this->request->data['Offer']['company_id'] = $company_id['Company']['id'];
 
-            // if the user uploaded an image, store the required information
-            // in $photo, so as to save it later
-            // TODO autogenerate thumbnails for mobile app
-            $photo = array();
-            if (is_uploaded_file($this->data['Offer']['image']['tmp_name'])) {
-                if ($this->isImage($this->data['Offer']['image']['type'])) {
-
-                    $file = fread(fopen($this->data['Offer']['image']['tmp_name'], 'r'),
-                                  $this->data['Offer']['image']['size']);
-                    $photo['Image'] = $this->data['Offer']['image'];
-                    $photo['Image']['data'] = base64_encode($file);
-                    //TODO change the hardcoded image category
-                    $photo['Image']['image_category_id'] = 1;
-                } else {
-                    $this->Session->setFlash('Μη αποδεκτός τύπος αρχείου εικόνας.');
-                    return;
-                }
-            }
-
-            unset($this->request->data['Offer']['image']);
-
             $transaction = $this->Offer->getDataSource();
             $transaction->begin();
-
             $error = false;
+
             if ($this->Offer->save($this->data)) {
 
+                $photos = $this->processImages($this->request->data['Image']);
                 // try to save images
-                if (!empty($photo)) {
-                    $photo['Image']['offer_id'] = $this->Offer->id;
-                    if (!$this->Image->save($photo))
+                if (!empty($photos)) {
+                    for ($i = 0; $i < count($photos); $i++)
+                        $photos[$i]['offer_id'] = $this->Offer->id;
+
+                    if (!$this->Image->saveMany($photos))
                         $error = true;
                 }
 
                 // try to save WorkHours only if Offer.category is HappyHour
                 if ($this->data['Offer']['offer_category_id'] == 1) {
-                    for ($i = 0; $i < count($this->data['WorkHour']); $i++) {
+                    for ($i = 0; $i < count($this->data['WorkHour']); $i++)
                         $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;
-                        if (!$this->WorkHour->save($this->data['WorkHour'][$i])) {
-                            $error = true;
-                            break;
-                        }
-                    }
+
+                    if (!$this->WorkHour->saveMany($this->data['WorkHour']))
+                        $error = true;
                 }
             } else {
                 $error = true;
@@ -156,8 +136,106 @@ class OffersController extends AppController {
     }
 
 
+    public function edit($id = null) {
+
+        if ($id == null) throw new BadRequestException();
+
+        $options['conditions'] = array('Offer.id' => $id);
+        $options['recursive'] = 0;
+        $offer = $this->Offer->find('first', $options);
+
+        if (empty($offer)) throw new NotFoundException();
+
+        if ($offer['Company']['user_id'] != $this->Auth->User('id'))
+            throw new ForbiddenException();
+
+        // required to fill the select boxes with the correct values
+        $this->set('offerTypes', $this->Offer->OfferType->find('list'));
+        $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
+        $this->set('days', $this->Day->find('list'));
+
+        if (empty($this->data)) {
+
+            // find the images of this offer and put them in $offer variable
+            if ($offer['Offer']['image_count'] > 0) {
+                $img_opts['conditions'] = array('Image.offer_id' => $offer['Offer']['id']);
+                $img_opts['recursive'] = -1;
+                $offer['Image'] = Set::extract('/Image/.',
+                                               $this->Image->find('all', $img_opts));
+            }
+
+            // find the work_hours of this offer and put them in $offer variable
+            if ($offer['Offer']['work_hour_count'] > 0) {
+                $wh_opts['conditions'] = array('WorkHour.offer_id' => $offer['Offer']['id']);
+                $wh_opts['recursive'] = -1;
+                $offer['WorkHour'] = Set::extract('/WorkHour/.',
+                                                  $this->WorkHour->find('all', $wh_opts));
+            }
+
+            $this->request->data = $offer;
+        } else {
+            // set the required default values
+            $this->request->data['Offer']['current_quantity'] = 0;
+            $this->request->data['Offer']['offer_state_id'] = OfferStates::Draft;
+
+            // find the id of the Company related to the logged user
+            // and assign it to Offer.company_id
+            $options['fields'] = array('Company.id');
+            $options['conditions'] = array(
+                'Company.user_id' => $this->Auth->User('id')
+            );
+            $options['recursive'] = -1;
+            $company_id = $this->Company->find('first', $options);
+            $this->request->data['Offer']['company_id'] = $company_id['Company']['id'];
+
+            $transaction = $this->Offer->getDataSource();
+            $transaction->begin();
+            $error = false;
+
+            if ($this->Offer->save($this->data)) {
+
+                // try to save the new images
+                $photos = $this->processImages($this->request->data['Image']);
+                if (!empty($photos)) {
+                    for ($i = 0; $i < count($photos); $i++)
+                        $photos[$i]['offer_id'] = $this->Offer->id;
+
+                    if (!$this->Image->saveMany($photos))
+                        $error = true;
+                }
+
+                // If Offer.category is HappyHour delete all the related
+                // images and insert new entries
+                if ($this->data['Offer']['offer_category_id'] == 1) {
+                    $del_opts['WorkHour.offer_id'] = $this->Offer->id;
+                    if ($this->WorkHour->deleteAll($del_opts, false)) {
+                        for ($i = 0; $i < count($this->data['WorkHour']); $i++)
+                            $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;
+
+                        if (!$this->WorkHour->saveMany($this->data['WorkHour']))
+                            $error = true;
+                    } else
+                        $error = true;
+                }
+            } else {
+                $error = true;
+            }
+
+// $transaction->rollback();pr($offer); die();
+
+            if ($error === true) {
+                $transaction->rollback();
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα');
+            } else {
+                $transaction->commit();
+                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε');
+            }
+        }
+    }
+
+
     public function delete($id = null) {
-        // An Offer can be delete only if is_draft == 1.
+        // An Offer can be delete only if it's draft.
         // At first, attempt to delete all Images and WorkHours
         // related to this Offer and then delete Offer.
 
@@ -165,13 +243,14 @@ class OffersController extends AppController {
         $offer = $this->Offer->find('first', $options);
 
         if ($this->Auth->User('id') === $offer['Company']['user_id']) {
-            if ($offer['Offer']['is_draft'] == 1) {
+            if ($offer['Offer']['offer_state_id'] == OfferStates::Draft) {
                 $transaction = $this->Offer->getDataSource();
                 $transaction->begin();
                 $error = false;
 
                 if ($this->Image->deleteAll(array('Image.offer_id' => $id), false) &&
-                    $this->WorkHour->deleteAll(array('WorkHour.offer_id' => $id), false)) {
+                    $this->WorkHour->deleteAll(array('WorkHour.offer_id' => $id), false))
+                {
                     if (!$this->Offer->delete($id, false))
                         $error = true;
                 } else {

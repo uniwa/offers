@@ -2,7 +2,10 @@
 
 class WorkHour extends AppModel{
     public $name = 'WorkHour';
-    public $belongsTo = array('Company', 'Day',
+    public $belongsTo = array('Day',
+                              'Company' => array(
+                                    'counterCache' => true
+                              ),
                               'Offer' => array(
                                     'counterCache' => true
                                )
@@ -10,7 +13,7 @@ class WorkHour extends AppModel{
 
     public $validate = array(
 
-        'day_id' => array( 
+        'day_id' => array(
                 'rule' => '/^[1-7]{1}$/'
         )
     );

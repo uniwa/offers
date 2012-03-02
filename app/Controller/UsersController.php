@@ -2,7 +2,7 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Image', 'Day', 'WorkHour', 'Image');
+    public $uses = array('User', 'Image', 'Day', 'WorkHour', 'Municipality');
 
     function beforeFilter() {
         parent::beforeFilter();
@@ -70,6 +70,10 @@ class UsersController extends AppController {
 
     function register() {
 
+        $this->set('municipalities',
+                   $this->Municipality->find('list',
+                                             array('order' => 'Municipality.name ASC')
+                                            ));
 
         $this->set( "days", $this->Day->find('list') );
 
@@ -116,14 +120,24 @@ class UsersController extends AppController {
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
                 $dataSource->rollback();            
                 return;
+
             }
-            
+
             $this->User->Company->set('user_id', $this->User->id);
             if( !$this->User->Company->save( $this->request->data['Company'])){
 
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
                 $dataSource->rollback();
                 return;
+            }
+
+            $photos = $this->processImages($this->request->data['Company']['Image'],
+                                           3, true,
+                                           array('company_id' => $this->User->Company->id));
+            if (!$this->Image->saveMany($photos)) {
+                $this->Session->setFlash('Η εγγραφή δεν ολοκληρώθηκε');
+                $dataSource->rollback();
+                $rb = 1;
             }
 
             $workHour = $this->setCompanyId( $this->User->Company->id, $workHour );

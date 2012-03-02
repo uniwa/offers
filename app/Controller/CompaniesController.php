@@ -22,7 +22,7 @@ class CompaniesController extends AppController {
         $options['conditions'] = array('Company.id' => $id,
                                        'Company.is_enabled' => 1,
                                        'User.is_banned' => 0);
-        $options['recursive'] = 0;
+        $options['recursive'] = 1;
         $company = $this->Company->find('first', $options);
 
         if (empty($company))
@@ -31,7 +31,7 @@ class CompaniesController extends AppController {
 
         // find the active offers of this company
         $active_options['conditions'] = array('Offer.company_id' => $id,
-                                              'Offer.is_active' => 1);
+                                              'Offer.offer_state_id' => OfferStates::Active);
         $active_options['fields'] = array('Offer.*');
         $active_options['order'] = array();
         $active_options['recrsive'] = 0;
@@ -40,7 +40,7 @@ class CompaniesController extends AppController {
 
         // find the draft offers of this company
         $draft_options['conditions'] = array('Offer.company_id' => $id,
-                                             'Offer.is_draft' => 1);
+                                             'Offer.offer_state_id' => OfferStates::Draft);
         $draft_options['fields'] = array('Offer.*');
         $draft_options['order'] = array('Offer.starting ASC');
         $draft_options['recursive'] = 0;
@@ -49,8 +49,7 @@ class CompaniesController extends AppController {
 
         // find the inactive offers of this company
         $inactive_options['conditions'] = array('Offer.company_id' => $id,
-                                                'Offer.is_draft' => 0,
-                                                'Offer.is_active' => 0);
+                                                'Offer.offer_state_id' => OfferStates::Inactive);
         $inactive_options['fields'] = array('Offer.*');
         $inactive_options['order'] = array('Offer.starting ASC');
         $inactive_options['recursive'] = 0;

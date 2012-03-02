@@ -98,4 +98,4 @@ if( empty( $offers ) ) {
 }
 
 echo '</div>';//span 9
-?>
+

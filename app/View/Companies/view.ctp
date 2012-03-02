@@ -34,14 +34,13 @@ if (isset($comp['service_type']))
 if (isset($comp['afm']))
     echo 'ΑΦΜ : '.$comp['afm'].'<br/>';
 
-if (isset($comp['doy']))
-    echo 'ΔΟΥ : '.$comp['doy'].'<br/>';
-
 if (isset($comp['working_hours']))
     echo 'Ωράριο λειτουργίας : '.$comp['working_hours'].'<br/>';
 
-if (isset($company['Image']['id']))
-    echo $this->Html->image('/images/view/'.$company['Image']['id']);
+foreach ($company['Image'] as $image) {
+    echo $this->Html->image('/images/view/'.$image['id']);
+}
+echo '<br/>';
 
 // display Drafts only for the owner of this company
 if ($this->Session->read('Auth.User.id') == $comp['user_id']) {

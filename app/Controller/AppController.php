@@ -3,6 +3,8 @@
 App::uses('ImageExtensionException', 'Error');
 App::uses('UploadFileException', 'Error');
 
+App::import('Vendor', 'OfferStates');
+
 class AppController extends Controller{
 
     public $components = array(

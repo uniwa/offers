@@ -37,7 +37,7 @@
           <a class="brand" href="#">Coupons</a>
           <div class="nav-collapse">
             <ul class="nav">
-            <li class="active"><?php echo $this->Html->link('Εγγραφή', array( 'controller'=>'Users', 'action'=>'register'));?></li>
+            <li class="active"><?php echo $this->Html->link('Εγγραφή', array( 'controller'=>'users', 'action'=>'register'));?></li>
 			  <li><a href="#">Όροι χρήσης</a></li>
               <li><a href="#about">Συχνές Ερωτήσεις</a></li>
             </ul>
@@ -47,7 +47,7 @@
                 if( $this->Session->check( 'Auth.User' ) ) {
 
                     $username = $this->Session->read( 'Auth.User.username' );
-                    $logout = $this->Html->link( 'Αποσύνδεση ', array( 'controller' => 'Users', 'action' => 'logout') );
+                    $logout = $this->Html->link( 'Αποσύνδεση ', array( 'controller' => 'users', 'action' => 'logout') );
                     echo "<p class=\"navbar-text pull-right\">$logout( $username )</p>";
                 } else {?>
                     

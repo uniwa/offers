@@ -1,6 +1,6 @@
 <?php
 
-echo $this->Html->link('Προσθήκη τύπου προσφοράς.',
+echo $this->Html->link('Προσθήκη.',
                        array('controller' => 'offertypes', 'action' => 'add'));
 
 echo '<br/><br/>';

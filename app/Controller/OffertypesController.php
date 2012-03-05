@@ -32,4 +32,28 @@ class OffertypesController extends  AppController {
             }
         }
     }
+
+
+    public function edit ($id = null) {
+
+        if ($id == null) throw new BadRequestException();
+
+        if (empty($this->data)) {
+
+            $options['conditions'] = array('OfferType.id' => $id);
+            $type = $this->OfferType->find('first', $options);
+
+            if (empty($type)) throw new NotFoundException();
+
+            $this->request->data = $type;
+        } else {
+
+            if ($this->OfferType->save($this->data)) {
+                $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν επιτυχώς.');
+                $this->redirect(array('controller' => 'Offertypes'));
+            } else {
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.');
+            }
+        }
+    }
 }

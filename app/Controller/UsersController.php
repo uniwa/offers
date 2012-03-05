@@ -118,7 +118,7 @@ class UsersController extends AppController {
             if( !$this->User->save( $this->request->data['User'] ) ) {
 
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
-                $dataSource->rollback();            
+                $dataSource->rollback();
                 return;
 
             }
@@ -150,8 +150,8 @@ class UsersController extends AppController {
 
             $dataSource->commit();
             $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
-            $this->redirect(array('controller'=>'Offers', 'action' => 'index'));               
-            
+            $this->redirect(array('controller'=>'Offers', 'action' => 'index'));
+
         }
 
 

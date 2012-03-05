@@ -37,6 +37,7 @@
           <?php echo  $this->Html->link(__('Coupons'), array( 'controller'=>'offers', 'action'=>'index'), array( 'class'=>'brand'));?>
           <div class="nav-collapse">
             <ul class="nav">
+
             <li><?php echo $this->Html->link(__('Εγγραφή'), array( 'controller'=>'users', 'action'=>'register'));?></li>
             <li><?php echo $this->Html->link(__('Όροι χρήσης'), array( 'controller'=>'users', 'action'=>'terms'));?></li>
             <li><?php echo $this->Html->link(__('Συχνές Ερωτήσεις'), array( 'controller'=>'users', 'action'=>'faq'));?></li>

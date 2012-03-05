@@ -26,7 +26,6 @@
         echo $this->Form->input('Company.phone', array( 'label' => 'Τηλέφωνο', 'class'=>'span2','type'=>'text') );
         echo $this->Form->input('Company.fax', array( 'label' => 'Fax', 'class'=>'span2','type'=>'text') );
         echo $this->Form->input('Company.afm', array( 'label' => 'Α.Φ.Μ', 'class'=>'span3','type'=>'text') );
-        echo $this->Form->input('Company.doy', array( 'label' => 'ΔΟΥ', 'class'=>'span4','type'=>'text') );
 
 
     ?>    

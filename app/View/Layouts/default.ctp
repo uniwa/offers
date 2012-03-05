@@ -34,12 +34,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="#">Coupons</a>
+          <?php echo  $this->Html->link(__('Coupons'), array( 'controller'=>'offers', 'action'=>'index'), array( 'class'=>'brand'));?>
           <div class="nav-collapse">
             <ul class="nav">
-            <li class="active"><?php echo $this->Html->link('Εγγραφή', array( 'controller'=>'Users', 'action'=>'register'));?></li>
-			  <li><a href="#">Όροι χρήσης</a></li>
-              <li><a href="#about">Συχνές Ερωτήσεις</a></li>
+            <li><?php echo $this->Html->link(__('Εγγραφή'), array( 'controller'=>'users', 'action'=>'register'));?></li>
+            <li><?php echo $this->Html->link(__('Όροι χρήσης'), array( 'controller'=>'users', 'action'=>'terms'));?></li>
+            <li><?php echo $this->Html->link(__('Συχνές Ερωτήσεις'), array( 'controller'=>'users', 'action'=>'faq'));?></li>
             </ul>
             <!-- Login functionality with dropdown -->
 			<?php 
@@ -47,7 +47,7 @@
                 if( $this->Session->check( 'Auth.User' ) ) {
 
                     $username = $this->Session->read( 'Auth.User.username' );
-                    $logout = $this->Html->link( 'Αποσύνδεση ', array( 'controller' => 'Users', 'action' => 'logout') );
+                    $logout = $this->Html->link( __('Αποσύνδεση '), array( 'controller' => 'users', 'action' => 'logout') );
                     echo "<p class=\"navbar-text pull-right\">$logout( $username )</p>";
                 } else {?>
                     

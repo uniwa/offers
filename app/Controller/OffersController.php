@@ -75,6 +75,9 @@ class OffersController extends AppController {
 
     public function add() {
 
+        if ($this->Auth->User('role') !== 'company')
+            throw new ForbiddenException();
+
         // required to fill the select boxes with the correct values
         $this->set('offerTypes', $this->Offer->OfferType->find('list'));
         $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));

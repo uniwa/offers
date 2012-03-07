@@ -3,8 +3,8 @@
 class CompaniesController extends AppController {
 
     public $name = 'Companies';
-    public $helpers = array('Html');
-    public $uses = array('Company', 'Offer');
+    public $helpers = array('Html', 'Form');
+    public $uses = array('Company', 'Offer', 'Municipality', 'User');
 
     function index() {
 
@@ -59,5 +59,45 @@ class CompaniesController extends AppController {
         $company = array_merge($company, $offers);
         $this->set('company', $company);
 // pr($company); die();
+    }
+
+
+    public function edit ($id = null) {
+
+        if ($id == null) throw new BadRequestException();
+
+        $this->set('municipalities',
+                   $this->Municipality->find('list', array(
+                                             'order' => 'Municipality.name ASC')
+                                            ));
+
+        $options['conditions'] = array('Company.id' => $id);
+        $options['recursive'] = 1;
+        $company = $this->Company->find('first', $options);
+        $this->set('company', $company);
+
+        if (empty($company)) throw new NotFoundException();
+
+        if ($company['Company']['user_id'] !== $this->Auth->User('id'))
+            throw new ForbiddenException();
+
+        if (empty($this->request->data)) {
+            $this->request->data = $company;
+        } else {
+            $this->User->id = $company['Company']['user_id'];
+            if ($this->User->saveField('email', $this->request->data['User']['email']))
+            if ($this->Company->save($this->request->data))
+            {
+                $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν.');
+                $this->redirect(array(
+                        'controller' => 'companies',
+                        'action' => 'view',
+                        $company['Company']['id']
+                       ));
+            } else {
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.');
+pr($this->request->data);die();
+            }
+        }
     }
 }

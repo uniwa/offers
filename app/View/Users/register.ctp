@@ -18,23 +18,24 @@
         echo $this->Form->input('User.repeat_password', array( 'label' => 'Επάναληψη κωδικού πρόσβασης', 'type' => 'password', 'class'=>'span4'));
         echo $this->Form->input('User.email', array( 'label' => 'e-mail', 'class'=>'span4','type'=>'text') );
         echo $this->Form->input('Company.name', array( 'label' => 'Όνομα επιχείρησης', 'class'=>'span4','type'=>'text') );
-        echo $this->Form->input('Company.service_type', array( 'label' => 'Προσφερόμενη υπηρεσία', 'class'=>'span4','type'=>'text') );   
+        echo $this->Form->input('Company.service_type', array( 'label' => 'Προσφερόμενη υπηρεσία', 'class'=>'span4','type'=>'text') );
         echo $this->Form->input('Company.Image.0', array( 'label' => 'Λογότυπο', 'type' => 'file' ) );
         echo $this->Form->input('Company.Image.1', array( 'label' => 'Λογότυπο', 'type' => 'file' ) );
-        echo $this->Form->input('Company.address', array( 'label' => 'Διεύθυνση', 'class'=>'span4') );
+        echo $this->Form->input('Company.address', array( 'label' => 'Διεύθυνση', 'class'=>'span4', 'type' => 'text') );
         echo $this->Form->input('Company.postalcode', array( 'label' => 'Ταχυδρομικός κώδικας', 'class'=>'span1') );
+        echo $this->Form->input('Company.municipality_id', array('label' => 'Δήμος', 'type' => 'select'));
         echo $this->Form->input('Company.phone', array( 'label' => 'Τηλέφωνο', 'class'=>'span2','type'=>'text') );
         echo $this->Form->input('Company.fax', array( 'label' => 'Fax', 'class'=>'span2','type'=>'text') );
         echo $this->Form->input('Company.afm', array( 'label' => 'Α.Φ.Μ', 'class'=>'span3','type'=>'text') );
 
 
-    ?>    
+    ?>
         <tr>
             Ωράριο λειτουργίας
         </tr>
 
         <table class="table table-bordered">
-           
+
           <thead>
             <tr>
             <th>ΗΜΕΡΑ</th>

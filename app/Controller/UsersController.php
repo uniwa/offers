@@ -88,30 +88,6 @@ class UsersController extends AppController {
 
             $dataSource->begin();
 
-            // avatar stuff
-            $photo = array();
-            if (is_uploaded_file($this->data['Company']['image']['tmp_name'])) {
-                if ($this->isImage($this->data['Company']['image']['type'])) {
-
-                    $file = fread(fopen($this->data['Company']['image']['tmp_name'], 'r'),
-                                  $this->data['Company']['image']['size']);
-                    $photo['Image'] = $this->data['Company']['image'];
-                    $photo['Image']['data'] = base64_encode($file);
-                    //TODO change the hardcoded image category
-                    $photo['Image']['image_category_id'] = 3;
-                    if ($this->Image->save($photo)) {
-                        $this->request->data['Company']['image_id'] = $this->Image->id;
-                    } else {
-                        $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα στην φωτογραφία.');
-                        $dataSource->rollback();
-                    }
-                } else {
-                    $this->Session->setFlash('Μη αποδεκτός τύπος αρχείου εικόνας.');
-                    return;
-                }
-            }
-            // end of avatar stuff
-
             $workHour = $this->request->data['WorkHour'];
             unset( $this->request->data['WorkHour']);
 
@@ -132,12 +108,12 @@ class UsersController extends AppController {
             }
 
             $photos = $this->processImages($this->request->data['Company']['Image'],
-                                           3, true,
+                                           3, true, null,
                                            array('company_id' => $this->User->Company->id));
-            if (!$this->Image->saveMany($photos)) {
+            if (!empty($photos) && !$this->Image->saveMany($photos)) {
                 $this->Session->setFlash('Η εγγραφή δεν ολοκληρώθηκε');
                 $dataSource->rollback();
-                $rb = 1;
+                return;
             }
 
             $workHour = $this->setCompanyId( $this->User->Company->id, $workHour );

@@ -27,34 +27,34 @@ class LdapAuthenticate extends BaseAuthenticate {
     private function saveLdapInfo( $data ) {
 
         $model = new User();
-        $user = $model->find( 'all', 
-            array( 'conditions' => array( 'username' => $data['username'] ) ) 
+        $user = $model->find( 'all',
+            array( 'conditions' => array( 'username' => $data['username'] ) )
         );
 
 
         if( empty($user) ) {
 
-            $new_user = array( 
-                'User' => 
-                array(  
+            $new_user = array(
+                'User' =>
+                array(
                     'username' => $data['username'],
                     'password' => '',
                     'email' => $data['email'],
                     'is_banned'=>0,
                     'role' => 'student' ),
                 'Student' =>
-                    array(  
+                    array(
                         'firstname' => $data['first_name'],
                         'lastname' => $data['last_name'] ) );
-                                
-            
+
+
             $model->saveAssociated( $new_user, array( 'validate' => false ) );
             return $new_user['User'];
         }
 
-        //return user data and Auth component 
+        //return user data and Auth component
         //automagicaly wite's them in Auth.User
-        //inside Session 
+        //inside Session
         return $user[0]['User'];
     }
 

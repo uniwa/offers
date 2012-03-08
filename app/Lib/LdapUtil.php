@@ -16,12 +16,12 @@ class LdapUtil {
 
         //loads ldap file from app/config/
         Configure::load( 'ldap' );
-        
+
         $this->ldapServer  = Configure::read('Ldap.server');
-        $this->ldapPort = Configure::read( 'Ldap.port' ); 
-        $this->suffix = Configure::read( 'Ldap.suffix' ); 
+        $this->ldapPort = Configure::read( 'Ldap.port' );
+        $this->suffix = Configure::read( 'Ldap.suffix' );
         $this->baseDN = Configure::read( 'Ldap.baseDN' );
-        $this->ldapUser = Configure::read( 'Ldap.user'); 
+        $this->ldapUser = Configure::read( 'Ldap.user');
         $this->ldapPassword = Configure::read( 'Ldap.password' );
 
         /*Connect to LDAP*/
@@ -65,11 +65,11 @@ class LdapUtil {
     //Returns true if uid already exists
     public function uidCheck( $uid ){
 
-       
+
         ldap_bind( $this->ldap, $this->ldapUser, $this->ldapPassword );
         /*
-         * compares with uid users distinguished name. If user does not exist returns 
-         * -1 which is error. Avoiding warnings with @ and accept -1 as false 
+         * compares with uid users distinguished name. If user does not exist returns
+         * -1 which is error. Avoiding warnings with @ and accept -1 as false
          * value
          * */
         @$result = ldap_compare( $this->ldap, 'uid='.$uid.', ou=people,'.$this->baseDN, 'uid', $uid );
@@ -90,7 +90,7 @@ class LdapUtil {
         $username =  $user;
         $attributes = array( 'givenname;lang-el', 'sn;lang-el', 'cn;lang-el', 'mail' /*, 'memmberof'*/ );
         $filter = "(uid=$username)";
-    
+
         ldap_bind( $this->ldap, $this->ldapUser, $this->ldapPassword );
         $result = ldap_search( $this->ldap, $this->baseDN, $filter, $attributes );
         $entries = ldap_get_entries( $this->ldap, $result );
@@ -108,8 +108,8 @@ class LdapUtil {
         $info['name'] = $entries[0]['cn;lang-el'][0];
         $info['email'] = $entries[0]['mail'][0];
         //$info['groups'] = $this->groups($array[0]['memberof']); for future use
-                         
-        
+
+
         return $info;
     }
 
@@ -120,7 +120,7 @@ class LdapUtil {
        /* Creates a temp array with goups info in each record*/
        foreach( $members as $entry ) {
 
-           $tmp = array_merge( $tmp, explode( ',', $entry ) ) ; 
+           $tmp = array_merge( $tmp, explode( ',', $entry ) ) ;
        }
 
        /*parse records*/

@@ -55,8 +55,6 @@ class UsersController extends AppController {
             return true;
         }
 
-        $this->Session->write('Auth.User.is_enabled',
-                              $currentUser['Company']['is_enabled']);
         return $currentUser['Company']['is_enabled'];
     }
 

@@ -54,3 +54,7 @@ echo $this->Form->hidden('Company.id');
 echo $this->Form->hidden('Company.user_id');
 echo $this->Form->hidden('Company.afm');
 echo $this->Form->end('Αποθήκευση');
+echo $this->Html->link('Επιστροφή', array(
+                       'controller' => 'companies',
+                       'action' => 'view',
+                       $company['Company']['id']));

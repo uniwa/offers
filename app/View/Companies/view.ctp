@@ -13,14 +13,14 @@ echo 'Επιχείρηση '.$comp['id'].'<br/>';
 if (isset($comp['name']))
     echo 'Όνομα επιχείρησης : '.$comp['name'].'<br/>';
 
-if (isset($comp['logo']))
-    echo 'Λογότυπο : '.$comp['logo'].'<br/>';
-
 if (isset($comp['address']))
     echo 'Διεύθυνση : '.$comp['address'].'<br/>';
 
-if (isset($comp['postal_code']))
-    echo 'Ταχ. Κώδικας : '.$comp['postal_code'].'<br/>';
+if (isset($comp['postalcode']))
+    echo 'Ταχ. Κώδικας : '.$comp['postalcode'].'<br/>';
+
+if (isset($company['User']['email']))
+    echo 'Email : '.$company['User']['email'].'<br/>';
 
 if (isset($comp['phone']))
     echo 'Τηλέφωνο : '.$comp['phone'].'<br/>';

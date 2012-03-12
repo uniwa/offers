@@ -96,7 +96,6 @@ class CompaniesController extends AppController {
                        ));
             } else {
                 $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.');
-pr($this->request->data);die();
             }
         }
     }

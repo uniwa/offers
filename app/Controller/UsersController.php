@@ -42,7 +42,7 @@ class UsersController extends AppController {
     private function isCompanyEnabled( $data ) {
 
         $username = $data['User']['username'];
-        $currentUser = $this->User->find( 'all',
+        $currentUser = $this->User->find( 'first',
             array( 'conditions' => array( 'username' => $username ) )
         );
 
@@ -50,16 +50,14 @@ class UsersController extends AppController {
         //checks if current user not found
         //or checks if user is not company owner
         //and returns true to continue in login method
-        if( empty( $currentUser ) || $currentUser['0']['User']['role'] != 'company'  ) {
+        if( empty( $currentUser ) || $currentUser['User']['role'] != 'company'  ) {
 
             return true;
         }
 
-        $companyState = (boolean)$currentUser['0']['Company']['is_enabled'];
-        //writes in Auth.User array company's state
-        $this->Session->write( 'Auth.User.is_enabled', $companyState);
-
-        return $companyState;
+        $this->Session->write('Auth.User.is_enabled',
+                              $currentUser['Company']['is_enabled']);
+        return $currentUser['Company']['is_enabled'];
     }
 
     function logout() {

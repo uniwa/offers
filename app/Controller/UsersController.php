@@ -3,11 +3,11 @@
 class UsersController extends AppController {
 
     public $uses = array('User', 'Image', 'Day', 'WorkHour', 'Municipality');
-
     function beforeFilter() {
         parent::beforeFilter();
 
         $this->Auth->allow('register');
+        $this->Auth->allow('days' );
 
         //in case user try to get  register when is logged in
         if( $this->Auth->user() && $this->request['action'] == 'register') {
@@ -47,8 +47,8 @@ class UsersController extends AppController {
         );
 
 
-        //checks if current user not found
-        //or checks if user is not company owner
+        //1.checks if current user not found
+        //2.or checks if user is not company owner
         //and returns true to continue in login method
         if( empty( $currentUser ) || $currentUser['User']['role'] != 'company'  ) {
 
@@ -56,6 +56,7 @@ class UsersController extends AppController {
         }
 
         return $currentUser['Company']['is_enabled'];
+
     }
 
     function logout() {
@@ -71,7 +72,6 @@ class UsersController extends AppController {
                                              array('order' => 'Municipality.name ASC')
                                             ));
 
-        $this->set( "days", $this->Day->find('list') );
 
         if( !empty( $this->request->data ) ) {
 
@@ -127,6 +127,12 @@ class UsersController extends AppController {
         }
 
 
+    }
+
+    function days(){
+
+        $this->set( "days", $this->Day->find('list') );
+        $this->set("_serialize", "days");
     }
 
     //sets Company id from saved company

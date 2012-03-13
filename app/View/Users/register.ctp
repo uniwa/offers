@@ -29,49 +29,11 @@
         echo $this->Form->input('Company.afm', array( 'label' => 'Α.Φ.Μ', 'class'=>'span3','type'=>'text') );
 
 
-    ?>
-        <tr>
-            Ωράριο λειτουργίας
-        </tr>
+    ?>    
+        <strong>Ωράριο λειτουργίας: </strong>
 
-        <table class="table table-bordered">
-
-          <thead>
-            <tr>
-            <th>ΗΜΕΡΑ</th>
-            <th>Ώρα έναρξης</th>
-            <th>Ώρα λήξης</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-                <td>
-                    <?php echo $this->Form->input( 'WorkHour.0.day_id', array( 'label'=>'Ημέρα' ));?>
-                </td>
-                <td>
-                    <?php echo $this->Form->input( 'WorkHour.0.starting',
-                            array( 'label'=>null, 'type'=>'time', 'timeFormat'=>24, 'interval'=>15, 'class'=>'span3' ));?>
-                </td>
-                <td>
-                    <?php echo $this->Form->input( 'WorkHour.0.ending',
-                            array( 'label'=>null, 'type'=>'time', 'timeFormat'=>24, 'interval'=>15, 'class'=>'span3'));?>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <?php echo $this->Form->input( 'WorkHour.1.day_id', array( 'label'=>'Ημέρα' ));?>
-                </td>
-                <td>
-                    <?php echo $this->Form->input( 'WorkHour.1.starting',
-                            array( 'label'=>null, 'type'=>'time', 'timeFormat'=>24, 'interval'=>15 , 'class'=>'span3'));?>
-                </td>
-                <td>
-                    <?php echo $this->Form->input( 'WorkHour.1.ending',
-                            array( 'label'=>null, 'type'=>'time', 'timeFormat'=>24, 'interval'=>15, 'class'=>'span3'));?>
-                </td>
-            </tr>
-          </tbody>
-        </table>
+        <a class="btn" id="create">Εισαγωγή <b class="caret"></b></a>
+        <div id="table"/> 
 
     </fieldset>
 <?php echo $this->Form->end(__('Υποβολή'));?>

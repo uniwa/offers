@@ -4,7 +4,7 @@ class CompaniesController extends AppController {
 
     public $name = 'Companies';
     public $helpers = array('Html', 'Form');
-    public $uses = array('Company', 'Offer', 'Municipality', 'User');
+    public $uses = array('Company', 'Offer', 'Municipality', 'User', 'Day', 'WorkHour');
 
     function index() {
 
@@ -71,6 +71,8 @@ class CompaniesController extends AppController {
                                              'order' => 'Municipality.name ASC')
                                             ));
 
+        $this->set('days', $this->Day->find('list'));
+
         $options['conditions'] = array('Company.id' => $id);
         $options['recursive'] = 1;
         $company = $this->Company->find('first', $options);
@@ -84,18 +86,34 @@ class CompaniesController extends AppController {
         if (empty($this->request->data)) {
             $this->request->data = $company;
         } else {
+
+            $transaction = $this->Company->getDataSource();
+            $transaction->begin();
+            $error = false;
+
+            // update work_hours first
+            if (!$this->WorkHour->saveAll($this->request->data['WorkHour']))
+                $error = true;
+
             $this->User->id = $company['Company']['user_id'];
-            if ($this->User->saveField('email', $this->request->data['User']['email']))
-            if ($this->Company->save($this->request->data))
-            {
+            if (!$this->User->saveField('email', $this->request->data['User']['email']))
+                $error = true;
+
+            if (!$this->Company->save($this->request->data))
+                $error = true;
+
+
+            if ($error) {
+                $transaction->rollback();
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.');
+            } else {
+                $transaction->commit();
                 $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν.');
                 $this->redirect(array(
                         'controller' => 'companies',
                         'action' => 'view',
                         $company['Company']['id']
-                       ));
-            } else {
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.');
+                    ));
             }
         }
     }

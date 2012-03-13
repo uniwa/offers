@@ -48,7 +48,62 @@ echo $this->Form->input('Company.fax', array(
                         'class' => 'span2',
                         'type'  => 'text'
                        ));
+?>
 
+Ωράριο λειτουργίας
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ΗΜΕΡΑ</th>
+            <th>Ώρα έναρξης</th>
+            <th>Ώρα λήξης</th>
+        </tr>
+    </thead>
+    <tbody>
+<?php
+
+    for ($i = 0; $i < count($company['WorkHour']); $i++) {
+        echo '<tr>';
+
+        echo $this->Form->hidden('WorkHour.'.$i.'.id');
+        echo $this->Form->hidden('WorkHour.'.$i.'.company_id');
+
+        echo '<td>'.
+             $this->Form->input('WorkHour.'.$i.'.day_id',
+                                array('label' => 'Ημέρα')).
+             '</td>';
+
+        echo '<td>'.
+             $this->Form->input('WorkHour.'.$i.'.starting',
+                                array(
+                                    'label' => null,
+                                    'type'=>'time',
+                                    'timeFormat'=>24,
+                                    'interval'=>15,
+                                    'class'=>'span3'
+                                )).
+             '</td>';
+
+        echo '<td>'.
+             $this->Form->input('WorkHour.'.$i.'.ending',
+                                array(
+                                    'label' => null,
+                                    'type'=>'time',
+                                    'timeFormat'=>24,
+                                    'interval'=>15,
+                                    'class'=>'span3'
+                                )).
+             '</td>';
+
+        echo '</tr>';
+    }
+
+?>
+    </tbody>
+</table>
+
+<?php
 echo $this->Form->hidden('User.id');
 echo $this->Form->hidden('Company.id');
 echo $this->Form->hidden('Company.user_id');

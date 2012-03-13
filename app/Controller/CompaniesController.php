@@ -4,7 +4,8 @@ class CompaniesController extends AppController {
 
     public $name = 'Companies';
     public $helpers = array('Html', 'Form');
-    public $uses = array('Company', 'Offer', 'Municipality', 'User', 'Day', 'WorkHour');
+    public $uses = array('Company', 'Offer', 'Municipality',
+                         'User', 'Day', 'WorkHour', 'Image');
 
     function index() {
 
@@ -102,6 +103,11 @@ class CompaniesController extends AppController {
             if (!$this->Company->save($this->request->data))
                 $error = true;
 
+            $photos = $this->processImages($this->request->data['Image'],
+                                           1, true, null,
+                                           array('company_id' => $company['Company']['id']));
+            if (!$this->Image->saveMany($photos))
+                $error = true;
 
             if ($error) {
                 $transaction->rollback();

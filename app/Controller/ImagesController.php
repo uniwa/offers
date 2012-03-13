@@ -15,7 +15,7 @@ class ImagesController extends AppController {
             header('Content-Type: '.$image['Image']['type']);
             header('Content-Disposition: filename='.$image['Image']['name']);
             header('Content-Length: '.$image['Image']['size']);
-            echo base64_decode($image['Image']['data']);
+            echo $image['Image']['data'];
             exit();
         }
     }

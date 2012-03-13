@@ -6,6 +6,12 @@ if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
     echo $this->Html->link('Ανάρτηση Προσφοράς',
                            array('controller' => 'offers', 'action' => 'add'));
     echo '<br/>';
+
+    echo $this->Html->link('Επεξεργασία στοιχείων επιχείρησης',
+                           array('controller' => 'companies',
+                           'action' => 'edit',
+                           $company['Company']['id']));
+    echo '<br/>';
 }
 
 echo 'Επιχείρηση '.$comp['id'].'<br/>';

@@ -96,8 +96,8 @@ class OffersController extends AppController {
                 'Company.user_id' => $this->Auth->User('id')
             );
             $options['recursive'] = -1;
-            $company_id = $this->Company->find('first', $options);
-            $this->request->data['Offer']['company_id'] = $company_id['Company']['id'];
+            $company = $this->Company->find('first', $options);
+            $this->request->data['Offer']['company_id'] = $company['Company']['id'];
 
             $transaction = $this->Offer->getDataSource();
             $transaction->begin();
@@ -133,6 +133,11 @@ class OffersController extends AppController {
             } else {
                 $transaction->commit();
                 $this->Session->setFlash('Η προσφορά αποθηκεύτηκε');
+                $this->redirect(array(
+                                    'controller' => 'companies',
+                                    'action' => 'view',
+                                    $company['Company']['id']
+                                ));
             }
         }
     }

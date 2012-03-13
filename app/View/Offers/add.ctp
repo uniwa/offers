@@ -1,21 +1,21 @@
 <?php
 
-echo $this->Form->create('Offer', array(
+echo $this->Form->create(false, array(
                             'type' => 'POST',
                             'enctype' => 'multipart/form-data'
                         ));
 
-echo $this->Form->input('title', array('label' => 'Τίτλος'));
-echo $this->Form->input('description', array(
+echo $this->Form->input('Offer.title', array('label' => 'Τίτλος'));
+echo $this->Form->input('Offer.description', array(
                             'label' => 'Περιγραφή'
                        ));
-echo $this->Form->input('offer_category_id', array(
+echo $this->Form->input('Offer.offer_category_id', array(
                             'label' => 'Κατηγορία Προσφοράς'
                        ));
-echo $this->Form->input('offer_type_id', array(
+echo $this->Form->input('Offer.offer_type_id', array(
                             'label' => 'Είδος Προσοράς'
                        ));
-echo $this->Form->input('starting', array(
+echo $this->Form->input('Offer.starting', array(
                             'label' => 'Ημερ/νία & Ώρα έναρξης προσφοράς',
                             'separator' => ' ',
                             'dateFormat' => 'DMY',
@@ -25,7 +25,7 @@ echo $this->Form->input('starting', array(
                             'timeFormat' => 24,
                             'interval' => 15
                        ));
-echo $this->Form->input('ending', array(
+echo $this->Form->input('Offer.ending', array(
                             'label' => 'Ημερ/νία & Ώρα λήξης προσφοράς',
                             'separator' => ' ',
                             'dateFormat' => 'DMY',
@@ -57,7 +57,7 @@ echo $this->Form->input('WorkHour.0.ending',
                         ));
 echo 'Happy Hour only end<br/>';
 
-echo $this->Form->input('expiration_date', array(
+echo $this->Form->input('Offer.expiration_date', array(
                             'label' => 'Η προσφορά ισχύει μέχρι',
                             'type' => 'date',
                             'separator' => ' ',
@@ -66,11 +66,11 @@ echo $this->Form->input('expiration_date', array(
                             'maxYear' => date('Y') + 5,
                             'orderYear' => 'asc'
                        ));
-echo $this->Form->input('total_quantity', array(
+echo $this->Form->input('Offer.total_quantity', array(
                             'label' => 'Συνολικός αριθμός διαθέσιμων κουπονιών',
                             'empty' => 'Δεν έχει κουπόνια'
                        ));
-echo $this->Form->input('tags', array('label' => 'Λέξεις κλειδιά'));
+echo $this->Form->input('Offer.tags', array('label' => 'Λέξεις κλειδιά'));
 echo $this->Form->input('Image.0', array(
                             'label' => 'Φωτογραφία',
                             'type' => 'file'

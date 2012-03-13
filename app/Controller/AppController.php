@@ -125,7 +125,7 @@ class AppController extends Controller{
             throw new ImageExtensionException();
 
         $file = fread(fopen($image['tmp_name'], 'r'), $image['size']);
-        $image['data'] = base64_encode($file);
+        $image['data'] = $file;
         $image['image_category_id'] = $image_category;
         // set the foreign keys if needed
         foreach (array_keys($foreign_keys) as $key)
@@ -202,7 +202,7 @@ class AppController extends Controller{
         $result = $source_img;
         $result['name'] = 'thumb_'.$result['name'];
         $result['size'] = $thumb_size;
-        $result['data'] = base64_encode($thumb_data);
+        $result['data'] = $thumb_data;
         // thumbnail category
         $result['image_category_id'] = 2;
 

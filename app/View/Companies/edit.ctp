@@ -104,6 +104,28 @@ echo $this->Form->input('Company.fax', array(
 </table>
 
 <?php
+
+foreach ($company['Image'] as $image) {
+    echo $this->Html->image('/images/view/'.$image['id']);
+    echo $this->Html->link('Διαγραφή',
+                           array(
+                                'controller' => 'images',
+                                'action' => 'delete',
+                                $image['id']),
+                           'Να διαγραφεί η εικόνα;'
+                          );
+}
+
+echo $this->Form->input('Image.0', array(
+                            'label' => 'Φωτογραφία',
+                            'type' => 'file'
+                       ));
+
+echo $this->Form->input('Image.1', array(
+                            'label' => 'Φωτογραφία',
+                            'type' => 'file'
+                       ));
+
 echo $this->Form->hidden('User.id');
 echo $this->Form->hidden('Company.id');
 echo $this->Form->hidden('Company.user_id');

@@ -3,10 +3,12 @@
 if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
     $offer['Offer']['offer_state_id'] == OfferStates::Draft)
 {
-    echo $this->Html->link('Διαγραφή', array(
-                                        'controller' => 'offers',
-                                        'action' => 'delete',
-                                        $offer['Offer']['id'])).'<br/>';
+    echo $this->Html->link('Διαγραφή',
+                           array(
+                                'controller' => 'offers',
+                                'action' => 'delete',
+                                $offer['Offer']['id']),
+                           'Να διαγραφεί η προσφοα;').'<br/>';
 
     echo $this->Html->link('Επεξεργασία', array(
                                             'controller' => 'offers',

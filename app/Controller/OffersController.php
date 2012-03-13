@@ -96,8 +96,8 @@ class OffersController extends AppController {
                 'Company.user_id' => $this->Auth->User('id')
             );
             $options['recursive'] = -1;
-            $company_id = $this->Company->find('first', $options);
-            $this->request->data['Offer']['company_id'] = $company_id['Company']['id'];
+            $company = $this->Company->find('first', $options);
+            $this->request->data['Offer']['company_id'] = $company['Company']['id'];
 
             $transaction = $this->Offer->getDataSource();
             $transaction->begin();
@@ -105,15 +105,12 @@ class OffersController extends AppController {
 
             if ($this->Offer->save($this->data)) {
 
-                $photos = $this->processImages($this->request->data['Image']);
+                $photos = $this->processImages($this->request->data['Image'],
+                                               1, true, null,
+                                               array('offer_id' => $this->Offer->id));
                 // try to save images
-                if (!empty($photos)) {
-                    for ($i = 0; $i < count($photos); $i++)
-                        $photos[$i]['offer_id'] = $this->Offer->id;
-
-                    if (!$this->Image->saveMany($photos))
-                        $error = true;
-                }
+                if (!$this->Image->saveMany($photos))
+                    $error = true;
 
                 // try to save WorkHours only if Offer.category is HappyHour
                 if ($this->data['Offer']['offer_category_id'] == 1) {
@@ -133,6 +130,11 @@ class OffersController extends AppController {
             } else {
                 $transaction->commit();
                 $this->Session->setFlash('Η προσφορά αποθηκεύτηκε');
+                $this->redirect(array(
+                                    'controller' => 'companies',
+                                    'action' => 'view',
+                                    $company['Company']['id']
+                                ));
             }
         }
     }

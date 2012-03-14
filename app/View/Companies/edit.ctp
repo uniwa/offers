@@ -61,6 +61,7 @@ echo $this->Form->input('Company.fax', array(
         </tr>
     </thead>
     <tbody>
+
 <?php
 
     for ($i = 0; $i < count($company['WorkHour']); $i++) {
@@ -112,8 +113,9 @@ foreach ($company['Image'] as $image) {
                                 'controller' => 'images',
                                 'action' => 'delete',
                                 $image['id']),
+                           array(),
                            'Να διαγραφεί η εικόνα;'
-                          );
+                          ).'<br/>';
 }
 
 echo $this->Form->input('Image.0', array(

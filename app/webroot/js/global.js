@@ -8,7 +8,7 @@ $(function() {
             e.stopPropagation();
     });
 
-
+if ( window.location.pathname == 'coupons/user/register' ) {
     function optionTemplate( count ) {
 
         return (count>9)?"<option value=\""+count+"\">"+count+"</option>":"<option value=\"0"+count+"\">0"+count+"</option>";
@@ -142,10 +142,16 @@ $(function() {
         return div;
 
     }
+
+    function buttonDiv( map ) {
+
+        var temp = window.location.pathname;
+        alert( temp );
+    }
     
     //TODO oloklhrwsh
     function createRow( counter, startingTime, endingTime, dayMap ) {
-        
+       buttonDiv( 99 );//example 
         var bodyRow = "<td>"+ dayDiv( dayMap )+"</td>"+"<td>"+timeDiv( startingTime )+"</td>"
                 +"<td>"+timeDiv( endingTime )+"</td>";
         var removeButton = "<a class=\"btn\" id =\"remove\">αφαίρεση</a>";
@@ -242,6 +248,8 @@ $(function() {
             $('table').remove();
         }
     });
+
+}
 
 
 });

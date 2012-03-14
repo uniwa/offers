@@ -93,7 +93,8 @@ class CompaniesController extends AppController {
             $error = false;
 
             // update work_hours first
-            if (!$this->WorkHour->saveAll($this->request->data['WorkHour']))
+            if (isset($this->request->data['WorkHour']) &&
+                !$this->WorkHour->saveAll($this->request->data['WorkHour']))
                 $error = true;
 
             $this->User->id = $company['Company']['user_id'];
@@ -104,7 +105,7 @@ class CompaniesController extends AppController {
                 $error = true;
 
             $photos = $this->processImages($this->request->data['Image'],
-                                           1, true, null,
+                                           1, false, null,
                                            array('company_id' => $company['Company']['id']));
             if (!$this->Image->saveMany($photos))
                 $error = true;

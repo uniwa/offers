@@ -61,6 +61,7 @@ echo $this->Form->input('Company.fax', array(
         </tr>
     </thead>
     <tbody>
+
 <?php
 
     for ($i = 0; $i < count($company['WorkHour']); $i++) {

@@ -113,8 +113,9 @@ foreach ($company['Image'] as $image) {
                                 'controller' => 'images',
                                 'action' => 'delete',
                                 $image['id']),
+                           array(),
                            'Να διαγραφεί η εικόνα;'
-                          );
+                          ).'<br/>';
 }
 
 echo $this->Form->input('Image.0', array(

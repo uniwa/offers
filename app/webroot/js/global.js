@@ -87,18 +87,22 @@ if ( window.location.pathname == '/coupons/users/register' ) {
 
 
     function divTemplate( map ) {
-
-        var labelElement = "<label for=\""+map.id+"\">"+map.label+"</label>";
-        var divElement =  "<div class=\""+map.divClass+"\">"+labelElement+map.options+"</div>";
+        
+        var labelElement = $(document.createElement( 'label')).attr( 'for', map.id);
+        labelElement.html( map.label );
+//        var labelElement = "<label for=\""+map.id+"\">"+map.label+"</label>";
+//
+        var divElement = $(document.createElement('div')).attr( 'class', map.divClass);
+        divElement.append( labelElement );
+        divElement.append( map.options );
+        //var divElement =  "<div class=\""+map.divClass+"\">"+labelElement+map.options+"</div>";
         return divElement;
     }
 
     function dayDiv(map) {
-
-        var select = "<select name=\""+map.selectName+"\""
-            +" id=\""+map.id+"\""
-            +" class=\""+map.selectClass+"\">"
-            +dayOptions()+"</select>";
+        
+        var select = $(document.createElement('select')).attr( 'name', map.selectName ).attr('id', map.id ).attr('class', map.selectClass );
+        select.html( dayOptions() );
 
         var div = divTemplate( {
                     label: map.label,
@@ -110,33 +114,41 @@ if ( window.location.pathname == '/coupons/users/register' ) {
     }
 
     function timeDiv( map ) {
+        //for hour to minute
+        var separator = $(document.createElement('span'));
+        separator.html( ":" );
 
-        var selectHour =  "<select name=\""+map.hourName+"\""
-            +" id=\""+map.hourId+"\""
-            +" class=\""+map.hourClass+"\">"
-            +hourOptions(map.hourType)+"</select>";
+        //standard meridian separator
+        var mersep = $(document.createElement('span'));
+        mersep.html( " " );
 
-        var selectMinute =  "<select name=\""+map.minuteName+"\""
-            +" id=\""+map.minuteId+"\""
-            +" class=\""+map.minuteClass+"\">"
-            +minuteOptions(map.interval)+"</select>";
+        var selectHour = 
+            $(document.createElement('select')).attr( "name", map.hourName ).attr( "id", map.hourId ).attr( "class", map.hourClass );
+        selectHour.append( hourOptions( map.hourType ) );
+
+        var selectMinute = 
+            $(document.createElement('select')).attr( "name", map.minuteName ).attr( "id", map.minuteId ).attr( "class", map.minuteClass );
+        selectMinute.append(minuteOptions(map.interval));
+
+        //default represantation of time
+        var time = selectHour.after( separator ).after( selectMinute ); 
 
         var selectMeridian = null;
 
         if( map.hourType == 12 ) {
-            
-            var selectMeridian =  "<select name=\""+map.meridianName+"\""
-                +" id=\""+map.meridianId+"\""
-                +" class=\""+map.meridianClass+"\">"
-                +meridianOptions( map.meridianLang )+"</select>";
 
+            selectMeridian = 
+                $(document.createElement('select')).attr( "name", map.meridianName )
+                .attr( "id", map.meridianId ).attr( "class", map.meridianClass );
+
+            selectMeridian.append(meridianOptions(map.meridianLang));           
         }
 
        var div = divTemplate( {
                     label: map.label,
                     divClass:map.divClass,
                     id:map.hourId,
-                    options:(selectMeridian==null)?selectHour+":"+selectMinute:selectHour+":"+selectMinute+" "+selectMeridian
+                    options:(selectMeridian==null)?time:selectHour.after( mersep ).after( selectMeridian )
         });
 
         return div;
@@ -144,25 +156,39 @@ if ( window.location.pathname == '/coupons/users/register' ) {
     }
 
     function buttonDiv( map ) {
+    
+        var button = $(document.createElement('a')).attr( "class", "btn" ).attr("id", map.buttonId );
+        button.html( map.content );
 
-        var temp = window.location.pathname;
-        alert( temp );
+        var div = divTemplate( { 
+            label: map.label,
+            divClass: map.divClass,
+            id:map.buttonId,
+            options:button
+        });
+
+        return div;
+    }
+
+    function createColumn( content ) {
+
+        var col = $(document.createElement('td'));
+        col.html( content );
+        return col;
     }
     
-    //TODO oloklhrwsh
-    function createRow( counter, startingTime, endingTime, dayMap ) {
-       buttonDiv( 99 );//example 
-        var bodyRow = "<td>"+ dayDiv( dayMap )+"</td>"+"<td>"+timeDiv( startingTime )+"</td>"
-                +"<td>"+timeDiv( endingTime )+"</td>";
-        var removeButton = "<a class=\"btn\" id =\"remove\">αφαίρεση</a>";
-        var divR = $(document.createElement('div')).attr( "class", "removeDiv").attr( "id", counter);
-        var column = $(document.createElement('td'));
-        divR.html( removeButton );
-        column.append( divR );
+    function createRow( counter, startingTime, endingTime, dayMap, removeButton, createButton) {
+        
+        var day = createColumn( dayDiv( dayMap ) );
+        var starting = createColumn( timeDiv( startingTime ) );
+        var ending = createColumn( timeDiv( endingTime ) );
+        var rbutton = createColumn( buttonDiv( removeButton ) );
 
         var row = $(document.createElement('tr')).attr( "id" ,"row"+counter );
-        row.html( bodyRow );
-        row.append( column );
+        row.append( day );
+        row.append( starting );
+        row.append( ending );
+        row.append( rbutton );
 
         if( counter == 0 ) {
 
@@ -176,7 +202,6 @@ if ( window.location.pathname == '/coupons/users/register' ) {
 
         } else {
         
-
             row.appendTo( "tbody" );
         }
 
@@ -184,10 +209,12 @@ if ( window.location.pathname == '/coupons/users/register' ) {
     }
 
     var counter = 0;
+    var removed = 0;
 
-    $("#create").click( function() {
+   //end of conf maps
 
-            var dayMap ={
+    $("#create").live("click", function() {
+         var dayMap ={
                     label: "",
                     divClass:"input select required",
                     id:"WorkHour" + counter + "DayId",
@@ -231,7 +258,23 @@ if ( window.location.pathname == '/coupons/users/register' ) {
 
           };
 
-        createRow( counter,startingTime, endingTime, dayMap );
+            var removeButton = {
+                label:"",
+                divClass:counter,
+                buttonId:"remove",
+                content:"Αφαίρεση"
+
+            };
+
+            var createButton = {
+
+                label:"",
+                divClass:"createButton",
+                buttonId:"create",
+                content:"Προσθήκη"
+            }
+
+        createRow( counter,startingTime, endingTime, dayMap, removeButton, createButton );
 
         counter++;
     });
@@ -239,12 +282,16 @@ if ( window.location.pathname == '/coupons/users/register' ) {
 
     $("#remove").live( "click", function() {
 
-        counter--;//me epifilaxh
-        var id = $(this).parent().attr('id');
+        removed++;
+
+
+        var id = $(this).parent().attr('class');
         $("#row"+id).remove();
 
-        if( counter == 0 ) {
+        if( counter == removed ) {
 
+            removed = 0;
+            counter = 0;
             $('table').remove();
         }
     });

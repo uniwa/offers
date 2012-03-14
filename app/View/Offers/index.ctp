@@ -7,7 +7,8 @@
 
 if( empty( $happyOffers ) ) {
 
-    echo $this->element('info', array(
+    echo $this->element('alert', array(
+        'type' => 'info',
         'label' => '<span class="label label-info">Happy Hour</span>',
         'message' =>' Δεν υπάρχουν happy Hour προσφορές'
         ));
@@ -49,7 +50,8 @@ echo '</div>';//hero unit
 
 if( empty( $offers ) ) {
 
-    echo $this->element('info', array( 
+    echo $this->element('alert', array( 
+            'type' => 'info',
             'label' => '<span class="label label-info">Offers</span>',
             'message' => ' Δεν υπάρχουν προσφορές' )
         );

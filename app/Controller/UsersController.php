@@ -2,7 +2,7 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Image', 'Day', 'WorkHour', 'Municipality');
+    public $uses = array('User', 'Image', 'Day', 'WorkHour', 'Municipality', 'Company');
     function beforeFilter() {
         parent::beforeFilter();
 
@@ -67,12 +67,6 @@ class UsersController extends AppController {
 
     function register() {
 
-        $this->set('municipalities',
-                   $this->Municipality->find('list',
-                                             array('order' => 'Municipality.name ASC')
-                                            ));
-
-
         if( !empty( $this->request->data ) ) {
 
             $dataSource = $this->User->getDataSource();
@@ -84,9 +78,6 @@ class UsersController extends AppController {
 
             $dataSource->begin();
 
-            $workHour = $this->request->data['WorkHour'];
-            unset( $this->request->data['WorkHour']);
-
             if( !$this->User->save( $this->request->data['User'] ) ) {
 
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
@@ -95,25 +86,8 @@ class UsersController extends AppController {
 
             }
 
-            $this->User->Company->set('user_id', $this->User->id);
-            if( !$this->User->Company->save( $this->request->data['Company'])){
-
-                $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
-                $dataSource->rollback();
-                return;
-            }
-
-            $photos = $this->processImages($this->request->data['Company']['Image'],
-                                           3, true, null,
-                                           array('company_id' => $this->User->Company->id));
-            if (!empty($photos) && !$this->Image->saveMany($photos)) {
-                $this->Session->setFlash('Η εγγραφή δεν ολοκληρώθηκε');
-                $dataSource->rollback();
-                return;
-            }
-
-            $workHour = $this->setCompanyId( $this->User->Company->id, $workHour );
-            if( !$this->WorkHour->saveMany( $workHour )){
+            $this->request->data['Company']['user_id'] = $this->User->id;
+            if( !$this->Company->save( $this->request->data['Company'])){
 
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
                 $dataSource->rollback();

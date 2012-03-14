@@ -7,7 +7,6 @@ class UsersController extends AppController {
         parent::beforeFilter();
 
         $this->Auth->allow('register');
-        $this->Auth->allow('days' );
 
         //in case user try to get  register when is logged in
         if( $this->Auth->user() && $this->request['action'] == 'register') {
@@ -78,26 +77,5 @@ class UsersController extends AppController {
             } else
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
         }
-    }
-
-    function days(){
-
-        $this->set( "days", $this->Day->find('list') );
-        $this->set("_serialize", "days");
-    }
-
-    //sets Company id from saved company
-    private function setCompanyId( $c_id, $workHour ) {
-
-        if( empty( $c_id ) ){
-            return null;
-        }
-        //creates the work hour format, compatible with mysql
-        foreach( $workHour as &$wh ){
-
-            $wh['company_id'] = $c_id;
-        }
-
-        return $workHour;
     }
 }

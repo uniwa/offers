@@ -68,39 +68,16 @@ class UsersController extends AppController {
     function register() {
 
         if( !empty( $this->request->data ) ) {
-
-            $dataSource = $this->User->getDataSource();
             //is_enabled and is_banned is by default false
             //set registered User's role
             $this->request->data['User']['role'] =  'company';
-            //Use this to avoid valdation errors
-            unset($this->User->Company->validate['user_id']);
 
-            $dataSource->begin();
-
-            if( !$this->User->save( $this->request->data['User'] ) ) {
-
+            if($this->User->saveAssociated($this->request->data)) {
+                $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
+                $this->redirect(array('controller'=>'Offers', 'action' => 'index'));
+            } else
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
-                $dataSource->rollback();
-                return;
-
-            }
-
-            $this->request->data['Company']['user_id'] = $this->User->id;
-            if( !$this->Company->save( $this->request->data['Company'])){
-
-                $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
-                $dataSource->rollback();
-                return;
-            }
-
-            $dataSource->commit();
-            $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
-            $this->redirect(array('controller'=>'Offers', 'action' => 'index'));
-
         }
-
-
     }
 
     function days(){

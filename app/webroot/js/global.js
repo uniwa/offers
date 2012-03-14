@@ -90,12 +90,9 @@ if ( window.location.pathname == '/coupons/users/register' ) {
         
         var labelElement = $(document.createElement( 'label')).attr( 'for', map.id);
         labelElement.html( map.label );
-//        var labelElement = "<label for=\""+map.id+"\">"+map.label+"</label>";
-//
         var divElement = $(document.createElement('div')).attr( 'class', map.divClass);
         divElement.append( labelElement );
         divElement.append( map.options );
-        //var divElement =  "<div class=\""+map.divClass+"\">"+labelElement+map.options+"</div>";
         return divElement;
     }
 
@@ -211,7 +208,6 @@ if ( window.location.pathname == '/coupons/users/register' ) {
     var counter = 0;
     var removed = 0;
 
-   //end of conf maps
 
     $("#create").live("click", function() {
          var dayMap ={

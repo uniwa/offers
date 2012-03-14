@@ -115,6 +115,7 @@ class UsersController extends AppController {
             $workHour = $this->setCompanyId( $this->User->Company->id, $workHour );
             if( !$this->WorkHour->saveMany( $workHour )){
 
+
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
                 $dataSource->rollback();
                 return;

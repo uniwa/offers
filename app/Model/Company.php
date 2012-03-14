@@ -24,16 +24,9 @@ class Company extends AppModel {
                 'allowEmpty' => true,
                 'message' => 'Η επωνυμία περιέχει έναν μη έγκυρο χαρακτήρα.'
             )
-
         ),
 
         'service_type' => array(
-
-            'not_empty' => array(
-                'rule' => 'notEmpty',
-                'message' => 'Παρακαλώ εισάγετε το είδος της προσφερόμενης υπηρεσίας .',
-                'required' => true
-            ),
             'maxsize' => array(
                 'rule' => array('maxLength', 100),
                 'allowEmpty' => false,
@@ -44,8 +37,8 @@ class Company extends AppModel {
                 'allowEmpty' => false,
                 'message' => 'Η επωνυμία περιέχει έναν μη έγκυρο χαρακτήρα.'
             )
-
         ),
+
         'address' => array(
             'size' => array(
                 'rule' => array('maxLength', 45),
@@ -69,11 +62,6 @@ class Company extends AppModel {
         ),
 
         'phone' => array(
-            'not_empty' => array(
-                'rule' => 'notEmpty',
-                'message' => 'Παρακαλώ εισάγετε ένα τηλέφωνο επικοινωνίας.',
-                'required' => true
-            ),
             'size' => array(
                 'rule' => array('between', 10, 10),
                 'message' => 'Ο αριθμός τηλεφώνου πρέπει να περιέχει 10 ψηφία.',
@@ -93,7 +81,6 @@ class Company extends AppModel {
                 'allowEmpty' => true,
                 'required' => false
             ),
-
             'valid' => array(
                 'rule' => '/^\d+$/',
                 'message' => 'Ο αριθμός περιέχει έναν μη έγκυρο χαρακτήρα.',
@@ -108,13 +95,11 @@ class Company extends AppModel {
                 'message' => 'Παρακαλώ εισάγετε το ΑΦΜ σας.',
                 'required' => true
             ),
-
             'size' => array(
                 'rule' => array('between', 9, 9),
                 'allowEmpty' => true,
                 'message' => 'Το ΑΦΜ πρέπει να περιέχει ακριβώς 9 ψηφία.'
             ),
-
             'valid' => array(
                 'rule' => '/^\d+$/',
                 'message' => 'Το ΑΦΜ πρέπει να περιέχει μόνο ψηφία',

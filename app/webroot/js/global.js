@@ -8,7 +8,7 @@ $(function() {
             e.stopPropagation();
     });
 
-if ( window.location.pathname == 'coupons/user/register' ) {
+if ( window.location.pathname == '/coupons/users/register' ) {
     function optionTemplate( count ) {
 
         return (count>9)?"<option value=\""+count+"\">"+count+"</option>":"<option value=\"0"+count+"\">0"+count+"</option>";

@@ -18,6 +18,11 @@ class AppController extends Controller{
     );
     public $helpers = array('Session', 'Form', 'Js' => array('Jquery'), 'Html');
 
+    //constant variables for flashes
+    protected $INFO = 'alert alert-info';
+    protected $ERROR = 'alert alert-error';
+    protected $SUCCESS = 'alert alert-success';
+
     function beforeFilter() {
 
         //clear authError default message

@@ -106,9 +106,9 @@ class OffersController extends AppController {
             if ($this->Offer->save($this->data)) {
 
                 $photos = Image::process($this->request->data['Image'],
-                                               array('offer_id' => $this->Offer->id));
+                                         array('offer_id' => $this->Offer->id));
                 // try to save images
-                if (!$this->Image->saveMany($photos))
+                if (!empty($photos) && !$this->Image->saveMany($photos))
                     $error = true;
 
                 // try to save WorkHours only if Offer.category is HappyHour

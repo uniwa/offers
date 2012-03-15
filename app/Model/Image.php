@@ -13,6 +13,8 @@ class Image extends AppModel {
                               )
                         );
 
+    public static $validExtensions = array('jpeg', 'png', 'gif');
+
     /**
      * @short checks whether a file is an image based on its extension
      *
@@ -21,9 +23,11 @@ class Image extends AppModel {
      *
      * @return true or false
      */
-    public function isValid($file_type, $valid = array('jpeg', 'png', 'gif')) {
+    public static function isValid($file_type, $valid = null) {
 
-        if (!is_array($valid))
+        if (is_null($valid))
+            $valid = self::$validExtensions;
+        else if (!is_array($valid))
             throw new InvalidArgumentException('$valid must be array.');
 
         if (strpos($file_type, '/') !== false) {
@@ -51,11 +55,12 @@ class Image extends AppModel {
      *
      * @return Array of images
      */
-    public static function processImages($images,
-                                         $image_category = 1,
-                                         $generate_thumbs = true,
-                                         $thumb_size = null,
-                                         $foreign_keys = array())
+    public static function process($images,
+                                   $foreign_keys = array(),
+                                   $image_category = 1,
+                                   $generate_thumbs = true,
+                                   $thumb_size = null
+                                   )
     {
         if ($thumb_size === null)
             $thumb_size = array('width' => 260);
@@ -70,11 +75,11 @@ class Image extends AppModel {
         if (isset($images['tmp_name'])) $images = array($images);
 
         foreach ($images as $image) {
-            $tmp = Image::_processImage($image, $image_category, $foreign_keys);
+            $tmp = self::_process($image, $image_category, $foreign_keys);
             if (!empty($tmp)) {
                 $photos[] = $tmp;
                 if ($generate_thumbs === true)
-                    $photos[] = Image::_createThumbnail($tmp, $thumb_size);
+                    $photos[] = self::_createThumbnail($tmp, $thumb_size);
             }
         }
 
@@ -95,7 +100,7 @@ class Image extends AppModel {
      *
      * @return Array containing image information and data
      */
-    private static function _processImage($image, $image_category, $foreign_keys) {
+    private static function _process($image, $image_category, $foreign_keys) {
         if ((isset($image['tmp_name']) && $image['tmp_name'] == null ) ||
              isset($image['id']))
             return array();
@@ -103,7 +108,7 @@ class Image extends AppModel {
         if (!is_uploaded_file($image['tmp_name']))
             throw new UploadFileException();
 
-        if (!Image::isValid($image['type']))
+        if (!self::isValid($image['type']))
             throw new ImageExtensionException();
 
         $file = fread(fopen($image['tmp_name'], 'r'), $image['size']);

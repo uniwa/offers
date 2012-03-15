@@ -105,8 +105,7 @@ class OffersController extends AppController {
 
             if ($this->Offer->save($this->data)) {
 
-                $photos = Image::processImages($this->request->data['Image'],
-                                               1, true, null,
+                $photos = Image::process($this->request->data['Image'],
                                                array('offer_id' => $this->Offer->id));
                 // try to save images
                 if (!$this->Image->saveMany($photos))
@@ -199,7 +198,7 @@ class OffersController extends AppController {
             if ($this->Offer->save($this->data)) {
 
                 // try to save the new images
-                $photos = Image::processImages($this->request->data['Image']);
+                $photos = Image::process($this->request->data['Image']);
                 if (!empty($photos)) {
                     for ($i = 0; $i < count($photos); $i++)
                         $photos[$i]['offer_id'] = $this->Offer->id;

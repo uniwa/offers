@@ -1,7 +1,7 @@
 <h2>Εγγραφή νέου χρήστη</h2>
 <div class="register form">
 <?php
-    echo $this->Session->flash('register');
+    echo $this->Session->flash();
     echo $this->Form->create(false, array(
                                         'action' => 'register',
                                         'type' => 'POST',

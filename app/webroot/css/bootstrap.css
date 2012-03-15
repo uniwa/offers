@@ -3383,3 +3383,27 @@ a.thumbnail:hover {
 .invisible {
   visibility: hidden;
 }
+
+#UserLoginForm {
+
+    background-image:url('../img/login-background.png');
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10%;
+}
+
+.login-fieldset, #UserLoginForm .submit {
+    margin-left : 20%;
+    margin-right : 20%;
+}
+
+footer, #footer {
+
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+}
+
+

@@ -100,7 +100,7 @@
 	</div><!--/.fluid-container-->
        
 
-        <hr>
+        <hr id = "footer">
 
     	<footer>
     	   	<p>&copy; Τ.Ε.Ι Αθήνας  2012</p>

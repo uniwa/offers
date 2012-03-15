@@ -42,6 +42,9 @@
             <li><?php echo $this->Html->link(__('Όροι χρήσης'), array( 'controller'=>'users', 'action'=>'terms'));?></li>
             <li><?php echo $this->Html->link(__('Συχνές Ερωτήσεις'), array( 'controller'=>'users', 'action'=>'faq'));?></li>
             </ul>
+
+            <!--renders notification message-->
+            <?php echo $this->Session->flash(); ?>
             <!-- Login functionality with dropdown -->
 			<?php 
 

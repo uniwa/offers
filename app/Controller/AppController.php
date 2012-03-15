@@ -5,6 +5,7 @@ App::uses('UploadFileException', 'Error');
 App::uses('Image', 'Model');
 
 App::import('Vendor', 'OfferStates');
+App::import('Vendor', 'Flash');
 
 class AppController extends Controller{
 

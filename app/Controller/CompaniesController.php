@@ -107,7 +107,7 @@ class CompaniesController extends AppController {
             $photos = $this->processImages($this->request->data['Image'],
                                            1, false, null,
                                            array('company_id' => $company['Company']['id']));
-            if (!$this->Image->saveMany($photos))
+            if (!empty($photos) && !$this->Image->saveMany($photos))
                 $error = true;
 
             if ($error) {

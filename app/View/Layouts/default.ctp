@@ -45,6 +45,9 @@
 
             <!--renders notification message-->
             <?php echo $this->Session->flash(); ?>
+
+            <!--Block dropdown form when user is inside login action-->
+            <?php if( $this->here != '/coupons/users/login' ) { ?>
             <!-- Login functionality with dropdown -->
 			<?php 
 
@@ -83,7 +86,9 @@
 
                     </ul>
                    
-        <?php	}?>
+        <?php	}
+
+            }?>
 
           </div><!--/.nav-collapse -->
 		 </div>

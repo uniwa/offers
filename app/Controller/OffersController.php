@@ -202,14 +202,10 @@ class OffersController extends AppController {
             if ($this->Offer->save($this->data)) {
 
                 // try to save the new images
-                $photos = Image::process($this->request->data['Image']);
-                if (!empty($photos)) {
-                    for ($i = 0; $i < count($photos); $i++)
-                        $photos[$i]['offer_id'] = $this->Offer->id;
-
-                    if (!$this->Image->saveMany($photos))
-                        $error = true;
-                }
+                $photos = Image::process($this->request->data['Image'],
+                                         array('offer_id' => $this->Offer->id));
+                if (!empty($photos) && !$this->Image->saveMany($photos))
+                $error = true;
 
                 // If Offer.category is HappyHour delete all the related
                 // images and insert new entries

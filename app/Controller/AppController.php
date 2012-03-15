@@ -2,7 +2,6 @@
 
 App::uses('ImageExtensionException', 'Error');
 App::uses('UploadFileException', 'Error');
-
 App::uses('Image', 'Model');
 
 App::import('Vendor', 'OfferStates');

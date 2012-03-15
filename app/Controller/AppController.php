@@ -17,6 +17,7 @@ class AppController extends Controller{
             )
         )
     );
+
     public $helpers = array('Session', 'Form', 'Js' => array('Jquery'), 'Html');
 
     //constant variables for flashes
@@ -25,14 +26,7 @@ class AppController extends Controller{
     protected $SUCCESS = 'alert alert-success';
 
     function beforeFilter() {
-
         //clear authError default message
         $this->Auth->authError = " ";
-    }
-
-
-    protected function generateHash($size = 32) {
-
-        return substr(md5(date('c')), 0, $size > 32 ? 32 : $size);
     }
 }

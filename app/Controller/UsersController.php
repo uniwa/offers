@@ -76,7 +76,7 @@ class UsersController extends AppController {
                 $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
                 $this->redirect(array('controller'=>'Offers', 'action' => 'index'));
             } else
-                $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'));
+                $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'), 'default', array('class'=>$this->ERROR));
         }
     }
 

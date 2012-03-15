@@ -27,11 +27,15 @@ class UsersController extends AppController {
                     return $this->redirect( $this->Auth->redirect() );
                 } else {
 
-                    $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"), 'default', array('class' => $this->ERROR) );
+                    $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"),
+                                             'default',
+                                             array('class' => Flash::Error));
                 }
             } else {
 
-                $this->Session->setFlash(__("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"), 'default', array('class' => $this->ERROR) );
+                $this->Session->setFlash(__("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"),
+                                         'default',
+                                         array('class' => Flash::Error));
             }
         }
     }
@@ -72,10 +76,14 @@ class UsersController extends AppController {
             $this->request->data['User']['role'] =  'company';
 
             if($this->User->saveAssociated($this->request->data)) {
-                $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε') );
+                $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε'),
+                                         'default',
+                                         array('class' => Flash::Success));
                 $this->redirect(array('controller'=>'Offers', 'action' => 'index'));
             } else
-                $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'), 'default', array('class'=>$this->ERROR));
+                $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'),
+                                         'default',
+                                         array('class' => Flash::Error));
         }
     }
 }

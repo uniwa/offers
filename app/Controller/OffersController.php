@@ -125,10 +125,14 @@ class OffersController extends AppController {
 
             if ($error === true) {
                 $transaction->rollback();
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα');
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
+                                         'default',
+                                         array('class' => Flash::Error));
             } else {
                 $transaction->commit();
-                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε');
+                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε',
+                                         'default',
+                                         array('class' => Flash::Success));
                 $this->redirect(array(
                                     'controller' => 'companies',
                                     'action' => 'view',
@@ -228,10 +232,14 @@ class OffersController extends AppController {
 
             if ($error === true) {
                 $transaction->rollback();
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα');
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
+                                         'default',
+                                         array('class' => Flash::Error));
             } else {
                 $transaction->commit();
-                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε');
+                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε',
+                                         'default',
+                                         array('class' => Flash::Success));
             }
         }
     }
@@ -262,21 +270,27 @@ class OffersController extends AppController {
 
                 if ($error === true) {
                     $transaction->rollback();
-                    $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.');
+                    $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
+                                             'default',
+                                             array('class' => Flash::Error));
                     $this->redirect(array(
                                         'controller' => 'offers',
                                         'action' => 'view',
                                         $offer['Offer']['id']));
                 } else {
                     $transaction->commit();
-                    $this->Session->setFlash('Η προσφορά διαγράφηκε επιτυχώς.');
+                    $this->Session->setFlash('Η προσφορά διαγράφηκε επιτυχώς.',
+                                             'default',
+                                             array('class' => Flash::Success));
                     $this->redirect(array(
                                         'controller' => 'companies',
                                         'action' => 'view',
                                         $offer['Company']['id']));
                 }
             } else {
-                $this->Session->setFlash('Η προσφορά δεν μπορεί να διαγραφεί');
+                $this->Session->setFlash('Η προσφορά δεν μπορεί να διαγραφεί',
+                                         'default',
+                                         array('class' => Flash::Info));
                 $this->redirect(array(
                                     'controller' => 'offers',
                                     'action' => 'view',

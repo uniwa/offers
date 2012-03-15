@@ -112,10 +112,14 @@ class CompaniesController extends AppController {
 
             if ($error) {
                 $transaction->rollback();
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.');
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
+                                         'default',
+                                         array('class' => Flash::Error));
             } else {
                 $transaction->commit();
-                $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν.');
+                $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν.',
+                                         'default',
+                                         array('class' => Flash::Success));
                 $this->redirect(array(
                         'controller' => 'companies',
                         'action' => 'view',

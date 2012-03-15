@@ -27,11 +27,11 @@ class UsersController extends AppController {
                     return $this->redirect( $this->Auth->redirect() );
                 } else {
 
-                    $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"), 'default', array(), 'auth' );
+                    $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"), 'default', array('class' => $this->ERROR) );
                 }
             } else {
 
-                $this->Session->setFlash(__("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"), 'default', array(), 'auth' );
+                $this->Session->setFlash(__("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"), 'default', array('class' => $this->ERROR) );
             }
         }
     }

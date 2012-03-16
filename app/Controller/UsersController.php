@@ -24,6 +24,13 @@ class UsersController extends AppController {
 
                 if( $this->Auth->login() ) {
 
+                    //get user or company id and set it in Sesion Auth.User 
+                    //array as role_id
+                    $user = $this->User->find( 'first', 
+                        array ( 'conditions' => array( 'User.id'=> $this->Auth->user('id') ) ) );
+                    $this->Session->write( 'Auth.User.role_id', 
+                        (empty($user['Company']['id']))?$user['Student']['id']:$user['Company']['id']);
+
                     return $this->redirect( $this->Auth->redirect() );
                 } else {
 

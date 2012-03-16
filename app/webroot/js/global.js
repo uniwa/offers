@@ -8,6 +8,12 @@ $(function() {
             e.stopPropagation();
     });
 
+    //starting row gen functionality
+
+    
+    var counter =  $('.workcount').val();
+    var removed = 0;
+
     function optionTemplate( count ) {
 
         return (count>9)?"<option value=\""+count+"\">"+count+"</option>":"<option value=\"0"+count+"\">0"+count+"</option>";
@@ -185,7 +191,6 @@ $(function() {
         row.append( starting );
         row.append( ending );
         row.append( rbutton );
-
         if( counter == 0 ) {
 
             var table = $(document.createElement('table')).attr("class", "table table-bordered").attr( "id", "table" );
@@ -197,18 +202,16 @@ $(function() {
             table.appendTo( "#table" );
 
         } else {
-        
             row.appendTo( "tbody" );
         }
 
         
     }
 
-    var counter = 0;
-    var removed = 0;
 
 
     $("#create").live("click", function() {
+
          var dayMap ={
                     label: "",
                     divClass:"input select required",
@@ -276,7 +279,7 @@ $(function() {
 
 
     $("#remove").live( "click", function() {
-
+        
         removed++;
 
 

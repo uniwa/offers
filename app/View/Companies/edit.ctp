@@ -50,7 +50,15 @@ echo $this->Form->input('Company.fax', array(
                        ));
 ?>
 
-Ωράριο λειτουργίας
+Ωράριο λειτουργίας: <a class ="btn" id="create">Προσθήκη <b class"carret"></b></a>
+
+<?php $c = count( $company['WorkHour'] );
+echo '<input type="hidden" name="workcount" class="workcount" value="'.$c.'"/>';?>
+<!--geneartes table when table not set-->
+<div id="table"></div>
+<?php
+if( $c != 0  ) {
+?>
 
 <table class="table table-bordered">
     <thead>
@@ -63,8 +71,7 @@ echo $this->Form->input('Company.fax', array(
     <tbody>
 
 <?php
-
-    for ($i = 0; $i < count($company['WorkHour']); $i++) {
+    for ($i = 0; $i < $c; $i++) {
         echo '<tr>';
 
         echo $this->Form->hidden('WorkHour.'.$i.'.id');
@@ -95,7 +102,10 @@ echo $this->Form->input('Company.fax', array(
                                     'interval'=>15,
                                     'class'=>'span3'
                                 )).
-             '</td>';
+            '</td>';
+
+        echo '<td><div class="'.$i.'"<label for="remove"></label><a class = "btn" id="remove">Αφαίρεση</a></td>';
+
 
         echo '</tr>';
     }
@@ -103,6 +113,7 @@ echo $this->Form->input('Company.fax', array(
 ?>
     </tbody>
 </table>
+<?php }?>
 
 <?php
 

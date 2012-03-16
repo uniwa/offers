@@ -23,6 +23,8 @@
 <?php echo $this->Html->script('jquery'); ?>
 <?php echo $this->Html->script('dropdown'); ?>
 <?php echo $this->Html->script('global'); ?>
+<?php echo $this->Html->script('modal'); ?>
+<?php echo $this->Html->script('transition'); ?>
 </head>
 <body>
 
@@ -39,12 +41,9 @@
             <ul class="nav">
 
             <li><?php echo $this->Html->link(__('Εγγραφή'), array( 'controller'=>'users', 'action'=>'register'));?></li>
-            <li><?php echo $this->Html->link(__('Όροι χρήσης'), array( 'controller'=>'users', 'action'=>'terms'));?></li>
+            <li><?php echo $this->Html->link(__('Όροι χρήσης'), "#termsModal", array(  'data-toggle'=>'modal'));?></li>
             <li><?php echo $this->Html->link(__('Συχνές Ερωτήσεις'), array( 'controller'=>'users', 'action'=>'faq'));?></li>
             </ul>
-
-            <!--renders notification message-->
-            <?php echo $this->Session->flash(); ?>
 
             <!--Block dropdown form when user is inside login action-->
             <?php if( $this->here != '/coupons/users/login' ) { ?>
@@ -96,9 +95,12 @@
     </div>
 
 	<div class="container-fluid">
-
+<!--renders notification message-->
+            <?php echo $this->Session->flash(); ?>
       	<div class="row-fluid">
-			<?php echo $content_for_layout;?>						
+			<?php echo $content_for_layout;?>
+			<!--modal snipet-->
+			<?php echo $this->element( 'terms' );?>
 		</div><!--/row-->
 	
    		

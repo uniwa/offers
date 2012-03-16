@@ -15,7 +15,6 @@ echo $this->Form->input('Offer.description', array(
                        ));
 echo $this->Form->input('Offer.offer_category_id', array(
                         'label' => 'Κατηγορία Προσφοράς',
-                        'type' => 'text'
                        ));
 echo $this->Form->input('Offer.offer_type_id', array(
                         'label' => 'Είδος Προσοράς'

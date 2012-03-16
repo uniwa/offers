@@ -61,7 +61,7 @@ class OffersController extends AppController {
                                     'Offer.id' => $id,
         //TODO uncomment the next line when the offer activation logic is
         // implemented
-//                                     'Offer.offer_state_id' => OfferStates::Active,
+                                    //'Offer.offer_state_id' => OfferStates::Active,
                                     'Company.is_enabled' => 1
                                  );
         //TODO check if the company's user is_banned before showing the offer

@@ -49,14 +49,22 @@
             <?php if( $this->here != '/coupons/users/login' ) { ?>
             <!-- Login functionality with dropdown -->
 			<?php 
-
+                
+                //if user is logged in take his profile link and logout link
                 if( $this->Session->check( 'Auth.User' ) ) {
 
                     $username = $this->Session->read( 'Auth.User.username' );
+                    $role = $this->Session->read( 'Auth.User.role' );
+                    $id = $this->Session->read( 'Auth.User.role_id' );
+
+                    $profile = $this->Html->link( __('Το προφίλ μου'), 
+                        ($role=='company')?"/companies/view/".$id:"/students/view/".$id);
+
                     $logout = $this->Html->link( __('Αποσύνδεση '), array( 'controller' => 'users', 'action' => 'logout') );
-                    echo "<p class=\"navbar-text pull-right\">$logout( $username )</p>";
+
+                    echo "<p class=\"navbar-text pull-right\">$profile&nbsp&nbsp&nbsp$logout( $username )</p>";
                 } else {?>
-                    
+                   <!--TODO all inside element -->
                     <ul class="nav pull-right">
                     <li class="dropdown" id="login">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#login">
@@ -66,7 +74,6 @@
 
                     <ul class="dropdown-menu">
 
-                        <?php echo $this->Session->flash('auth'); ?>
                         <?php echo $this->Form->create('User', array(
                             'action'=>'post', 'url'=>array(
                                                 'controller'=>'users', 'action'=>'login') ));?>

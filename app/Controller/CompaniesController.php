@@ -104,18 +104,22 @@ class CompaniesController extends AppController {
             if (!$this->Company->save($this->request->data))
                 $error = true;
 
-            $photos = $this->processImages($this->request->data['Image'],
-                                           1, false, null,
-                                           array('company_id' => $company['Company']['id']));
+            $photos = Image::process($this->request->data['Image'],
+                                     array('company_id' => $company['Company']['id']),
+                                     1, false);
             if (!empty($photos) && !$this->Image->saveMany($photos))
                 $error = true;
 
             if ($error) {
                 $transaction->rollback();
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.');
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
+                                         'default',
+                                         array('class' => Flash::Error));
             } else {
                 $transaction->commit();
-                $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν.');
+                $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν.',
+                                         'default',
+                                         array('class' => Flash::Success));
                 $this->redirect(array(
                         'controller' => 'companies',
                         'action' => 'view',

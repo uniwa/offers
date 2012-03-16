@@ -25,10 +25,14 @@ class OffertypesController extends  AppController {
     public function add () {
         if (!empty($this->data)) {
             if ($this->OfferType->save($this->data)) {
-                $this->Session->setFlash('Η αποθήκευση ήταν επιτυχής.');
+                $this->Session->setFlash('Η αποθήκευση ήταν επιτυχής.',
+                                         'default',
+                                         array('class' => Flash::Success));
                 $this->redirect(array('controller' => 'Offertypes'));
             } else {
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.');
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
+                                         'default',
+                                         array('class' => Flash::Error));
             }
         }
     }
@@ -49,10 +53,14 @@ class OffertypesController extends  AppController {
         } else {
 
             if ($this->OfferType->save($this->data)) {
-                $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν επιτυχώς.');
+                $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν επιτυχώς.',
+                                         'default',
+                                         array('class' => Flash::Success));
                 $this->redirect(array('controller' => 'Offertypes', 'action' => 'index'));
             } else {
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.');
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
+                                         'default',
+                                         array('class' => Flash::Error));
             }
         }
     }

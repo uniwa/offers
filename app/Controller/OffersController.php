@@ -105,11 +105,10 @@ class OffersController extends AppController {
 
             if ($this->Offer->save($this->data)) {
 
-                $photos = $this->processImages($this->request->data['Image'],
-                                               1, true, null,
-                                               array('offer_id' => $this->Offer->id));
+                $photos = Image::process($this->request->data['Image'],
+                                         array('offer_id' => $this->Offer->id));
                 // try to save images
-                if (!$this->Image->saveMany($photos))
+                if (!empty($photos) && !$this->Image->saveMany($photos))
                     $error = true;
 
                 // try to save WorkHours only if Offer.category is HappyHour
@@ -126,10 +125,14 @@ class OffersController extends AppController {
 
             if ($error === true) {
                 $transaction->rollback();
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα');
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
+                                         'default',
+                                         array('class' => Flash::Error));
             } else {
                 $transaction->commit();
-                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε');
+                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε',
+                                         'default',
+                                         array('class' => Flash::Success));
                 $this->redirect(array(
                                     'controller' => 'companies',
                                     'action' => 'view',
@@ -199,14 +202,10 @@ class OffersController extends AppController {
             if ($this->Offer->save($this->data)) {
 
                 // try to save the new images
-                $photos = $this->processImages($this->request->data['Image']);
-                if (!empty($photos)) {
-                    for ($i = 0; $i < count($photos); $i++)
-                        $photos[$i]['offer_id'] = $this->Offer->id;
-
-                    if (!$this->Image->saveMany($photos))
-                        $error = true;
-                }
+                $photos = Image::process($this->request->data['Image'],
+                                         array('offer_id' => $this->Offer->id));
+                if (!empty($photos) && !$this->Image->saveMany($photos))
+                $error = true;
 
                 // If Offer.category is HappyHour delete all the related
                 // images and insert new entries
@@ -229,10 +228,14 @@ class OffersController extends AppController {
 
             if ($error === true) {
                 $transaction->rollback();
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα');
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
+                                         'default',
+                                         array('class' => Flash::Error));
             } else {
                 $transaction->commit();
-                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε');
+                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε',
+                                         'default',
+                                         array('class' => Flash::Success));
             }
         }
     }
@@ -263,21 +266,27 @@ class OffersController extends AppController {
 
                 if ($error === true) {
                     $transaction->rollback();
-                    $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.');
+                    $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
+                                             'default',
+                                             array('class' => Flash::Error));
                     $this->redirect(array(
                                         'controller' => 'offers',
                                         'action' => 'view',
                                         $offer['Offer']['id']));
                 } else {
                     $transaction->commit();
-                    $this->Session->setFlash('Η προσφορά διαγράφηκε επιτυχώς.');
+                    $this->Session->setFlash('Η προσφορά διαγράφηκε επιτυχώς.',
+                                             'default',
+                                             array('class' => Flash::Success));
                     $this->redirect(array(
                                         'controller' => 'companies',
                                         'action' => 'view',
                                         $offer['Company']['id']));
                 }
             } else {
-                $this->Session->setFlash('Η προσφορά δεν μπορεί να διαγραφεί');
+                $this->Session->setFlash('Η προσφορά δεν μπορεί να διαγραφεί',
+                                         'default',
+                                         array('class' => Flash::Info));
                 $this->redirect(array(
                                     'controller' => 'offers',
                                     'action' => 'view',

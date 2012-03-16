@@ -8,6 +8,7 @@ if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
                                 'controller' => 'offers',
                                 'action' => 'delete',
                                 $offer['Offer']['id']),
+                            array(),
                            'Να διαγραφεί η προσφοα;').'<br/>';
 
     echo $this->Html->link('Επεξεργασία', array(

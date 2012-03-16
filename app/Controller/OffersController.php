@@ -61,7 +61,7 @@ class OffersController extends AppController {
                                     'Offer.id' => $id,
         //TODO uncomment the next line when the offer activation logic is
         // implemented
-//                                     'Offer.offer_state_id' => OfferStates::Active,
+                                    //'Offer.offer_state_id' => OfferStates::Active,
                                     'Company.is_enabled' => 1
                                  );
         //TODO check if the company's user is_banned before showing the offer
@@ -83,7 +83,7 @@ class OffersController extends AppController {
         $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
         $this->set('days', $this->Day->find('list'));
 
-        if (!empty($this->data)) {
+        if (!empty($this->request->data)) {
 
             // set the required default values
             $this->request->data['Offer']['current_quantity'] = 0;
@@ -103,7 +103,7 @@ class OffersController extends AppController {
             $transaction->begin();
             $error = false;
 
-            if ($this->Offer->save($this->data)) {
+            if ($this->Offer->save($this->request->data)) {
 
                 $photos = Image::process($this->request->data['Image'],
                                          array('offer_id' => $this->Offer->id));
@@ -112,11 +112,11 @@ class OffersController extends AppController {
                     $error = true;
 
                 // try to save WorkHours only if Offer.category is HappyHour
-                if ($this->data['Offer']['offer_category_id'] == 1) {
-                    for ($i = 0; $i < count($this->data['WorkHour']); $i++)
+                if ($this->request->data['Offer']['offer_category_id'] == 1) {
+                    for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
                         $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;
 
-                    if (!$this->WorkHour->saveMany($this->data['WorkHour']))
+                    if (!$this->WorkHour->saveMany($this->request->data['WorkHour']))
                         $error = true;
                 }
             } else {
@@ -161,7 +161,7 @@ class OffersController extends AppController {
         $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
         $this->set('days', $this->Day->find('list'));
 
-        if (empty($this->data)) {
+        if (empty($this->request->data)) {
 
             // find the images of this offer and put them in $offer variable
             if ($offer['Offer']['image_count'] > 0) {
@@ -199,7 +199,7 @@ class OffersController extends AppController {
             $transaction->begin();
             $error = false;
 
-            if ($this->Offer->save($this->data)) {
+            if ($this->Offer->save($this->request->data)) {
 
                 // try to save the new images
                 $photos = Image::process($this->request->data['Image'],
@@ -209,13 +209,13 @@ class OffersController extends AppController {
 
                 // If Offer.category is HappyHour delete all the related
                 // images and insert new entries
-                if ($this->data['Offer']['offer_category_id'] == 1) {
+                if ($this->request->data['Offer']['offer_category_id'] == 1) {
                     $del_opts['WorkHour.offer_id'] = $this->Offer->id;
                     if ($this->WorkHour->deleteAll($del_opts, false)) {
-                        for ($i = 0; $i < count($this->data['WorkHour']); $i++)
+                        for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
                             $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;
 
-                        if (!$this->WorkHour->saveMany($this->data['WorkHour']))
+                        if (!$this->WorkHour->saveMany($this->request->data['WorkHour']))
                             $error = true;
                     } else
                         $error = true;

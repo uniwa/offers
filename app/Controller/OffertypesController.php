@@ -23,8 +23,8 @@ class OffertypesController extends  AppController {
 
 
     public function add () {
-        if (!empty($this->data)) {
-            if ($this->OfferType->save($this->data)) {
+        if (!empty($this->request->data)) {
+            if ($this->OfferType->save($this->request->data)) {
                 $this->Session->setFlash('Η αποθήκευση ήταν επιτυχής.',
                                          'default',
                                          array('class' => Flash::Success));
@@ -42,7 +42,7 @@ class OffertypesController extends  AppController {
 
         if ($id == null) throw new BadRequestException();
 
-        if (empty($this->data)) {
+        if (empty($this->request->data)) {
 
             $options['conditions'] = array('OfferType.id' => $id);
             $type = $this->OfferType->find('first', $options);
@@ -52,7 +52,7 @@ class OffertypesController extends  AppController {
             $this->request->data = $type;
         } else {
 
-            if ($this->OfferType->save($this->data)) {
+            if ($this->OfferType->save($this->request->data)) {
                 $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν επιτυχώς.',
                                          'default',
                                          array('class' => Flash::Success));

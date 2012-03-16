@@ -93,9 +93,13 @@ class CompaniesController extends AppController {
             $error = false;
 
             // update work_hours first
-            if (isset($this->request->data['WorkHour']) &&
-                !$this->WorkHour->saveAll($this->request->data['WorkHour']))
-                $error = true;
+            if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
+                for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
+                    $this->request->data['WorkHour'][$i]['company_id'] = $company['Company']['id'];
+
+                if (!$this->WorkHour->saveAll($this->request->data['WorkHour']))
+                    $error = true;
+            }
 
             $this->User->id = $company['Company']['user_id'];
             if (!$this->User->saveField('email', $this->request->data['User']['email']))

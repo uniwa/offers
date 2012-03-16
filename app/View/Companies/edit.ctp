@@ -72,7 +72,7 @@ if( $c != 0  ) {
 
 <?php
     for ($i = 0; $i < $c; $i++) {
-        echo '<tr>';
+        echo '<tr id="row'.$i.'">';
 
         echo $this->Form->hidden('WorkHour.'.$i.'.id');
         echo $this->Form->hidden('WorkHour.'.$i.'.company_id');
@@ -104,7 +104,7 @@ if( $c != 0  ) {
                                 )).
             '</td>';
 
-        echo '<td><div class="'.$i.'"<label for="remove"></label><a class = "btn" id="remove">Αφαίρεση</a></td>';
+            echo '<td><div class="'.$i.'"><label for="remove"></label><a class = "btn" id="remove">Αφαίρεση</a></td>';
 
 
         echo '</tr>';

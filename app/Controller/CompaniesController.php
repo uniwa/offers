@@ -64,9 +64,8 @@ class CompaniesController extends AppController {
 
 
     public function edit ($id = null) {
-
+        
         if ($id == null) throw new BadRequestException();
-
         $this->set('municipalities',
                    $this->Municipality->find('list', array(
                                              'order' => 'Municipality.name ASC')

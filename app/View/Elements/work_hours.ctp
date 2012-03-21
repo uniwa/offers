@@ -53,7 +53,7 @@ if( $c != 0  ) {
                                 )).
             '</td>';
 
-        echo '<td><div class="'.$i.'"><label for="remove"></label><a class = "btn" id="remove">Αφαίρεση</a></td>';
+        echo '<td><div class="'.$i.'"><label for="remove"></label><a class = "btn" id="remove">Αφαίρεση</i></a></td>';
 
 
         echo '</tr>';

@@ -3,7 +3,7 @@
 class OffersController extends AppController {
 
     public $name = 'Offers';
-    public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day');
+    public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day', 'Coupon', 'Student');
     public $paginate = array(
         'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
@@ -14,7 +14,7 @@ class OffersController extends AppController {
         'recursive' => -1
     );
 
-    public $helpers = array( 'Html' );
+    public $helpers = array('Html');
 
     function beforeFilter(){
         parent::beforeFilter();
@@ -70,6 +70,13 @@ class OffersController extends AppController {
         $this->set('offer', $offer);
         if (empty($offer))
             throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
+
+        if ($this->Auth->User('role') === 'student') {
+            $st_opts['conditions'] = array('Student.id' => $this->Auth->User('id'));
+            $st_opts['recursive'] = -1;
+            $student = $this->Student->find('first', $st_opts);
+            $this->set('student', $student);
+        }
     }
 
 

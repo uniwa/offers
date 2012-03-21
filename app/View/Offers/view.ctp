@@ -50,6 +50,19 @@ if (isset($offer['Offer']['coupon_count']) && $offer['Offer']['coupon_count'] >=
          '<br/>';
 }
 
+if ($this->Session->read('Auth.User.role') === 'student' &&
+    $offer['OfferCategory']['name'] !== 'happy hour')
+{
+    echo '<br/><br/>';
+    echo $this->Form->create(false, array('type' => 'post',
+                                          'url' => array('controller' => 'coupons',
+                                                         'action' => 'add')
+                                         ));
+    echo $this->Form->hidden('Coupon.offer_id', array('value' => $offer['Offer']['id']));
+    echo $this->Form->hidden('Coupon.student_id', array('value' => $student['Student']['id']));
+    echo $this->Form->end('Get Coupon');
+}
+
 if (!empty($offer['Image']))
     foreach ($offer['Image'] as $image)
         echo $this->Html->image('/images/view/'.$image['id']);

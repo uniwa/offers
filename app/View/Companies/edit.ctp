@@ -51,9 +51,8 @@ echo $this->Form->input('Company.fax', array(
 ?>
 
 <?php 
-
 echo $this->element( "work_hours", array(
-    "work_hour_count" => $work_hour_count,
+    "work_hour_count" => $company['Company']['work_hour_count'],
     "timeFormat" => 24,
     //"interval" => 15 //default
     "header" => array('Ημέρα', 'Ώρα Έναρξης', 'Ώρα Λήξης', 'Επιλογή'),

@@ -3,5 +3,8 @@
 class Coupon extends AppModel {
 
     public $name = 'Coupon';
-    public $belongsTo = array('Students', 'Offer');
+    public $belongsTo = array('Students',
+                              'Offer' => array(
+                                    'counterCache' => true
+                              ));
 }

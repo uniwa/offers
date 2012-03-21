@@ -46,7 +46,7 @@ echo 'Happy Hour only<br/>';
 
 
 echo $this->element( "work_hours", array(
-    "work_hour_count" => $work_hour_count,
+    "work_hour_count" => 0,
     "timeFormat" => 24,
     //"interval" => 15 //default
     "header" => array('Ημέρα', 'Ώρα Έναρξης', 'Ώρα Λήξης', 'Επιλογή'),

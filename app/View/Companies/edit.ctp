@@ -50,70 +50,19 @@ echo $this->Form->input('Company.fax', array(
                        ));
 ?>
 
-Ωράριο λειτουργίας: <a class ="btn" id="create">Προσθήκη <b class"carret"></b></a>
+<?php 
 
-<?php $c = count( $company['WorkHour'] );
-echo '<input type="hidden" name="workcount" class="workcount" value="'.$c.'"/>';?>
-<!--geneartes table when table not set-->
-<div id="table"></div>
-<?php
-if( $c != 0  ) {
-?>
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>ΗΜΕΡΑ</th>
-            <th>Ώρα έναρξης</th>
-            <th>Ώρα λήξης</th>
-        </tr>
-    </thead>
-    <tbody>
-
-<?php
-    for ($i = 0; $i < $c; $i++) {
-        echo '<tr id="row'.$i.'">';
-
-        echo $this->Form->hidden('WorkHour.'.$i.'.id');
-        echo $this->Form->hidden('WorkHour.'.$i.'.company_id');
-
-        echo '<td>'.
-             $this->Form->input('WorkHour.'.$i.'.day_id',
-                                array('label' => 'Ημέρα')).
-             '</td>';
-
-        echo '<td>'.
-             $this->Form->input('WorkHour.'.$i.'.starting',
-                                array(
-                                    'label' => null,
-                                    'type'=>'time',
-                                    'timeFormat'=>24,
-                                    'interval'=>15,
-                                    'class'=>'span3'
-                                )).
-             '</td>';
-
-        echo '<td>'.
-             $this->Form->input('WorkHour.'.$i.'.ending',
-                                array(
-                                    'label' => null,
-                                    'type'=>'time',
-                                    'timeFormat'=>24,
-                                    'interval'=>15,
-                                    'class'=>'span3'
-                                )).
-            '</td>';
-
-            echo '<td><div class="'.$i.'"><label for="remove"></label><a class = "btn" id="remove">Αφαίρεση</a></td>';
-
-
-        echo '</tr>';
-    }
-
-?>
-    </tbody>
-</table>
-<?php }?>
+echo $this->element( "work_hours", array(
+    "work_hour_count" => $work_hour_count,
+    "timeFormat" => 24,
+    //"interval" => 15 //default
+    "header" => array('Ημέρα', 'Ώρα Έναρξης', 'Ώρα Λήξης', 'Επιλογή'),
+    "table_class" => "table table-striped",
+    //"input_class" => span3, //default
+    //"input_label" => null, //default
+    //"staring_time_label" => null, //default
+    //"ending_time_lebel" => null, //default
+) );?>
 
 <?php
 

@@ -185,7 +185,7 @@ class OffersController extends AppController {
                 $offer['WorkHour'] = Set::extract('/WorkHour/.',
                                                   $this->WorkHour->find('all', $wh_opts));
             }
-
+            $this->set('work_hour_count', $offer['Offer']['work_hour_count'] );
             $this->request->data = $offer;
         } else {
             // set the required default values
@@ -219,11 +219,14 @@ class OffersController extends AppController {
                 if ($this->request->data['Offer']['offer_category_id'] == 1) {
                     $del_opts['WorkHour.offer_id'] = $this->Offer->id;
                     if ($this->WorkHour->deleteAll($del_opts, false)) {
+
+                       // pr( $this->request->data('WorkHour'); die();
                         for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
                             $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;
 
                         if (!$this->WorkHour->saveMany($this->request->data['WorkHour']))
                             $error = true;
+                       $this->set( 'work_hour_count', count($this->request->data['WorkHour'] )); 
                     } else
                         $error = true;
                 }
@@ -244,7 +247,16 @@ class OffersController extends AppController {
                                          'default',
                                          array('class' => Flash::Success));
             }
+
+            /*$options['fields'] =  array( 'Offer.work_hour_count' );
+            $options['conditions'] = array('Offer.id' => $id);
+            $options['recursive'] = 0;
+            $this->set( 'work_hour_count', $this->Offer->find('first', $options) );*/
+           
         }
+        
+        
+
     }
 
 

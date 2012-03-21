@@ -28,6 +28,7 @@
 </head>
 <body>
 
+    <?php  //echo $this->element( 'terms' ); ?>
    <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
@@ -107,7 +108,6 @@
       	<div class="row-fluid">
 			<?php echo $content_for_layout;?>
 			<!--modal snipet-->
-			<?php echo $this->element( 'terms' );?>
 		</div><!--/row-->
 	
    		

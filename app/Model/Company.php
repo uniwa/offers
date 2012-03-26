@@ -98,13 +98,33 @@ class Company extends AppModel {
             'size' => array(
                 'rule' => array('between', 9, 9),
                 'allowEmpty' => true,
-                'message' => 'Το ΑΦΜ πρέπει να περιέχει ακριβώς 9 ψηφία.'
+                'message' => 'Ο ΑΦΜ πρέπει να περιέχει ακριβώς 9 ψηφία.'
             ),
             'valid' => array(
                 'rule' => '/^\d+$/',
-                'message' => 'Το ΑΦΜ πρέπει να περιέχει μόνο ψηφία',
+                'message' => 'Ο ΑΦΜ πρέπει να περιέχει μόνο ψηφία',
+                'allowEmpty' => true
+            ),
+            'valid' => array(
+                'rule' => 'checkValid',
+                'message' => 'Ο ΑΦΜ δεν είναι έγκυρος',
                 'allowEmpty' => true
             )
         )
     );
+
+    public function checkValid($afm){
+        $afm = $afm['afm'];
+        $result = false;
+        if(strlen($afm) == 9){
+            $remainder = 0;
+            $sum = 0;
+            for ($nn = 2, $k = 7, $sum = 0; $k >= 0; $k--, $nn += $nn){
+                $sum += $nn * ($afm[$k]);
+            }
+            $remainder = $sum % 11;
+            $result = ($remainder == 10)?($afm[8] == '0'):($afm[8] == $remainder);
+        }
+        return $result;
+    }
 }

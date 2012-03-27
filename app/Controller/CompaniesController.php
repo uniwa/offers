@@ -91,7 +91,13 @@ class CompaniesController extends AppController {
             $transaction->begin();
             $error = false;
 
-            // update work_hours first
+            if (!$this->Company->save($this->request->data))
+                $error = true;
+
+            $del_opts['WorkHour.company_id'] = $this->request->data['Company']['id'];
+            if (!$this->WorkHour->deleteAll($del_opts, true, true))
+                $error = true;
+
             if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
                 for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
                     $this->request->data['WorkHour'][$i]['company_id'] = $company['Company']['id'];
@@ -102,9 +108,6 @@ class CompaniesController extends AppController {
 
             $this->User->id = $company['Company']['user_id'];
             if (!$this->User->saveField('email', $this->request->data['User']['email']))
-                $error = true;
-
-            if (!$this->Company->save($this->request->data))
                 $error = true;
 
             $photos = $this->Image->process($this->request->data['Image'],

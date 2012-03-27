@@ -23,7 +23,7 @@ class Image extends AppModel {
      *
      * @return true or false
      */
-    public static function isValid($file_type, $valid = null) {
+    public function isValid($file_type, $valid = null) {
 
         if (is_null($valid))
             $valid = self::$validExtensions;
@@ -55,7 +55,7 @@ class Image extends AppModel {
      *
      * @return Array of images
      */
-    public static function process($images,
+    public function process($images,
                                    $foreign_keys = array(),
                                    $image_category = 1,
                                    $generate_thumbs = true,
@@ -75,11 +75,11 @@ class Image extends AppModel {
         if (isset($images['tmp_name'])) $images = array($images);
 
         foreach ($images as $image) {
-            $tmp = self::_process($image, $image_category, $foreign_keys);
+            $tmp = $this->_process($image, $image_category, $foreign_keys);
             if (!empty($tmp)) {
                 $photos[] = $tmp;
                 if ($generate_thumbs === true)
-                    $photos[] = self::_createThumbnail($tmp, $thumb_size);
+                    $photos[] = $this->_createThumbnail($tmp, $thumb_size);
             }
         }
 
@@ -100,7 +100,7 @@ class Image extends AppModel {
      *
      * @return Array containing image information and data
      */
-    private static function _process($image, $image_category, $foreign_keys) {
+    private function _process($image, $image_category, $foreign_keys) {
         if ((isset($image['tmp_name']) && $image['tmp_name'] == null ) ||
              isset($image['id']))
             return array();
@@ -108,7 +108,7 @@ class Image extends AppModel {
         if (!is_uploaded_file($image['tmp_name']))
             throw new UploadFileException();
 
-        if (!self::isValid($image['type']))
+        if (!$this->isValid($image['type']))
             throw new ImageExtensionException();
 
         $file = fread(fopen($image['tmp_name'], 'r'), $image['size']);
@@ -129,7 +129,7 @@ class Image extends AppModel {
      *
      * @return The thumbnail ready to be saved in DB as blob
      */
-    private static function _createThumbnail($source_img, $thumb_size) {
+    private function _createThumbnail($source_img, $thumb_size) {
 
         $extension = explode('/', $source_img['type']);
         $extension = $extension[1];

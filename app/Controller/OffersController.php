@@ -112,7 +112,7 @@ class OffersController extends AppController {
 
             if ($this->Offer->save($this->request->data)) {
 
-                $photos = Image::process($this->request->data['Image'],
+                $photos = $this->Image->process($this->request->data['Image'],
                                          array('offer_id' => $this->Offer->id));
                 // try to save images
                 if (!empty($photos) && !$this->Image->saveMany($photos))
@@ -209,7 +209,7 @@ class OffersController extends AppController {
             if ($this->Offer->save($this->request->data)) {
 
                 // try to save the new images
-                $photos = Image::process($this->request->data['Image'],
+                $photos = $this->Image->process($this->request->data['Image'],
                                          array('offer_id' => $this->Offer->id));
                 if (!empty($photos) && !$this->Image->saveMany($photos))
                 $error = true;
@@ -226,15 +226,13 @@ class OffersController extends AppController {
 
                         if (!$this->WorkHour->saveMany($this->request->data['WorkHour']))
                             $error = true;
-                       $this->set( 'work_hour_count', count($this->request->data['WorkHour'] )); 
+                       $this->set( 'work_hour_count', count($this->request->data['WorkHour'] ));
                     } else
                         $error = true;
                 }
             } else {
                 $error = true;
             }
-
-// $transaction->rollback();pr($offer); die();
 
             if ($error === true) {
                 $transaction->rollback();
@@ -252,11 +250,7 @@ class OffersController extends AppController {
             $options['conditions'] = array('Offer.id' => $id);
             $options['recursive'] = 0;
             $this->set( 'work_hour_count', $this->Offer->find('first', $options) );*/
-           
         }
-        
-        
-
     }
 
 

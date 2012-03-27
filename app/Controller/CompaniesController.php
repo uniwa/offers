@@ -35,7 +35,7 @@ class CompaniesController extends AppController {
                                               'Offer.offer_state_id' => OfferStates::Active);
         $active_options['fields'] = array('Offer.*');
         $active_options['order'] = array();
-        $active_options['recrsive'] = 0;
+        $active_options['recursive'] = 0;
         $offers_tmp = $this->Offer->find('all', $active_options);
         $offers['Offer']['Active'] = Set::extract('/Offer/.', $offers_tmp);
 
@@ -64,7 +64,7 @@ class CompaniesController extends AppController {
 
 
     public function edit ($id = null) {
-        
+
         if ($id == null) throw new BadRequestException();
         $this->set('municipalities',
                    $this->Municipality->find('list', array(

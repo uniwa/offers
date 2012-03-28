@@ -24,7 +24,7 @@ class OffersController extends AppController {
     public function index() {
         //get last 3 happy  hour offers
         $happyOffers = $this->Offer->find( 'all' , array(
-            'conditions'=>array('Offer.offer_category_id' => 1,
+            'conditions'=>array('Offer.offer_type_id' => 1,
                             'Offer.offer_state_id' => OfferStates::Active
                             ),
             'limit' => 3,
@@ -38,7 +38,7 @@ class OffersController extends AppController {
         $this->set( 'happyOffers', $happyOffers );
 
         $offers = $this->paginate('Offer', array(
-                                    'Offer.offer_category_id !=' => 1,
+                                    'Offer.offer_type_id !=' => 1,
                                     'Offer.offer_state_id' => OfferStates::Active
                                 ) );
         $this->minify_desc( $offers, 160 );
@@ -119,15 +119,16 @@ class OffersController extends AppController {
                     $error = true;
 
                 // try to save WorkHours only if Offer.category is HappyHour
-                if ($this->request->data['Offer']['offer_category_id'] == 1) {
-                    for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
-                        $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;
+                if ($this->request->data['Offer']['offer_type_id'] == 1) {
+                    if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
+                        for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
+                            $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;
 
-                    if (!$this->WorkHour->saveMany($this->request->data['WorkHour']))
+                        if (!$this->WorkHour->saveMany($this->request->data['WorkHour']))
+                            $error = true;
+                    } else
                         $error = true;
                 }
-            } else {
-                $error = true;
             }
 
             if ($error === true) {
@@ -221,7 +222,7 @@ class OffersController extends AppController {
 
             // If Offer.category is HappyHour delete all the related
             // images and insert new entries
-            if ($this->request->data['Offer']['offer_category_id'] == 1) {
+            if ($this->request->data['Offer']['offer_type_id'] == 1) {
 
                 if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
                     for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)

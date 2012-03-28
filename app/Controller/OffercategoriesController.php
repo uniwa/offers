@@ -1,9 +1,9 @@
 <?php
 
-class OffertypesController extends  AppController {
+class OffercategoriesController extends  AppController {
 
-    public $name = 'Offertypes';
-    public $uses = array('OfferType');
+    public $name = 'offercategories';
+    public $uses = array('OfferCategory');
     public $helpers = array('Html', 'Form');
 
 
@@ -17,18 +17,18 @@ class OffertypesController extends  AppController {
 
     public function index () {
 
-        $offerTypes = $this->OfferType->find('all');
-        $this->set('results', $offerTypes);
+        $offerCategories = $this->OfferCategory->find('all');
+        $this->set('results', $offerCategories);
     }
 
 
     public function add () {
         if (!empty($this->request->data)) {
-            if ($this->OfferType->save($this->request->data)) {
+            if ($this->OfferCategory->save($this->request->data)) {
                 $this->Session->setFlash('Η αποθήκευση ήταν επιτυχής.',
                                          'default',
                                          array('class' => Flash::Success));
-                $this->redirect(array('controller' => 'Offertypes'));
+                $this->redirect(array('controller' => 'offercategories'));
             } else {
                 $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
                                          'default',
@@ -44,19 +44,19 @@ class OffertypesController extends  AppController {
 
         if (empty($this->request->data)) {
 
-            $options['conditions'] = array('OfferType.id' => $id);
-            $type = $this->OfferType->find('first', $options);
+            $options['conditions'] = array('OfferCategory.id' => $id);
+            $type = $this->OfferCategory->find('first', $options);
 
             if (empty($type)) throw new NotFoundException();
 
             $this->request->data = $type;
         } else {
 
-            if ($this->OfferType->save($this->request->data)) {
+            if ($this->OfferCategory->save($this->request->data)) {
                 $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν επιτυχώς.',
                                          'default',
                                          array('class' => Flash::Success));
-                $this->redirect(array('controller' => 'Offertypes', 'action' => 'index'));
+                $this->redirect(array('controller' => 'offercategories', 'action' => 'index'));
             } else {
                 $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
                                          'default',
@@ -70,14 +70,14 @@ class OffertypesController extends  AppController {
 
         if ($id == null) throw new BadRequestException();
 
-        $options['conditions'] = array('OfferType.id' => $id);
-        $type = $this->OfferType->find('first', $options);
+        $options['conditions'] = array('OfferCategory.id' => $id);
+        $type = $this->OfferCategory->find('first', $options);
 
         if (empty($type)) throw new NotFoundException();
 
-        if ($this->OfferType->delete($id)) {
+        if ($this->OfferCategory->delete($id)) {
             $this->Session->setFlash('Η διαγραφή ήταν επιτυχής.');
-            $this->redirect(array('controller' => 'Offertypes', 'action' => 'index'));
+            $this->redirect(array('controller' => 'offercategories', 'action' => 'index'));
         } else {
             $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.');
         }

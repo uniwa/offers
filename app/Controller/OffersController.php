@@ -25,7 +25,8 @@ class OffersController extends AppController {
         //get last 3 happy  hour offers
         $happyOffers = $this->Offer->find( 'all' , array(
             'conditions'=>array('Offer.offer_category_id' => 1,
-                            'Offer.offer_state_id' => OfferStates::Active
+                            'Offer.offer_state_id' => OfferStates::Active,
+                            'Offer.is_spam' => 0
                             ),
             'limit' => 3,
             'recursive' => -1,
@@ -39,7 +40,8 @@ class OffersController extends AppController {
 
         $offers = $this->paginate('Offer', array(
                                     'Offer.offer_category_id !=' => 1,
-                                    'Offer.offer_state_id' => OfferStates::Active
+                                    'Offer.offer_state_id' => OfferStates::Active,
+                                    'Offer.is_spam' => 0
                                 ) );
         $this->minify_desc( $offers, 160 );
         $this->set('offers', $offers);
@@ -62,6 +64,7 @@ class OffersController extends AppController {
         //TODO uncomment the next line when the offer activation logic is
         // implemented
                                     //'Offer.offer_state_id' => OfferStates::Active,
+                                    //'Offer.is_spam' => 0
                                     'Company.is_enabled' => 1
                                  );
         //TODO check if the company's user is_banned before showing the offer

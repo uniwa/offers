@@ -1,12 +1,8 @@
 /*
--- Query: 
+-- Query:
 -- Date: 2012-01-12 09:48
 */
-INSERT INTO `offer_types` (`id`,`name`) VALUES (NULL,'Φαγητό');
-INSERT INTO `offer_types` (`id`,`name`) VALUES (NULL,'Υπηρεσίες');
-INSERT INTO `offer_types` (`id`,`name`) VALUES (NULL,'Δραστηριότητες & Χόμπι');
-INSERT INTO `offer_types` (`id`,`name`) VALUES (NULL,'Ένδυση & Υπόδηση');
-INSERT INTO `offer_types` (`id`,`name`) VALUES (NULL,'Υγεία');
-INSERT INTO `offer_types` (`id`,`name`) VALUES (NULL,'Ταξίδια & Εκδρομές');
-INSERT INTO `offer_types` (`id`,`name`) VALUES (NULL,'Διασκέδαση');
-INSERT INTO `offer_types` (`id`,`name`) VALUES (NULL,'Προϊόντα');
+
+INSERT INTO `offer_types` (`id`,`name`) VALUES (NULL,'happy hour');
+INSERT INTO `offer_types` (`id`,`name`) VALUES (NULL,'coupons');
+INSERT INTO `offer_types` (`id`,`name`) VALUES (NULL,'limited');

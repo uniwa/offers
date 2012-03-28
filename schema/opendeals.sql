@@ -215,6 +215,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   `image_count` INT NOT NULL DEFAULT 0 ,
   `work_hour_count` INT NOT NULL DEFAULT 0 ,
   `offer_state_id` INT NOT NULL DEFAULT 1 ,
+  `is_spam` TINYINT(1) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_offers_offer_categories` (`offer_category_id` ASC) ,
   INDEX `fk_offers_offer_types1` (`offer_type_id` ASC) ,

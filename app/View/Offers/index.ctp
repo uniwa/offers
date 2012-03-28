@@ -70,7 +70,7 @@ if( empty( $offers ) ) {
 
         }
         //offer start
-        if( $offer['Offer']['offer_category_id'] == 2 ) {
+        if( $offer['Offer']['offer_type_id'] == 2 ) {
 
              echo $this->element( 'grid',
                 array(

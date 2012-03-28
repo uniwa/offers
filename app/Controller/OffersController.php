@@ -5,7 +5,7 @@ class OffersController extends AppController {
     public $name = 'Offers';
     public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day', 'Coupon', 'Student');
     public $paginate = array(
-        'fields' => array('Offer.title', 'Offer.description'),
+//        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
         'order'=>array(
 

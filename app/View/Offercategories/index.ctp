@@ -14,7 +14,7 @@ if (isset($results)) {
                                      $ocategory['OfferCategory']['id'])
                             ).' ';
         echo $this->Html->link('Διαγραφή',
-                               array('controller' => 'offercategory',
+                               array('controller' => 'offercategories',
                                      'action' => 'delete',
                                      $ocategory['OfferCategory']['id']),
                                array(),

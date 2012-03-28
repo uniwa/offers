@@ -3,7 +3,7 @@
 <div class="hero-unit">
 <div class="row-fluid">
 
-<?php      
+<?php
 
 if( empty( $happyOffers ) ) {
 
@@ -14,12 +14,12 @@ if( empty( $happyOffers ) ) {
         ));
 } else {
 
-        foreach( $happyOffers as $key => $hr ) { 
+        foreach( $happyOffers as $key => $hr ) {
 
-            echo $this->element( 'grid', 
-                array( 
-                    'span'=>4, 
-                    'offset'=>1, 
+            echo $this->element( 'grid',
+                array(
+                    'span'=>4,
+                    'offset'=>1,
                     'title'=>"<h2>{$happyOffers[$key]['Offer']['title']}",
                     'label'=>"<span class=\"label label-info\">Happy Hour</span></h2>",
                     'description'=>"<p>{$happyOffers[$key]['Offer']['description']}</p>",
@@ -36,11 +36,11 @@ echo '</div>';//hero unit
 <div class = "pagination">
 <ul>
 <?php echo $this->Paginator->numbers(array(
-    'first' => 2, 
-    'last' => 2, 
+    'first' => 2,
+    'last' => 2,
     'modulus'=>3,
     'separator' => ' ',
-    'tag'=>'li', 
+    'tag'=>'li',
     'ellipsis'=> '<a href=" ">...</a>') );?>
 </ul>
 </div>
@@ -50,7 +50,7 @@ echo '</div>';//hero unit
 
 if( empty( $offers ) ) {
 
-    echo $this->element('alert', array( 
+    echo $this->element('alert', array(
             'type' => 'info',
             'label' => '<span class="label label-info">Offers</span>',
             'message' => ' Δεν υπάρχουν προσφορές' )
@@ -59,7 +59,7 @@ if( empty( $offers ) ) {
     //seperate in blocks of 3
     $sep = 3;
     $count = count( $offers )/$sep;
-    //offers 
+    //offers
     foreach( $offers as $key => $offer ) {
 
         if( $key%$sep == 0  && $key > 0) {
@@ -72,25 +72,25 @@ if( empty( $offers ) ) {
         //offer start
         if( $offer['Offer']['offer_category_id'] == 2 ) {
 
-             echo $this->element( 'grid', 
-                array( 
-                    'span'=>4, 
-                    'offset'=>0, 
+             echo $this->element( 'grid',
+                array(
+                    'span'=>4,
+                    'offset'=>0,
                     //h2 closes in label
                     'title'=>"<h2>{$offers[$key]['Offer']['title']}",
-                    'label'=>"<span class=\"label label-warning\">limited</span></h2>",
+                    'label'=>"<span class=\"label label-warning\">coupons</span></h2>",
                     'description'=>"<p>{$offers[$key]['Offer']['description']}</p>",
                     'btn' =>"<p><a class=\"btn\" href=\"#\">περισσότερα &raquo;</a></p>")
                 );
 
         } else {
-             echo $this->element( 'grid', 
-                array( 
-                    'span'=>4, 
-                    'offset'=>0, 
+             echo $this->element( 'grid',
+                array(
+                    'span'=>4,
+                    'offset'=>0,
                     //h2 closes in label
                     'title'=>"<h2>{$offers[$key]['Offer']['title']}",
-                    'label'=>"<span class=\"label label-success\">unlimited</span></h2>",
+                    'label'=>"<span class=\"label label-success\">limited</span></h2>",
                     'description'=>"<p>{$offers[$key]['Offer']['description']}</p>",
                     'btn' =>"<p><a class=\"btn\" href=\"#\">περισσότερα &raquo;</a></p>")
                 );
@@ -100,4 +100,3 @@ if( empty( $offers ) ) {
 }
 
 echo '</div>';//span 9
-

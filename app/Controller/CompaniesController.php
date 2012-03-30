@@ -35,7 +35,7 @@ class CompaniesController extends AppController {
                                               'Offer.offer_state_id' => OfferStates::Active);
         $active_options['fields'] = array('Offer.*');
         $active_options['order'] = array();
-        $active_options['recrsive'] = 0;
+        $active_options['recursive'] = 0;
         $offers_tmp = $this->Offer->find('all', $active_options);
         $offers['Offer']['Active'] = Set::extract('/Offer/.', $offers_tmp);
 
@@ -64,7 +64,7 @@ class CompaniesController extends AppController {
 
 
     public function edit ($id = null) {
-        
+
         if ($id == null) throw new BadRequestException();
         $this->set('municipalities',
                    $this->Municipality->find('list', array(
@@ -91,7 +91,13 @@ class CompaniesController extends AppController {
             $transaction->begin();
             $error = false;
 
-            // update work_hours first
+            if (!$this->Company->save($this->request->data))
+                $error = true;
+
+            $del_opts['WorkHour.company_id'] = $this->request->data['Company']['id'];
+            if (!$this->WorkHour->deleteAll($del_opts, true, true))
+                $error = true;
+
             if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
                 for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
                     $this->request->data['WorkHour'][$i]['company_id'] = $company['Company']['id'];
@@ -104,10 +110,7 @@ class CompaniesController extends AppController {
             if (!$this->User->saveField('email', $this->request->data['User']['email']))
                 $error = true;
 
-            if (!$this->Company->save($this->request->data))
-                $error = true;
-
-            $photos = Image::process($this->request->data['Image'],
+            $photos = $this->Image->process($this->request->data['Image'],
                                      array('company_id' => $company['Company']['id']),
                                      1, false);
             if (!empty($photos) && !$this->Image->saveMany($photos))

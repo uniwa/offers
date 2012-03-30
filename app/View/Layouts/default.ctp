@@ -117,7 +117,7 @@
         <hr id = "footer">
 
     	<footer>
-    	   	<p>&copy; Τ.Ε.Ι Αθήνας  2012</p>
+    	   	<p>&copy; Τ.Ε.Ι Αθήνας <?php echo date('Y'); ?></p>
         </footer>
 <!--will allow all scripts generated in layout elements to be output in one place-->
 <?php echo $this->Js->writeBuffer(); ?>

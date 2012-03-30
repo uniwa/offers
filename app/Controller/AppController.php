@@ -24,5 +24,18 @@ class AppController extends Controller{
     function beforeFilter() {
         //clear authError default message
         $this->Auth->authError = " ";
+
+        if(  $this->Auth->user() != null ) {
+            if(!($this->request['controller'] == 'TermsOfUse' && $this->request['action'] == 'index' )) { 
+                if( !($this->request['controller'] == 'Offers' && $this->request['action'] == 'index') ) {
+                   if( !($this->request['controller'] == 'Users' && $this->request['action'] == 'logout') ) {
+
+                    $this->redirect( array( 'controller'=>'TermsOfUse', 'action'=>'index' ) );
+                    }
+                
+                }
+            }
+        } 
     }
+
 }

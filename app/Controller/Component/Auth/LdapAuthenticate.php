@@ -25,7 +25,7 @@ class LdapAuthenticate extends BaseAuthenticate {
     }
 
     private function saveLdapInfo( $data ) {
-
+        
         $model = new User();
         $user = $model->find( 'all',
             array( 'conditions' => array( 'username' => $data['username'] ) )
@@ -56,6 +56,7 @@ class LdapAuthenticate extends BaseAuthenticate {
         //automagicaly wite's them in Auth.User
         //inside Session
         return $user[0]['User'];
+        return true;
     }
 
 }

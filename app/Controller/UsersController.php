@@ -20,60 +20,52 @@ class UsersController extends AppController {
 
         if( $this->request->is( 'post' ) ) {
             
-            $username = $this->request->data['User']['username'];
-            $currentUser = $this->User->find( 'first',
-                array( 'conditions' => array( 'username' => $username ) ));
-//TODO change the order set isCompanyEnabled after login
-            if( $this->isCompanyEnabled( $currentUser ) ) {
+            //This method resets the model 
+            //state for saving new information
+            $this->User->create(false); 
+            if( $this->Auth->login() ) {
             
-                if( $this->Auth->login() ) {
+                    $username = $this->request->data['User']['username'];
+                    $currentUser = $this->User->find( 'first',
+                        array( 'conditions' => array( 'username' => $username ) ));
 
-                    //get user or company id and set it in Sesion Auth.User 
-                    //array as role_id
-                    //writes student's or companie's related id
-                    $this->Session->write( 'Auth.User.role_id', 
-                        (empty($currentUser['Company']['id']))?$currentUser['Student']['id']:$currentUser['Company']['id']);
-                    pr( $this->Auth->user( 'role_id')); die();
+                    $role = $this->Auth->user('role');
+                    if( $role != 'admin' ) {
+                        //writes student's or companie's related id inside Session
+                        $this->Session->write( 'Auth.User.role_id', 
+                            (empty($currentUser['Company']['id']))?$currentUser['Student']['id']:$currentUser['Company']['id']);
+                    }   
 
-                    if( $this->Auth->user('role') != 'company'
-                        && $this->Auth->user('terms_accepted') == false ) {
+                    if( $role == 'company' && !$currentUser['Company']['is_enabled'] ) {
+                        
+                        $this->Auth->logout();
+                        $this->Session->setFlash(__("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"),
+                                         'default',
+                                         array('class' => Flash::Error));
+                        return;
 
+                    } 
+                   
+                    if( $role == 'student' && !$this->Auth->user('terms_accepted') ) {
+
+                        //logout inside TermsOfUse controller to use Sessions 
+                        //Auth array
                         $this->redirect( array('controller'=>'TermsOfUse', 'action'=>'index') );
                     }
 
                     
                     return $this->redirect( $this->Auth->redirect() );
+
                 } else {
 
                     $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"),
                                              'default',
                                              array('class' => Flash::Error));
                 }
-            } else {
 
-                $this->Session->setFlash(__("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"),
-                                         'default',
-                                         array('class' => Flash::Error));
-            }
         }
     }
 
-    //This function returns company state result( is_enabled )
-    //plus returns true if user is not company owner or is not exist
-    private function isCompanyEnabled( $currentUser ) {
-
-
-        //1.checks if current user not found
-        //2.or checks if user is not company owner
-        //and returns true to continue in login method
-        if( empty( $currentUser ) || $currentUser['User']['role'] != 'company'  ) {
-
-            return true;
-        }
-
-        return $currentUser['Company']['is_enabled'];
-
-    }
 
     function logout() {
 

@@ -18,7 +18,6 @@ class TermsOfUseController extends AppController {
             $accept = $data['User']['accept'];
             if( $accept == 1 ) {
 
-               // $this->loadModel( 'User', $id );
                 $this->User->id = $this->Auth->user('id');
                 $this->User->saveField('terms_accepted', true);
 

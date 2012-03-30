@@ -19,18 +19,29 @@ class UsersController extends AppController {
     function login() {
 
         if( $this->request->is( 'post' ) ) {
-
-            if( $this->isCompanyEnabled( $this->request->data ) ) {
-
+            
+            $username = $this->request->data['User']['username'];
+            $currentUser = $this->User->find( 'first',
+                array( 'conditions' => array( 'username' => $username ) ));
+//TODO change the order set isCompanyEnabled after login
+            if( $this->isCompanyEnabled( $currentUser ) ) {
+            
                 if( $this->Auth->login() ) {
 
                     //get user or company id and set it in Sesion Auth.User 
                     //array as role_id
-                    $user = $this->User->find( 'first', 
-                        array ( 'conditions' => array( 'User.id'=> $this->Auth->user('id') ) ) );
+                    //writes student's or companie's related id
                     $this->Session->write( 'Auth.User.role_id', 
-                        (empty($user['Company']['id']))?$user['Student']['id']:$user['Company']['id']);
+                        (empty($currentUser['Company']['id']))?$currentUser['Student']['id']:$currentUser['Company']['id']);
+                    pr( $this->Auth->user( 'role_id')); die();
 
+                    if( $this->Auth->user('role') != 'company'
+                        && $this->Auth->user('terms_accepted') == false ) {
+
+                        $this->redirect( array('controller'=>'TermsOfUse', 'action'=>'index') );
+                    }
+
+                    
                     return $this->redirect( $this->Auth->redirect() );
                 } else {
 
@@ -49,12 +60,7 @@ class UsersController extends AppController {
 
     //This function returns company state result( is_enabled )
     //plus returns true if user is not company owner or is not exist
-    private function isCompanyEnabled( $data ) {
-
-        $username = $data['User']['username'];
-        $currentUser = $this->User->find( 'first',
-            array( 'conditions' => array( 'username' => $username ) )
-        );
+    private function isCompanyEnabled( $currentUser ) {
 
 
         //1.checks if current user not found

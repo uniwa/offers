@@ -295,4 +295,10 @@ $(function() {
     });
 
 
+ 
+    //cross domain call in roommates
+    jQuery.getJSON("http://localhost/roommates/webservice/houses?callback=?", 
+            function(data) {
+                    console.log(data);
+            });
 });

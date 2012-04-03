@@ -139,7 +139,6 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
   `municipality_id` INT NULL DEFAULT NULL ,
   `image_count` INT NOT NULL DEFAULT 0 ,
   `work_hour_count` INT NOT NULL DEFAULT 0,
-  `is_spam` TINYINT( 1 ) NOT NULL DEFAULT 0 ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_companies_users1` (`user_id` ASC) ,
   INDEX `fk_companies_municipalities` (`municipality_id` ASC) ,

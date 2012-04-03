@@ -41,6 +41,7 @@ class LdapAuthenticate extends BaseAuthenticate {
                     'password' => '',
                     'email' => $data['email'],
                     'is_banned'=>0,
+                    'terms_accepted' => 0,
                     'role' => 'student' ),
                 'Student' =>
                     array(

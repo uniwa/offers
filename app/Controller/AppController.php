@@ -29,7 +29,7 @@ class AppController extends Controller{
         $cur_user = $this->Auth->user();
         if($cur_user != null) {
             if(!($this->request['controller'] == 'TermsOfUse')) { 
-                if( !($this->request['controller'] == 'Users' && $this->request['action'] == 'logout') ) {
+                if(!($this->request['controller'] == 'users' && $this->request['action'] == 'logout')) {
                     if(!$cur_user['terms_accepted']){
                         $this->redirect( array( 'controller'=>'TermsOfUse', 'action'=>'index' ) );
                     }

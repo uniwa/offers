@@ -14,19 +14,22 @@ class TermsOfUseController extends AppController {
 
         $data = $this->request->data;
         if( !empty( $data ) ) {
-
             $accept = $data['User']['accept'];
-            if( $accept == 1 ) {
 
+            if( $accept == 1 ) {
                 $this->User->id = $this->Auth->user('id');
                 $this->User->saveField('terms_accepted', true);
 
-                $this->Session->setFlash( __('Έχετε αποδεχτεί του όρους χρήσης'), 'default',
-                   array( 'class'=>Flash::Success ) ); 
-                $this->redirect( array( 'controller'=>'Offers', 'action' => 'index' ) );
-            } else {
+                // reload user info after the update
+                $this->Session->write('Auth',
+                                      $this->User->read(null, $this->Auth->user('id')));
 
-                $this->Session->setFlash( __('Δεν έχετε αποδεχτεί τους όρους χρήσης'), 'default', 
+                $this->Session->setFlash( __('Έχετε αποδεχτεί του όρους χρήσης'), 'default',
+                   array( 'class'=>Flash::Success ) );
+                $this->redirect( array( 'controller'=>'Offers', 'action' => 'index' ) );
+
+            } else {
+                $this->Session->setFlash( __('Δεν έχετε αποδεχτεί τους όρους χρήσης'), 'default',
                     array( 'class'=>Flash::Error ) );
                 $this->Auth->logout();
                 $this->redirect( array( 'controller'=>'Offers', 'action' => 'index' ) );

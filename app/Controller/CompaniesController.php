@@ -8,7 +8,7 @@ class CompaniesController extends AppController {
                          'User', 'Day', 'WorkHour', 'Image');
 
     public function view($id = null) {
-        if (! $this->is_authorized($this->Auth->user())
+        if (! $this->is_authorized($this->Auth->user()))
             throw new ForbiddenException();
 
         // everyone can view a company by id

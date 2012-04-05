@@ -20,12 +20,23 @@ class CompaniesController extends AppController {
 
     function view($id = null) {
 
-        $options['conditions'] = array('Company.id' => $id,
-                                       'Company.is_enabled' => 1,
-                                       'User.is_banned' => 0);
-        $options['recursive'] = 1;
-        $company = $this->Company->find('first', $options);
+        // everyone can view a company by id
+        $options['conditions'] = array('Company.id' => $id);
 
+        // allow companies to view their own profile without id
+        if ($this->Auth->user('role') === ROLE_COMPANY) {
+            if ($id == null) {
+                // view own profile
+                $options['conditions'] = array(
+                    'Company.user_id' => $this->Auth->user('id'));
+            }
+        }
+
+        // filter only enabled companies
+        $options['conditions'] += array('Company.is_enabled' => 1);
+        $options['recursive'] = 1;
+
+        $company = $this->Company->find('first', $options);
         if (empty($company))
             throw new NotFoundException('Η συγκεκριμένη επιχείρηση δεν
                                         βρέθηκε.');

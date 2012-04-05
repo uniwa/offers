@@ -38,4 +38,17 @@ class AppController extends Controller{
         }
     }
 
+    public function is_authorized($user) {
+        // main authorization function
+        // override in each controller
+
+        // admin can access every action
+        if (isset($user['role']) && $user['role'] === 'admin') {
+            return true;
+        }
+
+        // default deny
+        return false;
+    }
+
 }

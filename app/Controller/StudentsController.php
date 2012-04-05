@@ -17,18 +17,20 @@ class StudentsController extends AppController {
                 throw new NotFoundException('Το συγκεκριμένο profile χρήστη δεν
                                             βρέθηκε.');
             }
+
+            // admins query students using student ids
+            $options['conditions'] = array(
+                'conditions' => array('Student.id' => $id));
+
         } else {
-            $id = $this->Auth->user('id');
+            // users query their own profile using their user id
+            $options['conditions'] = array(
+                'conditions' => array('Student.user_id' => $this->Auth->user('id')));
         }
+        $options['recursive'] = 0;
 
         // get student profile and user info
-        $options = array(
-            'conditions' => array('Student.user_id' => $id),
-            'recursive' => 0
-        );
-
         $user = $this->Student->find('first', $options);
-
         if (empty($user))
             throw new NotFoundException('Το συγκεκριμένο profile χρήστη δεν
                                         βρέθηκε.');

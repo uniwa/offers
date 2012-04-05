@@ -32,6 +32,7 @@ class CompaniesController extends AppController {
             throw new NotFoundException('Η συγκεκριμένη επιχείρηση δεν
                                         βρέθηκε.');
 
+        /*
         // find the active offers of this company
         $active_options['conditions'] = array('Offer.company_id' => $id,
                                               'Offer.offer_state_id' => OfferStates::Active);
@@ -60,8 +61,8 @@ class CompaniesController extends AppController {
         $offers['Offer']['Inactive'] = Set::extract('/Offer/.', $offers_tmp);
 
         $company = array_merge($company, $offers);
+         */
         $this->set('company', $company);
-// pr($company); die();
     }
 
 

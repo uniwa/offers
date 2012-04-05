@@ -53,7 +53,7 @@ class StudentsController extends AppController {
                 $this->Session->write('Auth',
                     $this->User->read(null, $this->Auth->user('id')));
                 $this->Session->setFlash(
-                    __('Έχετε αποδεχτεί του όρους χρήσης'),
+                    __('Έχετε αποδεχτεί τους όρους χρήσης'),
                     'default',
                     array( 'class'=>Flash::Success));
                 $this->redirect(array('controller'=>'Offers', 'action' => 'index'));

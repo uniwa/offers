@@ -8,6 +8,8 @@ class CompaniesController extends AppController {
                          'User', 'Day', 'WorkHour', 'Image');
 
     public function view($id = null) {
+        if (! $this->is_authorized($this->Auth->user())
+            throw new ForbiddenException();
 
         // everyone can view a company by id
         $options['conditions'] = array('Company.id' => $id);
@@ -133,5 +135,21 @@ class CompaniesController extends AppController {
                     ));
             }
         }
+    }
+
+    public function is_authorized($user) {
+        if ($user['is_banned'] == 0) {
+            // all users can view company views that are not banned
+            if ($this->action === 'view') {
+                return true;
+            }
+            // TODO
+            // add check for action 'edit'
+            // check if company belongs to the user
+            // who requested the edit action
+        }
+
+        // admin can see banned users too
+        return parent::is_authorized($user);
     }
 }

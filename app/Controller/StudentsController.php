@@ -65,6 +65,10 @@ class StudentsController extends AppController {
                 $this->Auth->logout();
                 $this->redirect(array('controller'=>'Offers', 'action' => 'index'));
             }
+        } else {
+            $cur_user = $this->Auth->user();
+            $terms_accepted = $cur_user['terms_accepted'];
+            $this->set('terms_accepted', $terms_accepted);
         }
     }
 

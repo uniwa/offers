@@ -7,17 +7,6 @@ class CompaniesController extends AppController {
     public $uses = array('Company', 'Offer', 'Municipality',
                          'User', 'Day', 'WorkHour', 'Image');
 
-    public function index() {
-
-        $options['conditions'] = array('Company.is_enabled' => 1,
-                                       'User.is_banned' => 0);
-        $options['recursive'] = 0;
-        $results = $this->Company->find('all', $options);
-
-        $this->set('companies', $results);
-    }
-
-
     public function view($id = null) {
 
         // everyone can view a company by id

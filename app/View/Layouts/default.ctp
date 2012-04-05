@@ -20,16 +20,16 @@
     padding: 0 6px;
   }
 </style>
-<?php echo $this->Html->script('jquery'); ?>
-<?php echo $this->Html->script('dropdown'); ?>
-<?php echo $this->Html->script('global'); ?>
-<?php echo $this->Html->script('modal'); ?>
-<?php echo $this->Html->script('transition'); ?>
+<?php
+    echo $this->Html->script('jquery');
+    echo $this->Html->script('dropdown');
+    echo $this->Html->script('global');
+    echo $this->Html->script('modal');
+    echo $this->Html->script('transition');
+?>
 </head>
 <body>
-
-    <?php  //echo $this->element( 'terms' ); ?>
-   <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-fixed-top">
       <div class="navbar-inner">
         <div class="container-fluid">
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -37,20 +37,43 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <?php echo  $this->Html->link(__('Coupons'), array( 'controller'=>'offers', 'action'=>'index'), array( 'class'=>'brand'));?>
+          <?php
+            echo $this->Html->link(
+                __('Coupons'),
+                array( 'controller'=>'offers', 'action'=>'index'),
+                array( 'class'=>'brand'));
+          ?>
           <div class="nav-collapse">
             <ul class="nav">
 
-            <li><?php echo $this->Html->link(__('Εγγραφή'), array( 'controller'=>'users', 'action'=>'register'));?></li>
-            <li><?php echo $this->Html->link(__('Όροι χρήσης'), "#termsModal", array(  'data-toggle'=>'modal'));?></li>
-            <li><?php echo $this->Html->link(__('Συχνές Ερωτήσεις'), array( 'controller'=>'users', 'action'=>'faq'));?></li>
+            <li>
+                <?php
+                    echo $this->Html->link(
+                        __('Εγγραφή'),
+                        array('controller' => 'users', 'action' => 'register'));
+                ?>
+            </li>
+            <li>
+                <?php
+                    echo $this->Html->link(
+                        __('Όροι χρήσης'),
+                        array('controller' => 'students', 'action' => 'terms'));
+                ?>
+            </li>
+            <li>
+                <?php
+                    echo $this->Html->link(
+                        __('Συχνές Ερωτήσεις'),
+                        array('controller' => 'users', 'action' => 'faq'));
+                ?>
+            </li>
             </ul>
 
             <!--Block dropdown form when user is inside login action-->
-            <?php if( $this->here != '/coupons/users/login' ) { ?>
-            <!-- Login functionality with dropdown -->
-			<?php 
-                
+            <?php
+                if ($this->here != '/coupons/users/login') {
+                // Login functionality with dropdown
+              
                 //if user is logged in take his profile link and logout link
                 if( $this->Session->check( 'Auth.User' ) ) {
 
@@ -64,7 +87,8 @@
                     $logout = $this->Html->link( __('Αποσύνδεση '), array( 'controller' => 'users', 'action' => 'logout') );
 
                     echo "<p class=\"navbar-text pull-right\">$profile&nbsp&nbsp&nbsp$logout( $username )</p>";
-                } else {?>
+                } else {
+            ?>
                    <!--TODO all inside element -->
                     <ul class="nav pull-right">
                     <li class="dropdown" id="login">
@@ -93,18 +117,18 @@
 
                     </ul>
                    
-        <?php	}
-
-            }?>
-
+          <?php
+                }
+            }
+          ?>
           </div><!--/.nav-collapse -->
 		 </div>
       </div>
     </div>
 
 	<div class="container-fluid">
-<!--renders notification message-->
-            <?php echo $this->Session->flash(); ?>
+    <!--renders notification message-->
+        <?php echo $this->Session->flash(); ?>
       	<div class="row-fluid">
 			<?php echo $content_for_layout;?>
 			<!--modal snipet-->

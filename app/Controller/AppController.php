@@ -25,13 +25,13 @@ class AppController extends Controller{
         $this->Auth->authError = " ";
         
         // When logged user has not accepted terms,
-        // redirect to TermsOfUse (only allow logout)
+        // redirect to terms of use (only allow logout)
         $cur_user = $this->Auth->user();
-        if($cur_user != null) {
-            if(!($this->request['controller'] == 'TermsOfUse')) { 
-                if(!($this->request['controller'] == 'users' && $this->request['action'] == 'logout')) {
-                    if(!$cur_user['terms_accepted']){
-                        $this->redirect( array( 'controller'=>'TermsOfUse', 'action'=>'index' ) );
+        if (!is_null($cur_user)) {
+            if (($cur_user['role'] === ROLE_STUDENT) && !($this->request['controller'] == 'students' && $this->request['action'] == 'terms')){
+                if (!$cur_user['terms_accepted']) {
+                    if (!($this->request['controller'] == 'users' && $this->request['action'] == 'logout')) {
+                        $this->redirect(array('controller' => 'students', 'action' => 'terms'));
                     }
                 }
             }
@@ -43,7 +43,7 @@ class AppController extends Controller{
         // override in each controller
 
         // admin can access every action
-        if (isset($user['role']) && $user['role'] === 'admin') {
+        if (isset($user['role']) && $user['role'] === ROLE_ADMIN) {
             return true;
         }
 

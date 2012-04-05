@@ -7,7 +7,7 @@ class CompaniesController extends AppController {
     public $uses = array('Company', 'Offer', 'Municipality',
                          'User', 'Day', 'WorkHour', 'Image');
 
-    function index() {
+    public function index() {
 
         $options['conditions'] = array('Company.is_enabled' => 1,
                                        'User.is_banned' => 0);
@@ -18,7 +18,7 @@ class CompaniesController extends AppController {
     }
 
 
-    function view($id = null) {
+    public function view($id = null) {
 
         // everyone can view a company by id
         $options['conditions'] = array('Company.id' => $id);

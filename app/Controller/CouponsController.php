@@ -6,7 +6,7 @@ class CouponsController extends AppController {
     public $uses = array('Coupon', 'Offer');
 
     public function add () {
-        if ($this->Auth->User('role') !== 'student')
+        if ($this->Auth->User('role') !== ROLE_STUDENT)
             throw new ForbiddenException();
 
         if (empty($this->request->data))

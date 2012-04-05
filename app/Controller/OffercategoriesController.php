@@ -9,7 +9,7 @@ class OffercategoriesController extends  AppController {
 
     public function beforeFilter () {
         parent::beforeFilter();
-        if ($this->Auth->User('role') !== 'admin') {
+        if ($this->Auth->User('role') !== ROLE_ADMIN) {
             throw new ForbiddenException();
         }
     }

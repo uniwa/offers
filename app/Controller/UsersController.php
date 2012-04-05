@@ -30,13 +30,13 @@ class UsersController extends AppController {
                         array( 'conditions' => array( 'username' => $username ) ));
 
                     $role = $this->Auth->user('role');
-                    if( $role != 'admin' ) {
+                    if( $role != ROLE_ADMIN ) {
                         //writes student's or companie's related id inside Session
                         $this->Session->write( 'Auth.User.role_id', 
                             (empty($currentUser['Company']['id']))?$currentUser['Student']['id']:$currentUser['Company']['id']);
                     }   
 
-                    if( $role == 'company' && !$currentUser['Company']['is_enabled'] ) {
+                    if( $role == ROLE_COMPANY && !$currentUser['Company']['is_enabled'] ) {
                         
                         $this->Auth->logout();
                         $this->Session->setFlash(__("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"),
@@ -46,7 +46,7 @@ class UsersController extends AppController {
 
                     } 
                    
-                    if( $role == 'student' && !$this->Auth->user('terms_accepted') ) {
+                    if( $role == ROLE_STUDENT && !$this->Auth->user('terms_accepted') ) {
 
                         //logout inside TermsOfUse controller to use Sessions 
                         //Auth array
@@ -78,7 +78,7 @@ class UsersController extends AppController {
         if( !empty( $this->request->data ) ) {
             //is_enabled and is_banned is by default false
             //set registered User's role
-            $this->request->data['User']['role'] =  'company';
+            $this->request->data['User']['role'] =  ROLE_COMPANY;
 
             if($this->User->saveAssociated($this->request->data)) {
                 $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε'),

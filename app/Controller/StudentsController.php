@@ -12,7 +12,7 @@ class StudentsController extends AppController {
 
         // admin does not have a profile, must give a profile $id
         // to view other profiles
-        if ( $this->Auth->User('role') === 'admin') {
+        if ( $this->Auth->User('role') === ROLE_ADMIN) {
             if ($id == null) {
                 throw new NotFoundException('Το συγκεκριμένο profile χρήστη δεν
                                             βρέθηκε.');
@@ -38,7 +38,7 @@ class StudentsController extends AppController {
 
     public function is_authorized($user) {
         // only students can see profiles
-        if ($user['role'] === 'student') {
+        if ($user['role'] === ROLE_STUDENT) {
             return true;
         }
 

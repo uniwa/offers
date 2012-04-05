@@ -74,7 +74,7 @@ class OffersController extends AppController {
         if (empty($offer))
             throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
 
-        if ($this->Auth->User('role') === 'student') {
+        if ($this->Auth->User('role') === ROLE_STUDENT) {
             $st_opts['conditions'] = array('Student.id' => $this->Auth->User('id'));
             $st_opts['recursive'] = -1;
             $student = $this->Student->find('first', $st_opts);
@@ -85,7 +85,7 @@ class OffersController extends AppController {
 
     public function add() {
 
-        if ($this->Auth->User('role') !== 'company')
+        if ($this->Auth->User('role') !== ROLE_COMPANY)
             throw new ForbiddenException();
 
         // required to fill the select boxes with the correct values

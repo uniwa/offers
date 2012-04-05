@@ -1,0 +1,15 @@
+<?php
+$config = array(
+    'Constants' => array(
+        'ROLE_ADMIN' => 'admin',
+        'ROLE_STUDENT' => 'student',
+        'ROLE_COMPANY' => 'company',
+    ),
+    'Settings' => array(
+        'offer_type' => array(
+            0 => 'happy hour',
+            1 => 'coupons',
+            2 => 'limited',
+        ),
+    ),
+);

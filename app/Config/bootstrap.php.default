@@ -26,6 +26,35 @@
 // Setup a 'default' cache configuration for use in the application.
 Cache::config('default', array('engine' => 'File'));
 
+// Global settings and constants
+// read from file 'app/Config/configuration.php'
+App::uses('PhpReader', 'Configure');
+Configure::config('default', new PhpReader());
+Configure::load('configuration', 'default');
+
+// Define all read constants
+$constants = Configure::read('Constants');
+foreach($constants as $key => $value){
+    define($key, $value);
+}
+
+// Read settings
+function setting_read($setting=null, $key=null){
+    if(!is_null($setting) && !is_null($key)){
+        $request = 'Settings.'.$setting.'.'.$key;
+        $value = Configure::read($request);
+
+        return $value;
+    }
+}
+
+// Wrapper getter for offer type
+function offer_type($key=null){
+    if(!is_null($key)){
+        return setting_read('offer_type', $key);
+    }
+}
+
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
  *

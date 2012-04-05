@@ -19,13 +19,11 @@ class StudentsController extends AppController {
             }
 
             // admins query students using student ids
-            $options['conditions'] = array(
-                'conditions' => array('Student.id' => $id));
+            $options['conditions'] = array('Student.id' => $id);
 
         } else {
             // users query their own profile using their user id
-            $options['conditions'] = array(
-                'conditions' => array('Student.user_id' => $this->Auth->user('id')));
+            $options['conditions'] = array('Student.user_id' => $this->Auth->user('id'));
         }
         $options['recursive'] = 0;
 

@@ -7,25 +7,27 @@ class CompaniesController extends AppController {
     public $uses = array('Company', 'Offer', 'Municipality',
                          'User', 'Day', 'WorkHour', 'Image');
 
-    function index() {
+    public function view($id = null) {
+        if (! $this->is_authorized($this->Auth->user())
+            throw new ForbiddenException();
 
-        $options['conditions'] = array('Company.is_enabled' => 1,
-                                       'User.is_banned' => 0);
-        $options['recursive'] = 0;
-        $results = $this->Company->find('all', $options);
+        // everyone can view a company by id
+        $options['conditions'] = array('Company.id' => $id);
 
-        $this->set('companies', $results);
-    }
+        // allow companies to view their own profile without id
+        if ($this->Auth->user('role') === ROLE_COMPANY) {
+            if ($id == null) {
+                // view own profile
+                $options['conditions'] = array(
+                    'Company.user_id' => $this->Auth->user('id'));
+            }
+        }
 
-
-    function view($id = null) {
-
-        $options['conditions'] = array('Company.id' => $id,
-                                       'Company.is_enabled' => 1,
-                                       'User.is_banned' => 0);
+        // filter only enabled companies
+        $options['conditions'] += array('Company.is_enabled' => 1);
         $options['recursive'] = 1;
-        $company = $this->Company->find('first', $options);
 
+        $company = $this->Company->find('first', $options);
         if (empty($company))
             throw new NotFoundException('Η συγκεκριμένη επιχείρηση δεν
                                         βρέθηκε.');
@@ -133,5 +135,21 @@ class CompaniesController extends AppController {
                     ));
             }
         }
+    }
+
+    public function is_authorized($user) {
+        if ($user['is_banned'] == 0) {
+            // all users can view company views that are not banned
+            if ($this->action === 'view') {
+                return true;
+            }
+            // TODO
+            // add check for action 'edit'
+            // check if company belongs to the user
+            // who requested the edit action
+        }
+
+        // admin can see banned users too
+        return parent::is_authorized($user);
     }
 }

@@ -42,7 +42,7 @@
             <ul class="nav">
 
             <li><?php echo $this->Html->link(__('Εγγραφή'), array( 'controller'=>'users', 'action'=>'register'));?></li>
-            <li><?php echo $this->Html->link(__('Όροι χρήσης'), "#termsModal", array(  'data-toggle'=>'modal'));?></li>
+            <li><?php echo $this->Html->link(__('Όροι χρήσης'), array( 'controller'=>'termsofuse', 'action'=>'index'));?></li>
             <li><?php echo $this->Html->link(__('Συχνές Ερωτήσεις'), array( 'controller'=>'users', 'action'=>'faq'));?></li>
             </ul>
 

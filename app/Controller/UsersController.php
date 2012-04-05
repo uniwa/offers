@@ -17,52 +17,40 @@ class UsersController extends AppController {
     }
 
     function login() {
-
-        if( $this->request->is( 'post' ) ) {
-            
+        if ($this->request->is('post')) {
             //This method resets the model 
             //state for saving new information
             $this->User->create(false); 
-            if( $this->Auth->login() ) {
-            
-                    $username = $this->request->data['User']['username'];
-                    $currentUser = $this->User->find( 'first',
-                        array( 'conditions' => array( 'username' => $username ) ));
+            if ($this->Auth->login()) {
+                $username = $this->request->data['User']['username'];
+                $currentUser = $this->User->find('first',
+                    array('conditions' => array('username' => $username)));
+                $role = $this->Auth->user('role');
 
-                    $role = $this->Auth->user('role');
-                    if( $role != ROLE_ADMIN ) {
-                        //writes student's or companie's related id inside Session
-                        $this->Session->write( 'Auth.User.role_id', 
-                            (empty($currentUser['Company']['id']))?$currentUser['Student']['id']:$currentUser['Company']['id']);
-                    }   
+                if ($role != ROLE_ADMIN) {
+                    //writes student's or company's related id inside Session
+                    $this->Session->write('Auth.User.role_id',
+                        (empty($currentUser['Company']['id']))?
+                            $currentUser['Student']['id']:
+                            $currentUser['Company']['id']);
+                }   
 
-                    if( $role == ROLE_COMPANY && !$currentUser['Company']['is_enabled'] ) {
-                        
-                        $this->Auth->logout();
-                        $this->Session->setFlash(__("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"),
-                                         'default',
-                                         array('class' => Flash::Error));
-                        return;
+                if ($role == ROLE_COMPANY && !$currentUser['Company']['is_enabled']) {
+                    $this->Auth->logout();
+                    $this->Session->setFlash(
+                        __("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"),
+                        'default',
+                        array('class' => Flash::Error));
+                    return;
+                } 
 
-                    } 
-                   
-                    if( $role == ROLE_STUDENT && !$this->Auth->user('terms_accepted') ) {
-
-                        //logout inside TermsOfUse controller to use Sessions 
-                        //Auth array
-                        $this->redirect( array('controller'=>'TermsOfUse', 'action'=>'index') );
-                    }
-
-                    
-                    return $this->redirect( $this->Auth->redirect() );
-
-                } else {
-
-                    $this->Session->setFlash(__("Δώστε έγκυρο όνομα και κωδικό χρήστη"),
-                                             'default',
-                                             array('class' => Flash::Error));
-                }
-
+                return $this->redirect($this->Auth->redirect());
+            } else {
+                $this->Session->setFlash(
+                    __("Δώστε έγκυρο όνομα και κωδικό χρήστη"),
+                    'default',
+                    array('class' => Flash::Error));
+            }
         }
     }
 

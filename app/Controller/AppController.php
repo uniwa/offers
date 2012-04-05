@@ -25,7 +25,7 @@ class AppController extends Controller{
         $this->Auth->authError = " ";
         
         // When logged user has not accepted terms,
-        // redirect to TermsOfUse (only allow logout)
+        // redirect to terms of use (only allow logout)
         $cur_user = $this->Auth->user();
         if (!is_null($cur_user)) {
             if (($cur_user['role'] === ROLE_STUDENT) && !($this->request['controller'] == 'students' && $this->request['action'] == 'terms')){

@@ -10,7 +10,7 @@ if( empty( $happyOffers ) ) {
     echo $this->element('alert', array(
         'type' => 'info',
         'label' => '<span class="label label-info">Happy Hour</span>',
-        'message' =>' Δεν υπάρχουν happy Hour προσφορές'
+        'message' =>' Δεν υπάρχουν προσφορές Happy Hour'
         ));
 } else {
 

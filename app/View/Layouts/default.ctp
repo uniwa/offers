@@ -59,7 +59,7 @@
                     $id = $this->Session->read( 'Auth.User.role_id' );
 
                     $profile = $this->Html->link( __('Το προφίλ μου'), 
-                        ($role=='company')?"/companies/view/".$id:"/students/view/".$id);
+                        ($role == ROLE_COMPANY)?"/companies/view/":"/students/view/");
 
                     $logout = $this->Html->link( __('Αποσύνδεση '), array( 'controller' => 'users', 'action' => 'logout') );
 

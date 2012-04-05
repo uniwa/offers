@@ -43,7 +43,7 @@ class AppController extends Controller{
         // override in each controller
 
         // admin can access every action
-        if (isset($user['role']) && $user['role'] === 'admin') {
+        if (isset($user['role']) && $user['role'] === ROLE_ADMIN) {
             return true;
         }
 

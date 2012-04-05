@@ -33,7 +33,11 @@ class StudentsController extends AppController {
             throw new NotFoundException('Το συγκεκριμένο profile χρήστη δεν
                                         βρέθηκε.');
 
-        $this->set('user', $user);
+        $this->set('user', array('firstname' => $user['Student']['firstname'],
+                                 'lastname' => $user['Student']['lastname'],
+                                 'username' => $user['User']['username'],
+                                 'email' => $user['User']['email'])
+        );
     }
 
     public function is_authorized($user) {

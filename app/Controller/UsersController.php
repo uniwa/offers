@@ -5,27 +5,23 @@ class UsersController extends AppController {
     public $uses = array('User', 'Image', 'Day', 'WorkHour', 'Municipality', 'Company');
     function beforeFilter() {
         parent::beforeFilter();
-
         $this->Auth->allow('register');
 
-        //in case user try to get  register when is logged in
-        if( $this->Auth->user() && $this->request['action'] == 'register') {
-
-                throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
+        // In case user tries to register when logged in
+        if ($this->Auth->user() && $this->request['action'] == 'register') {
+            throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
         }
-
     }
 
     function login() {
         if ($this->request->is('post')) {
-            //This method resets the model 
-            //state for saving new information
-            $this->User->create(false); 
-            if ($this->Auth->login()) {
-                $username = $this->request->data['User']['username'];
+            $userlogin = $this->Auth->login();
+            if ($userlogin) {
+                $user = $this->Auth->user();
+                $username = $user['username'];
+                $role = $user['role'];
                 $currentUser = $this->User->find('first',
                     array('conditions' => array('username' => $username)));
-                $role = $this->Auth->user('role');
 
                 if ($role != ROLE_ADMIN) {
                     //writes student's or company's related id inside Session
@@ -42,7 +38,7 @@ class UsersController extends AppController {
                         'default',
                         array('class' => Flash::Error));
                     return;
-                } 
+                }
 
                 return $this->redirect($this->Auth->redirect());
             } else {

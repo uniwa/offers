@@ -57,7 +57,7 @@
                 <?php
                     echo $this->Html->link(
                         __('Όροι χρήσης'),
-                        array('controller' => 'students', 'action' => 'terms'));
+                        array('controller' => 'users', 'action' => 'terms'));
                 ?>
             </li>
             <li>

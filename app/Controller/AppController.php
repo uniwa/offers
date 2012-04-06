@@ -28,10 +28,10 @@ class AppController extends Controller{
         // redirect to terms of use (only allow logout)
         $cur_user = $this->Auth->user();
         if (!is_null($cur_user)) {
-            if (($cur_user['role'] === ROLE_STUDENT) && !($this->request['controller'] == 'students' && $this->request['action'] == 'terms')){
+            if (($cur_user['role'] === ROLE_STUDENT) && !($this->request['controller'] == 'users' && $this->request['action'] == 'terms')){
                 if (!$cur_user['terms_accepted']) {
                     if (!($this->request['controller'] == 'users' && $this->request['action'] == 'logout')) {
-                        $this->redirect(array('controller' => 'students', 'action' => 'terms'));
+                        $this->redirect(array('controller' => 'users', 'action' => 'terms'));
                     }
                 }
             }

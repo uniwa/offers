@@ -90,4 +90,36 @@ class UsersController extends AppController {
                                          array('class' => Flash::Error));
         }
     }
+
+    //Terms of use action
+    public function terms() {
+        $data = $this->request->data;
+        if (!empty($data)) {
+            $accept = $data['User']['accept'];
+            if ($accept == 1) {
+                $this->User->id = $this->Auth->user('id');
+                $save = $this->User->saveField('terms_accepted', true, false);
+
+                // reload user info after the update
+                $this->Session->write('Auth',
+                    $this->User->read(null, $this->Auth->user('id')));
+                $this->Session->setFlash(
+                    __('Έχετε αποδεχτεί τους όρους χρήσης'),
+                    'default',
+                    array( 'class'=>Flash::Success));
+                $this->redirect(array('controller' => 'offers', 'action' => 'index'));
+            } else {
+                $this->Session->setFlash(
+                    __('Δεν έχετε αποδεχτεί τους όρους χρήσης'),
+                    'default',
+                    array('class'=>Flash::Error));
+                $this->Auth->logout();
+                $this->redirect(array('controller' => 'offers', 'action' => 'index'));
+            }
+        } else {
+            $cur_user = $this->Auth->user();
+            $terms_accepted = $cur_user['terms_accepted'];
+            $this->set('terms_accepted', $terms_accepted);
+        }
+    }
 }

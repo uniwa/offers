@@ -6,8 +6,10 @@ $message .= "<p>Suspendisse posuere, neque gravida tempus ullamcorper, tellus ar
 echo $message;
 
 // Display form to accept terms if terms not accepted
-if (!$terms_accepted) {
-    echo $this->Form->create();
-    echo $this->Form->input('accept', array('label'=>'Αποδέχομαι τους όρους χρήσης', 'type'=>'checkbox'));
-    echo $this->Form->end('Συνέχεια');
+if ($this->Session->read( 'Auth.User.role') === ROLE_STUDENT) { //TODO set this in controller
+    if (!$terms_accepted) {
+        echo $this->Form->create();
+        echo $this->Form->input('accept', array('label'=>'Αποδέχομαι τους όρους χρήσης', 'type'=>'checkbox'));
+        echo $this->Form->end('Συνέχεια');
+    }
 }

@@ -16,13 +16,13 @@ class LdapUtil {
 
         //loads ldap file from app/config/
         Configure::load( 'ldap' );
-
-        $this->ldapServer  = Configure::read('Ldap.server');
-        $this->ldapPort = Configure::read( 'Ldap.port' );
-        $this->suffix = Configure::read( 'Ldap.suffix' );
-        $this->baseDN = Configure::read( 'Ldap.baseDN' );
-        $this->ldapUser = Configure::read( 'Ldap.user');
-        $this->ldapPassword = Configure::read( 'Ldap.password' );
+        $ldapsrv = Configure::read('Ldap');
+        $this->ldapServer  = $ldapsrv['server'];
+        $this->ldapPort = $ldapsrv['port'];
+        $this->suffix = $ldapsrv['suffix'];
+        $this->baseDN = $ldapsrv['baseDN'];
+        $this->ldapUser = $ldapsrv['user'];
+        $this->ldapPassword = $ldapsrv['password'];
 
         /*Connect to LDAP*/
         if ($this->ldapPort == '') {

@@ -33,7 +33,7 @@ class UsersController extends AppController {
                         (empty($currentUser['Company']['id']))?
                             $currentUser['Student']['id']:
                             $currentUser['Company']['id']);
-                }   
+                }
 
                 if ($role == ROLE_COMPANY && !$currentUser['Company']['is_enabled']) {
                     $this->Auth->logout();
@@ -42,7 +42,22 @@ class UsersController extends AppController {
                         'default',
                         array('class' => Flash::Error));
                     return;
-                } 
+                }
+
+                // save last login field
+                $this->User->id = $this->Auth->user('id');
+                $this->User->saveField('last_login', date(DATE_ATOM), false);
+
+                // redirect to profile on 1st login
+                // admins always go to the default screen
+                if ( $currentUser['User']['last_login'] == null ) {
+                    if ($role === ROLE_COMPANY) {
+                        $this->redirect(array('controller' => 'companies', 'action' => 'view'));
+                    }
+                    if ($role === ROLE_STUDENT) {
+                        $this->redirect(array('controller' => 'students', 'action' => 'view'));
+                    }
+                }
 
                 return $this->redirect($this->Auth->redirect());
             } else {

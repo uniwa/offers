@@ -49,7 +49,7 @@ class StudentsController extends AppController {
             $accept = $data['User']['accept'];
             if ($accept == 1) {
                 $this->User->id = $this->Auth->user('id');
-                $this->User->saveField('terms_accepted', true);
+                $save = $this->User->saveField('terms_accepted', true, false);
 
                 // reload user info after the update
                 $this->Session->write('Auth',
@@ -58,14 +58,14 @@ class StudentsController extends AppController {
                     __('Έχετε αποδεχτεί τους όρους χρήσης'),
                     'default',
                     array( 'class'=>Flash::Success));
-                $this->redirect(array('controller'=>'Offers', 'action' => 'index'));
+                $this->redirect(array('controller' => 'offers', 'action' => 'index'));
             } else {
                 $this->Session->setFlash(
                     __('Δεν έχετε αποδεχτεί τους όρους χρήσης'),
                     'default',
                     array('class'=>Flash::Error));
                 $this->Auth->logout();
-                $this->redirect(array('controller'=>'Offers', 'action' => 'index'));
+                $this->redirect(array('controller' => 'offers', 'action' => 'index'));
             }
         } else {
             $cur_user = $this->Auth->user();

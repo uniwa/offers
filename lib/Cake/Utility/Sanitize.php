@@ -7,12 +7,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.10.0.1076
@@ -69,7 +69,13 @@ class Sanitize {
 		if (is_numeric($string) || $string === null || is_bool($string)) {
 			return $string;
 		}
-		$string = substr($db->value($string), 1);
+		$string = $db->value($string, 'string');
+		if ($string[0] === 'N') {
+			$string = substr($string, 2);
+		} else {
+			$string = substr($string, 1);
+		}
+
 		$string = substr($string, 0, -1);
 		return $string;
 	}
@@ -208,7 +214,7 @@ class Sanitize {
 
 		if (is_string($options)) {
 			$options = array('connection' => $options);
-		} else if (!is_array($options)) {
+		} elseif (!is_array($options)) {
 			$options = array();
 		}
 
@@ -254,4 +260,5 @@ class Sanitize {
 			return $data;
 		}
 	}
+
 }

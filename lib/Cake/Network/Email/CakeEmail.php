@@ -5,12 +5,12 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Network.Email
  * @since         CakePHP(tm) v 2.0.0
@@ -242,7 +242,6 @@ class CakeEmail {
 /**
  * Charset the email body is sent in
  *
- *
  * @var string
  */
 	public $charset = 'utf-8';
@@ -250,15 +249,17 @@ class CakeEmail {
 /**
  * Charset the email header is sent in
  * If null, the $charset property will be used as default
+ *
  * @var string
  */
 	public $headerCharset = null;
 
 /**
  * The application wide charset, used to encode headers and body
+ *
  * @var string
  */
-	public $_appCharset = null;
+	protected $_appCharset = null;
 
 /**
  * List of files that should be attached to the email.
@@ -686,6 +687,9 @@ class CakeEmail {
 			if ($email === $alias) {
 				$return[] = $email;
 			} else {
+				if (strpos($alias, ',') !== false) {
+					$alias = '"' . $alias . '"';
+				}
 				$return[] = sprintf('%s <%s>', $this->_encode($alias), $email);
 			}
 		}
@@ -825,7 +829,7 @@ class CakeEmail {
 			$this->_messageId = $message;
 		} else {
 			if (!preg_match('/^\<.+@.+\>$/', $message)) {
-				throw new SocketException(__d('cake_dev', 'Invalid format to Message-ID. The text should be something like "<uuid@server.com>"'));
+				throw new SocketException(__d('cake_dev', 'Invalid format for Message-ID. The text should be something like "<uuid@server.com>"'));
 			}
 			$this->_messageId = $message;
 		}
@@ -944,7 +948,8 @@ class CakeEmail {
 
 /**
  * Send an email using the specified content, template and layout
- *
+ * 
+ * @param mixed $content String with message or array with messages
  * @return array
  * @throws SocketException
  */
@@ -953,7 +958,7 @@ class CakeEmail {
 			throw new SocketException(__d('cake_dev', 'From is not specified.'));
 		}
 		if (empty($this->_to) && empty($this->_cc) && empty($this->_bcc)) {
-			throw new SocketException(__d('cake_dev', 'You need specify one destination on to, cc or bcc.'));
+			throw new SocketException(__d('cake_dev', 'You need to specify at least one destination for to, cc or bcc.'));
 		}
 
 		if (is_array($content)) {
@@ -1015,6 +1020,8 @@ class CakeEmail {
  * @param CakeEmail $obj CakeEmail
  * @param array $config
  * @return void
+ * @throws ConfigureException When configuration file cannot be found, or is missing
+ *   the named config.
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
@@ -1240,9 +1247,14 @@ class CakeEmail {
 /**
  * Attach non-embedded files by adding file contents inside boundaries.
  *
+ * @param string $boundary Boundary to use. If null, will default to $this->_boundary 
  * @return array An array of lines to add to the message
  */
-	protected function _attachFiles() {
+	protected function _attachFiles($boundary = null) {
+		if ($boundary === null) {
+			$boundary = $this->_boundary;
+		}
+
 		$msg = array();
 		foreach ($this->_attachments as $filename => $fileInfo) {
 			if (!empty($fileInfo['contentId'])) {
@@ -1250,7 +1262,7 @@ class CakeEmail {
 			}
 			$data = $this->_readFile($fileInfo['file']);
 
-			$msg[] = '--' . $this->_boundary;
+			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
 			$msg[] = 'Content-Transfer-Encoding: base64';
 			$msg[] = 'Content-Disposition: attachment; filename="' . $filename . '"';
@@ -1270,7 +1282,7 @@ class CakeEmail {
 	protected function _readFile($file) {
 		$handle = fopen($file, 'rb');
 		$data = fread($handle, filesize($file));
-		$data = chunk_split(base64_encode($data)) ;
+		$data = chunk_split(base64_encode($data));
 		fclose($handle);
 		return $data;
 	}
@@ -1278,9 +1290,14 @@ class CakeEmail {
 /**
  * Attach inline/embedded files to the message.
  *
+ * @param string $boundary Boundary to use. If null, will default to $this->_boundary 
  * @return array An array of lines to add to the message
  */
-	protected function _attachInlineFiles() {
+	protected function _attachInlineFiles($boundary = null) {
+		if ($boundary === null) {
+			$boundary = $this->_boundary;
+		}
+
 		$msg = array();
 		foreach ($this->_attachments as $filename => $fileInfo) {
 			if (empty($fileInfo['contentId'])) {
@@ -1288,7 +1305,7 @@ class CakeEmail {
 			}
 			$data = $this->_readFile($fileInfo['file']);
 
-			$msg[] = '--' . $this->_boundary;
+			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: ' . $fileInfo['mimetype'];
 			$msg[] = 'Content-Transfer-Encoding: base64';
 			$msg[] = 'Content-ID: <' . $fileInfo['contentId'] . '>';
@@ -1323,7 +1340,7 @@ class CakeEmail {
 			$msg[] = '--' . $boundary;
 			$msg[] = 'Content-Type: multipart/related; boundary="rel-' . $boundary . '"';
 			$msg[] = '';
-			$relBoundary = 'rel-' . $boundary;
+			$relBoundary = $textBoundary = 'rel-' . $boundary;
 		}
 
 		if ($hasMultipleTypes) {
@@ -1345,7 +1362,7 @@ class CakeEmail {
 			$msg = array_merge($msg, $content);
 			$msg[] = '';
 		}
-	
+
 		if (isset($rendered['html'])) {
 			if ($textBoundary !== $boundary || $hasAttachments) {
 				$msg[] = '--' . $textBoundary;
@@ -1365,7 +1382,7 @@ class CakeEmail {
 		}
 
 		if ($hasInlineAttachments) {
-			$attachments = $this->_attachInlineFiles();
+			$attachments = $this->_attachInlineFiles($relBoundary);
 			$msg = array_merge($msg, $attachments);
 			$msg[] = '';
 			$msg[] = '--' . $relBoundary . '--';
@@ -1373,7 +1390,7 @@ class CakeEmail {
 		}
 
 		if ($hasAttachments) {
-			$attachments = $this->_attachFiles();
+			$attachments = $this->_attachFiles($boundary);
 			$msg = array_merge($msg, $attachments);
 		}
 		if ($hasAttachments || $hasMultipleTypes) {
@@ -1437,7 +1454,7 @@ class CakeEmail {
 			$View->set('content', $content);
 			$View->hasRendered = false;
 			$View->viewPath = $View->layoutPath = 'Emails' . DS . $type;
-	
+
 			$render = $View->render($template, $layout);
 			$render = str_replace(array("\r\n", "\r"), "\n", $render);
 			$rendered[$type] = $this->_encodeString($render, $this->charset);
@@ -1457,4 +1474,5 @@ class CakeEmail {
 		}
 		return '7bit';
 	}
+
 }

@@ -17,7 +17,7 @@ echo $this->Form->input('Offer.offer_category_id', array(
                         'label' => 'Κατηγορία Προσφοράς',
                        ));
 echo $this->Form->input('Offer.offer_type_id', array(
-                        'label' => 'Είδος Προσοράς'
+                        'label' => 'Είδος Προσφοράς'
                        ));
 echo $this->Form->input('Offer.starting', array(
                         'label' => 'Ημερ/νία & Ώρα έναρξης προσφοράς',

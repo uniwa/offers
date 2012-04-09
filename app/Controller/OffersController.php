@@ -93,6 +93,96 @@ class OffersController extends AppController {
         $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
         $this->set('days', $this->Day->find('list'));
 
+        // Common elements for all offer types
+        $input_elements = array();
+        
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.title';
+        $new_elem['options']['label'] = 'Τίτλος';
+        $new_elem['options']['type'] = 'text';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.description';
+        $new_elem['options']['label'] = 'Περιγραφή';
+        $new_elem['options']['type'] = 'textarea';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Image.0';
+        $new_elem['options']['label'] = 'Φωτογραφία';
+        $new_elem['options']['type'] = 'file';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.tags';
+        $new_elem['options']['label'] = 'Λέξεις-κλειδιά';
+        $new_elem['options']['type'] = 'text';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.offer_category_id';
+        $new_elem['options']['label'] = 'Κατηγορία προσφοράς';
+        $input_elements[] = $new_elem;
+/*
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.offer_type_id';
+        $new_elem['options']['label'] = 'Τύπος προσφοράς';
+        $input_elements[] = $new_elem;
+*/
+        // Coupons
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.total_quantity';
+        $new_elem['options']['label'] = 'Αριθμός διαθέσιμων κουπονιών';
+        $new_elem['options']['empty'] = 'Δεν έχει κουπόνια';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.coupon_terms';
+        $new_elem['options']['label'] = 'Όροι εξαργύρωσης κουπονιού';
+        $new_elem['options']['type'] = 'text';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.starting';
+        $new_elem['options']['label'] = 'Ημ/νία & ώρα έναρξης προσφοράς';
+        $new_elem['options']['separator'] = ' ';
+        $new_elem['options']['dateFormat'] = 'DMY';
+        $new_elem['options']['minYear'] = date('Y');
+        $new_elem['options']['maxYear'] = date('Y') + 1;
+        $new_elem['options']['orderYear'] = 'asc';
+        $new_elem['options']['timeFormat'] = '24';
+        $new_elem['options']['interval'] = '15';
+        $input_elements[] = $new_elem;
+
+        // Limited
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.ending';
+        $new_elem['options']['label'] = 'Ημ/νία & ώρα λήξης προσφοράς';
+        $new_elem['options']['separator'] = ' ';
+        $new_elem['options']['dateFormat'] = 'DMY';
+        $new_elem['options']['minYear'] = date('Y');
+        $new_elem['options']['maxYear'] = date('Y') + 1;
+        $new_elem['options']['orderYear'] = 'asc';
+        $new_elem['options']['timeFormat'] = '24';
+        $new_elem['options']['interval'] = '15';
+        $input_elements[] = $new_elem;
+/*
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.expiration_date';
+        $new_elem['options']['label'] = 'Η προσφορά ισχύει μέχρι';
+        $new_elem['options']['type'] = 'date';
+        $new_elem['options']['separator'] = ' ';
+        $new_elem['options']['dateFormat'] = 'DMY';
+        $new_elem['options']['minYear'] = date('Y');
+        $new_elem['options']['maxYear'] = date('Y') + 5;
+        $new_elem['options']['orderYear'] = 'asc';
+        $new_elem['options']['timeFormat'] = '24';
+        $new_elem['options']['interval'] = '15';
+        $input_elements[] = $new_elem;
+*/
+        $this->set('input_elements', $input_elements);
+
         if (!empty($this->request->data)) {
 
             // set the required default values

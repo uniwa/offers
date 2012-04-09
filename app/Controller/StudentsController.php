@@ -6,10 +6,14 @@ class StudentsController extends AppController {
     public $helpers = array('Html');
     public $uses = array('User', 'Student');
 
-    public function view($id = null) {
-        if (! $this->is_authorized($this->Auth->user()) )
+    public function beforeFilter() {
+        if (! $this->is_authorized($this->Auth->user()))
             throw new ForbiddenException();
 
+        parent::beforeFilter();
+    }
+
+    public function view($id = null) {
         // admin does not have a profile, must give a profile $id
         // to view other profiles
         if ( $this->Auth->User('role') === ROLE_ADMIN) {

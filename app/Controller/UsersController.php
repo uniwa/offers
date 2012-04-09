@@ -23,14 +23,6 @@ class UsersController extends AppController {
                 $currentUser = $this->User->find('first',
                     array('conditions' => array('username' => $username)));
 
-                if ($role != ROLE_ADMIN) {
-                    //writes student's or company's related id inside Session
-                    $this->Session->write('Auth.User.role_id',
-                        (empty($currentUser['Company']['id']))?
-                            $currentUser['Student']['id']:
-                            $currentUser['Company']['id']);
-                }
-
                 if ($role == ROLE_COMPANY && !$currentUser['Company']['is_enabled']) {
                     $this->Auth->logout();
                     $this->Session->setFlash(

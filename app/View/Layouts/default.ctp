@@ -73,13 +73,10 @@
             <?php
                 if ($this->here != '/coupons/users/login') {
                 // Login functionality with dropdown
-              
                 //if user is logged in take his profile link and logout link
                 if( $this->Session->check( 'Auth.User' ) ) {
-
                     $username = $this->Session->read( 'Auth.User.username' );
                     $role = $this->Session->read( 'Auth.User.role' );
-                    $id = $this->Session->read( 'Auth.User.role_id' );
 
                     $profile = $this->Html->link( __('Το προφίλ μου'), 
                         ($role == ROLE_COMPANY)?"/companies/view/":"/students/view/");

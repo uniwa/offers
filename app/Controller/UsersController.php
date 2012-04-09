@@ -2,7 +2,8 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Image', 'Day', 'WorkHour', 'Municipality', 'Company');
+    public $uses = array('User', 'Image', 'Day',
+                         'WorkHour', 'Municipality', 'Company');
     function beforeFilter() {
         parent::beforeFilter();
         $this->Auth->allow('register');
@@ -19,11 +20,13 @@ class UsersController extends AppController {
             if ($userlogin) {
                 if ($this->Auth->user('role') == ROLE_COMPANY) {
                     // check if company is enabled
-                    $enabled = $this->User->find('first', array(
-                        'conditions' => array('User.id' => $this->Auth->user('id')),
-                        'fields' => array('Company.is_enabled'),
-                        'recursive' => 0
-                    ));
+                    $options['conditions'] = array(
+                        'User.id' => $this->Auth->user('id')
+                    );
+                    $options['fields'] = array('Company.is_enabled');
+                    $options['recusive'] = 0;
+
+                    $enabled = $this->User->find('first', $options);
                     $enabled = Set::extract($enabled, 'Company.is_enabled');
 
                     if (! $enabled) {
@@ -44,10 +47,14 @@ class UsersController extends AppController {
                 // admins always go to the default screen
                 if ( $this->Auth->user('last_login') == null ) {
                     if ($this->Auth->user('role') === ROLE_COMPANY) {
-                        $this->redirect(array('controller' => 'companies', 'action' => 'view'));
+                        $this->redirect(array(
+                            'controller' => 'companies', 'action' => 'view'
+                        ));
                     }
                     if ($this->Auth->user('role') === ROLE_STUDENT) {
-                        $this->redirect(array('controller' => 'students', 'action' => 'view'));
+                        $this->redirect(array(
+                            'controller' => 'students', 'action' => 'view'
+                        ));
                     }
                 }
 
@@ -79,7 +86,9 @@ class UsersController extends AppController {
                 $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε'),
                                          'default',
                                          array('class' => Flash::Success));
-                $this->redirect(array('controller'=>'Offers', 'action' => 'index'));
+                $this->redirect(array(
+                    'controller'=>'Offers', 'action' => 'index'
+                ));
             } else
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'),
                                          'default',
@@ -103,14 +112,17 @@ class UsersController extends AppController {
                     __('Έχετε αποδεχτεί τους όρους χρήσης'),
                     'default',
                     array( 'class'=>Flash::Success));
-                $this->redirect(array('controller' => 'offers', 'action' => 'index'));
+                $this->redirect(array(
+                    'controller' => 'offers', 'action' => 'index'));
             } else {
                 $this->Session->setFlash(
                     __('Δεν έχετε αποδεχτεί τους όρους χρήσης'),
                     'default',
                     array('class'=>Flash::Error));
                 $this->Auth->logout();
-                $this->redirect(array('controller' => 'offers', 'action' => 'index'));
+                $this->redirect(array(
+                    'controller' => 'offers', 'action' => 'index'
+                ));
             }
         } else {
             $cur_user = $this->Auth->user();

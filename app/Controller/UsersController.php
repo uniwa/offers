@@ -70,13 +70,10 @@ class UsersController extends AppController {
 
 
     function logout() {
-
         $this->redirect( $this->Auth->logout() );
-
     }
 
     function register() {
-
         if( !empty( $this->request->data ) ) {
             //is_enabled and is_banned is by default false
             //set registered User's role
@@ -125,9 +122,7 @@ class UsersController extends AppController {
                 ));
             }
         } else {
-            $cur_user = $this->Auth->user();
-            $terms_accepted = $cur_user['terms_accepted'];
-            $this->set('terms_accepted', $terms_accepted);
+            $this->set('terms_accepted', $this->Auth->user('terms_accepted');
         }
     }
 }

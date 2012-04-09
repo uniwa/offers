@@ -17,19 +17,23 @@ class UsersController extends AppController {
         if ($this->request->is('post')) {
             $userlogin = $this->Auth->login();
             if ($userlogin) {
-                $user = $this->Auth->user();
-                $username = $user['username'];
-                $role = $user['role'];
-                $currentUser = $this->User->find('first',
-                    array('conditions' => array('username' => $username)));
+                if ($this->Auth->user('role') == ROLE_COMPANY) {
+                    // check if company is enabled
+                    $enabled = $this->User->find('first', array(
+                        'conditions' => array('User.id' => $this->Auth->user('id')),
+                        'fields' => array('Company.is_enabled'),
+                        'recursive' => 0
+                    ));
+                    $enabled = Set::extract($enabled, 'Company.is_enabled');
 
-                if ($role == ROLE_COMPANY && !$currentUser['Company']['is_enabled']) {
-                    $this->Auth->logout();
-                    $this->Session->setFlash(
-                        __("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"),
-                        'default',
-                        array('class' => Flash::Error));
-                    return;
+                    if (! $enabled) {
+                        $this->Auth->logout();
+                        $this->Session->setFlash(
+                            __("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"),
+                            'default',
+                            array('class' => Flash::Error));
+                        return;
+                    }
                 }
 
                 // save last login field
@@ -38,11 +42,11 @@ class UsersController extends AppController {
 
                 // redirect to profile on 1st login
                 // admins always go to the default screen
-                if ( $currentUser['User']['last_login'] == null ) {
-                    if ($role === ROLE_COMPANY) {
+                if ( $this->Auth->user('last_login') == null ) {
+                    if ($this->Auth->user('role') === ROLE_COMPANY) {
                         $this->redirect(array('controller' => 'companies', 'action' => 'view'));
                     }
-                    if ($role === ROLE_STUDENT) {
+                    if ($this->Auth->user('role') === ROLE_STUDENT) {
                         $this->redirect(array('controller' => 'students', 'action' => 'view'));
                     }
                 }

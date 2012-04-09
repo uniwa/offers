@@ -210,7 +210,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   `description` TEXT NULL DEFAULT NULL ,
   `started` DATETIME NOT NULL ,
   `ended` DATETIME NULL DEFAULT NULL ,
-  `autostart` DATETIME NOT NULL ,
+  `autostart` DATETIME NULL DEFAULT NULL ,
   `autoend` DATETIME NULL DEFAULT NULL ,
   `coupon_terms` TEXT NULL DEFAULT NULL ,
   `total_quantity` INT NOT NULL DEFAULT 0 ,

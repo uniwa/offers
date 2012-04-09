@@ -7,10 +7,14 @@ class CompaniesController extends AppController {
     public $uses = array('Company', 'Offer', 'Municipality',
                          'User', 'Day', 'WorkHour', 'Image');
 
-    public function view($id = null) {
+    public function beforeFilter() {
         if (! $this->is_authorized($this->Auth->user()))
             throw new ForbiddenException();
 
+        parent::beforeFilter();
+    }
+
+    public function view($id = null) {
         // everyone can view a company by id
         $options['conditions'] = array('Company.id' => $id);
 

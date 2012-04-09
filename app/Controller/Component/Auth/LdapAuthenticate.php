@@ -23,11 +23,11 @@ class LdapAuthenticate extends BaseAuthenticate {
             return false;
         }
     }
-    
+
     // Override to return hash for empty password
-	protected function _password($password) {
-		return AuthComponent::password('');
-	}
+    protected function _password($password) {
+        return AuthComponent::password('');
+    }
 
     private function saveLdapInfo($data) {
         $model = new User();

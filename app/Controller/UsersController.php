@@ -122,7 +122,7 @@ class UsersController extends AppController {
                 ));
             }
         } else {
-            $this->set('terms_accepted', $this->Auth->user('terms_accepted');
+            $this->set('terms_accepted', $this->Auth->user('terms_accepted'));
         }
     }
 }

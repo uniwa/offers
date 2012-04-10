@@ -124,6 +124,7 @@ class OffersController extends AppController {
             // set the required default values
             $this->request->data['Offer']['current_quantity'] = 0;
             $this->request->data['Offer']['offer_state_id'] = OfferStates::Draft;
+            $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
 
             // find the id of the Company related to the logged user
             // and assign it to Offer.company_id

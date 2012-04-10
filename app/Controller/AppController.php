@@ -18,12 +18,18 @@ class AppController extends Controller{
         )
     );
 
-    public $helpers = array('Session', 'Form', 'Js' => array('Jquery'), 'Html');
+    public $helpers = array(
+        'Session',
+        'Form',
+        'Html',
+        'Js' => array('Jquery'),
+        'Tb' => array('className' => 'TwitterBootstrap.TwitterBootstrap')
+    );
 
     function beforeFilter() {
         //clear authError default message
         $this->Auth->authError = " ";
-        
+
         // When logged user has not accepted terms,
         // redirect to terms of use (only allow logout)
         $cur_user = $this->Auth->user();

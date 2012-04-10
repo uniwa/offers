@@ -18,42 +18,36 @@ class OffersController extends AppController {
 
     function beforeFilter(){
         parent::beforeFilter();
-        $this->Auth->allow( 'index' );
+        $this->Auth->allow('index');
     }
 
     public function index() {
-        //get last 3 happy  hour offers
-        $happyOffers = $this->Offer->find( 'all' , array(
-            'conditions'=>array('Offer.offer_type_id' => 1,
-                            'Offer.offer_state_id' => OfferStates::Active,
-                            'Offer.is_spam' => 0
-                            ),
+        //get last 3 happy hour offers
+        $happyOffers = $this->Offer->find('all', array(
+            'conditions'=>array(
+                'Offer.offer_type_id' => 1,
+                'Offer.offer_state_id' => OfferStates::Active,
+                'Offer.is_spam' => 0),
             'limit' => 3,
             'recursive' => -1,
-            'order' => 'Offer.starting DESC'
-
-        ) );
+            'order' => 'Offer.started DESC'));
 
         //minify description strings
-        $this->minify_desc( $happyOffers, 100 );
-        $this->set( 'happyOffers', $happyOffers );
+        $this->minify_desc($happyOffers, 100);
+        $this->set('happyOffers', $happyOffers);
 
         $offers = $this->paginate('Offer', array(
-                                    'Offer.offer_type_id !=' => 1,
-                                    'Offer.offer_state_id' => OfferStates::Active,
-                                    'Offer.is_spam' => 0
-                                ) );
-        $this->minify_desc( $offers, 160 );
+            'Offer.offer_type_id !=' => 1,
+            'Offer.offer_state_id' => OfferStates::Active,
+            'Offer.is_spam' => 0));
+        $this->minify_desc($offers, 160);
         $this->set('offers', $offers);
     }
 
     private function minify_desc( &$array, $limit ) {
-
-        foreach( $array as &$rec ) {
-
-            $rec['Offer']['description'] = substr( $rec['Offer']['description'] ,0 , $limit );
+        foreach($array as &$rec) {
+            $rec['Offer']['description'] = substr($rec['Offer']['description'], 0, $limit);
         }
-
     }
 
 

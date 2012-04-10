@@ -136,6 +136,7 @@ class OffersController extends AppController {
             $company = $this->Company->find('first', $options);
             $this->request->data['Offer']['company_id'] = $company['Company']['id'];
 
+            $this->Offer->id = $id;
             $transaction = $this->Offer->getDataSource();
             $transaction->begin();
             $error = false;

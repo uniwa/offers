@@ -148,7 +148,7 @@ class OffersController extends AppController {
                     $error = true;
 
                 // try to save WorkHours only if Offer.category is HappyHour
-                if ($this->request->data['Offer']['offer_type_id'] == 1) {
+                if ($this->request->data['Offer']['offer_type_id'] == 0) {
                     if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
                         for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
                             $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;

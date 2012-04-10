@@ -23,7 +23,7 @@ class AppController extends Controller{
         'Form',
         'Html',
         'Js' => array('Jquery'),
-        'TB' => array('classname' => 'TwitterBootstrap.TwitterBootstrap')
+        'TB' => array('className' => 'TwitterBootstrap.TwitterBootstrap')
     );
 
     function beforeFilter() {

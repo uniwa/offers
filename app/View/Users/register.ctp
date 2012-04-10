@@ -22,7 +22,7 @@
 
     echo $this->Tb->input(array(
         'field' => 'User.password',
-        'input' => $this->Form->text(
+        'input' => $this->Form->password(
                         'User.password', array('class' => 'span4')
                     ),
         'label' => 'Κωδικός πρόσβασης'
@@ -30,7 +30,7 @@
 
     echo $this->Tb->input(array(
         'field' => 'User.repeat_password',
-        'input' => $this->Form->text(
+        'input' => $this->Form->password(
                         'User.repeat_password', array('class' => 'span4')
                     ),
         'label' => 'Επάναληψη κωδικού πρόσβασης'

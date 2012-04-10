@@ -16,11 +16,10 @@ class OffersController extends AppController {
 
     public $helpers = array('Html');
 
-    const ADD = -1;
-
     function beforeFilter(){
         parent::beforeFilter();
         $this->Auth->allow('index');
+        define('ADD', -1);
     }
 
     public function index() {

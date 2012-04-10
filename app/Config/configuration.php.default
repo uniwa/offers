@@ -4,6 +4,9 @@ $config = array(
         'ROLE_ADMIN' => 'admin',
         'ROLE_STUDENT' => 'student',
         'ROLE_COMPANY' => 'company',
+        'TYPE_HAPPYHOUR' => 0,
+        'TYPE_COUPONS' => 1,
+        'TYPE_LIMITED' => 2,
     ),
     'Settings' => array(
         'offer_type' => array(

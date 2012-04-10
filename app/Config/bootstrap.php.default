@@ -92,3 +92,5 @@ function offer_type($key=null){
  * CakePlugin::load('DebugKit'); //Loads a single plugin named DebugKit
  *
  */
+// bootstrap from Twitter
+CakePlugin::load('TwitterBootstrap');

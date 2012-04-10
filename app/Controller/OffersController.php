@@ -78,15 +78,15 @@ class OffersController extends AppController {
 
     // Wrapper functions for 'add offer' action
     public function add_happyhour() {
-        $this->edit(0);
+        $this->edit(0, -1);
     }
 
     public function add_coupons() {
-        $this->edit(1);
+        $this->edit(1, -1);
     }
 
     public function add_limited() {
-        $this->edit(2);
+        $this->edit(2, -1);
     }
 
     // Wrapper functions for 'edit offer' action

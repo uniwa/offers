@@ -55,13 +55,12 @@ class OffersController extends AppController {
     public function view($id = null) {
 
         $options['conditions'] = array(
-                                    'Offer.id' => $id,
+            'Offer.id' => $id,
         //TODO uncomment the next line when the offer activation logic is
         // implemented
-                                    //'Offer.offer_state_id' => OfferStates::Active,
-                                    //'Offer.is_spam' => 0
-                                    'Company.is_enabled' => 1
-                                 );
+            'Offer.offer_state_id' => OfferStates::Active,
+            'Offer.is_spam' => 0,
+            'Company.is_enabled' => 1);
         //TODO check if the company's user is_banned before showing the offer
         $options['recursive'] = 1;
         $offer = $this->Offer->find('first', $options);
@@ -127,8 +126,9 @@ class OffersController extends AppController {
             $transaction = $this->Offer->getDataSource();
             $transaction->begin();
             $error = false;
+            $saved = $this->Offer->save($this->request->data);
 
-            if ($this->Offer->save($this->request->data)) {
+            if ($saved) {
                 $photos = $this->Image->process(
                     $this->request->data['Image'],
                     array('offer_id' => $this->Offer->id));
@@ -148,6 +148,8 @@ class OffersController extends AppController {
                     } else
                         $error = true;
                 }
+            } else {
+                $error = true;
             }
 
             if ($error) {

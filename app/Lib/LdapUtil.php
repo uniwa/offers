@@ -3,7 +3,6 @@ class LdapUtil {
 
     private $ldap  = null;//ldap connection
 
-
     /*LDAP credentials for connection*/
     private $ldapServer  = null;
     private $ldapPort = null;
@@ -13,7 +12,6 @@ class LdapUtil {
     private $ldapPassword = null;
 
     public function __construct() {
-
         //loads ldap file from app/config/
         Configure::load( 'ldap' );
         $ldapsrv = Configure::read('Ldap');
@@ -50,21 +48,13 @@ class LdapUtil {
          * if user has not ldap acount returns false
          **/
         @$good = ldap_bind( $this->ldap, 'uid='.$user.','.$this->baseDN, $pass );
-        if( $good === true ) {
 
-            return true;
-
-        } else {
-
-            return false;
-        }
-
+        return $good;
     }
 
     //This function checks for uid existance
     //Returns true if uid already exists
     public function uidCheck( $uid ){
-
 
         ldap_bind( $this->ldap, $this->ldapUser, $this->ldapPassword );
         /*
@@ -73,21 +63,19 @@ class LdapUtil {
          * value
          * */
         @$result = ldap_compare( $this->ldap, 'uid='.$uid.', ou=people,'.$this->baseDN, 'uid', $uid );
-        return ($result == 1)?true:false;
+
+        return ($result == 1);
 
     }
 
     public function __destruct() {
-
         ldap_unbind( $this->ldap );
     }
 
     /**
      * Get formated entry from ldap sub-tree with RDN the principal name
      * */
-    public function getInfo( $user ) {
-
-        $username =  $user;
+    public function getInfo( $username ) {
         $attributes = array( 'givenname;lang-el', 'sn;lang-el', 'cn;lang-el', 'mail' /*, 'memmberof'*/ );
         $filter = "(uid=$username)";
 
@@ -99,16 +87,13 @@ class LdapUtil {
     }
 
     private function formatInfo( $entries ) {
-
         $info = array();
-
         $info['username'] = $entries[0]['username'][0];
         $info['first_name'] =  $entries[0]['givenname;lang-el'][0];
         $info['last_name'] = $entries[0]['sn;lang-el'][0];
         $info['name'] = $entries[0]['cn;lang-el'][0];
         $info['email'] = $entries[0]['mail'][0];
         //$info['groups'] = $this->groups($array[0]['memberof']); for future use
-
 
         return $info;
     }
@@ -135,4 +120,3 @@ class LdapUtil {
        return $groups;
     }
 }
-

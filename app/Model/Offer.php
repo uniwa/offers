@@ -6,6 +6,31 @@ class Offer extends AppModel {
     public $belongsTo = array('Company', 'OfferType', 'OfferCategory', 'OfferState');
     public $hasMany = array('Coupon', 'Image', 'WorkHour');
 
+    // @param $company_id limits find to offers that belong to the specified
+    // company
+    // return an array with keys: `draft', `active', `inactive', each of which
+    // corresponds to an array of offers
+    public function find_all($company_id = NULL) {
+        $group = '/Offer[offer_state_id=';
+        $options = array();
+        if(!empty($company_id)) {
+            $options['conditions'] = array('Offer.company_id' => $company_id);
+        }
+        $options['fields'] = array('Offer.*');
+        $options['order'] = array('Offer.created ASC');
+        $options['recursive'] = 0;
+
+        $result = $this->find('all', $options);
+        $offers = array();
+
+        // using Set:: extract, for now
+        $offers['Draft'] = Set::extract($group.STATE_DRAFT.']', $result);
+        $offers['Active'] = Set::extract($group.STATE_ACTIVE.']', $result);
+        $offers['Inactive'] = Set::extract($group.STATE_INACTIVE.']', $result);
+
+        return $offers;
+    }
+
     // This function updates the state of all offers based on their autostart
     // and autoend values.
     // It should be invoked BEFORE any operation that requires up-to-date offer

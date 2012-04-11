@@ -18,55 +18,49 @@ class OffersController extends AppController {
 
     function beforeFilter(){
         parent::beforeFilter();
-        $this->Auth->allow( 'index' );
+        $this->Auth->allow('index');
+        define('ADD', -1);
     }
 
     public function index() {
-        //get last 3 happy  hour offers
-        $happyOffers = $this->Offer->find( 'all' , array(
-            'conditions'=>array('Offer.offer_type_id' => 1,
-                            'Offer.offer_state_id' => OfferStates::Active,
-                            'Offer.is_spam' => 0
-                            ),
+        //get last 3 happy hour offers
+        $happyOffers = $this->Offer->find('all', array(
+            'conditions'=>array(
+                'Offer.offer_type_id' => 1,
+                'Offer.offer_state_id' => OfferStates::Active,
+                'Offer.is_spam' => 0),
             'limit' => 3,
             'recursive' => -1,
-            'order' => 'Offer.starting DESC'
-
-        ) );
+            'order' => 'Offer.started DESC'));
 
         //minify description strings
-        $this->minify_desc( $happyOffers, 100 );
-        $this->set( 'happyOffers', $happyOffers );
+        $this->minify_desc($happyOffers, 100);
+        $this->set('happyOffers', $happyOffers);
 
         $offers = $this->paginate('Offer', array(
-                                    'Offer.offer_type_id !=' => 1,
-                                    'Offer.offer_state_id' => OfferStates::Active,
-                                    'Offer.is_spam' => 0
-                                ) );
-        $this->minify_desc( $offers, 160 );
+            'Offer.offer_type_id !=' => 1,
+            'Offer.offer_state_id' => OfferStates::Active,
+            'Offer.is_spam' => 0));
+        $this->minify_desc($offers, 160);
         $this->set('offers', $offers);
     }
 
     private function minify_desc( &$array, $limit ) {
-
-        foreach( $array as &$rec ) {
-
-            $rec['Offer']['description'] = substr( $rec['Offer']['description'] ,0 , $limit );
+        foreach($array as &$rec) {
+            $rec['Offer']['description'] = substr($rec['Offer']['description'], 0, $limit);
         }
-
     }
 
 
     public function view($id = null) {
 
         $options['conditions'] = array(
-                                    'Offer.id' => $id,
+            'Offer.id' => $id,
         //TODO uncomment the next line when the offer activation logic is
         // implemented
-                                    //'Offer.offer_state_id' => OfferStates::Active,
-                                    //'Offer.is_spam' => 0
-                                    'Company.is_enabled' => 1
-                                 );
+            'Offer.offer_state_id' => OfferStates::Active,
+            'Offer.is_spam' => 0,
+            'Company.is_enabled' => 1);
         //TODO check if the company's user is_banned before showing the offer
         $options['recursive'] = 1;
         $offer = $this->Offer->find('first', $options);
@@ -82,22 +76,41 @@ class OffersController extends AppController {
         }
     }
 
+    // Wrapper functions for 'add offer' action
+    public function add_happyhour() {
+        $this->modify(TYPE_HAPPYHOUR, ADD);
+    }
 
-    public function add() {
+    public function add_coupons() {
+        $this->modify(TYPE_COUPONS, ADD);
+    }
 
+    public function add_limited() {
+        $this->modify(TYPE_LIMITED, ADD);
+    }
+
+    // Wrapper functions for 'edit offer' action
+    public function edit($id=null) {
+        $this->modify(null, $id);
+    }
+
+    // Function for adding/editing offer
+    // $offer_type_id same as global, 0-happy hour, 1-coupons, 2-limited
+    // if $id is -1, add a new offer
+    // else edit the offer with the corresponding id
+    private function modify($offer_type_id, $id=null) {
         if ($this->Auth->User('role') !== ROLE_COMPANY)
             throw new ForbiddenException();
 
-        // required to fill the select boxes with the correct values
-        $this->set('offerTypes', $this->Offer->OfferType->find('list'));
-        $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
-        $this->set('days', $this->Day->find('list'));
+        if (is_null($id)) throw new BadRequestException();
 
+        // Save modified offer
         if (!empty($this->request->data)) {
 
             // set the required default values
             $this->request->data['Offer']['current_quantity'] = 0;
             $this->request->data['Offer']['offer_state_id'] = OfferStates::Draft;
+//            $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
 
             // find the id of the Company related to the logged user
             // and assign it to Offer.company_id
@@ -109,20 +122,23 @@ class OffersController extends AppController {
             $company = $this->Company->find('first', $options);
             $this->request->data['Offer']['company_id'] = $company['Company']['id'];
 
+            $this->Offer->id = $id;
             $transaction = $this->Offer->getDataSource();
             $transaction->begin();
             $error = false;
+            $saved = $this->Offer->save($this->request->data);
 
-            if ($this->Offer->save($this->request->data)) {
+            if ($saved) {
+                $photos = $this->Image->process(
+                    $this->request->data['Image'],
+                    array('offer_id' => $this->Offer->id));
 
-                $photos = $this->Image->process($this->request->data['Image'],
-                                         array('offer_id' => $this->Offer->id));
                 // try to save images
                 if (!empty($photos) && !$this->Image->saveMany($photos))
                     $error = true;
 
                 // try to save WorkHours only if Offer.category is HappyHour
-                if ($this->request->data['Offer']['offer_type_id'] == 1) {
+                if ($this->request->data['Offer']['offer_type_id'] == TYPE_HAPPYHOUR) {
                     if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
                         for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
                             $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;
@@ -132,130 +148,161 @@ class OffersController extends AppController {
                     } else
                         $error = true;
                 }
+            } else {
+                $error = true;
             }
 
-            if ($error === true) {
+            if ($error) {
                 $transaction->rollback();
                 $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
-                                         'default',
-                                         array('class' => Flash::Error));
+                    'default',
+                    array('class' => Flash::Error));
             } else {
                 $transaction->commit();
                 $this->Session->setFlash('Η προσφορά αποθηκεύτηκε',
-                                         'default',
-                                         array('class' => Flash::Success));
+                    'default',
+                    array('class' => Flash::Success));
                 $this->redirect(array(
-                                    'controller' => 'companies',
-                                    'action' => 'view',
-                                    $company['Company']['id']
-                                ));
+                    'controller' => 'companies',
+                    'action' => 'view',
+                    $company['Company']['id']));
             }
-        }
-    }
-
-
-    public function edit($id = null) {
-
-        if ($id == null) throw new BadRequestException();
-
-        $options['conditions'] = array('Offer.id' => $id);
-        $options['recursive'] = 0;
-        $offer = $this->Offer->find('first', $options);
-
-        if (empty($offer)) throw new NotFoundException();
-
-        if ($offer['Company']['user_id'] != $this->Auth->User('id'))
-            throw new ForbiddenException();
-
-        // required to fill the select boxes with the correct values
-        $this->set('offerTypes', $this->Offer->OfferType->find('list'));
-        $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
-        $this->set('days', $this->Day->find('list'));
-        $this->set('work_hour_count', $offer['Offer']['work_hour_count'] );
-
-        if (empty($this->request->data)) {
-
-            // find the images of this offer and put them in $offer variable
-            if ($offer['Offer']['image_count'] > 0) {
-                $img_opts['conditions'] = array('Image.offer_id' => $offer['Offer']['id']);
-                $img_opts['recursive'] = -1;
-                $offer['Image'] = Set::extract('/Image/.',
-                                               $this->Image->find('all', $img_opts));
-            }
-
-            // find the work_hours of this offer and put them in $offer variable
-            if ($offer['Offer']['work_hour_count'] > 0) {
-                $wh_opts['conditions'] = array('WorkHour.offer_id' => $offer['Offer']['id']);
-                $wh_opts['recursive'] = -1;
-                $offer['WorkHour'] = Set::extract('/WorkHour/.',
-                                                  $this->WorkHour->find('all', $wh_opts));
-            }
-            $this->request->data = $offer;
+            $input_elements = $this->prepare_edit_view($offer_type_id);
+            $this->set('input_elements', $input_elements);
         } else {
-            // set the required default values
-            $this->request->data['Offer']['current_quantity'] = 0;
-            $this->request->data['Offer']['offer_state_id'] = OfferStates::Draft;
+            // Add/edit offer
+            if ($id !== -1) {
+                // Edit existing offer
+                $options['conditions'] = array('Offer.id' => $id);
+                $options['recursive'] = 0;
+                $offer = $this->Offer->find('first', $options);
 
-            // find the id of the Company related to the logged user
-            // and assign it to Offer.company_id
-            $options['fields'] = array('Company.id');
-            $options['conditions'] = array(
-                'Company.user_id' => $this->Auth->User('id')
-            );
-            $options['recursive'] = -1;
-            $company_id = $this->Company->find('first', $options);
-            $this->request->data['Offer']['company_id'] = $company_id['Company']['id'];
+                if (empty($offer)) throw new NotFoundException();
 
-            $transaction = $this->Offer->getDataSource();
-            $transaction->begin();
-            $error = false;
+//                if ($offer['Offer']['offer_type_id'] != $offer_type_id)
+//                    throw new BadRequestException();
 
-            if (!$this->Offer->save($this->request->data))
-                $error = true;
+                if ($offer['Company']['user_id'] != $this->Auth->User('id'))
+                    throw new ForbiddenException();
 
-            $del_opts['WorkHour.offer_id'] = $this->Offer->id;
-            if (!$this->WorkHour->deleteAll($del_opts, true, true))
-                $error = true;
+                // required to fill the select boxes with the correct values
+                $this->set('work_hour_count', $offer['Offer']['work_hour_count'] );
 
-            // try to save the new images
-            $photos = $this->Image->process($this->request->data['Image'],
-                                     array('offer_id' => $this->Offer->id));
-            if (!empty($photos) && !$this->Image->saveMany($photos))
-            $error = true;
+                // find the images of this offer and put them in $offer variable
+                if ($offer['Offer']['image_count'] > 0) {
+                    $img_opts['conditions'] = array('Image.offer_id' => $offer['Offer']['id']);
+                    $img_opts['recursive'] = -1;
+                    $offer['Image'] = Set::extract('/Image/.',
+                                                   $this->Image->find('all', $img_opts));
+                }
 
-            // If Offer.category is HappyHour delete all the related
-            // images and insert new entries
-            if ($this->request->data['Offer']['offer_type_id'] == 1) {
+                // find the work_hours of this offer and put them in $offer variable
+                if ($offer['Offer']['work_hour_count'] > 0) {
+                    $wh_opts['conditions'] = array('WorkHour.offer_id' => $offer['Offer']['id']);
+                    $wh_opts['recursive'] = -1;
+                    $offer['WorkHour'] = Set::extract('/WorkHour/.',
+                                                      $this->WorkHour->find('all', $wh_opts));
+                }
 
-                if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
-                    for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
-                        $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;
-
-                    if (!$this->WorkHour->saveMany($this->request->data['WorkHour']))
-                        $error = true;
-                } else
-                    // TODO show a better error message, because it is
-                    // imandatory to insert WorkHours when the offer is happy hour
-                    $error = true;
+                $this->request->data = $offer;
             }
 
-            if ($error === true) {
-                $transaction->rollback();
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
-                                         'default',
-                                         array('class' => Flash::Error));
-            } else {
-                $transaction->commit();
-                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε',
-                                         'default',
-                                         array('class' => Flash::Success));
-                $this->redirect(array('controller' => 'offers',
-                                      'action' => 'view',
-                                      $this->Offer->id));
-            }
+            // Required to fill the select boxes with the correct values
+            $this->set('offerTypes', $this->Offer->OfferType->find('list'));
+            $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
+            $this->set('days', $this->Day->find('list'));
+
+            $input_elements = $this->prepare_edit_view($offer_type_id);
+            $this->set('input_elements', $input_elements);
+
+            $this->render('edit');
         }
     }
 
+    private function prepare_edit_view($offer_type_id) {
+        // Common elements for all offer types
+        $input_elements = array();
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.offer_type_id';
+        $new_elem['options']['type'] = 'hidden';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.title';
+        $new_elem['options']['label'] = 'Τίτλος';
+        $new_elem['options']['type'] = 'text';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.description';
+        $new_elem['options']['label'] = 'Περιγραφή';
+        $new_elem['options']['type'] = 'textarea';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Image.0';
+        $new_elem['options']['label'] = 'Φωτογραφία';
+        $new_elem['options']['type'] = 'file';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.tags';
+        $new_elem['options']['label'] = 'Λέξεις-κλειδιά';
+        $new_elem['options']['type'] = 'text';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.offer_category_id';
+        $new_elem['options']['label'] = 'Κατηγορία προσφοράς';
+        $input_elements[] = $new_elem;
+
+        // Coupons
+        if ($offer_type_id == TYPE_COUPONS) {
+            $new_elem = array();
+            $new_elem['title'] = 'Offer.total_quantity';
+            $new_elem['options']['label'] = 'Αριθμός διαθέσιμων κουπονιών';
+            $new_elem['options']['empty'] = 'Δεν έχει κουπόνια';
+            $input_elements[] = $new_elem;
+
+            $new_elem = array();
+            $new_elem['title'] = 'Offer.coupon_terms';
+            $new_elem['options']['label'] = 'Όροι εξαργύρωσης κουπονιού';
+            $new_elem['options']['type'] = 'text';
+            $input_elements[] = $new_elem;
+        }
+
+        if (in_array($offer_type_id, array(TYPE_COUPONS, TYPE_LIMITED))) {
+            $new_elem = array();
+            $new_elem['title'] = 'Offer.autostart';
+            $new_elem['options']['label'] = 'Ημ/νία & ώρα έναρξης προσφοράς';
+            $new_elem['options']['separator'] = ' ';
+            $new_elem['options']['dateFormat'] = 'DMY';
+            $new_elem['options']['minYear'] = date('Y');
+            $new_elem['options']['maxYear'] = date('Y') + 1;
+            $new_elem['options']['orderYear'] = 'asc';
+            $new_elem['options']['timeFormat'] = '24';
+            $new_elem['options']['interval'] = '15';
+            $input_elements[] = $new_elem;
+        }
+
+        // Limited
+        if ($offer_type_id == TYPE_LIMITED) {
+            $new_elem = array();
+            $new_elem['title'] = 'Offer.autoend';
+            $new_elem['options']['label'] = 'Ημ/νία & ώρα λήξης προσφοράς';
+            $new_elem['options']['separator'] = ' ';
+            $new_elem['options']['dateFormat'] = 'DMY';
+            $new_elem['options']['minYear'] = date('Y');
+            $new_elem['options']['maxYear'] = date('Y') + 1;
+            $new_elem['options']['orderYear'] = 'asc';
+            $new_elem['options']['timeFormat'] = '24';
+            $new_elem['options']['interval'] = '15';
+            $input_elements[] = $new_elem;
+        }
+
+        return $input_elements;
+    }
 
     public function delete($id = null) {
         // An Offer can be delete only if it's draft.

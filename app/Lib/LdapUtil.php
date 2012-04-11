@@ -52,20 +52,17 @@ class LdapUtil {
         return $good;
     }
 
-    //This function checks for uid existance
-    //Returns true if uid already exists
-    public function uidCheck( $uid ){
-
+    public function exists( $username ){
+        // check if username exists in ldap
         ldap_bind( $this->ldap, $this->ldapUser, $this->ldapPassword );
-        /*
-         * compares with uid users distinguished name. If user does not exist returns
-         * -1 which is error. Avoiding warnings with @ and accept -1 as false
-         * value
-         * */
-        @$result = ldap_compare( $this->ldap, 'uid='.$uid.', ou=people,'.$this->baseDN, 'uid', $uid );
 
-        return ($result == 1);
+        $attributes = array('uid');
+        $filter = "(uid=$username)";
 
+        $result = ldap_search( $this->ldap, $this->baseDN, $filter, $attributes );
+        $entries = ldap_get_entries( $this->ldap, $result );
+
+        return $entries['count'] > 0;
     }
 
     public function __destruct() {

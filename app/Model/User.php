@@ -31,6 +31,12 @@ class User extends AppModel {
                 'rule'=>array( 'between', 2, 16 ),
                 'required'=>true,
                 'message' => 'Ο κωδικός πρέπει να είναι μεταξύ 2 και 16 χαρακτήρων'
+            ),
+
+            'ldap' => array(
+                'rule' => 'in_ldap',
+                'required' => true,
+                'message' => 'Αυτό το όνομα χρήστη χρησιμοποιείται ήδη'
             )
         ),
 
@@ -126,6 +132,12 @@ class User extends AppModel {
         }
 
         return true;
+    }
+
+    public function in_ldap() {
+        App::uses('LdapUtil', 'Lib');
+        $ldap = new LdapUtil();
+        return (! $ldap->exists($this->data['User']['username']));
     }
 
 }

@@ -79,47 +79,39 @@ class OffersController extends AppController {
 
     // Wrapper functions for 'add offer' action
     public function add_happyhour() {
-        $this->edit(TYPE_HAPPYHOUR, ADD);
+        $this->modify(TYPE_HAPPYHOUR, ADD);
     }
 
     public function add_coupons() {
-        $this->edit(TYPE_COUPONS, ADD);
+        $this->modify(TYPE_COUPONS, ADD);
     }
 
     public function add_limited() {
-        $this->edit(TYPE_LIMITED, ADD);
+        $this->modify(TYPE_LIMITED, ADD);
     }
 
     // Wrapper functions for 'edit offer' action
-    public function edit_happyhour($id=null) {
-        $this->edit(TYPE_HAPPYHOUR, $id);
-    }
-
-    public function edit_coupons($id=null) {
-        $this->edit(TYPE_COUPONS, $id);
-    }
-
-    public function edit_limited($id=null) {
-        $this->edit(TYPE_LIMITED, $id);
+    public function edit($id=null) {
+        $this->modify(null, $id);
     }
 
     // Function for adding/editing offer
     // $offer_type_id same as global, 0-happy hour, 1-coupons, 2-limited
     // if $id is -1, add a new offer
     // else edit the offer with the corresponding id
-    private function edit($offer_type_id, $id=null) {
-
+    private function modify($offer_type_id, $id=null) {
         if ($this->Auth->User('role') !== ROLE_COMPANY)
             throw new ForbiddenException();
 
         if (is_null($id)) throw new BadRequestException();
 
+        // Save modified offer
         if (!empty($this->request->data)) {
 
             // set the required default values
             $this->request->data['Offer']['current_quantity'] = 0;
             $this->request->data['Offer']['offer_state_id'] = OfferStates::Draft;
-            $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
+//            $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
 
             // find the id of the Company related to the logged user
             // and assign it to Offer.company_id
@@ -137,9 +129,10 @@ class OffersController extends AppController {
             $error = false;
 
             if ($this->Offer->save($this->request->data)) {
+                $photos = $this->Image->process(
+                    $this->request->data['Image'],
+                    array('offer_id' => $this->Offer->id));
 
-                $photos = $this->Image->process($this->request->data['Image'],
-                                         array('offer_id' => $this->Offer->id));
                 // try to save images
                 if (!empty($photos) && !$this->Image->saveMany($photos))
                     $error = true;
@@ -157,33 +150,36 @@ class OffersController extends AppController {
                 }
             }
 
-            if ($error === true) {
+            if ($error) {
                 $transaction->rollback();
                 $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
-                                         'default',
-                                         array('class' => Flash::Error));
+                    'default',
+                    array('class' => Flash::Error));
             } else {
                 $transaction->commit();
                 $this->Session->setFlash('Η προσφορά αποθηκεύτηκε',
-                                         'default',
-                                         array('class' => Flash::Success));
+                    'default',
+                    array('class' => Flash::Success));
                 $this->redirect(array(
-                                    'controller' => 'companies',
-                                    'action' => 'view',
-                                    $company['Company']['id']
-                                ));
+                    'controller' => 'companies',
+                    'action' => 'view',
+                    $company['Company']['id']));
             }
+            $input_elements = $this->prepare_edit_view($offer_type_id);
+            $this->set('input_elements', $input_elements);
         } else {
-            // Edit existing offer
+            // Add/edit offer
             if ($id !== -1) {
+                // Edit existing offer
                 $options['conditions'] = array('Offer.id' => $id);
                 $options['recursive'] = 0;
                 $offer = $this->Offer->find('first', $options);
 
                 if (empty($offer)) throw new NotFoundException();
 
-                if ($offer['Offer']['offer_type_id'] != $offer_type_id)
-                    throw new BadRequestException();
+//                if ($offer['Offer']['offer_type_id'] != $offer_type_id)
+//                    throw new BadRequestException();
+
                 if ($offer['Company']['user_id'] != $this->Auth->User('id'))
                     throw new ForbiddenException();
 
@@ -214,86 +210,96 @@ class OffersController extends AppController {
             $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
             $this->set('days', $this->Day->find('list'));
 
-            // Common elements for all offer types
-            $input_elements = array();
-
-            $new_elem = array();
-            $new_elem['title'] = 'Offer.title';
-            $new_elem['options']['label'] = 'Τίτλος';
-            $new_elem['options']['type'] = 'text';
-            $input_elements[] = $new_elem;
-
-            $new_elem = array();
-            $new_elem['title'] = 'Offer.description';
-            $new_elem['options']['label'] = 'Περιγραφή';
-            $new_elem['options']['type'] = 'textarea';
-            $input_elements[] = $new_elem;
-
-            $new_elem = array();
-            $new_elem['title'] = 'Image.0';
-            $new_elem['options']['label'] = 'Φωτογραφία';
-            $new_elem['options']['type'] = 'file';
-            $input_elements[] = $new_elem;
-
-            $new_elem = array();
-            $new_elem['title'] = 'Offer.tags';
-            $new_elem['options']['label'] = 'Λέξεις-κλειδιά';
-            $new_elem['options']['type'] = 'text';
-            $input_elements[] = $new_elem;
-
-            $new_elem = array();
-            $new_elem['title'] = 'Offer.offer_category_id';
-            $new_elem['options']['label'] = 'Κατηγορία προσφοράς';
-            $input_elements[] = $new_elem;
-
-            // Coupons
-            if ($offer_type_id == TYPE_COUPONS) {
-                $new_elem = array();
-                $new_elem['title'] = 'Offer.total_quantity';
-                $new_elem['options']['label'] = 'Αριθμός διαθέσιμων κουπονιών';
-                $new_elem['options']['empty'] = 'Δεν έχει κουπόνια';
-                $input_elements[] = $new_elem;
-
-                $new_elem = array();
-                $new_elem['title'] = 'Offer.coupon_terms';
-                $new_elem['options']['label'] = 'Όροι εξαργύρωσης κουπονιού';
-                $new_elem['options']['type'] = 'text';
-                $input_elements[] = $new_elem;
-            }
-
-            if (in_array($offer_type_id, array(TYPE_COUPONS, TYPE_LIMITED))) {
-                $new_elem = array();
-                $new_elem['title'] = 'Offer.autostart';
-                $new_elem['options']['label'] = 'Ημ/νία & ώρα έναρξης προσφοράς';
-                $new_elem['options']['separator'] = ' ';
-                $new_elem['options']['dateFormat'] = 'DMY';
-                $new_elem['options']['minYear'] = date('Y');
-                $new_elem['options']['maxYear'] = date('Y') + 1;
-                $new_elem['options']['orderYear'] = 'asc';
-                $new_elem['options']['timeFormat'] = '24';
-                $new_elem['options']['interval'] = '15';
-                $input_elements[] = $new_elem;
-            }
-
-            // Limited
-            if ($offer_type_id == TYPE_LIMITED) {
-                $new_elem = array();
-                $new_elem['title'] = 'Offer.autoend';
-                $new_elem['options']['label'] = 'Ημ/νία & ώρα λήξης προσφοράς';
-                $new_elem['options']['separator'] = ' ';
-                $new_elem['options']['dateFormat'] = 'DMY';
-                $new_elem['options']['minYear'] = date('Y');
-                $new_elem['options']['maxYear'] = date('Y') + 1;
-                $new_elem['options']['orderYear'] = 'asc';
-                $new_elem['options']['timeFormat'] = '24';
-                $new_elem['options']['interval'] = '15';
-                $input_elements[] = $new_elem;
-            }
-
+            $input_elements = $this->prepare_edit_view($offer_type_id);
             $this->set('input_elements', $input_elements);
 
             $this->render('edit');
         }
+    }
+
+    private function prepare_edit_view($offer_type_id) {
+        // Common elements for all offer types
+        $input_elements = array();
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.offer_type_id';
+        $new_elem['options']['type'] = 'hidden';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.title';
+        $new_elem['options']['label'] = 'Τίτλος';
+        $new_elem['options']['type'] = 'text';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.description';
+        $new_elem['options']['label'] = 'Περιγραφή';
+        $new_elem['options']['type'] = 'textarea';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Image.0';
+        $new_elem['options']['label'] = 'Φωτογραφία';
+        $new_elem['options']['type'] = 'file';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.tags';
+        $new_elem['options']['label'] = 'Λέξεις-κλειδιά';
+        $new_elem['options']['type'] = 'text';
+        $input_elements[] = $new_elem;
+
+        $new_elem = array();
+        $new_elem['title'] = 'Offer.offer_category_id';
+        $new_elem['options']['label'] = 'Κατηγορία προσφοράς';
+        $input_elements[] = $new_elem;
+
+        // Coupons
+        if ($offer_type_id == TYPE_COUPONS) {
+            $new_elem = array();
+            $new_elem['title'] = 'Offer.total_quantity';
+            $new_elem['options']['label'] = 'Αριθμός διαθέσιμων κουπονιών';
+            $new_elem['options']['empty'] = 'Δεν έχει κουπόνια';
+            $input_elements[] = $new_elem;
+
+            $new_elem = array();
+            $new_elem['title'] = 'Offer.coupon_terms';
+            $new_elem['options']['label'] = 'Όροι εξαργύρωσης κουπονιού';
+            $new_elem['options']['type'] = 'text';
+            $input_elements[] = $new_elem;
+        }
+
+        if (in_array($offer_type_id, array(TYPE_COUPONS, TYPE_LIMITED))) {
+            $new_elem = array();
+            $new_elem['title'] = 'Offer.autostart';
+            $new_elem['options']['label'] = 'Ημ/νία & ώρα έναρξης προσφοράς';
+            $new_elem['options']['separator'] = ' ';
+            $new_elem['options']['dateFormat'] = 'DMY';
+            $new_elem['options']['minYear'] = date('Y');
+            $new_elem['options']['maxYear'] = date('Y') + 1;
+            $new_elem['options']['orderYear'] = 'asc';
+            $new_elem['options']['timeFormat'] = '24';
+            $new_elem['options']['interval'] = '15';
+            $input_elements[] = $new_elem;
+        }
+
+        // Limited
+        if ($offer_type_id == TYPE_LIMITED) {
+            $new_elem = array();
+            $new_elem['title'] = 'Offer.autoend';
+            $new_elem['options']['label'] = 'Ημ/νία & ώρα λήξης προσφοράς';
+            $new_elem['options']['separator'] = ' ';
+            $new_elem['options']['dateFormat'] = 'DMY';
+            $new_elem['options']['minYear'] = date('Y');
+            $new_elem['options']['maxYear'] = date('Y') + 1;
+            $new_elem['options']['orderYear'] = 'asc';
+            $new_elem['options']['timeFormat'] = '24';
+            $new_elem['options']['interval'] = '15';
+            $input_elements[] = $new_elem;
+        }
+
+        return $input_elements;
     }
 
     public function delete($id = null) {

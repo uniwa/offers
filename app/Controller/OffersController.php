@@ -56,8 +56,6 @@ class OffersController extends AppController {
 
         $options['conditions'] = array(
             'Offer.id' => $id,
-        //TODO uncomment the next line when the offer activation logic is
-        // implemented
             'OR' => array(
                 // this allows owner of (draft or inactive) offer to view it
                 //TODO admin role must also be taken into consideration
@@ -75,9 +73,10 @@ class OffersController extends AppController {
         $options['recursive'] = 1;
         $offer = $this->Offer->find('first', $options);
 
-        $this->set('offer', $offer);
         if (empty($offer))
             throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
+
+        $this->set('offer', $offer);
 
         if ($this->Auth->User('role') === ROLE_STUDENT) {
             $st_opts['conditions'] = array('Student.id' => $this->Auth->User('id'));
@@ -85,7 +84,52 @@ class OffersController extends AppController {
             $student = $this->Student->find('first', $st_opts);
             $this->set('student', $student);
         }
-    }
+
+        // Prepare information for view
+        $offer_type_id = $offer['Offer']['offer_type_id'];
+        $offer_info = array();
+        $new_elem = array();
+        $new_elem['label'] = "Τίτλος";
+        $new_elem['value'] = $offer['Offer']['title'];
+        $offer_info[] = $new_elem;
+        $new_elem['label'] = "Περιγραφή";
+        $new_elem['value'] = $offer['Offer']['description'];
+        $offer_info[] = $new_elem;
+        $new_elem['label'] = "Κατηγορία";
+        $new_elem['value'] = $offer['OfferCategory']['name'];
+        $offer_info[] = $new_elem;
+        $new_elem['label'] = "Λέξεις-κλειδιά";
+        $new_elem['value'] = $offer['Offer']['tags'];
+        $offer_info[] = $new_elem;
+        if (($offer_type_id == TYPE_COUPONS) &&
+            $offer['Offer']['coupon_count'] >= 0) {
+            $new_elem['label'] = "Δεσμευμένα κουπόνια";
+            $new_elem['value'] = $offer['Offer']['coupon_count'].
+                ' από '.$offer['Offer']['total_quantity'];
+            $offer_info[] = $new_elem;
+            $new_elem['label'] = "Όροι εξαργύρωσης κουπονιού";
+            $new_elem['value'] = $offer['Offer']['coupon_terms'];
+            $offer_info[] = $new_elem;
+        }
+        if ($offer_type_id == TYPE_LIMITED) {
+            $new_elem['label'] = "Λήξη προσφοράς";
+            $new_elem['value'] = $offer['Offer']['autoend'];
+            $offer_info[] = $new_elem;
+        }
+        foreach($offer['WorkHour'] as $wh) {
+            $new_elem['label'] = day($wh['day_id']);
+            $new_elem['value'] = "{$wh['starting']} - {$wh['ending']}";
+            $offer_info[] = $new_elem;
+        }
+        $this->set('offer_info', $offer_info);
+/*
+        $new_elem['label'] = "";
+        $new_elem['value'] = $offer['Offer'][''];
+        $offer_info[] = $new_elem;
+        $new_elem['label'] = "";
+        $new_elem['value'] = $offer['Offer'][''];
+        $offer_info[] = $new_elem;
+*/    }
 
     // Wrapper functions for 'add offer' action
     public function add_happyhour() {
@@ -177,8 +221,6 @@ class OffersController extends AppController {
                     'action' => 'view',
                     $company['Company']['id']));
             }
-//            $input_elements = $this->prepare_edit_view($offer_type_id);
-//            $this->set('input_elements', $input_elements);
         } else {
             // Add/edit offer
             if ($id !== -1) {
@@ -227,6 +269,21 @@ class OffersController extends AppController {
 
         $input_elements = $this->prepare_edit_view($offer_type_id);
         $this->set('input_elements', $input_elements);
+        // Work hours for happy hour
+        if ($offer_type_id == TYPE_HAPPYHOUR) {
+            $work_hours = array(
+                'work_hour_count' => 0,
+                'timeFormat' => 24,
+                //'interval' => 15 //default
+                'header' => array('Ημέρα', 'Ώρα Έναρξης', 'Ώρα Λήξης', 'Επιλογή'),
+                'table_class' => 'table table-striped',
+                //'input_class' => span3, //default
+                //'input_label' => null, //default
+                //'staring_time_label' => null, //default
+                //'ending_time_label' => null, //default
+            );
+            $this->set('work_hours', $work_hours);
+        }
         $this->render('edit');
     }
 

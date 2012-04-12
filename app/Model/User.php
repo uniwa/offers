@@ -109,9 +109,16 @@ class User extends AppModel {
                 'required' =>true,
                 'message' =>'Απαιτείται e-mail'
             )
+        ),
+
+        'terms_accepted' => array(
+            'notEmpty' => array(
+                'rule' => array('equalTo', '1'),
+                'required' => 'create',
+                'allowEmpty' => 'false',
+                'message' =>'Απαιτείται αποδοχή των όρων χρήσης για να συνεχίσετε την εγγραφή.'
+            )
         )
-
-
     );
 
 

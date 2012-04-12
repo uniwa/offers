@@ -31,10 +31,19 @@ class CompaniesController extends AppController {
         $options['conditions'] += array('Company.is_enabled' => 1);
         $options['recursive'] = 1;
 
+        // ignore offers for the following `find'
+        $this->Company->unbindModel(array('hasMany' => array('Offer')));
         $company = $this->Company->find('first', $options);
         if (empty($company))
             throw new NotFoundException('Η συγκεκριμένη επιχείρηση δεν
                                         βρέθηκε.');
+
+        $company_id = $company['Company']['id'];
+
+        // update the state of the offers of current company
+        $this->Offer->update_state($company_id);
+        // append offers of this company
+        $company['Offer'] = $this->Offer->find_all($company_id);
 
         /*
         // find the active offers of this company

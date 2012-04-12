@@ -58,12 +58,23 @@ class OffersController extends AppController {
             'Offer.id' => $id,
         //TODO uncomment the next line when the offer activation logic is
         // implemented
-            'Offer.offer_state_id' => OfferStates::Active,
-            'Offer.is_spam' => 0,
-            'Company.is_enabled' => 1);
+            'OR' => array(
+                // this allows owner of (draft or inactive) offer to view it
+                //TODO admin role must also be taken into consideration
+                'Company.user_id' => $this->Auth->User('id'),
+
+                // these must apply for the rest of the members
+                array(
+                    'Offer.offer_state_id' => STATE_ACTIVE,
+                    'Offer.is_spam' => 0,
+                    'Company.is_enabled' => 1
+                )
+            )
+        );
         //TODO check if the company's user is_banned before showing the offer
         $options['recursive'] = 1;
         $offer = $this->Offer->find('first', $options);
+
         $this->set('offer', $offer);
         if (empty($offer))
             throw new NotFoundException('Η προσφορά δεν βρέθηκε.');

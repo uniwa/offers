@@ -13,9 +13,9 @@ $config = array(
     ),
     'Settings' => array(
         'offer_type' => array(
-            0 => 'happy hour',
-            1 => 'coupons',
-            2 => 'limited',
+            1 => 'happy hour',
+            2 => 'coupons',
+            3 => 'limited',
         ),
     ),
 );

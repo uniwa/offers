@@ -23,9 +23,9 @@ class Offer extends AppModel {
         $offers = array();
 
         // using Set:: extract, for now
-        $offers['Draft'] = Set::extract($group.STATE_DRAFT.']', $result);
-        $offers['Active'] = Set::extract($group.STATE_ACTIVE.']', $result);
-        $offers['Inactive'] = Set::extract($group.STATE_INACTIVE.']', $result);
+        $offers['Draft'] = Set::extract($group.STATE_DRAFT.']/.', $result);
+        $offers['Active'] = Set::extract($group.STATE_ACTIVE.']/.', $result);
+        $offers['Inactive'] = Set::extract($group.STATE_INACTIVE.']/.', $result);
 
         return $offers;
     }

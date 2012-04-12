@@ -70,9 +70,9 @@ if (empty($company['Offer']['Active'])) {
 } else {
     echo 'Ενεργές προσφορές:<br/>';
     foreach ($company['Offer']['Active'] as $active) {
-        echo $this->Html->link($draft['title'],
+        echo $this->Html->link($active['title'],
                                array('controller' => 'offers',
-                                     'action' => 'view', $draft['id'])
+                                     'action' => 'view', $active['id'])
                               );
         echo '<br/>';
     }
@@ -83,10 +83,10 @@ if (empty($company['Offer']['Inactive'])) {
     echo 'Δεν υπάρχουν παλαιότερες προσφορές.<br/>';
 } else {
     echo 'Παλαιότερες προσφορές:<br/>';
-    foreach ($company['Offer']['Inactive'] as $active) {
-        echo $this->Html->link($draft['title'],
+    foreach ($company['Offer']['Inactive'] as $inactive) {
+        echo $this->Html->link($inactive['title'],
                                array('controller' => 'offers',
-                                     'action' => 'view', $draft['id'])
+                                     'action' => 'view', $inactive['id'])
                               );
         echo '<br/>';
     }

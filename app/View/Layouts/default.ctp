@@ -88,32 +88,23 @@
             ?>
                    <!--TODO all inside element -->
                     <ul class="nav pull-right">
-                    <li class="dropdown" id="login">
-                    <a class="dropdown-toggle" data-toggle="dropdown" href="#login">
-                        Σύνδεση
-                        <b class="caret"></b>
-                    </a>
-
-                    <ul class="dropdown-menu">
-
-                        <?php echo $this->Form->create('User', array(
-                            'action'=>'post', 'url'=>array(
-                                                'controller'=>'users', 'action'=>'login') ));?>
-                        <fieldset>
-                        <?php
-                            echo $this->Form->input('username', array( 'label' => 'Όνομα χρήστη', 'type'=>'text'));
-                            echo $this->Form->input('password', array( 'label' => 'Κωδικός χρήστη'));
-                        ?>
-                        </fieldset>
-                        <?php echo $this->Form->end(array( 'label' =>__('Είσοδος'), 'class'=>'btn-primary'));?>
-                        <li class="divider"></li>
+                        <li class="dropdown" id="login">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="users/login">Σύνδεση<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <?php echo $this->Form->create('User', array(
+                                    'action'=>'post', 'url'=>array(
+                                                        'controller'=>'users', 'action'=>'login') ));?>
+                                <fieldset>
+                                <?php
+                                    echo $this->Form->input('username', array( 'label' => 'Όνομα χρήστη', 'type'=>'text'));
+                                    echo $this->Form->input('password', array( 'label' => 'Κωδικός χρήστη'));
+                                ?>
+                                </fieldset>
+                                <?php echo $this->Form->end(array( 'label' =>__('Είσοδος'), 'class'=>'btn-primary'));?>
+                                <li class="divider"></li>
+                           </ul>
+                       </li>
                     </ul>
-                    
-                    </li>
-
-
-                    </ul>
-                   
           <?php
                 }
             }

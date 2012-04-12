@@ -1,4 +1,19 @@
 <?php
+$offer_type_id = $this->request->data['Offer']['offer_type_id'];
+switch($offer_type_id){
+    case 1:
+        $label_class = 'label-info';
+        break;
+    case 2:
+        $label_class = 'label-warning';
+        break;
+    case 3:
+        $label_class = 'label-success';
+        break;
+}
+$label_text = offer_type($offer_type_id);
+echo "<p><span class='label {$label_class}'>{$label_text}</span></p>";
+
 $elem_html = $this->Form->create(false, array('type' => 'file'));
 
 foreach ($input_elements as $elem) {

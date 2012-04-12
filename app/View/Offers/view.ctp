@@ -1,5 +1,5 @@
 <?php
-
+//debug($offer);
 if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
     $offer['Offer']['offer_state_id'] == OfferStates::Draft)
 {
@@ -9,7 +9,7 @@ if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
                                 'action' => 'delete',
                                 $offer['Offer']['id']),
                             array(),
-                           'Να διαγραφεί η προσφοα;').'<br/>';
+                           'Να διαγραφεί η προσφορα;').'<br/>';
 
     echo $this->Html->link('Επεξεργασία', array(
                                             'controller' => 'offers',
@@ -20,7 +20,19 @@ if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
 
 
 echo 'Προσφορά '.$offer['Offer']['id'].'<br/>';
-
+switch($offer['Offer']['offer_type_id']){
+    case 1:
+        $label_class = 'label-info';
+        break;
+    case 2:
+        $label_class = 'label-warning';
+        break;
+    case 3:
+        $label_class = 'label-success';
+        break;
+}
+$label_text = offer_type($offer['Offer']['offer_type_id']);
+echo "<p><span class='label {$label_class}'>{$label_text}</span></p>";
 if (isset($offer['Company']['name']))
     echo 'Τίτλος: '.$offer['Offer']['title'].'<br/>';
 

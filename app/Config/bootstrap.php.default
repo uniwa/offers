@@ -2,7 +2,7 @@
 /**
  * This file is loaded automatically by the app/webroot/index.php file after core.php
  *
- * This file should load/create any application wide configuration settings, such as 
+ * This file should load/create any application wide configuration settings, such as
  * Caching, Logging, loading additional configuration files.
  *
  * You should also use this file to include any files that provide global functions/constants
@@ -52,6 +52,13 @@ function setting_read($setting=null, $key=null){
 function offer_type($key=null){
     if(!is_null($key)){
         return setting_read('offer_type', $key);
+    }
+}
+
+// Wrapper getter for day of the week
+function day($key=null){
+    if(!is_null($key)){
+        return setting_read('day', $key);
     }
 }
 

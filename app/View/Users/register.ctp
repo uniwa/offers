@@ -66,7 +66,30 @@
                     ),
         'label' => 'Α.Φ.Μ. επιχείρησης'
     ));
+
+    echo $this->Tb->input(array(
+        'field' => 'User.terms_accepted',
+        'input' => $this->Form->checkbox(
+                        'User.terms_accepted', array('value' => '0')
+                    ),
+        'label' => 'Όροι χρήσης'
+    ));
 ?>
+
+<div class="control-group text">
+    <div class="controls">
+        <textarea readonly="readonly" rows="4" name="" id="" cols="80" class="uneditable-input" style="width: 31.9149%; height: 100px;">
+OROI XRHSHS
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque neque nunc, vehicula sit amet tempor sit amet, feugiat a velit. Aliquam ultrices facilisis leo. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id ante diam, in viverra lectus. Cras augue quam, suscipit quis blandit at, convallis at enim. Ut nec malesuada erat. Suspendisse leo magna, gravida ac sodales sit amet, tempor ut magna. In et enim ac eros lacinia lacinia quis sed justo. Pellentesque eleifend scelerisque lectus, ut porttitor nibh hendrerit id. Maecenas eget hendrerit arcu. Aenean tempor risus eget leo tristique gravida.
+</textarea>
+    </div>
+</div>
+
+
+
+
+
     </fieldset>
 <?php
     echo $this->Tb->button(

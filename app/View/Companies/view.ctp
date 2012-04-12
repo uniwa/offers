@@ -48,22 +48,6 @@ foreach ($company['Image'] as $image) {
 }
 echo '<br/>';
 
-// display Drafts only for the owner of this company
-if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
-    if (empty($company['Offer']['Draft'])) {
-        echo 'Δεν υπάρχουν αποθηκευμένες προσφορές.<br/>';
-    } else {
-        echo 'Αποθηκευμένες προσφορές:<br/>';
-        foreach ($company['Offer']['Draft'] as $draft) {
-            echo $this->Html->link($draft['title'],
-                                   array('controller' => 'offers',
-                                         'action' => 'view', $draft['id'])
-                                  );
-            echo '<br/>';
-        }
-    }
-}
-
 // display Active offers
 if (empty($company['Offer']['Active'])) {
     echo 'Δεν υπάρχουν ενεργές προσφορές.<br/>';
@@ -74,7 +58,29 @@ if (empty($company['Offer']['Active'])) {
                                array('controller' => 'offers',
                                      'action' => 'view', $active['id'])
                               );
+        if ($active['is_spam'] == TRUE) {
+            echo ' [SPAM]';
+        }
         echo '<br/>';
+    }
+}
+
+// display Drafts only for the owner of this company
+if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
+    if (empty($company['Offer']['Draft'])) {
+        echo 'Δεν υπάρχουν μη ενεργοποιημένες προσφορές.<br/>';
+    } else {
+        echo 'Μη ενεργοποιημένες προσφορές:<br/>';
+        foreach ($company['Offer']['Draft'] as $draft) {
+            echo $this->Html->link($draft['title'],
+                                   array('controller' => 'offers',
+                                         'action' => 'view', $draft['id'])
+                                  );
+            if ($draft['is_spam'] == TRUE) {
+                echo ' [SPAM]';
+            }
+            echo '<br/>';
+        }
     }
 }
 
@@ -88,6 +94,9 @@ if (empty($company['Offer']['Inactive'])) {
                                array('controller' => 'offers',
                                      'action' => 'view', $inactive['id'])
                               );
+        if ($inactive['is_spam'] == true) {
+            echo ' [έχει χαρακτηρισθεί ως SPAM]';
+        }
         echo '<br/>';
     }
 }

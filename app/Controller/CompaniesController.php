@@ -38,10 +38,12 @@ class CompaniesController extends AppController {
             throw new NotFoundException('Η συγκεκριμένη επιχείρηση δεν
                                         βρέθηκε.');
 
+        $company_id = $company['Company']['id'];
+
         // update the state of the offers of current company
-        $this->Offer->update_state($id);
+        $this->Offer->update_state($company_id);
         // append offers of this company
-        $company['Offer'] = $this->Offer->find_all($id);
+        $company['Offer'] = $this->Offer->find_all($company_id);
 
         /*
         // find the active offers of this company

@@ -1,5 +1,4 @@
 <?php
-//debug($offer);
 if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
     $offer['Offer']['offer_state_id'] == OfferStates::Draft)
 {

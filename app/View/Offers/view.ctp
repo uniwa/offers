@@ -1,4 +1,5 @@
 <?php
+// TODO: move to controller
 if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
     $offer['Offer']['offer_state_id'] == OfferStates::Draft)
 {
@@ -17,8 +18,7 @@ if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
 
 }
 
-
-echo 'Προσφορά '.$offer['Offer']['id'].'<br/>';
+// TODO: move to controller
 switch($offer['Offer']['offer_type_id']){
     case 1:
         $label_class = 'label-info';
@@ -32,34 +32,13 @@ switch($offer['Offer']['offer_type_id']){
 }
 $label_text = offer_type($offer['Offer']['offer_type_id']);
 echo "<p><span class='label {$label_class}'>{$label_text}</span></p>";
-if (isset($offer['Company']['name']))
-    echo 'Τίτλος: '.$offer['Offer']['title'].'<br/>';
+echo "<h4>Προσφορά {$offer['Offer']['id']}</h4><br/>";
 
-if (isset($offer['Offer']['description']))
-    echo 'Περιγραφή: '.$offer['Offer']['description'].'<br/>';
-
-if (isset($offer['OfferCategory']['name']))
-    echo 'Κατηγορία: '.$offer['OfferCategory']['name'].'<br/>';
-
-if (isset($offer['OfferType']['name']))
-    echo 'Είδος: '.$offer['OfferType']['name'].'<br/>';
-
-if (isset($offer['Offer']['starting']))
-    echo 'Έναρξη προσφοράς: '.$offer['Offer']['starting'].'<br/>';
-
-if (isset($offer['Offer']['ending']))
-    echo 'Λήξη προσφοράς: '.$offer['Offer']['ending'].'<br/>';
-
-if (isset($offer['Offer']['expiration_date']))
-    echo 'Ισχύει έως: '.$offer['Offer']['expiration_date'].'<br/>';
-
-if (isset($offer['Offer']['coupon_count']) && $offer['Offer']['coupon_count'] >= 0) {
-    echo 'Δεσμευμένα κουπόνια: '.$offer['Offer']['coupon_count'].
-         (isset($offer['Offer']['total_quantity'])
-            ? ' από '.$offer['Offer']['total_quantity']
-            : '') .
-         '<br/>';
+$html = '';
+foreach($offer_info as $elem) {
+    $html .= "<strong>{$elem['label']}:</strong> {$elem['value']}<br />";
 }
+echo $html;
 
 if ($this->Session->read('Auth.User.role') === 'student' &&
     $offer['OfferCategory']['name'] !== 'happy hour')

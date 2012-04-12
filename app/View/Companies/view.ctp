@@ -1,17 +1,29 @@
+<h6>Ανάρτηση Προσφοράς</h6>
 <?php
 
 $comp = $company['Company'];
 
 if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
-    echo $this->Html->link('Ανάρτηση Προσφοράς',
-                           array('controller' => 'offers', 'action' => 'add'));
-    echo '<br/>';
+    echo "<p>";
+    echo $this->Html->link(offer_type(1), array(
+        'controller' => 'offers',
+        'action' => 'add_happyhour'),
+        array('class' => 'label label-info'));
+    echo $this->Html->link(offer_type(2), array(
+        'controller' => 'offers',
+        'action' => 'add_coupons'),
+        array('class' => 'label label-warning'));
+    echo $this->Html->link(offer_type(3), array(
+        'controller' => 'offers',
+        'action' => 'add_limited'),
+        array('class' => 'label label-success'));
+    echo "</p><h6>";
 
     echo $this->Html->link('Επεξεργασία στοιχείων επιχείρησης',
                            array('controller' => 'companies',
                            'action' => 'edit',
                            $company['Company']['id']));
-    echo '<br/>';
+    echo "</h6><br/>";
 }
 
 echo 'Επιχείρηση '.$comp['id'].'<br/>';

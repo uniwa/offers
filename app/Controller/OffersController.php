@@ -121,7 +121,6 @@ class OffersController extends AppController {
             // set the required default values
             $this->request->data['Offer']['current_quantity'] = 0;
             $this->request->data['Offer']['offer_state_id'] = OfferStates::Draft;
-//            $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
 
             // find the id of the Company related to the logged user
             // and assign it to Offer.company_id
@@ -178,8 +177,8 @@ class OffersController extends AppController {
                     'action' => 'view',
                     $company['Company']['id']));
             }
-            $input_elements = $this->prepare_edit_view($offer_type_id);
-            $this->set('input_elements', $input_elements);
+//            $input_elements = $this->prepare_edit_view($offer_type_id);
+//            $this->set('input_elements', $input_elements);
         } else {
             // Add/edit offer
             if ($id !== -1) {
@@ -190,11 +189,11 @@ class OffersController extends AppController {
 
                 if (empty($offer)) throw new NotFoundException();
 
-//                if ($offer['Offer']['offer_type_id'] != $offer_type_id)
-//                    throw new BadRequestException();
-
                 if ($offer['Company']['user_id'] != $this->Auth->User('id'))
                     throw new ForbiddenException();
+
+                // Set offer type
+                $offer_type_id = $offer['Offer']['offer_type_id'];
 
                 // required to fill the select boxes with the correct values
                 $this->set('work_hour_count', $offer['Offer']['work_hour_count'] );
@@ -218,16 +217,17 @@ class OffersController extends AppController {
                 $this->request->data = $offer;
             }
 
-            // Required to fill the select boxes with the correct values
-            $this->set('offerTypes', $this->Offer->OfferType->find('list'));
-            $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
-            $this->set('days', $this->Day->find('list'));
-
-            $input_elements = $this->prepare_edit_view($offer_type_id);
-            $this->set('input_elements', $input_elements);
-
-            $this->render('edit');
+            $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
         }
+
+        // Required to fill the select boxes with the correct values
+        $this->set('offerTypes', $this->Offer->OfferType->find('list'));
+        $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
+        $this->set('days', $this->Day->find('list'));
+
+        $input_elements = $this->prepare_edit_view($offer_type_id);
+        $this->set('input_elements', $input_elements);
+        $this->render('edit');
     }
 
     private function prepare_edit_view($offer_type_id) {

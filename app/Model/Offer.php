@@ -9,12 +9,16 @@ class Offer extends AppModel {
     // company
     // return an array with keys: `draft', `active', `inactive', each of which
     // corresponds to an array of offers
-    public function find_all($company_id = NULL) {
+    public function find_all($company_id = NULL, $shows_spam = 0) {
         $group = '/Offer[offer_state_id=';
         $options = array();
         if(!empty($company_id)) {
             $options['conditions'] = array('Offer.company_id' => $company_id);
         }
+        if($shows_spam == 0) {
+            $options['conditions'][] = array('Offer.is_spam' => $shows_spam);
+        }
+
         $options['fields'] = array('Offer.*');
         $options['order'] = array('Offer.created ASC');
         $options['recursive'] = 0;

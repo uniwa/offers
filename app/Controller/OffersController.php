@@ -63,7 +63,7 @@ class OffersController extends AppController {
 
                 // these must apply for the rest of the members
                 array(
-                    'Offer.offer_state_id' => STATE_ACTIVE,
+                    'Offer.offer_state_id <>' => STATE_DRAFT,
                     'Offer.is_spam' => 0,
                     'Company.is_enabled' => 1
                 )

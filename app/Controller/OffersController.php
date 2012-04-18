@@ -53,12 +53,13 @@ class OffersController extends AppController {
 
 
     public function view($id = null) {
-
         $options['conditions'] = array(
-            'Offer.id' => $id,
-            'OR' => array(
-                // this allows owner of (draft or inactive) offer to view it
-                //TODO admin role must also be taken into consideration
+            'Offer.id' => $id);
+
+        // if role is admin, the offer is displayed no matter what
+        if ($this->Auth->User('role') != ROLE_ADMIN) {
+            $options['conditions']['OR'] = array(
+                // this allows owner of offer to always view it
                 'Company.user_id' => $this->Auth->User('id'),
 
                 // these must apply for the rest of the members
@@ -67,8 +68,9 @@ class OffersController extends AppController {
                     'Offer.is_spam' => 0,
                     'Company.is_enabled' => 1
                 )
-            )
-        );
+            );
+        }
+
         //TODO check if the company's user is_banned before showing the offer
         $options['recursive'] = 1;
         $offer = $this->Offer->find('first', $options);

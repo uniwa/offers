@@ -2,7 +2,7 @@
 <html>
 <head>
 <title><?php echo $title_for_layout?></title>
-<?php 
+<?php
     echo $this->Html->charset();
     echo $this->Html->css( 'bootstrap' );
 ?>
@@ -16,7 +16,7 @@
   }
 
   .dropdown-menu {
-    
+
     padding: 0 6px;
   }
 </style>
@@ -48,9 +48,10 @@
 
             <li>
                 <?php
-                    echo $this->Html->link(
-                        __('Εγγραφή'),
-                        array('controller' => 'users', 'action' => 'register'));
+                    if ($guest)
+                        echo $this->Html->link(
+                            __('Εγγραφή'),
+                            array('controller' => 'users', 'action' => 'register'));
                 ?>
             </li>
             <li>
@@ -78,7 +79,7 @@
                     $username = $this->Session->read( 'Auth.User.username' );
                     $role = $this->Session->read( 'Auth.User.role' );
 
-                    $profile = $this->Html->link( __('Το προφίλ μου'), 
+                    $profile = $this->Html->link( __('Το προφίλ μου'),
                         ($role == ROLE_COMPANY)?"/companies/view/":"/students/view/");
 
                     $logout = $this->Html->link( __('Αποσύνδεση '), array( 'controller' => 'users', 'action' => 'logout') );
@@ -121,10 +122,10 @@
 			<?php echo $content_for_layout;?>
 			<!--modal snipet-->
 		</div><!--/row-->
-	
-   		
+
+
 	</div><!--/.fluid-container-->
-       
+
 
         <hr id = "footer">
 

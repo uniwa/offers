@@ -23,7 +23,7 @@ if( empty( $happyOffers ) ) {
                     'title'=>"<h2>{$happyOffers[$key]['Offer']['title']}",
                     'label'=>"<span class=\"label label-info\">Happy Hour</span></h2>",
                     'description'=>"<p>{$happyOffers[$key]['Offer']['description']}</p>",
-                    'btn' =>"<p><a class=\"btn\" href=\"#\">περισσότερα &raquo;</a></p>")
+                    'btn'=>$this->Html->link('περισσότερα »', array('action' => 'view', $happyOffers[$key]['Offer']['id']), array('class' => 'btn')))
                 );
         }
     }
@@ -80,8 +80,14 @@ if( empty( $offers ) ) {
                     'title'=>"<h2>{$offers[$key]['Offer']['title']}",
                     'label'=>"<span class=\"label label-warning\">coupons</span></h2>",
                     'description'=>"<p>{$offers[$key]['Offer']['description']}</p>",
-                    'btn' =>"<p><a class=\"btn\" href=\"#\">περισσότερα &raquo;</a></p>")
-                );
+#                    'btn' =>"<p><a class=\"btn\" href=\"#\">περισσότερα &raquo;</a></p>")
+                    'btn' => $this->Html->link('περισσότερα »',
+                        array(
+                            'action' => 'view',
+                            $offers[$key]['Offer']['id']),
+                        array('class' => 'btn')
+                    )
+                ));
 
         } else {
              echo $this->element( 'grid',
@@ -92,7 +98,8 @@ if( empty( $offers ) ) {
                     'title'=>"<h2>{$offers[$key]['Offer']['title']}",
                     'label'=>"<span class=\"label label-success\">limited</span></h2>",
                     'description'=>"<p>{$offers[$key]['Offer']['description']}</p>",
-                    'btn' =>"<p><a class=\"btn\" href=\"#\">περισσότερα &raquo;</a></p>")
+#                    'btn' =>"<p><a class=\"btn\" href=\"#\">περισσότερα &raquo;</a></p>")
+                    'btn' => $this->Html->link('περισσότερα »', array('action' => 'view', $offers[$key]['Offer']['id']), array('class' => 'btn')))
                 );
         }
 

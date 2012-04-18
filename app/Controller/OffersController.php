@@ -47,7 +47,19 @@ class OffersController extends AppController {
 
     private function minify_desc( &$array, $limit ) {
         foreach($array as &$rec) {
-            $rec['Offer']['description'] = substr($rec['Offer']['description'], 0, $limit);
+            // the text to cut at a word-boundary for a maximum of $limit chars
+            $desc = $rec['Offer']['description'];
+
+            if (mb_strlen($desc) < $limit) continue;
+
+            //find closest space near $limit
+            $pos = mb_strpos($desc, ' ', $limit);
+            if ($pos === false) {
+                $pos = $limit;
+            }
+            // keep string from start till the space nearest to $limit
+            $rec['Offer']['description'] =
+                mb_substr($desc, 0, $pos, 'UTF-8') . '…';
         }
     }
 

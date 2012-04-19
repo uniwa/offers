@@ -122,14 +122,7 @@ class OffersController extends AppController {
             $offer_info[] = $new_elem;
         }
         $this->set('offer_info', $offer_info);
-/*
-        $new_elem['label'] = "";
-        $new_elem['value'] = $offer['Offer'][''];
-        $offer_info[] = $new_elem;
-        $new_elem['label'] = "";
-        $new_elem['value'] = $offer['Offer'][''];
-        $offer_info[] = $new_elem;
-*/    }
+    }
 
     // Wrapper functions for 'add offer' action
     public function add_happyhour() {

@@ -386,6 +386,77 @@ class OffersController extends AppController {
         return $input_elements;
     }
 
+    // Wrapper functions for `terminate' that specify the redirect target
+    //
+    // @param $id offer id to terminate
+    public function terminate_from_company($id = null) {
+        $this->terminate($id, array(
+            'controller' => 'companies',
+            'action' => 'view'));
+    }
+    public function terminate_from_offer($id = null) {
+        $this->terminate($id, array(
+            'controller' => 'offers',
+            'action' => 'view', $id));
+    }
+    // this will (potentially) be used in the administrative page of all offers
+#    public function terminate_from_admin($id = null) {
+#    }
+
+    // Responsible for declaring an offer as inactive.
+    //
+    // @param $id the offer to terminate
+    // @param $redirect parameter to be passed into $this->redirect
+    private function terminate($id = null, $redirect) {
+        if (empty($id)) {
+            throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
+        }
+
+        // fetch only the fields required for checks and the ones to be updated
+        // TODO see if just offer_state_id and ended can be fetched and have
+        // this work still
+        $fields = array(
+            'Offer.*',
+            //'Offer.offer_state_id',
+            //'Offer.ended',
+            'Company.user_id');
+        // could use unbind on Coupon, Image and WorkHour to avoid Left joins !
+        // using fields, empty arrays are returned for these 3 associations
+
+        $offer = $this->Offer->read($fields, $id);
+
+        if (empty($offer)) {
+            throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
+        }
+
+        // allow company owner and admins to terminate an offer
+        if ($this->Auth->user('id') === $offer['Company']['user_id'] ||
+            $this->Auth->user('role') === ROLE_ADMIN) {
+
+            // only active offers may be terminated
+            if ($offer['Offer']['offer_state_id'] == STATE_ACTIVE) {
+
+                $this->Offer->set('offer_state_id', STATE_INACTIVE);
+                $this->Offer->set('ended', date('Y-m-d H:i:s'));
+
+                if ($this->Offer->save()) {
+                    $this->Session->setFlash('Η προσφορά απενεργοποιήθηκε.');
+
+                } else {
+                    $this->Session->setFlash(
+                        'Η προσφορά δεν κατέστη δυνατό να απενεργοποιηθεί.');
+                }
+
+                $this->redirect($redirect);
+
+            } else {
+                throw new ForbiddenException('Η προσφορά δεν δύναται απενεργοποίησης.');
+            }
+        } else {
+            throw new ForbiddenException('Δεν έχετε πρόσβαση σε αυτή τη σελίδα.');
+        }
+    }
+
     public function delete($id = null) {
         // An Offer can be delete only if it's draft.
         // At first, attempt to delete all Images and WorkHours

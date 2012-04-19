@@ -125,4 +125,9 @@ class UsersController extends AppController {
             $this->set('terms_accepted', $this->Auth->user('terms_accepted'));
         }
     }
+
+    // Frequently asked questions
+    public function faq() {
+    }
+
 }

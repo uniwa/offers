@@ -73,6 +73,16 @@ if (empty($company['Offer']['Active'])) {
         if ($active['is_spam'] == TRUE) {
             echo ' [SPAM]';
         }
+
+        echo ' ' . $this->Html->link(
+            '[Τερματισμός]',
+            array(
+                'controller' => 'offers',
+                'action' => 'terminate_from_company',
+                $active['id']),
+            null,
+            'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+
         echo '<br/>';
     }
 }

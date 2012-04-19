@@ -136,14 +136,7 @@ class OffersController extends AppController {
             $offer_info[] = $new_elem;
         }
         $this->set('offer_info', $offer_info);
-/*
-        $new_elem['label'] = "";
-        $new_elem['value'] = $offer['Offer'][''];
-        $offer_info[] = $new_elem;
-        $new_elem['label'] = "";
-        $new_elem['value'] = $offer['Offer'][''];
-        $offer_info[] = $new_elem;
-*/    }
+    }
 
     // Wrapper functions for 'add offer' action
     public function add_happyhour() {
@@ -207,12 +200,29 @@ class OffersController extends AppController {
 
                 // try to save WorkHours only if Offer.category is HappyHour
                 if ($this->request->data['Offer']['offer_type_id'] == TYPE_HAPPYHOUR) {
-                    if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
-                        for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
-                            $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;
-
-                        if (!$this->WorkHour->saveMany($this->request->data['WorkHour']))
+                    if (isset($this->request->data['WorkHour']) &&
+                        !empty($this->request->data['WorkHour'])) {
+                        $input_hours = $this->request->data['WorkHour'];
+                        $work_hours = array();
+                        for ($i = 1; $i <= count($input_hours); $i++) {
+                            if (!empty($input_hours[$i]['starting']) &&
+                                !empty($input_hours[$i]['ending'])) {
+                                $h0 = $this->get_time($input_hours[$i]['starting']);
+                                $h1 = $this->get_time($input_hours[$i]['ending']);
+                                $work_hours[] = array(
+                                    'offer_id' => $this->Offer->id,
+                                    'day_id' => ''.$i,
+                                    'starting' => $h0,
+                                    'ending' => $h1);
+                            }
+                        }
+                        if (!$this->WorkHour->deleteAll(
+                            array('Offer.id' => $this->Offer->id), false)) {
                             $error = true;
+                        } else {
+                            if (!$this->WorkHour->saveMany($work_hours))
+                                $error = true;
+                        }
                     } else
                         $error = true;
                 }
@@ -252,7 +262,7 @@ class OffersController extends AppController {
                 $offer_type_id = $offer['Offer']['offer_type_id'];
 
                 // required to fill the select boxes with the correct values
-                $this->set('work_hour_count', $offer['Offer']['work_hour_count'] );
+                $this->set('work_hour_count', $offer['Offer']['work_hour_count']);
 
                 // find the images of this offer and put them in $offer variable
                 if ($offer['Offer']['image_count'] > 0) {
@@ -266,13 +276,25 @@ class OffersController extends AppController {
                 if ($offer['Offer']['work_hour_count'] > 0) {
                     $wh_opts['conditions'] = array('WorkHour.offer_id' => $offer['Offer']['id']);
                     $wh_opts['recursive'] = -1;
-                    $offer['WorkHour'] = Set::extract('/WorkHour/.',
-                                                      $this->WorkHour->find('all', $wh_opts));
-                }
+                    $offer['WorkHour'] = Set::extract(
+                        '/WorkHour/.', $this->WorkHour->find('all', $wh_opts));
 
+                    // populate all 7 days of the week for view input
+                    $fill_keys = array('starting','ending','offer_id');
+                    $fill_values = array('','',$offer['Offer']['id']);
+                    $fill_day = array_combine($fill_keys, $fill_values);
+                    $fill_week = array_fill(1, 7, $fill_day);
+
+                    // trim ':00' seconds from time and update day
+                    foreach ($offer['WorkHour'] as $k => $wh) {
+                        $offer['WorkHour'][$k]['starting'] = $this->trim_time($wh['starting']);
+                        $offer['WorkHour'][$k]['ending'] = $this->trim_time($wh['ending']);
+                        $fill_week[$wh['day_id']] = $offer['WorkHour'][$k];
+                    }
+                    $offer['WorkHour'] = $fill_week;
+                }
                 $this->request->data = $offer;
             }
-
             $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
         }
 
@@ -386,6 +408,7 @@ class OffersController extends AppController {
         return $input_elements;
     }
 
+
     // Wrapper functions for `terminate' that specify the redirect target
     //
     // @param $id offer id to terminate
@@ -455,6 +478,17 @@ class OffersController extends AppController {
         } else {
             throw new ForbiddenException('Δεν έχετε πρόσβαση σε αυτή τη σελίδα.');
         }
+    }
+
+    private function get_time($time) {
+        $ts = strtotime($time);
+        $h = date('H', $ts);
+        $m = date('i', $ts);
+        return array('hour' => $h, 'min' => $m);
+    }
+
+    private function trim_time($time) {
+        return substr($time, 0, -3);
     }
 
     public function delete($id = null) {

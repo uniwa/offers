@@ -19,6 +19,7 @@ if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
 }
 
 $is_spam = $offer['Offer']['is_spam'];
+$offer_state_id = $offer['Offer']['offer_state_id'];
 
 // TODO: move to controller
 switch($offer['Offer']['offer_type_id']){
@@ -37,6 +38,18 @@ echo "<p><span class='label {$label_class}'>{$label_text}</span></p>";
 echo "<h4>Προσφορά {$offer['Offer']['id']}</h4><br/>";
 if ($is_spam) {
     echo 'Η προσφορά έχει χαρακτηρισθεί ως SPAM.<br/><br/>';
+}
+
+if ($offer_state_id == STATE_ACTIVE) {
+    echo $this->Html->link(
+        '[Τερματισμός]',
+        array(
+            'controller' => 'offers',
+            'action' => 'terminate_from_offer',
+            $offer['Offer']['id']),
+        null,
+        'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;')
+        . '<br>';
 }
 
 $html = '';

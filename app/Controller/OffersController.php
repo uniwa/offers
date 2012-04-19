@@ -186,15 +186,15 @@ class OffersController extends AppController {
 
                 // try to save WorkHours only if Offer.category is HappyHour
                 if ($this->request->data['Offer']['offer_type_id'] == TYPE_HAPPYHOUR) {
-                    if (isset($this->request->data['Hours']) &&
-                        !empty($this->request->data['Hours'])) {
-                        $hours = $this->request->data['Hours'];
+                    if (isset($this->request->data['WorkHour']) &&
+                        !empty($this->request->data['WorkHour'])) {
+                        $input_hours = $this->request->data['WorkHour'];
                         $work_hours = array();
-                        for ($i = 1; $i <= count($hours); $i++) {
-                            if (!empty($hours[$i]['starting']) &&
-                                !empty($hours[$i]['ending'])) {
-                                $h0 = $this->get_time($hours[$i]['starting']);
-                                $h1 = $this->get_time($hours[$i]['ending']);
+                        for ($i = 1; $i <= count($input_hours); $i++) {
+                            if (!empty($input_hours[$i]['starting']) &&
+                                !empty($input_hours[$i]['ending'])) {
+                                $h0 = $this->get_time($input_hours[$i]['starting']);
+                                $h1 = $this->get_time($input_hours[$i]['ending']);
                                 $work_hours[] = array(
                                     'offer_id' => $this->Offer->id,
                                     'day_id' => ''.$i,
@@ -202,8 +202,13 @@ class OffersController extends AppController {
                                     'ending' => $h1);
                             }
                         }
-                        if (!$this->WorkHour->saveMany($work_hours))
+                        if (!$this->WorkHour->deleteAll(
+                            array('Offer.id' => $this->Offer->id), false)) {
                             $error = true;
+                        } else {
+                            if (!$this->WorkHour->saveMany($work_hours))
+                                $error = true;
+                        }
                     } else
                         $error = true;
                 }
@@ -257,8 +262,22 @@ class OffersController extends AppController {
                 if ($offer['Offer']['work_hour_count'] > 0) {
                     $wh_opts['conditions'] = array('WorkHour.offer_id' => $offer['Offer']['id']);
                     $wh_opts['recursive'] = -1;
-                    $offer['WorkHour'] = Set::extract('/WorkHour/.',
-                                                      $this->WorkHour->find('all', $wh_opts));
+                    $offer['WorkHour'] = Set::extract(
+                        '/WorkHour/.', $this->WorkHour->find('all', $wh_opts));
+
+                    // populate all 7 days of the week for view input
+                    $fill_keys = array('starting','ending','offer_id');
+                    $fill_values = array('','',$offer['Offer']['id']);
+                    $fill_day = array_combine($fill_keys, $fill_values);
+                    $fill_week = array_fill(1, 7, $fill_day);
+
+                    // trim ':00' seconds from time and update day
+                    foreach ($offer['WorkHour'] as $k => $wh) {
+                        $offer['WorkHour'][$k]['starting'] = $this->trim_time($wh['starting']);
+                        $offer['WorkHour'][$k]['ending'] = $this->trim_time($wh['ending']);
+                        $fill_week[$wh['day_id']] = $offer['WorkHour'][$k];
+                    }
+                    $offer['WorkHour'] = $fill_week;
                 }
                 $this->request->data = $offer;
             }
@@ -380,6 +399,10 @@ class OffersController extends AppController {
         $h = date('H', $ts);
         $m = date('i', $ts);
         return array('hour' => $h, 'min' => $m);
+    }
+
+    private function trim_time($time) {
+        return substr($time, 0, -3);
     }
 
     public function delete($id = null) {

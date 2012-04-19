@@ -1,7 +1,9 @@
-insert into `companies` (`id`, `name`, `address`, `postalcode`,
-                         `phone`, `fax`, `service_type`, `afm`,
-                          `longitude`, `latitude`, 
-                         `is_enabled`, `user_id`, `municipality_id`)
-       values (1, 'company_test_1', 'test address 28', '12345',
-               '1234567890', '0987654321', 'estiatorio', '011111111',
-                null, null, true, 5, 13);
+INSERT INTO `companies` VALUES
+    (1,'company_test_1','test address 28','12345','1234567890','0987654321','estiatorio','011111111',NULL,NULL,1,5,13,1,1,NULL,NULL),
+    (2,'Comp 2 Dah',NULL,NULL,'',NULL,NULL,'011111111',NULL,NULL,1,6,NULL,2,2,'2012-04-12 06:19:31','2012-04-12 06:19:31'),
+    (3,'Papaka sto yalo',NULL,NULL,'',NULL,NULL,'011111111',NULL,NULL,0,7,NULL,0,0,'2012-04-12 12:37:32','2012-04-12 12:37:32'),
+    (4,'Pizza Fan',NULL,NULL,'2108112000',NULL,NULL,'011111111',NULL,NULL,1,9,NULL,0,0,'2012-04-17 09:24:38','2012-04-17 09:24:38'),
+    (5,'Fastbook.gr',NULL,NULL,'6940658458',NULL,NULL,'011111111',NULL,NULL,1,10,NULL,0,0,'2012-04-17 09:45:42','2012-04-17 09:45:42'),
+    (6,'YouthTrip.gr',NULL,NULL,'2310286830',NULL,NULL,'011111111',NULL,NULL,1,11,NULL,0,0,'2012-04-17 11:33:37','2012-04-17 11:33:37'),
+    (7,'Μέγαρο Μουσικής Αθηνών',NULL,NULL,'2107282000',NULL,NULL,'011111111',NULL,NULL,1,12,NULL,0,0,'2012-04-17 12:07:53','2012-04-17 12:07:53'),
+    (8,'Άρωμα Βύνης',NULL,NULL,'2100000000',NULL,NULL,'011111111',NULL,NULL,1,13,NULL,0,0,'2012-04-17 12:29:45','2012-04-17 12:29:45');

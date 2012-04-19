@@ -191,9 +191,10 @@ class OffersController extends AppController {
                         $hours = $this->request->data['Hours'];
                         $work_hours = array();
                         for ($i = 1; $i <= count($hours); $i++) {
-                            if (!empty($hours[$i][0]) && !empty($hours[$i][1])) {
-                                $h0 = $this->get_time($hours[$i][0]);
-                                $h1 = $this->get_time($hours[$i][1]);
+                            if (!empty($hours[$i]['starting']) &&
+                                !empty($hours[$i]['ending'])) {
+                                $h0 = $this->get_time($hours[$i]['starting']);
+                                $h1 = $this->get_time($hours[$i]['ending']);
                                 $work_hours[] = array(
                                     'offer_id' => $this->Offer->id,
                                     'day_id' => ''.$i,
@@ -201,7 +202,6 @@ class OffersController extends AppController {
                                     'ending' => $h1);
                             }
                         }
-debug($work_hours);
                         if (!$this->WorkHour->saveMany($work_hours))
                             $error = true;
                     } else
@@ -243,7 +243,7 @@ debug($work_hours);
                 $offer_type_id = $offer['Offer']['offer_type_id'];
 
                 // required to fill the select boxes with the correct values
-                $this->set('work_hour_count', $offer['Offer']['work_hour_count'] );
+                $this->set('work_hour_count', $offer['Offer']['work_hour_count']);
 
                 // find the images of this offer and put them in $offer variable
                 if ($offer['Offer']['image_count'] > 0) {
@@ -260,10 +260,8 @@ debug($work_hours);
                     $offer['WorkHour'] = Set::extract('/WorkHour/.',
                                                       $this->WorkHour->find('all', $wh_opts));
                 }
-
                 $this->request->data = $offer;
             }
-
             $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
         }
 

@@ -186,11 +186,23 @@ class OffersController extends AppController {
 
                 // try to save WorkHours only if Offer.category is HappyHour
                 if ($this->request->data['Offer']['offer_type_id'] == TYPE_HAPPYHOUR) {
-                    if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
-                        for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
-                            $this->request->data['WorkHour'][$i]['offer_id'] = $this->Offer->id;
-
-                        if (!$this->WorkHour->saveMany($this->request->data['WorkHour']))
+                    if (isset($this->request->data['Hours']) &&
+                        !empty($this->request->data['Hours'])) {
+                        $hours = $this->request->data['Hours'];
+                        $work_hours = array();
+                        for ($i = 1; $i <= count($hours); $i++) {
+                            if (!empty($hours[$i][0]) && !empty($hours[$i][1])) {
+                                $h0 = $this->get_time($hours[$i][0]);
+                                $h1 = $this->get_time($hours[$i][1]);
+                                $work_hours[] = array(
+                                    'offer_id' => $this->Offer->id,
+                                    'day_id' => ''.$i,
+                                    'starting' => $h0,
+                                    'ending' => $h1);
+                            }
+                        }
+debug($work_hours);
+                        if (!$this->WorkHour->saveMany($work_hours))
                             $error = true;
                     } else
                         $error = true;
@@ -363,6 +375,13 @@ class OffersController extends AppController {
         }
 
         return $input_elements;
+    }
+
+    private function get_time($time) {
+        $ts = strtotime($time);
+        $h = date('H', $ts);
+        $m = date('i', $ts);
+        return array('hour' => $h, 'min' => $m);
     }
 
     public function delete($id = null) {

@@ -32,7 +32,7 @@
 
     $wh = option_hours(true);
     for ($d = 1; $d <= 7; $d++) {
-        $name = 'Hours.'.$d;
+        $name = 'WorkHour.'.$d;
         $day_string = day($d).' ';
         $html .= "<div class='workhour'>";
         $html .= "<div class='day'>{$day_string}</div>";

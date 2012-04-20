@@ -23,8 +23,10 @@ class CouponsController extends AppController {
         //if (!empty($coupon))
         //    throw new BadRequestException('Έχετε ήδη ένα κουπόνι για αυτή την προσφορά');
 
-        // TODO unique serial number generation
-        $this->request->data['Coupon']['serial_number'] = 1234;
+        // Create a UUID
+        // TODO check for duplicate ?
+        $uuid = $this->generate_uuid();
+        $this->request->data['Coupon']['serial_number'] = $uuid;
         $this->request->data['Coupon']['is_used'] = 0;
 
         if ($this->Coupon->save($this->request->data))
@@ -37,5 +39,14 @@ class CouponsController extends AppController {
                                      array('class' => Flash::Error));
 
         $this->redirect($this->referer());
+    }
+
+    private function generate_uuid() {
+        $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000, mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff));
+
+        return $uuid;
     }
 }

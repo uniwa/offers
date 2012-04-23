@@ -132,6 +132,8 @@ class OffersController extends AppController {
         }
         foreach($offer['WorkHour'] as $wh) {
             $new_elem['label'] = day($wh['day_id']);
+            $wh['starting'] = $this->trim_time($wh['starting']);
+            $wh['ending'] = $this->trim_time($wh['ending']);
             $new_elem['value'] = "{$wh['starting']} - {$wh['ending']}";
             $offer_info[] = $new_elem;
         }

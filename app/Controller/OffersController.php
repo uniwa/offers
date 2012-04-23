@@ -437,7 +437,7 @@ class OffersController extends AppController {
 
         // ensure `Forbidden' message is shown, when a trespasser directly
         // requests for this URL
-        if ($user_role != ROLE_ADMIN || $user_role != ROLE_COMPANY) {
+        if ($user_role != ROLE_ADMIN && $user_role != ROLE_COMPANY) {
             throw new ForbiddenException('Δεν έχετε πρόσβαση σε αυτή τη σελίδα.');
         }
 
@@ -511,7 +511,7 @@ class OffersController extends AppController {
         $offer = $this->Offer->find('first', $options);
 
         if ($this->Auth->User('id') === $offer['Company']['user_id']) {
-            if ($offer['Offer']['offer_state_id'] == OfferStates::Draft) {
+            if ($offer['Offer']['offer_state_id'] == STATE_DRAFT) {
                 $transaction = $this->Offer->getDataSource();
                 $transaction->begin();
                 $error = false;

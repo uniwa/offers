@@ -49,36 +49,6 @@ class CompaniesController extends AppController {
         // append offers of this company
         $company['Offer'] = $this->Offer->find_all($company_id, $shows_spam);
 
-        /*
-        // find the active offers of this company
-        $active_options['conditions'] = array('Offer.company_id' => $id,
-                                              'Offer.offer_state_id' => OfferStates::Active);
-        $active_options['fields'] = array('Offer.*');
-        $active_options['order'] = array();
-        $active_options['recursive'] = 0;
-        $offers_tmp = $this->Offer->find('all', $active_options);
-        $offers['Offer']['Active'] = Set::extract('/Offer/.', $offers_tmp);
-
-        // find the draft offers of this company
-        $draft_options['conditions'] = array('Offer.company_id' => $id,
-                                             'Offer.offer_state_id' => OfferStates::Draft);
-        $draft_options['fields'] = array('Offer.*');
-        $draft_options['order'] = array('Offer.starting ASC');
-        $draft_options['recursive'] = 0;
-        $offers_tmp = $this->Offer->find('all', $draft_options);
-        $offers['Offer']['Draft'] = Set::extract('/Offer/.', $offers_tmp);
-
-        // find the inactive offers of this company
-        $inactive_options['conditions'] = array('Offer.company_id' => $id,
-                                                'Offer.offer_state_id' => OfferStates::Inactive);
-        $inactive_options['fields'] = array('Offer.*');
-        $inactive_options['order'] = array('Offer.starting ASC');
-        $inactive_options['recursive'] = 0;
-        $offers_tmp = $this->Offer->find('all', $inactive_options);
-        $offers['Offer']['Inactive'] = Set::extract('/Offer/.', $offers_tmp);
-
-        $company = array_merge($company, $offers);
-         */
         $this->set('company', $company);
     }
 

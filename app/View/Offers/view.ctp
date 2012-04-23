@@ -62,14 +62,16 @@ if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
     $offer['Offer']['offer_type_id'] !== TYPE_HAPPYHOUR) {
     echo '<br/><br/>';
     if ($offer['Offer']['offer_type_id'] == TYPE_COUPONS) {
-        $get_coupon = $this->Form->create(false, array('type' => 'post',
-            'url' => array('controller' => 'coupons', 'action' => 'add')));
-        $get_coupon .= $this->Form->hidden('Coupon.offer_id',
-            array('value' => $offer['Offer']['id']));
-        $get_coupon .= $this->Form->hidden('Coupon.student_id',
-            array('value' => $student['Student']['id']));
-        $get_coupon .= $this->Form->end('Get Coupon');
-        echo $get_coupon;
+        if ($offer['Offer']['coupon_count'] < $offer['Offer']['total_quantity']) {
+            $get_coupon = $this->Form->create(false, array('type' => 'post',
+                'url' => array('controller' => 'coupons', 'action' => 'add')));
+            $get_coupon .= $this->Form->hidden('Coupon.offer_id',
+                array('value' => $offer['Offer']['id']));
+            $get_coupon .= $this->Form->hidden('Coupon.student_id',
+                array('value' => $student['Student']['id']));
+            $get_coupon .= $this->Form->end('Get Coupon');
+            echo $get_coupon;
+        }
     }
 }
 

@@ -41,15 +41,18 @@ if ($is_spam) {
 }
 
 if ($offer_state_id == STATE_ACTIVE) {
-    echo $this->Html->link(
-        '[Τερματισμός]',
-        array(
-            'controller' => 'offers',
-            'action' => 'terminate_from_offer',
-            $offer['Offer']['id']),
-        null,
-        'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;')
-        . '<br>';
+
+    if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] ) {
+      echo $this->Html->link(
+          '[Τερματισμός]',
+          array(
+              'controller' => 'offers',
+              'action' => 'terminate_from_offer',
+              $offer['Offer']['id']),
+          null,
+          'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+    }
+    echo '<br>';
 }
 
 $html = '';
@@ -58,17 +61,19 @@ foreach($offer_info as $elem) {
 }
 echo $html;
 
-if ($this->Session->read('Auth.User.role') === 'student' &&
-    $offer['OfferCategory']['name'] !== 'happy hour')
-{
+if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
+    $offer['Offer']['offer_type_id'] !== TYPE_HAPPYHOUR) {
     echo '<br/><br/>';
-    echo $this->Form->create(false, array('type' => 'post',
-                                          'url' => array('controller' => 'coupons',
-                                                         'action' => 'add')
-                                         ));
-    echo $this->Form->hidden('Coupon.offer_id', array('value' => $offer['Offer']['id']));
-    echo $this->Form->hidden('Coupon.student_id', array('value' => $student['Student']['id']));
-    echo $this->Form->end('Get Coupon');
+    if ($offer['Offer']['offer_type_id'] == TYPE_COUPONS) {
+        $get_coupon = $this->Form->create(false, array('type' => 'post',
+            'url' => array('controller' => 'coupons', 'action' => 'add')));
+        $get_coupon .= $this->Form->hidden('Coupon.offer_id',
+            array('value' => $offer['Offer']['id']));
+        $get_coupon .= $this->Form->hidden('Coupon.student_id',
+            array('value' => $student['Student']['id']));
+        $get_coupon .= $this->Form->end('Get Coupon');
+        echo $get_coupon;
+    }
 }
 
 if (!empty($offer['Image']))

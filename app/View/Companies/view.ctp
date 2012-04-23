@@ -2,8 +2,9 @@
 <?php
 
 $comp = $company['Company'];
+$is_user_the_owner = $this->Session->read('Auth.User.id') == $comp['user_id'];
 
-if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
+if ($is_user_the_owner) {
     echo "<p>";
     echo $this->Html->link(offer_type(1), array(
         'controller' => 'offers',
@@ -74,16 +75,18 @@ if (empty($company['Offer']['Active'])) {
             echo ' [SPAM]';
         }
 
-        echo ' ' . $this->Html->link(
-            '[Τερματισμός]',
-            array(
-                'controller' => 'offers',
-                'action' => 'terminate_from_company',
-                $active['id']),
-            null,
-            'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+        if ($is_user_the_owner) {
+          echo ' ' . $this->Html->link(
+              '[Τερματισμός]',
+              array(
+                  'controller' => 'offers',
+                  'action' => 'terminate_from_company',
+                  $active['id']),
+              null,
+              'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+      }
 
-        echo '<br/>';
+      echo '<br/>';
     }
 }
 

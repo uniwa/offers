@@ -415,12 +415,12 @@ class OffersController extends AppController {
     //
     // @param $id offer id to terminate
     public function terminate_from_company($id = null) {
-        $this->terminate($id, array(
+        $this->_terminate($id, array(
             'controller' => 'companies',
             'action' => 'view'));
     }
     public function terminate_from_offer($id = null) {
-        $this->terminate($id, array(
+        $this->_terminate($id, array(
             'controller' => 'offers',
             'action' => 'view', $id));
     }
@@ -432,7 +432,16 @@ class OffersController extends AppController {
     //
     // @param $id the offer to terminate
     // @param $redirect parameter to be passed into $this->redirect
-    private function terminate($id = null, $redirect) {
+    private function _terminate($id = null, $redirect) {
+        $user_role = $this->Auth->user('role');
+
+        // ensure `Forbidden' message is shown, when a trespasser directly
+        // requests for this URL
+        if ($user_role != ROLE_ADMIN || $user_role != ROLE_COMPANY) {
+            throw new ForbiddenException('Δεν έχετε πρόσβαση σε αυτή τη σελίδα.');
+        }
+
+        // avoid db request when no offer was specified
         if (empty($id)) {
             throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
         }

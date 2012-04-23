@@ -41,15 +41,18 @@ if ($is_spam) {
 }
 
 if ($offer_state_id == STATE_ACTIVE) {
-    echo $this->Html->link(
-        '[Τερματισμός]',
-        array(
-            'controller' => 'offers',
-            'action' => 'terminate_from_offer',
-            $offer['Offer']['id']),
-        null,
-        'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;')
-        . '<br>';
+
+    if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] ) {
+      echo $this->Html->link(
+          '[Τερματισμός]',
+          array(
+              'controller' => 'offers',
+              'action' => 'terminate_from_offer',
+              $offer['Offer']['id']),
+          null,
+          'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+    }
+    echo '<br>';
 }
 
 $html = '';

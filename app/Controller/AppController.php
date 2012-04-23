@@ -27,8 +27,6 @@ class AppController extends Controller{
     );
 
     function beforeFilter() {
-        $guest = is_null($this->Auth->user());
-        $this->set('guest', $guest);
         //clear authError default message
         $this->Auth->authError = " ";
 

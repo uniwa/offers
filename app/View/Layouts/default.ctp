@@ -48,10 +48,12 @@
 
             <li>
                 <?php
-                    if ($guest)
+                    // show register link for guests
+                    if (! $this->Session->check('Auth.User.id')) {
                         echo $this->Html->link(
                             __('Εγγραφή'),
                             array('controller' => 'users', 'action' => 'register'));
+                    }
                 ?>
             </li>
             <li>

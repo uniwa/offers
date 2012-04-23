@@ -127,4 +127,9 @@ class Company extends AppModel {
         }
         return $result;
     }
+
+    public function is_owned_by($company_id, $user_id) {
+        return $this->field('id',
+            array('id' => $company_id, 'user_id' => $user_id)) === $company_id;
+    }
 }

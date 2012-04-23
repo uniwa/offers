@@ -131,10 +131,17 @@ class CompaniesController extends AppController {
             if ($this->action === 'view') {
                 return true;
             }
-            // TODO
-            // add check for action 'edit'
-            // check if company belongs to the user
-            // who requested the edit action
+
+            if ($this->action === 'edit') {
+                $company_id = $this->request->params['pass'][0];
+                if ($this->Auth->User('role') === ROLE_COMPANY) {
+                    if ($this->Company->is_owned_by($company_id, $user['id'])) {
+                        return true;
+                    }
+                }
+                // admin cannot edit company profiles
+                return false;
+            }
         }
 
         // admin can see banned users too

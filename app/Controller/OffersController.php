@@ -17,9 +17,29 @@ class OffersController extends AppController {
     public $helpers = array('Html');
 
     function beforeFilter(){
+        if (! $this->is_authorized($this->Auth->user()))
+            throw new ForbiddenException();
+
         parent::beforeFilter();
         $this->Auth->allow('index');
         define('ADD', -1);
+    }
+
+    public function is_authorized($user) {
+        // All registered users can view offers
+        if (in_array($this->action, array('index', 'view'))) {
+            return true;
+        }
+
+        // The owner of an offer can edit and delete it
+        if (in_array($this->action, array('edit', 'delete'))) {
+            $offer_id = $this->request->params['pass'][0];
+            if ($this->Offer->is_owned_by($offer_id, $user['id'])) {
+                return true;
+            }
+        }
+
+        return parent::is_authorized($user);
     }
 
     public function index() {

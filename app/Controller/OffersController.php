@@ -23,7 +23,6 @@ class OffersController extends AppController {
         parent::beforeFilter();
         $this->Auth->allow('index');
         define('ADD', -1);
-        define('TERMINATE', 1);
     }
 
     public function is_authorized($user) {
@@ -36,7 +35,11 @@ class OffersController extends AppController {
 
         // The owner of an offer can edit and delete it, as well as activate and
         //  terminate it
-        if (in_array($this->action, array('edit', 'delete', 'terminate_from_company', 'terminate_from_offer'))) {
+        if (in_array($this->action, array(
+            'edit', 'delete',
+            'terminate_from_company', 'terminate_from_offer',
+            'activate_from_company', 'activate_from_offer'))) {
+
             $offer_id = $this->request->params['pass'][0];
             if ($this->Offer->is_owned_by($offer_id, $user['id'])) {
                 return true;
@@ -440,19 +443,34 @@ class OffersController extends AppController {
         return $input_elements;
     }
 
+    // Wrapper functions of `_change_state' for the activation of an offer
+    // specifying a redirect target.
+    //
+    // @param $id offer id to activate
+    public function activate_from_company($id = null) {
+        $this->_change_state($id, array(
+            'controller' => 'companies',
+            'action' => 'view'));
+    }
+    public function activate_from_offer($id = null) {
+        $this->_change_state($id, array(
+            'controller' => 'offers',
+            'action' => 'view', $id));
+    }
 
-    // Wrapper functions for `terminate' that specify the redirect target
+    // Wrapper functions of `_change_state' for the termination of an offer
+    // specifying a redirect target.
     //
     // @param $id offer id to terminate
     public function terminate_from_company($id = null) {
         $this->_change_state($id, array(
             'controller' => 'companies',
-            'action' => 'view'), TERMINATE);
+            'action' => 'view'), true);
     }
     public function terminate_from_offer($id = null) {
-        $this->_terminate($id, array(
+        $this->_change_state($id, array(
             'controller' => 'offers',
-            'action' => 'view', $id), TERMINATE);
+            'action' => 'view', $id), true);
     }
     // this will (potentially) be used in the administrative page of all offers
 #    public function terminate_from_admin($id = null) {
@@ -463,19 +481,18 @@ class OffersController extends AppController {
     // @param $id the offer to activate/terminate
     // @param $redirect passed into $this->redirect; if omitted,no redirection
     //      will take place
-    // @param $action determines if offer should be activated or terminated.
-    //      Defaults to activation; use constant `TERMINATE' if termination is
-    //      desired, instead.
+    // @param $should_terminate determines if offer should be activated or
+    //      terminated; defaults to false, resulting in its activation
     // @throws ForbiddenException if necessary conditions for
     //      activation/termination are not met
-    private function _change_state($id = null, $redirect = null, $action = 0) {
+    private function _change_state($id = null, $redirect = null, $should_terminate = false) {
 
-        if ($action == TERMINATE) {
+        if ($should_terminate == true ) {
             if ($this->Offer->terminate($id)) {
                 $this->Session->setFlash('Η προσφορά απενεργοποιήθηκε.');
             }
         } else {
-            if ($this->Offer->terminate($id)) {
+            if ($this->Offer->activate($id)) {
                 $this->Session->setFlash('Η προσφορά ενεργοποιήθηκε.');
             }
         }

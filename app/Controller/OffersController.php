@@ -26,6 +26,8 @@ class OffersController extends AppController {
     }
 
     public function is_authorized($user) {
+        $role = $this->Auth->user('role');
+
         // All registered users can view offers
         if (in_array($this->action, array('index', 'view'))) {
             return true;
@@ -35,6 +37,12 @@ class OffersController extends AppController {
         if (in_array($this->action, array('edit', 'delete'))) {
             $offer_id = $this->request->params['pass'][0];
             if ($this->Offer->is_owned_by($offer_id, $user['id'])) {
+                return true;
+            }
+        }
+
+        if (in_array($this->action, array('add_happyhour', 'add_coupons', 'add_coupons'))) {
+            if ($role === ROLE_COMPANY) {
                 return true;
             }
         }

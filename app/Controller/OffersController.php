@@ -46,7 +46,8 @@ class OffersController extends AppController {
             }
         }
 
-        if (in_array($this->action, array('add_happyhour', 'add_coupons', 'add_coupons'))) {
+        // Only companies can add an offer
+        if (in_array($this->action, array('add_happyhour', 'add_coupons', 'add_limited'))) {
             if ($role === ROLE_COMPANY) {
                 return true;
             }
@@ -196,9 +197,6 @@ class OffersController extends AppController {
     // if $id is -1, add a new offer
     // else edit the offer with the corresponding id
     private function modify($offer_type_id, $id=null) {
-        if ($this->Auth->User('role') !== ROLE_COMPANY)
-            throw new ForbiddenException();
-
         if (is_null($id)) throw new BadRequestException();
 
         // Save modified offer
@@ -521,51 +519,47 @@ class OffersController extends AppController {
         $options['conditions'] = array('Offer.id' => $id);
         $offer = $this->Offer->find('first', $options);
 
-        if ($this->Auth->User('id') === $offer['Company']['user_id']) {
-            if ($offer['Offer']['offer_state_id'] == STATE_DRAFT) {
-                $transaction = $this->Offer->getDataSource();
-                $transaction->begin();
-                $error = false;
+        if ($offer['Offer']['offer_state_id'] == STATE_DRAFT) {
+            $transaction = $this->Offer->getDataSource();
+            $transaction->begin();
+            $error = false;
 
-                if ($this->Image->deleteAll(array('Image.offer_id' => $id), false) &&
-                    $this->WorkHour->deleteAll(array('WorkHour.offer_id' => $id), false))
-                {
-                    if (!$this->Offer->delete($id, false))
-                        $error = true;
-                } else {
+            if ($this->Image->deleteAll(array('Image.offer_id' => $id), false) &&
+                $this->WorkHour->deleteAll(array('WorkHour.offer_id' => $id), false))
+            {
+                if (!$this->Offer->delete($id, false))
                     $error = true;
-                }
-
-                if ($error === true) {
-                    $transaction->rollback();
-                    $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
-                                             'default',
-                                             array('class' => Flash::Error));
-                    $this->redirect(array(
-                                        'controller' => 'offers',
-                                        'action' => 'view',
-                                        $offer['Offer']['id']));
-                } else {
-                    $transaction->commit();
-                    $this->Session->setFlash('Η προσφορά διαγράφηκε επιτυχώς.',
-                                             'default',
-                                             array('class' => Flash::Success));
-                    $this->redirect(array(
-                                        'controller' => 'companies',
-                                        'action' => 'view',
-                                        $offer['Company']['id']));
-                }
             } else {
-                $this->Session->setFlash('Η προσφορά δεν μπορεί να διαγραφεί',
+                $error = true;
+            }
+
+            if ($error === true) {
+                $transaction->rollback();
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
                                          'default',
-                                         array('class' => Flash::Info));
+                                         array('class' => Flash::Error));
                 $this->redirect(array(
                                     'controller' => 'offers',
                                     'action' => 'view',
                                     $offer['Offer']['id']));
+            } else {
+                $transaction->commit();
+                $this->Session->setFlash('Η προσφορά διαγράφηκε επιτυχώς.',
+                                         'default',
+                                         array('class' => Flash::Success));
+                $this->redirect(array(
+                                    'controller' => 'companies',
+                                    'action' => 'view',
+                                    $offer['Company']['id']));
             }
         } else {
-            throw new ForbiddenException('Δεν έχετε πρόσβαση σε αυτή τη σελίδα.');
+            $this->Session->setFlash('Η προσφορά δεν μπορεί να διαγραφεί',
+                                     'default',
+                                     array('class' => Flash::Info));
+            $this->redirect(array(
+                                'controller' => 'offers',
+                                'action' => 'view',
+                                $offer['Offer']['id']));
         }
     }
 }

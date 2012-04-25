@@ -37,6 +37,16 @@ switch($offer['Offer']['offer_type_id']){
 $label_text = offer_type($offer['Offer']['offer_type_id']);
 echo "<p><span class='label {$label_class}'>{$label_text}</span></p>";
 echo "<h4>Προσφορά {$offer['Offer']['id']}</h4><br/>";
+
+if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
+    echo $this->Html->link('Εταιρία: ' . $offer['Company']['name'],
+        array(
+            'controller' => 'companies',
+            'action' => 'view',
+            $offer['Company']['id']
+        )
+    );
+}
 if ($is_spam) {
     echo 'Η προσφορά έχει χαρακτηρισθεί ως SPAM.<br/><br/>';
 }

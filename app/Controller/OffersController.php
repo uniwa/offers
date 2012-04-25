@@ -41,7 +41,7 @@ class OffersController extends AppController {
             }
         }
 
-        if (in_array($this->action, array('add_happyhour', 'add_coupons', 'add_coupons'))) {
+        if (in_array($this->action, array('add_happyhour', 'add_coupons', 'add_limited'))) {
             if ($role === ROLE_COMPANY) {
                 return true;
             }

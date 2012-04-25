@@ -75,7 +75,7 @@ if (empty($company['Offer']['Active'])) {
             echo ' [SPAM]';
         }
 
-        if ($is_user_the_owner) {
+        if ($is_user_the_owner || $user_role == ROLE_ADMIN) {
           echo ' ' . $this->Html->link(
               '[Τερματισμός]',
               array(

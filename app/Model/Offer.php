@@ -166,4 +166,10 @@ class Offer extends AppModel {
         ),
     );
 
+    public function is_owned_by($offer_id, $user_id) {
+        $company_id = $this->Company->field('id', array('user_id' => $user_id));
+        $offer_company_id = $this->field('company_id', array('id' => $offer_id));
+        return $company_id === $offer_company_id;
+    }
+
 }

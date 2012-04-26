@@ -106,14 +106,15 @@ class Company extends AppModel {
                 'allowEmpty' => true
             ),
             'valid' => array(
-                'rule' => 'checkValid',
+                'rule' => 'check_valid_afm',
                 'message' => 'Ο ΑΦΜ δεν είναι έγκυρος',
                 'allowEmpty' => true
             )
         )
     );
 
-    public function checkValid($afm){
+    // Check if ΑΦΜ is valid (official algorithm)
+    public function check_valid_afm($afm) {
         $afm = $afm['afm'];
         $result = false;
         if(strlen($afm) == 9){

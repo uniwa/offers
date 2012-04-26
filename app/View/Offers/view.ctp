@@ -92,8 +92,6 @@ if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
                 'url' => array('controller' => 'coupons', 'action' => 'add')));
             $get_coupon .= $this->Form->hidden('Coupon.offer_id',
                 array('value' => $offer['Offer']['id']));
-            $get_coupon .= $this->Form->hidden('Coupon.student_id',
-                array('value' => $student['Student']['id']));
             $get_coupon .= $this->Form->end('Get Coupon');
             echo $get_coupon;
         }

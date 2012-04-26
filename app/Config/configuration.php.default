@@ -10,6 +10,7 @@ $config = array(
         'STATE_DRAFT' => 1,
         'STATE_ACTIVE' => 2,
         'STATE_INACTIVE' => 3,
+        'BIND_UNLIMITED' => 0,
     ),
     'Settings' => array(
         'offer_type' => array(

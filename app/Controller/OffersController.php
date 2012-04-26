@@ -415,6 +415,7 @@ class OffersController extends AppController {
             $new_elem['options']['orderYear'] = 'asc';
             $new_elem['options']['timeFormat'] = '24';
             $new_elem['options']['interval'] = '15';
+            $new_elem['options']['empty'] = true;
             $input_elements[] = $new_elem;
         }
 
@@ -430,6 +431,7 @@ class OffersController extends AppController {
             $new_elem['options']['orderYear'] = 'asc';
             $new_elem['options']['timeFormat'] = '24';
             $new_elem['options']['interval'] = '15';
+            $new_elem['options']['empty'] = true;
             $input_elements[] = $new_elem;
         }
 

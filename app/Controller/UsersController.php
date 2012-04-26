@@ -3,7 +3,8 @@
 class UsersController extends AppController {
 
     public $uses = array('User', 'Image', 'Day',
-                         'WorkHour', 'Municipality', 'Company');
+                         'WorkHour', 'Municipality', 'Company', 'Student');
+
     function beforeFilter() {
         parent::beforeFilter();
         $this->Auth->allow('register');
@@ -42,6 +43,28 @@ class UsersController extends AppController {
                 // save last login field
                 $this->User->id = $this->Auth->user('id');
                 $this->User->saveField('last_login', date(DATE_ATOM), false);
+
+                // Save student and company profile id in session
+                // as they are widely used thoughout the application
+                //  for students:
+                //      Auth.Student.id
+                //  for companies:
+                //      Auth.Company.id
+                //
+                //  Retrieving this data from session (controller/views):
+                //      $this->Session->read('Auth.Company.id');
+                //      $this->Session->read('Auth.Student.id');
+                //
+                if ($this->Auth->user('role') === ROLE_COMPANY) {
+                    $company_id = $this->Company->field('id',
+                        array('user_id' => $this->Auth->user('id')));
+                    $this->Session->write('Auth.Company.id', $company_id);
+
+                } elseif ($this->Auth->user('role') === ROLE_STUDENT) {
+                    $student_id = $this->Student->field('id',
+                        array('user_id' => $this->Auth->user('id')));
+                    $this->Session->write('Auth.Student.id', $student_id);
+                }
 
                 // redirect to profile on 1st login
                 // admins always go to the default screen

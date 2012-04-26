@@ -217,6 +217,22 @@ class Offer extends AppModel {
                 'message' => 'Οι λέξεις-κλειδιά περιέχουν μη έγκυρους χαρακτήρες.'
             ),
         ),
+
+        'max_per_student' => array(
+            'not_empty' => array(
+                'rule' => 'notEmpty',
+                'message' => 'Παρακαλώ εισάγετε μια τιμή.',
+                'required' => true
+            ),
+            'valid' => array(
+                'rule' => '/^\d+$/',
+                'message' => 'Ο αριθμός πρέπει να είναι θετικός ή μηδέν.',
+                'allowEmpty' => true,
+                'required' => false
+            )
+        ),
+
+
     );
 
     public function is_owned_by($offer_id, $user_id) {

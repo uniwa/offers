@@ -218,6 +218,23 @@ class Offer extends AppModel {
             ),
         ),
 
+        'total_quantity' => array(
+            'not_empty' => array(
+                'rule' => 'notEmpty',
+                'message' => 'Παρακαλώ εισάγετε μια τιμή.',
+                'required' => true
+            ),
+            'integer' => array(
+                'rule' => '/^\d+$/',
+                'message' => 'Παρακαλώ εισάγετε ένα θετικό ακέραιο αριθμό.',
+                'last' => true
+            ),
+            'positive' => array(
+                'rule' => array('comparison', '>', 0),
+                'message' => 'Ο αριθμός πρέπει να είναι θετικός.',
+            )
+        ),
+
         'max_per_student' => array(
             'not_empty' => array(
                 'rule' => 'notEmpty',
@@ -227,11 +244,9 @@ class Offer extends AppModel {
             'valid' => array(
                 'rule' => '/^\d+$/',
                 'message' => 'Ο αριθμός πρέπει να είναι θετικός ή μηδέν.',
-                'allowEmpty' => true,
-                'required' => false
+                'required' => true
             )
         ),
-
 
     );
 

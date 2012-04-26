@@ -195,7 +195,7 @@ class OffersController extends AppController {
     }
 
     // Function for adding/editing offer
-    // $offer_type_id same as global, 0-happy hour, 1-coupons, 2-limited
+    // $offer_type_id same as global, 1-happy hour, 2-coupons, 3-limited
     // if $id is -1, add a new offer
     // else edit the offer with the corresponding id
     private function modify($offer_type_id, $id=null) {

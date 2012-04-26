@@ -12,9 +12,6 @@ class CouponsController extends AppController {
         if (empty($this->request->data))
             throw new BadRequestException();
 
-        if ($this->Auth->User('id') !== $this->request->data['Coupon']['student_id'])
-            throw new BadRequestException();
-
         // throw an exception in case the student can get only one coupon
         //$options['conditions'] = array('Coupon.student_id' => $this->request->data['Coupon']['student_id'],
         //                               'Coupon.offer_id' => $this->request->data['Coupon']['offer_id']);
@@ -23,13 +20,16 @@ class CouponsController extends AppController {
         //if (!empty($coupon))
         //    throw new BadRequestException('Έχετε ήδη ένα κουπόνι για αυτή την προσφορά');
 
-        // Create a UUID
-        // TODO check for duplicate ?
-        $uuid = $this->generate_uuid();
-        $this->request->data['Coupon']['serial_number'] = $uuid;
-        $this->request->data['Coupon']['is_used'] = 0;
+        // do not work on the request object
+        $coupon_data = $this->request->data;
 
-        if ($this->Coupon->save($this->request->data))
+        // create a unique id
+        $coupon_data['Coupon']['serial_number'] = $this->generate_uuid();
+
+        $coupon_data['Coupon']['is_used'] = 0;
+        $coupon_data['Coupon']['student_id'] = $this->Session->read('Auth.Student.id');
+
+        if ($this->Coupon->save($coupon_data))
             $this->Session->setFlash('Το κουπόνι δεσμεύτηκε επιτυχώς',
                                      'default',
                                      array('class' => Flash::Success));

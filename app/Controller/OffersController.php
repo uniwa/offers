@@ -14,7 +14,7 @@ class OffersController extends AppController {
         'recursive' => -1
     );
 
-    public $helpers = array('Html');
+    public $helpers = array('Html', 'Time');
 
     function beforeFilter(){
         if (! $this->is_authorized($this->Auth->user()))
@@ -155,8 +155,10 @@ class OffersController extends AppController {
             $offer_info[] = $new_elem;
         }
         if ($offer_type_id == TYPE_LIMITED) {
+            App::uses('CakeTime', 'Utility');
             $new_elem['label'] = "Λήξη προσφοράς";
-            $new_elem['value'] = $offer['Offer']['autoend'];
+            $new_elem['value'] = CakeTime::format('d-m-Y H:i',
+                $offer['Offer']['autoend']);
             $offer_info[] = $new_elem;
         }
         foreach($offer['WorkHour'] as $wh) {

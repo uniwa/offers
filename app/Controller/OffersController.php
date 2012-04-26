@@ -406,8 +406,8 @@ class OffersController extends AppController {
 
             $new_elem = array();
             $new_elem['title'] = 'Offer.max_per_student';
-            $new_elem['options']['label'] = "Μέγιστος αριθμός κουπονιών ανά φοιτητή";
-            $new_elem['options']['label'] .= "<br />(0 για απεριόριστα)";
+            $new_elem['options']['label'] = "Μέγιστος αριθμός κουπονιών ανά φοιτητή<br />";
+            $new_elem['options']['label'] .= "(".BIND_UNLIMITED." για απεριόριστα)";
             $new_elem['options']['default'] = BIND_UNLIMITED;
             $input_elements[] = $new_elem;
 

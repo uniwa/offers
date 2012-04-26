@@ -1,5 +1,6 @@
 <?php
 // TODO: move to controller
+$is_user_the_owner = $this->Session->read('Auth.User.id') == $offer['Company']['user_id'];
 if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
     $offer['Offer']['offer_state_id'] == OfferStates::Draft)
 {
@@ -50,9 +51,8 @@ if ($is_spam) {
     echo 'Η προσφορά έχει χαρακτηρισθεί ως SPAM.<br/><br/>';
 }
 
-if ($offer_state_id == STATE_ACTIVE) {
-
-    if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] ) {
+if ($is_user_the_owner) {
+    if ($offer_state_id == STATE_ACTIVE) {
       echo $this->Html->link(
           '[Τερματισμός]',
           array(
@@ -61,9 +61,21 @@ if ($offer_state_id == STATE_ACTIVE) {
               $offer['Offer']['id']),
           null,
           'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+
+    } else if ($offer_state_id == STATE_DRAFT) {
+
+      echo $this->Html->link(
+          '[Ενεργοποίηση]',
+          array(
+              'controller' => 'offers',
+              'action' => 'activate_from_offer',
+              $offer['Offer']['id']),
+          null,
+          'Οι ενεργοποιημένες προσφορές δε δύναται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
     }
-    echo '<br>';
 }
+
+echo '<br>';
 
 $html = '';
 foreach($offer_info as $elem) {

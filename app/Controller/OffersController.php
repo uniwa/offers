@@ -33,8 +33,13 @@ class OffersController extends AppController {
             return true;
         }
 
-        // The owner of an offer can edit and delete it
-        if (in_array($this->action, array('edit', 'delete'))) {
+        // The owner of an offer can edit and delete it, as well as activate and
+        //  terminate it
+        if (in_array($this->action, array(
+            'edit', 'delete',
+            'terminate_from_company', 'terminate_from_offer',
+            'activate_from_company', 'activate_from_offer'))) {
+
             $offer_id = $this->request->params['pass'][0];
             if ($this->Offer->is_owned_by($offer_id, $user['id'])) {
                 return true;
@@ -440,84 +445,62 @@ class OffersController extends AppController {
         return $input_elements;
     }
 
-
-    // Wrapper functions for `terminate' that specify the redirect target
+    // Wrapper functions of `_change_state' for the activation of an offer
+    // specifying a redirect target.
     //
-    // @param $id offer id to terminate
-    public function terminate_from_company($id = null) {
-        $this->_terminate($id, array(
+    // @param $id offer id to activate
+    public function activate_from_company($id = null) {
+        $this->_change_state($id, array(
             'controller' => 'companies',
             'action' => 'view'));
     }
-    public function terminate_from_offer($id = null) {
-        $this->_terminate($id, array(
+    public function activate_from_offer($id = null) {
+        $this->_change_state($id, array(
             'controller' => 'offers',
             'action' => 'view', $id));
+    }
+
+    // Wrapper functions of `_change_state' for the termination of an offer
+    // specifying a redirect target.
+    //
+    // @param $id offer id to terminate
+    public function terminate_from_company($id = null) {
+        $this->_change_state($id, array(
+            'controller' => 'companies',
+            'action' => 'view'), true);
+    }
+    public function terminate_from_offer($id = null) {
+        $this->_change_state($id, array(
+            'controller' => 'offers',
+            'action' => 'view', $id), true);
     }
     // this will (potentially) be used in the administrative page of all offers
 #    public function terminate_from_admin($id = null) {
 #    }
 
-    // Responsible for declaring an offer as inactive.
+    // Responsible for manipulating the state of an offer.
     //
-    // @param $id the offer to terminate
-    // @param $redirect parameter to be passed into $this->redirect
-    private function _terminate($id = null, $redirect) {
-        $user_role = $this->Auth->user('role');
+    // @param $id the offer to activate/terminate
+    // @param $redirect passed into $this->redirect; if omitted,no redirection
+    //      will take place
+    // @param $should_terminate determines if offer should be activated or
+    //      terminated; defaults to false, resulting in its activation
+    // @throws ForbiddenException if necessary conditions for
+    //      activation/termination are not met
+    private function _change_state($id = null, $redirect = null, $should_terminate = false) {
 
-        // ensure `Forbidden' message is shown, when a trespasser directly
-        // requests for this URL
-        if ($user_role != ROLE_ADMIN && $user_role != ROLE_COMPANY) {
-            throw new ForbiddenException('Δεν έχετε πρόσβαση σε αυτή τη σελίδα.');
-        }
-
-        // avoid db request when no offer was specified
-        if (empty($id)) {
-            throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
-        }
-
-        // fetch only the fields required for checks and the ones to be updated
-        // TODO see if just offer_state_id and ended can be fetched and have
-        // this work still
-        $fields = array(
-            'Offer.*',
-            //'Offer.offer_state_id',
-            //'Offer.ended',
-            'Company.user_id');
-        // could use unbind on Coupon, Image and WorkHour to avoid Left joins !
-        // using fields, empty arrays are returned for these 3 associations
-
-        $offer = $this->Offer->read($fields, $id);
-
-        if (empty($offer)) {
-            throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
-        }
-
-        // allow company owner and admins to terminate an offer
-        if ($this->Auth->user('id') === $offer['Company']['user_id'] ||
-            $this->Auth->user('role') === ROLE_ADMIN) {
-
-            // only active offers may be terminated
-            if ($offer['Offer']['offer_state_id'] == STATE_ACTIVE) {
-
-                $this->Offer->set('offer_state_id', STATE_INACTIVE);
-                $this->Offer->set('ended', date('Y-m-d H:i:s'));
-
-                if ($this->Offer->save()) {
-                    $this->Session->setFlash('Η προσφορά απενεργοποιήθηκε.');
-
-                } else {
-                    $this->Session->setFlash(
-                        'Η προσφορά δεν κατέστη δυνατό να απενεργοποιηθεί.');
-                }
-
-                $this->redirect($redirect);
-
-            } else {
-                throw new ForbiddenException('Η προσφορά δεν δύναται απενεργοποίησης.');
+        if ($should_terminate == true ) {
+            if ($this->Offer->terminate($id)) {
+                $this->Session->setFlash('Η προσφορά απενεργοποιήθηκε.');
             }
         } else {
-            throw new ForbiddenException('Δεν έχετε πρόσβαση σε αυτή τη σελίδα.');
+            if ($this->Offer->activate($id)) {
+                $this->Session->setFlash('Η προσφορά ενεργοποιήθηκε.');
+            }
+        }
+
+        if (!empty($redirect)) {
+            $this->redirect($redirect);
         }
     }
 

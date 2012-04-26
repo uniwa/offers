@@ -49,6 +49,59 @@ class Offer extends AppModel {
         $this->deactivate_offers($company_id, $now);
     }
 
+    // TODO: this function could be merged with Offer::terminate into one
+    // Manually activate a specific offer. Authorization must be ensured
+    // beforehand.
+    // @param $id id of offer to activate
+    // @throws ForbiddenException when activate conditions are not met
+    public function activate($id = null) {
+
+        // TODO see if just offer_state_id and ended can be fetched and have
+        // this work still
+        if (empty($this->data)) {
+            // fetch only the fields required to be checked and updated
+            $this->recursive = -1;
+            $this->read('Offer.*', $id);
+        }
+
+        // only active offers may be terminated
+        if ($this->data['Offer']['offer_state_id'] == STATE_DRAFT) {
+
+            $this->set('offer_state_id', STATE_ACTIVE);
+            $this->set('started', date('Y-m-d H:i:s'));
+
+            return $this->save();
+        } else {
+            throw new ForbiddenException('Η προσφορά δεν δύναται ενεργοποίησης.');
+        }
+    }
+    // TODO: this function could be merged with Offer::activate into one
+    // Manually terminate a specific offer. Authorization must be ensured
+    // beforehand.
+    // @param $id id of offer to terminate
+    // @throws ForbiddenException when termination conditions are not met
+    public function terminate($id = null) {
+
+        // TODO see if just offer_state_id and ended can be fetched and have
+        // this work still
+        if (empty($this->data)) {
+            // fetch only the fields required to be checked and updated
+            $this->recursive = -1;
+            $this->read('Offer.*', $id);
+        }
+
+        // only active offers may be terminated
+        if ($this->data['Offer']['offer_state_id'] == STATE_ACTIVE) {
+
+            $this->set('offer_state_id', STATE_INACTIVE);
+            $this->set('ended', date('Y-m-d H:i:s'));
+
+            return $this->save();
+        } else {
+            throw new ForbiddenException('Η προσφορά δεν δύναται απενεργοποίησης.');
+        }
+    }
+
     private function activate_offers($company_id = NULL, $date) {
         // happy-hour offers do not automatically activate
 
@@ -169,7 +222,7 @@ class Offer extends AppModel {
     public function is_owned_by($offer_id, $user_id) {
         $company_id = $this->Company->field('id', array('user_id' => $user_id));
         $offer_company_id = $this->field('company_id', array('id' => $offer_id));
-        return $company_id === $offer_company_id;
+        return $company_id === $offer_company_id && $company_id !== false;
     }
 
 }

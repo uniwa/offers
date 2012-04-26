@@ -104,6 +104,17 @@ if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
             if ($draft['is_spam'] == TRUE) {
                 echo ' [SPAM]';
             }
+
+            if ($is_user_the_owner) {
+              echo ' ' . $this->Html->link(
+                  '[Ενεργοποίηση]',
+                  array(
+                      'controller' => 'offers',
+                      'action' => 'activate_from_company',
+                      $draft['id']),
+                  null,
+                  'Οι ενεργοποιημένες προσφορές δε δύναται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+            }
             echo '<br/>';
         }
     }
@@ -120,7 +131,7 @@ if (empty($company['Offer']['Inactive'])) {
                                      'action' => 'view', $inactive['id'])
                               );
         if ($inactive['is_spam'] == true) {
-            echo ' [έχει χαρακτηρισθεί ως SPAM]';
+            echo ' [SPAM]';
         }
         echo '<br/>';
     }

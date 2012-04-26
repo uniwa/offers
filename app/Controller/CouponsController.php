@@ -5,6 +5,13 @@ class CouponsController extends AppController {
     public $name = 'coupons';
     public $uses = array('Coupon', 'Offer');
 
+    public function beforeFilter() {
+        if (! $this->is_authorized($this->Auth->user()))
+            throw new ForbiddenException();
+
+        parent::beforeFilter();
+    }
+
     public function add () {
         if ($this->Auth->User('role') !== ROLE_STUDENT)
             throw new ForbiddenException();
@@ -49,4 +56,19 @@ class CouponsController extends AppController {
 
         return $uuid;
     }
+
+    public function is_authorized($user) {
+        if ($user['is_banned'] == 0) {
+            if ($this->action === 'add') {
+                // only students can get coupons
+                if ($user['role'] !== ROLE_STUDENT)
+                    return false;
+                return true;
+            }
+        }
+
+        // admin can see banned users too
+        return parent::is_authorized($user);
+    }
+
 }

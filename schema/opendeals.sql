@@ -215,6 +215,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   `coupon_terms` TEXT NULL DEFAULT NULL ,
   `total_quantity` INT NOT NULL DEFAULT 0 ,
   `coupon_count` INT NOT NULL DEFAULT 0 ,
+  `max_per_student` int(11) NOT NULL,
   `tags` MEDIUMTEXT NULL ,
   `offer_category_id` INT NOT NULL ,
   `offer_type_id` INT NOT NULL ,

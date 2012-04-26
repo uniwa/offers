@@ -222,7 +222,6 @@ class Offer extends AppModel {
             'not_empty' => array(
                 'rule' => 'notEmpty',
                 'message' => 'Παρακαλώ εισάγετε μια τιμή.',
-                'required' => true
             ),
             'integer' => array(
                 'rule' => '/^\d+$/',
@@ -235,18 +234,16 @@ class Offer extends AppModel {
             )
         ),
 
-        'max_per_student' => array(
+         'max_per_student' => array(
             'not_empty' => array(
                 'rule' => 'notEmpty',
                 'message' => 'Παρακαλώ εισάγετε μια τιμή.',
-                'required' => true
             ),
-            'valid' => array(
+            'integer' => array(
                 'rule' => '/^\d+$/',
-                'message' => 'Ο αριθμός πρέπει να είναι θετικός ή μηδέν.',
-                'required' => true
-            )
-        ),
+                 'message' => 'Ο αριθμός πρέπει να είναι θετικός ή μηδέν.',
+             )
+         ),
 
     );
 

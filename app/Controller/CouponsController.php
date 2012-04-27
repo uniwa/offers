@@ -13,9 +13,6 @@ class CouponsController extends AppController {
     }
 
     public function add ($id = null) {
-        if ($this->Auth->User('role') !== ROLE_STUDENT)
-            throw new ForbiddenException();
-
         if ($id === null)
             throw new BadRequestException();
 

@@ -19,22 +19,26 @@ class CouponsController extends AppController {
         if (empty($this->request->data))
             throw new BadRequestException();
 
-        // throw an exception in case the student can get only one coupon
-        //$options['conditions'] = array('Coupon.student_id' => $this->request->data['Coupon']['student_id'],
-        //                               'Coupon.offer_id' => $this->request->data['Coupon']['offer_id']);
-        //$options['recursive'] = -1;
-        //$coupon = $this->Coupon->find('first', $options);
-        //if (!empty($coupon))
-        //    throw new BadRequestException('Έχετε ήδη ένα κουπόνι για αυτή την προσφορά');
-
         // do not work on the request object
         $coupon_data = $this->request->data;
+
+        // don't read from session all the time
+        $student_id = $this->Session->read('Auth.Student.id');
+        $offer_id = $coupon_data['Coupon']['offer_id'];
+
+        // check if user is allowed to get the coupon due to maximum
+        // coupon number acquired
+        if ($this->Coupon->max_coupons_reached($offer_id, $student_id)) {
+            // TODO: make this a non 500 error
+            throw new MaxCouponsException('Έχετε δεσμεύσει τον μέγιστο ' .
+                'αριθμό κουπονιών για αυτήν την προσφορά.');
+        }
 
         // create a unique id
         $coupon_data['Coupon']['serial_number'] = $this->generate_uuid();
 
         $coupon_data['Coupon']['is_used'] = 0;
-        $coupon_data['Coupon']['student_id'] = $this->Session->read('Auth.Student.id');
+        $coupon_data['Coupon']['student_id'] = $student_id;
 
         if ($this->Coupon->save($coupon_data))
             $this->Session->setFlash('Το κουπόνι δεσμεύτηκε επιτυχώς',
@@ -72,3 +76,5 @@ class CouponsController extends AppController {
     }
 
 }
+
+class MaxCouponsException extends CakeException {};

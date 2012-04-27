@@ -12,35 +12,42 @@ class CouponsController extends AppController {
         parent::beforeFilter();
     }
 
-    public function add () {
-        if ($this->Auth->User('role') !== ROLE_STUDENT)
-            throw new ForbiddenException();
-
-        if (empty($this->request->data))
+    public function add ($id = null) {
+        if ($id === null)
             throw new BadRequestException();
 
-        // do not work on the request object
-        $coupon_data = $this->request->data;
+        // TODO DEPRECATE
+        // will use custom model function that checks for offer validity too
+        // ----
+        // check that the offer exists
+        $this->Offer->recursive = -1;
+        $conditions = array('Offer.id' => $id);
+        $offer = $this->Offer->find('first',
+                                    array('conditions' => $conditions));
+
+        if (! $offer)
+            throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
+        // --------------
 
         // don't read from session all the time
         $student_id = $this->Session->read('Auth.Student.id');
-        $offer_id = $coupon_data['Coupon']['offer_id'];
 
         // check if user is allowed to get the coupon due to maximum
         // coupon number acquired
-        if ($this->Coupon->max_coupons_reached($offer_id, $student_id)) {
+        if ($this->Coupon->max_coupons_reached($id, $student_id)) {
             // TODO: make this a non 500 error
             throw new MaxCouponsException('Έχετε δεσμεύσει τον μέγιστο ' .
                 'αριθμό κουπονιών για αυτήν την προσφορά.');
         }
 
         // create a unique id
-        $coupon_data['Coupon']['serial_number'] = $this->generate_uuid();
+        $coupon['Coupon']['serial_number'] = $this->generate_uuid();
 
-        $coupon_data['Coupon']['is_used'] = 0;
-        $coupon_data['Coupon']['student_id'] = $student_id;
+        $coupon['Coupon']['is_used'] = 0;
+        $coupon['Coupon']['student_id'] = $student_id;
+        $coupon['Coupon']['offer_id'] = $id;
 
-        if ($this->Coupon->save($coupon_data))
+        if ($this->Coupon->save($coupon))
             $this->Session->setFlash('Το κουπόνι δεσμεύτηκε επιτυχώς',
                                      'default',
                                      array('class' => Flash::Success));

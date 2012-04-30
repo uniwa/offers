@@ -63,7 +63,7 @@ class Image extends AppModel {
                                    )
     {
         if ($thumb_size === null)
-            $thumb_size = array('width' => 260);
+            $thumb_size = array('width' => THUMB_WIDTH);
 
         if (!is_array($thumb_size))
             throw new InvalidArgumentException('$thumb_size must be array or null.');

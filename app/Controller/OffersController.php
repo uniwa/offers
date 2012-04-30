@@ -162,6 +162,11 @@ class OffersController extends AppController {
             $new_elem['value'] = $offer['Offer']['coupon_count'].
                 ' από '.$offer['Offer']['total_quantity'];
             $offer_info[] = $new_elem;
+            $max = $offer['Offer']['max_per_student'];
+            $new_elem['label'] = "Μέγιστος αριθμός κουπονιών ανά σπουδαστή";
+            $new_elem['value'] =
+                ($max == BIND_UNLIMITED)?'απεριόριστα':$max;
+            $offer_info[] = $new_elem;
             $new_elem['label'] = "Όροι εξαργύρωσης κουπονιού";
             $new_elem['value'] = $offer['Offer']['coupon_terms'];
             $offer_info[] = $new_elem;
@@ -414,11 +419,15 @@ class OffersController extends AppController {
             $new_elem['options']['empty'] = 'Δεν έχει κουπόνια';
             $input_elements[] = $new_elem;
 
+            $max_options = array(
+                BIND_UNLIMITED => 'απεριόριστα', 1 => '1', 2 => '2',
+                3 => '3', 5 => '5', 10 => '10');
             $new_elem = array();
             $new_elem['title'] = 'Offer.max_per_student';
             $new_elem['options']['label'] = "Μέγιστος αριθμός κουπονιών ανά φοιτητή<br />";
-            $new_elem['options']['label'] .= "(".BIND_UNLIMITED." για απεριόριστα)";
-            $new_elem['options']['default'] = BIND_UNLIMITED;
+            $new_elem['options']['type'] = 'select';
+            $new_elem['options']['options'] = $max_options;
+//            $new_elem['options']['selected'] = BIND_UNLIMITED;
             $input_elements[] = $new_elem;
 
             $new_elem = array();

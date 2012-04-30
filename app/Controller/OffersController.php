@@ -37,7 +37,7 @@ class OffersController extends AppController {
         // The owner of an offer can edit and delete it, as well as activate and
         //  terminate it
         if (in_array($this->action, array(
-            'edit', 'delete',
+            'edit', 'delete', 'imageedit',
             'terminate_from_company', 'terminate_from_offer',
             'activate_from_company', 'activate_from_offer'))) {
 
@@ -425,7 +425,7 @@ class OffersController extends AppController {
 
         $new_elem = array();
         $new_elem['title'] = 'Image.0';
-        $new_elem['options']['label'] = 'Φωτογραφία';
+        $new_elem['options']['label'] = 'Εικόνα';
         $new_elem['options']['type'] = 'file';
         $input_elements[] = $new_elem;
 
@@ -456,7 +456,6 @@ class OffersController extends AppController {
             $new_elem['options']['label'] = "Μέγιστος αριθμός κουπονιών ανά φοιτητή<br />";
             $new_elem['options']['type'] = 'select';
             $new_elem['options']['options'] = $max_options;
-//            $new_elem['options']['selected'] = BIND_UNLIMITED;
             $input_elements[] = $new_elem;
 
             $new_elem = array();
@@ -498,6 +497,47 @@ class OffersController extends AppController {
         }
 
         return $input_elements;
+    }
+
+    // Images administration
+    public function imageedit($id = null) {
+        if (is_null($id))
+            throw new BadRequestException();
+
+        if (!empty($this->request->data)) {
+            $photos = $this->Image->process($this->request->data['Image'],
+                array('offer_id' => $id));
+
+            // try to save images
+            if (!empty($photos) && !$this->Image->saveMany($photos))
+                $error = true;
+        }
+
+        // Get offer
+        $options['conditions'] = array('Offer.id' => $id);
+        $options['recursive'] = 1;
+        $offer = $this->Offer->find('first', $options);
+
+        if (empty($offer)) throw new NotFoundException();
+
+        if ($offer['Company']['user_id'] != $this->Auth->User('id'))
+            throw new ForbiddenException();
+
+        if ($offer['Offer']['offer_state_id'] != STATE_DRAFT)
+            throw new ForbiddenException();
+
+        $this->set('offer', $offer);
+
+        if (count($offer['Image']) < 10) {
+            $new_elem = array();
+            $new_elem['title'] = 'Image.0';
+            $new_elem['options']['label'] = 'Προσθήκη εικόνας';
+            $new_elem['options']['type'] = 'file';
+            $input_elements[] = $new_elem;
+
+            $this->set('input_elements', $input_elements);
+        }
+
     }
 
     // Wrapper functions of `_change_state' for the activation of an offer

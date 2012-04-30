@@ -89,7 +89,7 @@ if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
     if ($offer['Offer']['offer_type_id'] == TYPE_COUPONS) {
         if ($offer['Offer']['coupon_count'] < $offer['Offer']['total_quantity']) {
             $get_coupon = $this->Form->create(false, array('type' => 'post',
-                'url' => array('controller' => 'coupons', 
+                'url' => array('controller' => 'coupons',
                                'action' => 'add',
                                $offer['Offer']['id']
                          )));
@@ -101,4 +101,5 @@ if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
 
 if (!empty($offer['Image']))
     foreach ($offer['Image'] as $image)
-        echo $this->Html->image('/images/view/'.$image['id']);
+        if ($image['image_category_id'] == IMG_NORMAL)
+            echo $this->Html->image('/images/view/'.$image['id']);

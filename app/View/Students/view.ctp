@@ -21,12 +21,15 @@
         <tbody>
             <?php
                 foreach ($coupons as $c) {
-                    // filter data we want
+                    // if we use it more than one time put it here
+                    // to avoid bloated code!
                     $date = $c['Coupon']['created'];
+                    $title = $c['Offer']['title'];
+                    $serial_number = $c['Coupon']['serial_number'];
 
                     // build links
                     $offer_link = $this->Html->link(
-                        $c['Offer']['title'],
+                        $title,
                         array(
                             'controller' => 'offers',
                             'action' => 'view',
@@ -46,7 +49,7 @@
                     );
 
                     $coupon_link = $this->Html->link(
-                        $c['Coupon']['serial_number'],
+                        $serial_number,
                         array(
                             'controller' => 'coupons',
                             'action' => 'view',
@@ -67,18 +70,35 @@
                     );
 
                     echo "<tr>";
-                    echo "<td>{$offer_link}</td>";
+
+                    // offer title - append "spam" keyword on spam
+                    echo "<td>";
+                    if ($c['Offer']['is_spam']) {
+                        echo '<span class="label label-important">spam</span> ';
+                        echo $title;
+                    }
+                    else {
+                        echo $offer_link;
+                    }
+                    echo"</td>";
+
                     echo "<td>{$company_link}</td>";
-                    echo "<td>{$coupon_link}</td>";
+
+                    // coupon link - don't allow coupon view if spam
+                    echo "<td>";
+                    if ($c['Offer']['is_spam']) {
+                        echo $serial_number;
+                    }
+                    else {
+                        echo $coupon_link;
+                    }
+                    echo"</td>";
+
                     echo "<td>{$this->Time->format('d-m-Y',$date)}</td>";
                     echo "<td>{$delete_link}";
-                    // to add trach icon use: <i class=\"icon-trash\"></i>
+                    // to add trash icon use: <i class=\"icon-trash\"></i>
                     echo "</tr>";
-
-
-
                 }
-
             ?>
         </tbody>
     </table>

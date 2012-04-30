@@ -106,8 +106,7 @@ class OffersController extends AppController {
 
 
     public function view($id = null) {
-        $options['conditions'] = array(
-            'Offer.id' => $id);
+        $options['conditions'] = array('Offer.id' => $id);
 
         // if role is admin, the offer is displayed no matter what
         if ($this->Auth->User('role') != ROLE_ADMIN) {

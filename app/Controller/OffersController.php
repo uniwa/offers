@@ -8,7 +8,6 @@ class OffersController extends AppController {
 //        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
         'order'=>array(
-
             'Offer.starting' => 'desc'
         ),
         'recursive' => -1
@@ -29,7 +28,7 @@ class OffersController extends AppController {
         $role = $this->Auth->user('role');
 
         // All registered users can view offers
-        if (in_array($this->action, array('index', 'view'))) {
+        if (in_array($this->action, array('index', 'home', 'view'))) {
             return true;
         }
 
@@ -57,6 +56,14 @@ class OffersController extends AppController {
     }
 
     public function index() {
+        $this->paginate = array('valid');
+        $offers = $this->paginate();
+        $this->minify_desc($offers, 160);
+        $this->set('offers', $offers);
+        $this->set('happyOffers', array());
+    }
+
+    public function home() {
         //get last 3 happy hour offers
         $happyOffers = $this->Offer->find('all', array(
             'conditions'=>array(

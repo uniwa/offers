@@ -13,6 +13,7 @@ $config = array(
         'IMG_NORMAL' => 1,
         'IMG_THUMB' => 2,
         'IMG_AVATAR' => 3,
+        'THUMB_WIDTH' => 100,
         'BIND_UNLIMITED' => 0,
         'NOT_SPAM' => 0,
     ),

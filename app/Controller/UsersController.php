@@ -5,6 +5,8 @@ class UsersController extends AppController {
     public $uses = array('User', 'Image', 'Day',
                          'WorkHour', 'Municipality', 'Company', 'Student');
 
+    public $components = array('RequestHandler');
+
     function beforeFilter() {
         parent::beforeFilter();
         $this->Auth->allow('register');

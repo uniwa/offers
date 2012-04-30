@@ -15,6 +15,8 @@ class OffersController extends AppController {
 
     public $helpers = array('Html', 'Time');
 
+    public $components = array('RequestHandler');
+
     function beforeFilter(){
         if (! $this->is_authorized($this->Auth->user()))
             throw new ForbiddenException();
@@ -139,7 +141,30 @@ class OffersController extends AppController {
             $this->set('student', $student);
         }
 
-        // Prepare information for view
+        $response_type = $this->RequestHandler->prefers();
+        // automatic rendering (for xml and json)
+        $should_serialize = false;
+        switch ($response_type) {
+            case 'xml':
+                $offer_info = $this->api_prepare_view($offer);
+                $should_serialize = true;
+                break;
+
+            default:
+                // Prepare information for view
+                $offer_info = $this->prepare_view($offer);
+        }
+
+        if ($should_serialize) {
+            $this->set(
+                array('offer_info' => $offer_info,
+                '_serialize' => array('offer_info')));
+        } else {
+            $this->set('offer_info', $offer_info);
+        }
+    }
+
+    private function prepare_view($offer) {
         $offer_type_id = $offer['Offer']['offer_type_id'];
         $offer_info = array();
         $new_elem = array();
@@ -184,7 +209,7 @@ class OffersController extends AppController {
             $new_elem['value'] = "{$wh['starting']} - {$wh['ending']}";
             $offer_info[] = $new_elem;
         }
-        $this->set('offer_info', $offer_info);
+        return $offer_info;
     }
 
     // Wrapper functions for 'add offer' action
@@ -590,5 +615,102 @@ class OffersController extends AppController {
                                 'action' => 'view',
                                 $offer['Offer']['id']));
         }
+    }
+
+    // Currently serves only individual Offers (ie, no indexing).
+    //
+    // @param $data must contain `Offer', `WorkHour' (ie, offer hours) and
+    //      `Company'
+    // @param $is_xml defines whether the array should be formatted with xml in
+    //      mind
+    // @returns an array to be rendered as xml or json
+    private function api_prepare_view($data, $is_xml = true) {
+        // the result to be rendered as xml (and possibly json as well)
+        $r = array();
+
+        // affect what details make sense to be returned (ie, not set to null)
+        $uid = $this->Auth->user('id');
+        $is_owner = $uid == $data['Company']['user_id'];
+
+        // use this format unless one of the predefined constants is preferred
+        $date_format = 'Y-m-d\TH:i:s';
+
+        $r['offer'] = $data['Offer'];
+
+        // not needed
+        unset($r['offer']['work_hour_count']);
+
+        if (!$is_owner) {
+            $r['offer']['autostart'] = null;
+            $r['offer']['autoend'] = null;
+        } else {
+            // properly format dates for xml
+
+        }
+
+        unset($r['offer']['offer_category_id']);
+        $r['offer']['offer_category'] = $data['OfferCategory']['name'];
+
+        unset($r['offer']['offer_type_id']);
+        $r['offer']['offer_type'] = $data['OfferType']['name'];
+
+        unset($r['offer']['offer_state_id']);
+        $r['offer']['offer_state'] = $data['OfferState']['name'];
+
+
+        // work hours (referred to as `offer_hours')
+        $r['offer']['offer_hours'] = array();
+        foreach ($data['WorkHour'] as $wh) {
+            unset($wh['id']);
+            unset($wh['company_id']);
+            unset($wh['offer_id']);
+            $r['offer']['offer_hours'][] = $wh;
+        }
+
+        $r['company'] = $data['Company'];
+        unset($r['company']['work_hour_count']);
+
+        // make any additional alterations, specifically for xml format
+        if ($is_xml) {
+            $this->xml_alter_view(&$r, $date_format);
+        }
+
+        return $r;
+    }
+
+    // Makes necessary modifications to the supplied array `r' so that it may
+    // properly be rendered in XML format.
+    //
+    // @param $r array containing `'offer' and `company' sub-arrays
+    // @param $date_format a string or predefined date format to apply to all
+    //      dates
+    private function xml_alter_view(&$r, $date_format) {
+
+        // all the date fields that are to be formatted
+        $date_fields = array(
+            'offer.started',
+            'offer.ended',
+            'offer.autostart',
+            'offer.autoend',
+            'offer.created',
+            'offer.modified',
+            'company.created',
+            'company.modified');
+
+        // format dates
+        foreach ($date_fields as $field) {
+            $date = Set::get($r, $field);
+            if (!empty($date)) {
+                Set::insert(&$r, $field, date($date_format, strtotime($date)));
+            }
+        }
+
+        // make offer id appear as attribute
+        $r['offer']['@id'] = $r['offer']['id'];
+        unset($r['offer']['id']);
+
+        // make company id appear as attribute
+        $r['company']['@id'] = $r['company']['id'];
+        unset($r['company']['id']);
     }
 }

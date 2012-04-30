@@ -150,6 +150,11 @@ class OffersController extends AppController {
                 $should_serialize = true;
                 break;
 
+            case 'json':
+                $offer_info = $this->api_prepare_view($offer, false);
+                $should_serialize = true;
+                break;
+
             default:
                 // Prepare information for view
                 $offer_info = $this->prepare_view($offer);

@@ -11,6 +11,7 @@ $config = array(
         'STATE_ACTIVE' => 2,
         'STATE_INACTIVE' => 3,
         'BIND_UNLIMITED' => 0,
+        'NOT_SPAM' => 0,
     ),
     'Settings' => array(
         'offer_type' => array(

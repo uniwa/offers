@@ -4,19 +4,34 @@ class Offer extends AppModel {
     public $name = 'Offer';
     public $belongsTo = array('Company', 'OfferType', 'OfferCategory', 'OfferState');
     public $hasMany = array('Coupon', 'Image', 'WorkHour');
+	public $findMethods = array('valid' => true);
+
+    // 'valid' custom find type
+    // returns active offers from enabled companies, not spam
+	protected function _findValid($state, $query, $results = array()) {
+	    if ($state === 'before') {
+			$query['conditions'] = array(
+                'Offer.offer_state_id' => STATE_ACTIVE,
+                'Offer.is_spam' => 0,
+                'Company.is_enabled' => 1);
+			$query['order'] = array('Offer.modified' => 'desc');
+			return $query;
+		}
+		return $results;
+	}
 
     // @param $company_id limits find to offers that belong to the specified
     // company
     // return an array with keys: `draft', `active', `inactive', each of which
     // corresponds to an array of offers
-    public function find_all($company_id = NULL, $shows_spam = 0) {
+    public function find_all($company_id = NULL, $shows_spam = false) {
         $group = '/Offer[offer_state_id=';
         $options = array();
         if(!empty($company_id)) {
             $options['conditions'] = array('Offer.company_id' => $company_id);
         }
-        if($shows_spam == 0) {
-            $options['conditions'][] = array('Offer.is_spam' => $shows_spam);
+        if(!$shows_spam) {
+            $options['conditions'][] = array('Offer.is_spam' => NOT_SPAM);
         }
 
         $options['fields'] = array('Offer.*');

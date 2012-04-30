@@ -46,13 +46,17 @@ class StudentsController extends AppController {
         $cond = array(
             'Coupon.student_id' => $this->Session->read('Auth.Student.id')
         );
+        $order = array('Coupon.created DESC');
         $this->Coupon->recursive = 0;
 
         // we also need company name
         $this->Coupon->Behaviors->attach('Containable');
         $this->Coupon->contain('Offer.Company.name');
 
-        $coupons = $this->Coupon->find('all', array('conditions' => $cond));
+        $coupons = $this->Coupon->find('all', array(
+            'conditions' => $cond,
+            'order' => $order)
+        );
         $this->set('coupons', $coupons);
     }
 

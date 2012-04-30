@@ -3,8 +3,8 @@
 class StudentsController extends AppController {
 
     public $name = 'Students';
-    public $helpers = array('Html');
-    public $uses = array('User', 'Student');
+    public $helpers = array('Html', 'Time');
+    public $uses = array('User', 'Student', 'Coupon');
 
     public function beforeFilter() {
         if (! $this->is_authorized($this->Auth->user()))
@@ -40,8 +40,20 @@ class StudentsController extends AppController {
         $this->set('user', array('firstname' => $user['Student']['firstname'],
                                  'lastname' => $user['Student']['lastname'],
                                  'username' => $user['User']['username'],
-                                 'email' => $user['User']['email'])
+                                 'email' => $user['User']['email']));
+
+        // get all student coupons
+        $cond = array(
+            'Coupon.student_id' => $this->Session->read('Auth.Student.id')
         );
+        $this->Coupon->recursive = 0;
+
+        // we also need company name
+        $this->Coupon->Behaviors->attach('Containable');
+        $this->Coupon->contain('Offer.Company.name');
+
+        $coupons = $this->Coupon->find('all', array('conditions' => $cond));
+        $this->set('coupons', $coupons);
     }
 
     public function is_authorized($user) {

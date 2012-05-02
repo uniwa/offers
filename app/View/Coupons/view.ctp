@@ -3,7 +3,8 @@
     <ul class="unstyled">
 <?php
     echo "<li>Τίτλος προσφοράς: {$coupon['Offer']['title']}</li>";
-    echo "<li>Κωδικός κουπονιού: {$coupon['Coupon']['serial_number']}</li>";
+    echo "<li>Κωδικός κουπονιού: <span class=\"label label-info\">"
+        . "{$coupon['Coupon']['serial_number']}</span></li>";
     echo "<li>Ημ/νία δέσμευσης: {$this->Time->format('d-m-Y H:i',
         $coupon['Coupon']['created'])}</li>";
     echo "<li>Στοιχεία σπουδαστή: {$coupon['Student']['firstname']}"

@@ -4,7 +4,8 @@
 <?php
     echo "<li>Τίτλος προσφοράς: {$coupon['Offer']['title']}</li>";
     echo "<li>Κωδικός κουπονιού: {$coupon['Coupon']['serial_number']}</li>";
-    echo "<li>Ημ/νία δέσμυσης: {$coupon['Coupon']['created']}</li>";
+    echo "<li>Ημ/νία δέσμευσης: {$this->Time->format('d-m-Y H:i',
+        $coupon['Coupon']['created'])}</li>";
     echo "<li>Στοιχεία σπουδαστή: {$coupon['Student']['firstname']}"
         . " {$coupon['Student']['lastname']}</li>";
 ?>

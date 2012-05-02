@@ -4,7 +4,7 @@ class CouponsController extends AppController {
 
     public $name = 'Coupons';
     public $uses = array('Coupon', 'Offer');
-    public $helpers = array('Html');
+    public $helpers = array('Html', 'Time');
 
     public function beforeFilter() {
         if (! $this->is_authorized($this->Auth->user()))

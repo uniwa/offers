@@ -2,8 +2,9 @@
 
 class CouponsController extends AppController {
 
-    public $name = 'coupons';
+    public $name = 'Coupons';
     public $uses = array('Coupon', 'Offer');
+    public $helpers = array('Html');
 
     public function beforeFilter() {
         if (! $this->is_authorized($this->Auth->user()))
@@ -59,6 +60,37 @@ class CouponsController extends AppController {
         $this->redirect($this->referer());
     }
 
+    public function view($id = null) {
+        if ($id === null)
+            throw new BadRequestException();
+
+        // fetch coupon and all associated data
+        //
+        // sample $coupon array:
+        //      'Coupon'
+        //      'Offer'
+        //          `-'Company'
+        //      'Student'
+        $cond = array('Coupon.id' => $id);
+
+        $this->Coupon->Behaviors->attach('Containable');
+        $this->Coupon->contain(array('Offer.Company', 'Student'));
+        $coupon = $this->Coupon->find('first', array('conditions' => $cond));
+
+        if (! $coupon)
+            throw new BadRequestException();
+
+        if ($coupon['Coupon']['student_id'] !==
+            $this->Session->read('Auth.Student.id'))
+            throw new ForbiddenException();
+
+        if ($coupon['Offer']['is_spam'])
+            throw new ForbiddenException('Η προσφορά για την οποία έχει'
+                .' δεσμευθεί το κουπόνι σας έχει χαρακτηριστεί σαν SPAM.');
+
+        $this->set('coupon', $coupon);
+    }
+
     private function generate_uuid() {
         $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff),
@@ -70,7 +102,7 @@ class CouponsController extends AppController {
 
     public function is_authorized($user) {
         if ($user['is_banned'] == 0) {
-            if ($this->action === 'add') {
+            if (in_array($this->action, array('add', 'view'))) {
                 // only students can get coupons
                 if ($user['role'] !== ROLE_STUDENT)
                     return false;

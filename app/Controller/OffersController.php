@@ -242,8 +242,22 @@ class OffersController extends AppController {
     private function modify($offer_type_id, $id=null) {
         if (is_null($id)) throw new BadRequestException();
 
+        // determines whether redirects or responses should take place
+        $should_serialize =
+            $this->RequestHandler->prefers(array('xml', 'json')) != null;
+
+        // special treatment for xml
+        $is_xml = $this->RequestHandler->prefers('xml');
+
         // Save modified offer
         if (!empty($this->request->data)) {
+
+            // extract data from XML request
+            if ($is_xml) {
+                // remove unnecessary root (wrapping) element
+                $request_data = $this->request->data;
+                $this->request->data = reset($request_data);
+            }
 
             // set the required default values
             $this->request->data['Offer']['current_quantity'] = 0;
@@ -266,16 +280,21 @@ class OffersController extends AppController {
             $saved = $this->Offer->save($this->request->data);
 
             if ($saved) {
-                $photos = $this->Image->process(
-                    $this->request->data['Image'],
-                    array('offer_id' => $this->Offer->id));
+                $request_data = $this->request->data;
+                $photos = array_key_exists('Image', $request_data)
+                    ? $this->Image->process(
+                        $request_data['Image'],
+                        array('offer_id' => $this->Offer->id))
+                    : null;
 
                 // try to save images
                 if (!empty($photos) && !$this->Image->saveMany($photos))
                     $error = true;
 
                 // try to save WorkHours only if Offer.category is HappyHour
-                if ($this->request->data['Offer']['offer_type_id'] == TYPE_HAPPYHOUR) {
+                if (array_key_exists('offer_type_id', $request_data['Offer']) &&
+                    $request_data['Offer']['offer_type_id'] == TYPE_HAPPYHOUR) {
+
                     if (isset($this->request->data['WorkHour']) &&
                         !empty($this->request->data['WorkHour'])) {
                         $input_hours = $this->request->data['WorkHour'];
@@ -308,18 +327,32 @@ class OffersController extends AppController {
 
             if ($error) {
                 $transaction->rollback();
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
-                    'default',
-                    array('class' => Flash::Error));
+
+                if ($should_serialize) {
+                    // throw Exception so that it may be rendered as a response
+                    throw new BadRequestException('Παρουσιάστηκε κάποιο σφάλμα');
+                } else {
+                    $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
+                        'default',
+                        array('class' => Flash::Error));
+                }
             } else {
                 $transaction->commit();
-                $this->Session->setFlash('Η προσφορά αποθηκεύτηκε',
-                    'default',
-                    array('class' => Flash::Success));
-                $this->redirect(array(
-                    'controller' => 'companies',
-                    'action' => 'view',
-                    $company['Company']['id']));
+
+                if ($should_serialize) {
+                    // serialize a simple array to inform of success (xml/json)
+                    $this->set(
+                        array('name' => 'Η προσφορά αποθηκεύτηκε',
+                        '_serialize' => array('name')));
+                } else {
+                    $this->Session->setFlash('Η προσφορά αποθηκεύτηκε',
+                        'default',
+                        array('class' => Flash::Success));
+                    $this->redirect(array(
+                        'controller' => 'companies',
+                        'action' => 'view',
+                        $company['Company']['id']));
+                }
             }
         } else {
             // Add/edit offer

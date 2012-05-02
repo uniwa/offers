@@ -5,6 +5,7 @@ class CouponsController extends AppController {
     public $name = 'Coupons';
     public $uses = array('Coupon', 'Offer');
     public $helpers = array('Html', 'Time');
+    public $components = array('RequestHandler');
 
     public function beforeFilter() {
         if (! $this->is_authorized($this->Auth->user()))
@@ -48,14 +49,28 @@ class CouponsController extends AppController {
         $coupon['Coupon']['student_id'] = $student_id;
         $coupon['Coupon']['offer_id'] = $id;
 
-        if ($this->Coupon->save($coupon))
-            $this->Session->setFlash('Το κουπόνι δεσμεύτηκε επιτυχώς',
-                                     'default',
-                                     array('class' => Flash::Success));
-        else
+        if ($this->Coupon->save($coupon)) {
+            if ($this->RequestHandler->prefers('html')) {
+                $this->Session->setFlash('Το κουπόνι δεσμεύτηκε επιτυχώς',
+                                         'default',
+                                         array('class' => Flash::Success));
+            }
+            else if ($this->RequestHandler->prefers(array('xml', 'json'))) {
+                $this->set(array(
+                    'coupon' => array(
+                        'id' => $this->Coupon->id,
+                        'serial_number' => $coupon['Coupon']['serial_number']),
+                    '_serialize' => array('coupon')
+                ));
+                return;
+            }
+
+        }
+        else {
             $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
                                      'default',
                                      array('class' => Flash::Error));
+        }
 
         $this->redirect($this->referer());
     }

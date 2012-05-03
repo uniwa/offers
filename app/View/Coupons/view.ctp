@@ -22,8 +22,8 @@
         . ", {$coupon['Offer']['Company']['postalcode']}</li>";
     echo "<li>Στοιχεία επικοινωνίας";
         echo "<ul>";
-            echo "<li>{$coupon['Offer']['Company']['phone']}</li>";
-            echo "<li>{$coupon['Offer']['Company']['fax']}</li>";
+            echo "<li>Τηλ: {$coupon['Offer']['Company']['phone']}</li>";
+            echo "<li>Fax: {$coupon['Offer']['Company']['fax']}</li>";
         echo "</ul>";
     echo "</li>";
 ?>

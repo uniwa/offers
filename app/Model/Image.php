@@ -23,7 +23,7 @@ class Image extends AppModel {
      *
      * @return true or false
      */
-    public function isValid($file_type, $valid = null) {
+    public function is_valid($file_type, $valid = null) {
 
         if (is_null($valid))
             $valid = self::$validExtensions;
@@ -109,7 +109,7 @@ class Image extends AppModel {
         if (!is_uploaded_file($image['tmp_name']))
             throw new UploadFileException();
 
-        if (!$this->isValid($image['type']))
+        if (!$this->is_valid($image['type']))
             throw new ImageExtensionException();
 
         $file = fread(fopen($image['tmp_name'], 'r'), $image['size']);

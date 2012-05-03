@@ -266,14 +266,6 @@ class OffersController extends AppController {
             $saved = $this->Offer->save($this->request->data);
 
             if ($saved) {
-                $photos = $this->Image->process(
-                    $this->request->data['Image'],
-                    array('offer_id' => $this->Offer->id));
-
-                // try to save images
-                if (!empty($photos) && !$this->Image->saveMany($photos))
-                    $error = true;
-
                 // try to save WorkHours only if Offer.category is HappyHour
                 if ($this->request->data['Offer']['offer_type_id'] == TYPE_HAPPYHOUR) {
                     if (isset($this->request->data['WorkHour']) &&

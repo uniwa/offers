@@ -55,10 +55,11 @@ if (isset($comp['afm']))
 
 if (isset($comp['working_hours']))
     echo 'Ωράριο λειτουργίας : '.$comp['working_hours'].'<br/>';
-
+/*
 foreach ($company['Image'] as $image) {
     echo $this->Html->image('/images/view/'.$image['id']).'<br/>';
 }
+*/
 echo '<br/>';
 
 // display Active offers

@@ -422,13 +422,13 @@ class OffersController extends AppController {
         $new_elem['options']['label'] = 'Περιγραφή';
         $new_elem['options']['type'] = 'textarea';
         $input_elements[] = $new_elem;
-
+/*
         $new_elem = array();
         $new_elem['title'] = 'Image.0';
         $new_elem['options']['label'] = 'Εικόνα';
         $new_elem['options']['type'] = 'file';
         $input_elements[] = $new_elem;
-
+*/
         $new_elem = array();
         $new_elem['title'] = 'Offer.tags';
         $new_elem['options']['label'] = 'Λέξεις-κλειδιά';
@@ -505,11 +505,13 @@ class OffersController extends AppController {
             throw new BadRequestException();
 
         if (!empty($this->request->data)) {
-            $photos = $this->Image->process($this->request->data['Image'],
+            $photo = $this->Image->process($this->request->data['Image'],
                 array('offer_id' => $id));
-
+            // add company_id
+            $company_id = $this->Session->read('Auth.Company.id');
+            $photo['company_id'] = $company_id;
             // try to save images
-            if (!empty($photos) && !$this->Image->saveMany($photos))
+            if (!empty($photo) && !$this->Image->save($photo))
                 $error = true;
         }
 

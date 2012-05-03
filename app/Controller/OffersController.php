@@ -496,17 +496,6 @@ class OffersController extends AppController {
         if (is_null($id))
             throw new BadRequestException();
 
-        if (!empty($this->request->data)) {
-            $photo = $this->Image->process($this->request->data['Image'],
-                array('offer_id' => $id));
-            // add company_id
-            $company_id = $this->Session->read('Auth.Company.id');
-            $photo['company_id'] = $company_id;
-            // try to save images
-            if (!empty($photo) && !$this->Image->save($photo))
-                $error = true;
-        }
-
         // Get offer
         $options['conditions'] = array('Offer.id' => $id);
         $options['recursive'] = 1;
@@ -520,9 +509,21 @@ class OffersController extends AppController {
         if ($offer['Offer']['offer_state_id'] != STATE_DRAFT)
             throw new ForbiddenException();
 
+        if (!empty($this->request->data) &&
+            (count($offer['Image']) < MAX_IMAGES)) {
+            $photo = $this->Image->process($this->request->data['Image'],
+                array('offer_id' => $id));
+            // add company_id
+            $company_id = $this->Session->read('Auth.Company.id');
+            $photo['company_id'] = $company_id;
+            // try to save images
+            if (!empty($photo) && !$this->Image->save($photo))
+                $error = true;
+        }
+
         $this->set('offer', $offer);
 
-        if (count($offer['Image']) < 10) {
+        if (count($offer['Image']) < MAX_IMAGES) {
             $new_elem = array();
             $new_elem['title'] = 'Image.0';
             $new_elem['options']['label'] = 'Προσθήκη εικόνας';

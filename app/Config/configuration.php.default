@@ -17,6 +17,7 @@ $config = array(
         'BIND_UNLIMITED' => 0,
         'NOT_SPAM' => 0,
         'MAX_IMAGES' => 5,
+        'MAX_UPLOAD_SIZE' => 2097152,
     ),
     'Settings' => array(
         'offer_type' => array(

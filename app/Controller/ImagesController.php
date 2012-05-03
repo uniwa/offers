@@ -4,8 +4,17 @@ class ImagesController extends AppController {
 
     public $name = 'Images';
 
-    function view ($id = null) {
+    // View normal image
+    public function view($id = null) {
+        $this->show($id, IMG_NORMAL);
+    }
 
+    // View thumbnail
+    public function thumb($id = null) {
+        $this->show($id, IMG_THUMB);
+    }
+
+    private function show($id, $type = IMG_NORMAL) {
         if ($id == null) throw new BadRequestException();
 
         $options['conditions'] = array('Image.id' => $id);
@@ -15,16 +24,22 @@ class ImagesController extends AppController {
         if (empty($image))
             throw new NotFoundException('Η συγκεκριμένη εικόνα δεν βρέθηκε');
 
+        $data = 'data';
+        $size = 'size';
+        $thumb = '_thumb';
+        if ($type == IMG_THUMB) {
+            $data .= $thumb;
+            $size .= $thumb;
+        }
+
         header('Content-Type: '.$image['Image']['type']);
-        header('Content-Disposition: filename='.$image['Image']['name']);
-        header('Content-Length: '.$image['Image']['size']);
-        echo $image['Image']['data'];
+        header('Content-Disposition: filename=thumb_'.$image['Image']['name']);
+        header('Content-Length: '.$image['Image'][$size]);
+        echo $image['Image'][$data];
         exit();
     }
 
-
-    function delete ($id = null) {
-
+    function delete($id = null) {
         if ($id == null) throw new BadRequestException();
 
         $options['conditions'] = array('Image.id' => $id);

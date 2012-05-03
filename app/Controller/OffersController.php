@@ -500,6 +500,7 @@ class OffersController extends AppController {
         $options['conditions'] = array('Offer.id' => $id);
         $options['recursive'] = 1;
         $offer = $this->Offer->find('first', $options);
+        $max_images = count($offer['Image']) >= MAX_IMAGES;
 
         if (empty($offer)) throw new NotFoundException();
 
@@ -509,21 +510,9 @@ class OffersController extends AppController {
         if ($offer['Offer']['offer_state_id'] != STATE_DRAFT)
             throw new ForbiddenException();
 
-        if (!empty($this->request->data) &&
-            (count($offer['Image']) < MAX_IMAGES)) {
-            $photo = $this->Image->process($this->request->data['Image'],
-                array('offer_id' => $id));
-            // add company_id
-            $company_id = $this->Session->read('Auth.Company.id');
-            $photo['company_id'] = $company_id;
-            // try to save images
-            if (!empty($photo) && !$this->Image->save($photo))
-                $error = true;
-        }
-
         $this->set('offer', $offer);
 
-        if (count($offer['Image']) < MAX_IMAGES) {
+        if (!$max_images) {
             $new_elem = array();
             $new_elem['title'] = 'Image.0';
             $new_elem['options']['label'] = 'Προσθήκη εικόνας';
@@ -533,6 +522,33 @@ class OffersController extends AppController {
             $this->set('input_elements', $input_elements);
         }
 
+        if (!empty($this->request->data) && !$max_images) {
+            $photo = $this->Image->process($this->request->data['Image'],
+                array('offer_id' => $id));
+            // add company_id
+            $company_id = $this->Session->read('Auth.Company.id');
+            $photo['company_id'] = $company_id;
+
+            // try to save images
+            $this->Offer->id = $id;
+            $transaction = $this->Offer->getDataSource();
+            $transaction->begin();
+            $error = false;
+            if (!empty($photo) && !$this->Image->save($photo))
+                $error = true;
+            if ($error) {
+                $transaction->rollback();
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
+                    'default',
+                    array('class' => Flash::Error));
+            } else {
+                $transaction->commit();
+                $this->Session->setFlash('Η εικόνα προστέθηκε',
+                    'default', array('class' => Flash::Success));
+                $this->redirect(array(
+                    'controller' => 'offers', 'action' => 'imageedit', $id));
+            }
+        }
     }
 
     // Wrapper functions of `_change_state' for the activation of an offer

@@ -50,6 +50,8 @@ class CouponsController extends AppController {
         $coupon['Coupon']['offer_id'] = $id;
 
         if ($this->Coupon->save($coupon)) {
+            // success getting coupon
+            // differentiate responses based on Accept header parameter
             if ($this->RequestHandler->prefers('html')) {
                 $this->Session->setFlash('Το κουπόνι δεσμεύτηκε επιτυχώς',
                                          'default',
@@ -67,9 +69,19 @@ class CouponsController extends AppController {
 
         }
         else {
-            $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
-                                     'default',
-                                     array('class' => Flash::Error));
+            // error getting coupon
+            // differentiate responses based on Accept header parameter
+            if ($this->RequestHandler->prefers('html')) {
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
+                                         'default',
+                                         array('class' => Flash::Error));
+            }
+            else if ($this->RequestHandler->prefers(array('xml', 'json'))) {
+                $this->set(array(
+                    'error' => 'Παρουσιάστηκε σφάλμα κατά την δέσμευση του κουπονιού',
+                    '_serialize' => array('error')
+                ));
+            }
         }
 
         $this->redirect($this->referer());

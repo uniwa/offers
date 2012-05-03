@@ -530,8 +530,7 @@ class OffersController extends AppController {
             $photo['company_id'] = $company_id;
 
             // try to save images
-            $this->Offer->id = $id;
-            $transaction = $this->Offer->getDataSource();
+            $transaction = $this->Image->getDataSource();
             $transaction->begin();
             $error = false;
             if (!empty($photo) && !$this->Image->save($photo))

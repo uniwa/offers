@@ -15,7 +15,7 @@ class OffersController extends AppController {
 
     public $helpers = array('Html', 'Time');
 
-    public $components = array('RequestHandler');
+    public $components = array('Common', 'RequestHandler');
 
     function beforeFilter(){
         if (! $this->is_authorized($this->Auth->user()))
@@ -514,7 +514,7 @@ class OffersController extends AppController {
 
         if (!$max_images) {
             $new_elem = array();
-            $new_elem['title'] = 'Image.0';
+            $new_elem['title'] = 'Image';
             $new_elem['options']['label'] = 'Προσθήκη εικόνας';
             $new_elem['options']['type'] = 'file';
             $input_elements[] = $new_elem;
@@ -523,6 +523,23 @@ class OffersController extends AppController {
         }
 
         if (!empty($this->request->data) && !$max_images) {
+            // check if user pressed upload without image
+            if (empty($this->request->data['Image']['name']))
+                $this->upload_error($id, 'empty');
+
+            // check if image is uploaded
+            if (!is_uploaded_file($this->request->data['Image']['tmp_name'])) {
+                $this->upload_error($id, 'size');
+            } else {
+                $tmp_size = filesize($this->request->data['Image']['tmp_name']);
+                if ($tmp_size > MAX_UPLOAD_SIZE)
+                    $this->upload_error($id, 'size');
+            }
+
+            // check file type
+            if (!$this->valid_type($this->data['Image']['tmp_name']))
+                $this->upload_error($id, 'filetype');
+
             $photo = $this->Image->process($this->request->data['Image'],
                 array('offer_id' => $id));
             // add company_id
@@ -538,8 +555,7 @@ class OffersController extends AppController {
             if ($error) {
                 $transaction->rollback();
                 $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
-                    'default',
-                    array('class' => Flash::Error));
+                    'default', array('class' => Flash::Error));
             } else {
                 $transaction->commit();
                 $this->Session->setFlash('Η εικόνα προστέθηκε',
@@ -548,6 +564,37 @@ class OffersController extends AppController {
                     'controller' => 'offers', 'action' => 'imageedit', $id));
             }
         }
+    }
+
+    private function upload_error($id, $error) {
+        switch ($error) {
+            case 'empty':
+                $error_msg = 'Παρακαλώ επιλέξτε εικόνα';
+                break;
+            case 'size':
+                $error_msg = 'Υπερβολικά μεγάλο μέγεθος εικόνας, η εικόνα δεν αποθηκεύτηκε';
+                break;
+            case 'filetype':
+                $error_msg = 'Επιτρέπονται μόνο αρχεία PNG, GIF και JPG';
+                break;
+            default:
+                return false;
+        }
+
+        $this->Session->setFlash($error_msg,
+            'default', array('class' => Flash::Error));
+        $this->redirect(array(
+            'controller' => 'offers', 'action' => 'imageedit', $id));
+    }
+
+    private function valid_type($file) {
+        // check if uploaded image has a valid filetype
+        $valid_types = array('png', 'jpg', 'jpeg', 'gif');
+
+        if (in_array($this->Common->upload_file_type($file), $valid_types)) {
+            return true;
+        }
+        return false;
     }
 
     // Wrapper functions of `_change_state' for the activation of an offer

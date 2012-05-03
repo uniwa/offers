@@ -16,6 +16,7 @@ $config = array(
         'THUMB_WIDTH' => 100,
         'BIND_UNLIMITED' => 0,
         'NOT_SPAM' => 0,
+        'MAX_IMAGES' => 5,
     ),
     'Settings' => array(
         'offer_type' => array(

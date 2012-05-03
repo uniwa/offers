@@ -85,7 +85,7 @@ class Offer extends AppModel {
             $this->set('offer_state_id', STATE_ACTIVE);
             $this->set('started', date('Y-m-d H:i:s'));
 
-            return $this->save();
+            return $this->save(null, false);
         } else {
             throw new ForbiddenException('Η προσφορά δεν δύναται ενεργοποίησης.');
         }

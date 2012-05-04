@@ -48,7 +48,7 @@ class OffersController extends AppController {
         }
 
         // Only companies can add an offer
-        if (in_array($this->action, array('add_happyhour', 'add_coupons', 'add_limited'))) {
+        if (in_array($this->action, array('add_happyhour', 'add_coupons', 'add_limited', 'webservice_add'))) {
             if ($role === ROLE_COMPANY) {
                 return true;
             }
@@ -230,6 +230,40 @@ class OffersController extends AppController {
         $this->modify(TYPE_LIMITED, ADD);
     }
 
+    // The purpose of this function is to replace the wrapper functions add_*,
+    // but this time for the webservice api. All it does is to call `modify'
+    // with the appropriate parameters (offer_type_id, and id == ADD) so the
+    // creation of a new offer may take place.
+    public function webservice_add($param = null) {
+
+        // params should not appear in URI
+        if (empty($param)) {
+
+            $is_supported = $this->RequestHandler->prefers(array('xml','json'));
+
+            // this function is available for specific requests only
+            if ($is_supported) {
+
+                $request = $this->request->data;
+
+                if (!empty($request)) {
+
+                    // remove wrapping
+                    // later on, xsd-compliance checks must also be performed
+                    $data = reset($request);
+
+                    if (Set::check($data, 'Offer.offer_type_id')) {
+                        $this->modify($data['Offer']['offer_type_id'], ADD);
+                        return;
+                    }
+                }
+            }
+        }
+
+        throw new BadRequestException(
+            'Η δομή του αιτήματος δεν είναι η αναμενόμενη');
+    }
+
     // Wrapper functions for 'edit offer' action
     public function edit($id=null) {
         $this->modify(null, $id);
@@ -341,9 +375,10 @@ class OffersController extends AppController {
 
                 if ($should_serialize) {
                     // serialize a simple array to inform of success (xml/json)
-                    $this->set(
-                        array('name' => 'Η προσφορά αποθηκεύτηκε',
-                        '_serialize' => array('name')));
+                    $this->set(array(
+                        'name' => 'Η προσφορά αποθηκεύτηκε',
+                        'id' => $this->Offer->id,
+                        '_serialize' => array('name', 'id')));
                 } else {
                     $this->Session->setFlash('Η προσφορά αποθηκεύτηκε',
                         'default',

@@ -41,6 +41,21 @@
 
     Router::parseExtensions('rss', 'xml', 'json');
 
+    Router::connect('/webservice/offer/*',
+        array(  'controller' => 'offers',
+                'action' => 'view',
+                '[method]' => 'GET'));
+
+    Router::connect('/webservice/offer/*',
+        array(  'controller' => 'offers',
+                'action' => 'edit',
+                '[method]' => 'PUT'));
+
+    Router::connect('/webservice/offer',
+        array(  'controller' => 'offers',
+                'action' => 'webservice_add',
+                '[method]' => 'POST'));
+
 /**
  * Load the CakePHP default routes. Remove this if you do not want to use
  * the built-in default routes.

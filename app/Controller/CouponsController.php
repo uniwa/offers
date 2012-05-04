@@ -2,8 +2,10 @@
 
 class CouponsController extends AppController {
 
-    public $name = 'coupons';
+    public $name = 'Coupons';
     public $uses = array('Coupon', 'Offer');
+    public $helpers = array('Html', 'Time');
+    public $components = array('RequestHandler');
 
     public function beforeFilter() {
         if (! $this->is_authorized($this->Auth->user()))
@@ -47,16 +49,73 @@ class CouponsController extends AppController {
         $coupon['Coupon']['student_id'] = $student_id;
         $coupon['Coupon']['offer_id'] = $id;
 
-        if ($this->Coupon->save($coupon))
-            $this->Session->setFlash('Το κουπόνι δεσμεύτηκε επιτυχώς',
-                                     'default',
-                                     array('class' => Flash::Success));
-        else
-            $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
-                                     'default',
-                                     array('class' => Flash::Error));
+        if ($this->Coupon->save($coupon)) {
+            // success getting coupon
+            // differentiate responses based on Accept header parameter
+            if ($this->RequestHandler->prefers('html')) {
+                $this->Session->setFlash('Το κουπόνι δεσμεύτηκε επιτυχώς',
+                                         'default',
+                                         array('class' => Flash::Success));
+            }
+            else if ($this->RequestHandler->prefers(array('xml', 'json'))) {
+                $this->set(array(
+                    'coupon' => array(
+                        'id' => $this->Coupon->id,
+                        'serial_number' => $coupon['Coupon']['serial_number']),
+                    '_serialize' => array('coupon')
+                ));
+                return;
+            }
+
+        }
+        else {
+            // error getting coupon
+            // differentiate responses based on Accept header parameter
+            if ($this->RequestHandler->prefers('html')) {
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
+                                         'default',
+                                         array('class' => Flash::Error));
+            }
+            else if ($this->RequestHandler->prefers(array('xml', 'json'))) {
+                $this->set(array(
+                    'error' => 'Παρουσιάστηκε σφάλμα κατά την δέσμευση του κουπονιού',
+                    '_serialize' => array('error')
+                ));
+            }
+        }
 
         $this->redirect($this->referer());
+    }
+
+    public function view($id = null) {
+        if ($id === null)
+            throw new BadRequestException();
+
+        // fetch coupon and all associated data
+        //
+        // sample $coupon array:
+        //      'Coupon'
+        //      'Offer'
+        //          `-'Company'
+        //      'Student'
+        $cond = array('Coupon.id' => $id);
+
+        $this->Coupon->Behaviors->attach('Containable');
+        $this->Coupon->contain(array('Offer.Company', 'Student'));
+        $coupon = $this->Coupon->find('first', array('conditions' => $cond));
+
+        if (! $coupon)
+            throw new BadRequestException();
+
+        if ($coupon['Coupon']['student_id'] !==
+            $this->Session->read('Auth.Student.id'))
+            throw new ForbiddenException();
+
+        if ($coupon['Offer']['is_spam'])
+            throw new ForbiddenException('Η προσφορά για την οποία έχει'
+                .' δεσμευθεί το κουπόνι σας έχει χαρακτηριστεί σαν SPAM.');
+
+        $this->set('coupon', $coupon);
     }
 
     private function generate_uuid() {
@@ -70,7 +129,7 @@ class CouponsController extends AppController {
 
     public function is_authorized($user) {
         if ($user['is_banned'] == 0) {
-            if ($this->action === 'add') {
+            if (in_array($this->action, array('add', 'view'))) {
                 // only students can get coupons
                 if ($user['role'] !== ROLE_STUDENT)
                     return false;

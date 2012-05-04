@@ -1,22 +1,27 @@
 <?php
+$html = '';
+
 // TODO: move to controller
 $is_user_the_owner = $this->Session->read('Auth.User.id') == $offer['Company']['user_id'];
 if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
     $offer['Offer']['offer_state_id'] == OfferStates::Draft)
 {
-    echo $this->Html->link('Διαγραφή',
-                           array(
-                                'controller' => 'offers',
-                                'action' => 'delete',
-                                $offer['Offer']['id']),
-                            array(),
-                           'Να διαγραφεί η προσφορα;').'<br/>';
+    $html .= $this->Html->link('Διαγραφή', array(
+        'controller' => 'offers', 'action' => 'delete', $offer['Offer']['id']),
+        array(), 'Να διαγραφεί η προσφορα;');
+    $html .= '<br>';
 
-    echo $this->Html->link('Επεξεργασία', array(
+    $html .= $this->Html->link('Επεξεργασία', array(
                                             'controller' => 'offers',
                                             'action' => 'edit',
-                                            $offer['Offer']['id'])).'<br/>';
+                                            $offer['Offer']['id']));
+    $html .= '<br>';
 
+    $html .= $this->Html->link('Εικόνες', array(
+                                            'controller' => 'offers',
+                                            'action' => 'imageedit',
+                                            $offer['Offer']['id']));
+    $html .= '<br>';
 }
 
 $is_spam = $offer['Offer']['is_spam'];
@@ -35,17 +40,12 @@ switch($offer['Offer']['offer_type_id']){
         break;
 }
 $label_text = offer_type($offer['Offer']['offer_type_id']);
-echo "<p><span class='label {$label_class}'>{$label_text}</span></p>";
-echo "<h4>Προσφορά {$offer['Offer']['id']}</h4><br/>";
+$html .= "<p><span class='label {$label_class}'>{$label_text}</span></p>";
+$html .= "<h4>Προσφορά {$offer['Offer']['id']}</h4><br/>";
 
 if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
-    echo $this->Html->link('Εταιρία: ' . $offer['Company']['name'],
-        array(
-            'controller' => 'companies',
-            'action' => 'view',
-            $offer['Company']['id']
-        )
-    );
+    $html .= $this->Html->link('Εταιρία: '.$offer['Company']['name'], array(
+        'controller' => 'companies', 'action' => 'view', $offer['Company']['id']));
 }
 if ($is_spam) {
     echo 'Η προσφορά έχει χαρακτηρισθεί ως SPAM.<br/><br/>';
@@ -64,7 +64,7 @@ if ($is_user_the_owner) {
 
     } else if ($offer_state_id == STATE_DRAFT) {
 
-      echo $this->Html->link(
+      $html .= $this->Html->link(
           '[Ενεργοποίηση]',
           array(
               'controller' => 'offers',
@@ -75,31 +75,33 @@ if ($is_user_the_owner) {
     }
 }
 
-echo '<br>';
+$html .= '<br>';
 
-$html = '';
 foreach($offer_info as $elem) {
     $html .= "<strong>{$elem['label']}:</strong> {$elem['value']}<br />";
 }
-echo $html;
 
 if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
     $offer['Offer']['offer_type_id'] !== TYPE_HAPPYHOUR) {
-    echo '<br/><br/>';
+    $html .= "<br/><br/>";
     if ($offer['Offer']['offer_type_id'] == TYPE_COUPONS) {
         if ($offer['Offer']['coupon_count'] < $offer['Offer']['total_quantity']) {
-            $get_coupon = $this->Form->create(false, array('type' => 'post',
+            $html .= $this->Form->create(false, array('type' => 'post',
                 'url' => array('controller' => 'coupons',
                                'action' => 'add',
                                $offer['Offer']['id']
                          )));
-            $get_coupon .= $this->Form->end('Get Coupon');
-            echo $get_coupon;
+            $html .= $this->Form->end('Get Coupon');
         }
     }
 }
 
 if (!empty($offer['Image']))
     foreach ($offer['Image'] as $image)
-        if ($image['image_category_id'] == IMG_NORMAL)
-            echo $this->Html->image('/images/view/'.$image['id']);
+        if ($image['image_category_id'] == IMG_NORMAL) {
+            $html .= "<div class='image_frame'>";
+            $html .= $this->Html->image('/images/view/'.$image['id']);
+            $html .= "</div>";
+        }
+
+echo $html;

@@ -15,7 +15,7 @@ class OffersController extends AppController {
 
     public $helpers = array('Html', 'Time');
 
-    public $components = array('RequestHandler');
+    public $components = array('Common', 'RequestHandler');
 
     function beforeFilter(){
         if (! $this->is_authorized($this->Auth->user()))
@@ -37,7 +37,7 @@ class OffersController extends AppController {
         // The owner of an offer can edit and delete it, as well as activate and
         //  terminate it
         if (in_array($this->action, array(
-            'edit', 'delete',
+            'edit', 'delete', 'imageedit',
             'terminate_from_company', 'terminate_from_offer',
             'activate_from_company', 'activate_from_offer'))) {
 
@@ -315,16 +315,6 @@ class OffersController extends AppController {
 
             if ($saved) {
                 $request_data = $this->request->data;
-                $photos = array_key_exists('Image', $request_data)
-                    ? $this->Image->process(
-                        $request_data['Image'],
-                        array('offer_id' => $this->Offer->id))
-                    : null;
-
-                // try to save images
-                if (!empty($photos) && !$this->Image->saveMany($photos))
-                    $error = true;
-
                 // try to save WorkHours only if Offer.category is HappyHour
                 if (array_key_exists('offer_type_id', $request_data['Offer']) &&
                     $request_data['Offer']['offer_type_id'] == TYPE_HAPPYHOUR) {
@@ -490,13 +480,13 @@ class OffersController extends AppController {
         $new_elem['options']['label'] = 'Περιγραφή';
         $new_elem['options']['type'] = 'textarea';
         $input_elements[] = $new_elem;
-
+/*
         $new_elem = array();
         $new_elem['title'] = 'Image.0';
-        $new_elem['options']['label'] = 'Φωτογραφία';
+        $new_elem['options']['label'] = 'Εικόνα';
         $new_elem['options']['type'] = 'file';
         $input_elements[] = $new_elem;
-
+*/
         $new_elem = array();
         $new_elem['title'] = 'Offer.tags';
         $new_elem['options']['label'] = 'Λέξεις-κλειδιά';
@@ -524,7 +514,6 @@ class OffersController extends AppController {
             $new_elem['options']['label'] = "Μέγιστος αριθμός κουπονιών ανά φοιτητή<br />";
             $new_elem['options']['type'] = 'select';
             $new_elem['options']['options'] = $max_options;
-//            $new_elem['options']['selected'] = BIND_UNLIMITED;
             $input_elements[] = $new_elem;
 
             $new_elem = array();
@@ -566,6 +555,112 @@ class OffersController extends AppController {
         }
 
         return $input_elements;
+    }
+
+    // Images administration
+    public function imageedit($id = null) {
+        if (is_null($id))
+            throw new BadRequestException();
+
+        // Get offer
+        $options['conditions'] = array('Offer.id' => $id);
+        $options['recursive'] = 1;
+        $offer = $this->Offer->find('first', $options);
+        $max_images = count($offer['Image']) >= MAX_IMAGES;
+
+        if (empty($offer)) throw new NotFoundException();
+
+        if ($offer['Company']['user_id'] != $this->Auth->User('id'))
+            throw new ForbiddenException();
+
+        if ($offer['Offer']['offer_state_id'] != STATE_DRAFT)
+            throw new ForbiddenException();
+
+        $this->set('offer', $offer);
+
+        if (!$max_images) {
+            $new_elem = array();
+            $new_elem['title'] = 'Image';
+            $new_elem['options']['label'] = 'Προσθήκη εικόνας';
+            $new_elem['options']['type'] = 'file';
+            $input_elements[] = $new_elem;
+
+            $this->set('input_elements', $input_elements);
+        }
+
+        if (!empty($this->request->data) && !$max_images) {
+            // check if user pressed upload without image
+            if (empty($this->request->data['Image']['name']))
+                $this->upload_error($id, 'empty');
+
+            // check if image is uploaded
+            if (!is_uploaded_file($this->request->data['Image']['tmp_name'])) {
+                $this->upload_error($id, 'size');
+            } else {
+                $tmp_size = filesize($this->request->data['Image']['tmp_name']);
+                if ($tmp_size > MAX_UPLOAD_SIZE)
+                    $this->upload_error($id, 'size');
+            }
+
+            // check file type
+            if (!$this->valid_type($this->data['Image']['tmp_name']))
+                $this->upload_error($id, 'filetype');
+
+            $photo = $this->Image->process($this->request->data['Image'],
+                array('offer_id' => $id));
+            // add company_id
+            $company_id = $this->Session->read('Auth.Company.id');
+            $photo['company_id'] = $company_id;
+
+            // try to save images
+            $transaction = $this->Image->getDataSource();
+            $transaction->begin();
+            $error = false;
+            if (!empty($photo) && !$this->Image->save($photo))
+                $error = true;
+            if ($error) {
+                $transaction->rollback();
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
+                    'default', array('class' => Flash::Error));
+            } else {
+                $transaction->commit();
+                $this->Session->setFlash('Η εικόνα προστέθηκε',
+                    'default', array('class' => Flash::Success));
+                $this->redirect(array(
+                    'controller' => 'offers', 'action' => 'imageedit', $id));
+            }
+        }
+    }
+
+    private function upload_error($id, $error) {
+        switch ($error) {
+            case 'empty':
+                $error_msg = 'Παρακαλώ επιλέξτε εικόνα';
+                break;
+            case 'size':
+                $error_msg = 'Υπερβολικά μεγάλο μέγεθος εικόνας, η εικόνα δεν αποθηκεύτηκε';
+                break;
+            case 'filetype':
+                $error_msg = 'Επιτρέπονται μόνο αρχεία PNG, GIF και JPG';
+                break;
+            default:
+                return false;
+        }
+
+        $this->Session->setFlash($error_msg,
+            'default', array('class' => Flash::Error));
+        $this->redirect(array(
+            'controller' => 'offers', 'action' => 'imageedit', $id));
+    }
+
+    private function valid_type($file) {
+        // check if uploaded image has a valid filetype
+        $valid_types = array('png', 'jpg', 'jpeg', 'gif');
+
+        if (in_array($this->Common->upload_file_type($file), $valid_types)) {
+            return true;
+        }
+        return false;
     }
 
     // Wrapper functions of `_change_state' for the activation of an offer

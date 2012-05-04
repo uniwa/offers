@@ -23,7 +23,7 @@ class Image extends AppModel {
      *
      * @return true or false
      */
-    public function isValid($file_type, $valid = null) {
+    public function is_valid($file_type, $valid = null) {
 
         if (is_null($valid))
             $valid = self::$validExtensions;
@@ -57,13 +57,13 @@ class Image extends AppModel {
      */
     public function process($images,
                                    $foreign_keys = array(),
-                                   $image_category = 1,
+                                   $image_category = IMG_NORMAL,
                                    $generate_thumbs = true,
                                    $thumb_size = null
                                    )
     {
         if ($thumb_size === null)
-            $thumb_size = array('width' => 260);
+            $thumb_size = array('width' => THUMB_WIDTH);
 
         if (!is_array($thumb_size))
             throw new InvalidArgumentException('$thumb_size must be array or null.');
@@ -71,19 +71,20 @@ class Image extends AppModel {
         if (!is_array($foreign_keys))
             throw new InvalidArgumentException('$foreign_keys must be array.');
 
-        $photos = array();
+        $photo = array();
         if (isset($images['tmp_name'])) $images = array($images);
 
         foreach ($images as $image) {
             $tmp = $this->_process($image, $image_category, $foreign_keys);
             if (!empty($tmp)) {
-                $photos[] = $tmp;
+                $photo = $tmp;
                 if ($generate_thumbs === true)
-                    $photos[] = $this->_createThumbnail($tmp, $thumb_size);
+                    $tmp = $this->_createThumbnail($tmp, $thumb_size);
+                    $photo = array_merge($photo, $tmp);
             }
         }
 
-        return $photos;
+        return $photo;
     }
 
     /**
@@ -108,7 +109,7 @@ class Image extends AppModel {
         if (!is_uploaded_file($image['tmp_name']))
             throw new UploadFileException();
 
-        if (!$this->isValid($image['type']))
+        if (!$this->is_valid($image['type']))
             throw new ImageExtensionException();
 
         $file = fread(fopen($image['tmp_name'], 'r'), $image['size']);
@@ -186,12 +187,8 @@ class Image extends AppModel {
         $thumb_size = ob_get_length();
         ob_end_clean();
 
-        $result = $source_img;
-        $result['name'] = 'thumb_'.$result['name'];
-        $result['size'] = $thumb_size;
-        $result['data'] = $thumb_data;
-        // thumbnail category
-        $result['image_category_id'] = 2;
+        $result['size_thumb'] = $thumb_size;
+        $result['data_thumb'] = $thumb_data;
 
         return $result;
     }

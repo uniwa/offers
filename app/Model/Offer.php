@@ -85,7 +85,7 @@ class Offer extends AppModel {
             $this->set('offer_state_id', STATE_ACTIVE);
             $this->set('started', date('Y-m-d H:i:s'));
 
-            return $this->save();
+            return $this->save(null, false);
         } else {
             throw new ForbiddenException('Η προσφορά δεν δύναται ενεργοποίησης.');
         }
@@ -96,22 +96,17 @@ class Offer extends AppModel {
     // @param $id id of offer to terminate
     // @throws ForbiddenException when termination conditions are not met
     public function terminate($id = null) {
-
-        // TODO see if just offer_state_id and ended can be fetched and have
-        // this work still
-        if (empty($this->data)) {
-            // fetch only the fields required to be checked and updated
-            $this->recursive = -1;
-            $this->read('Offer.*', $id);
-        }
+        // fetch only the fields required to be checked and updated
+        $this->read(array('offer_state_id'), $id);
 
         // only active offers may be terminated
         if ($this->data['Offer']['offer_state_id'] == STATE_ACTIVE) {
-
-            $this->set('offer_state_id', STATE_INACTIVE);
-            $this->set('ended', date('Y-m-d H:i:s'));
-
-            return $this->save();
+            // update state and manual end date
+            $data = array(
+                'offer_state_id' => STATE_INACTIVE,
+                'ended' => date('Y-m-d H:i:s')
+            );
+            return $this->save($data, false);
         } else {
             throw new ForbiddenException('Η προσφορά δεν δύναται απενεργοποίησης.');
         }

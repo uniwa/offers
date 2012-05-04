@@ -281,7 +281,7 @@ class OffersController extends AppController {
             $this->RequestHandler->prefers(array('xml', 'json')) != null;
 
         // special treatment for xml
-        $is_xml = $this->RequestHandler->prefers('xml');
+        $is_xml = $this->RequestHandler->requestedWith('xml');
 
         // Save modified offer
         if (!empty($this->request->data)) {

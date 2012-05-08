@@ -13,17 +13,17 @@ class Offer extends AppModel {
 
     // 'valid' custom find type
     // returns active offers from enabled companies, not spam
-	protected function _findValid($state, $query, $results = array()) {
-	    if ($state === 'before') {
-			$query['conditions'] = array(
+    protected function _findValid($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $query['conditions'] = array(
                 'Offer.offer_state_id' => STATE_ACTIVE,
                 'Offer.is_spam' => 0,
                 'Company.is_enabled' => 1);
-			$query['order'] = array('Offer.modified' => 'desc');
-			return $query;
-		}
-		return $results;
-	}
+            $query['order'] = array('Offer.modified' => 'desc');
+            return $query;
+        }
+        return $results;
+    }
 
     // @param $company_id limits find to offers that belong to the specified
     // company

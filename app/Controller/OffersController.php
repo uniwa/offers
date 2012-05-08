@@ -278,7 +278,7 @@ class OffersController extends AppController {
 
         // determines whether redirects or responses should take place
         $should_serialize =
-            $this->RequestHandler->prefers(array('xml', 'json')) != null;
+            $this->RequestHandler->prefers(array('xml', 'json', 'js')) != null;
 
         // special treatment for xml
         $is_xml = $this->RequestHandler->requestedWith('xml');
@@ -364,11 +364,30 @@ class OffersController extends AppController {
                 $transaction->commit();
 
                 if ($should_serialize) {
-                    // serialize a simple array to inform of success (xml/json)
-                    $this->set(array(
+
+                    $response = array(
                         'name' => 'Η προσφορά αποθηκεύτηκε',
-                        'id' => $this->Offer->id,
-                        '_serialize' => array('name', 'id')));
+                        'id' => $this->Offer->id);
+
+                    if ($this->RequestHandler->prefers('js')) {
+                        if (array_key_exists('callback', $this->request->query)) {
+
+                            $callback = $this->request->query['callback'];
+                            if (!empty($callback)) {
+
+                                $this->set('callback', $callback);
+                                $this->set('data', $response);
+                                $this->layout = 'js/status';
+
+                                return;
+                            }
+                        }
+                    }
+
+                    // serialize a simple array to inform of success (xml/json)
+                    $response['_serialize'] = array('name', 'id');
+                    $this->set($response);
+
                 } else {
                     $this->Session->setFlash('Η προσφορά αποθηκεύτηκε',
                         'default',

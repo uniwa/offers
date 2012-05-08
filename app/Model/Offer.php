@@ -4,7 +4,12 @@ class Offer extends AppModel {
     public $name = 'Offer';
     public $belongsTo = array('Company', 'OfferType', 'OfferCategory', 'OfferState');
     public $hasMany = array('Coupon', 'Image', 'WorkHour');
-	public $findMethods = array('valid' => true);
+    public $findMethods = array(
+        'valid' => true,
+        'hapyhour' => true,
+        'coupon' => true,
+        'limited' => true
+    );
 
     // 'valid' custom find type
     // returns active offers from enabled companies, not spam

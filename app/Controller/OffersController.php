@@ -61,8 +61,31 @@ class OffersController extends AppController {
         $this->paginate = array('valid');
         $offers = $this->paginate();
         $this->minify_desc($offers, 160);
-        $this->set('offers', $offers);
-        $this->set('happyOffers', array());
+
+        $response_type = $this->RequestHandler->prefers();
+        // automatic rendering (for xml and json)
+        $should_serialize = false;
+        switch ($response_type) {
+            case 'xml':
+                $offer_info = $this->api_prepare_view($offers);
+
+                $should_serialize = true;
+                break;
+
+            case 'json':
+                $offer_info = $this->api_prepare_view($offers, false);
+                $should_serialize = true;
+                break;
+        }
+
+        if ($should_serialize) {
+            $this->set(
+                array('offers' => $offers,
+                '_serialize' => array('offers')));
+        } else {
+            $this->set('offers', $offers);
+            $this->set('happyOffers', array());
+        }
     }
 
     public function home() {
@@ -804,100 +827,198 @@ class OffersController extends AppController {
         }
     }
 
-    // Currently serves only individual Offers (ie, no indexing).
+    // Transforms an array of offers in CakePHP's intrinsic format into an array
+    // capable of been converted into either XML or JSON.
+    // Handles individual offer data as well as that of multiple offers.
+    //
+    // Currently, if `Offer' key is present at root level, then it is presumed
+    // that the Retrieve operation was activated; otherwise, indexing is
+    // presumed.
     //
     // @param $data must contain `Offer', `WorkHour' (ie, offer hours) and
-    //      `Company'
+    //      `Company' on case of a retrieve operation; an array of such
+    //      sub-arrays for each 'row', otherwise
     // @param $is_xml defines whether the array should be formatted with xml in
-    //      mind
+    //      mind; default to true
     // @returns an array to be rendered as xml or json
     private function api_prepare_view($data, $is_xml = true) {
-        // the result to be rendered as xml (and possibly json as well)
-        $r = array();
 
-        // affect what details make sense to be returned (ie, not set to null)
+        // the result to be rendered in xml or json format; it is what this
+        // function returns
+        $result = array();
+
+        $is_index = !array_key_exists('Offer', $data);
+
+        // upon execution of the succeeding block, $offer_data becomes a
+        // 0-based-index array of offers; this permits a more uniform handling
+        // of iterating
+        if ($is_index) {
+
+            // the `_path' variables determine where should an item be inserted
+            // into the $result array;
+            // it is used to implement the appropriate array format
+            $offer_path = 'offers.offer.';
+            $company_path = 'companies.company.';
+
+            // allows offers coming from differect operations (most notably
+            // retrieve and index) to be handled in a uniform fashion, ie as an
+            // array of 0-based-index arrays of offers (note that references are
+            // used in order to minimize overhead)
+            $offer_data = &$data;
+
+        } else {
+
+            $offer_path = 'offer.';
+            $company_path = 'company.';
+
+            $offer_data = array(0 => &$data);
+        }
+
+        // affects what details make sense to be returned (ie, not set to null)
         $uid = $this->Auth->user('id');
-        $is_owner = $uid == $data['Company']['user_id'];
 
         // use this format unless one of the predefined constants is preferred
         $date_format = 'Y-m-d\TH:i:s';
 
-        $r['offer'] = $data['Offer'];
+        // the ids of companies that have already been formatted (avoid using
+        // `in_array')
+        $companies_id = array();
 
-        // not needed
-        unset($r['offer']['work_hour_count']);
+        // counters; utilized by `Set' to insert the current offer/company
+        $offer_i = 0;
+        $company_i = 0;
+        foreach ($offer_data as $offer) {
 
-        if (!$is_owner) {
-            $r['offer']['autostart'] = null;
-            $r['offer']['autoend'] = null;
-        } else {
-            // properly format dates for xml
+            // -- make all necessary alterations --
 
+            // identify logged in user as owner of company, and thus, offer as
+            // well
+            $is_owner = $uid == $offer['Company']['user_id'];
+
+            // `r' is a temporary vessel of `Offer'
+            $r = &$offer['Offer'];
+            $company_id = $r['company_id'];
+
+            // not needed
+            unset($r['work_hour_count']);
+
+            if ($is_owner) {
+
+                // properly format dates for xml
+            } else {
+
+                $r['autostart'] = null;
+                $r['autoend'] = null;
+            }
+
+            unset($r['offer_category_id']);
+            $r['offer_category'] = $offer['OfferCategory']['name'];
+
+            unset($r['offer_type_id']);
+            $r['offer_type'] = $offer['OfferType']['name'];
+
+            unset($r['offer_state_id']);
+            $r['offer_state'] = $offer['OfferState']['name'];
+
+
+            // work hours (will be displayed as `offer_hours')
+            $r['offer_hours'] = array();
+            foreach ($offer['WorkHour'] as $wh) {
+                unset($wh['id']);
+                unset($wh['company_id']);
+                unset($wh['offer_id']);
+                $r['offer_hours'][] = $wh;
+            }
+
+            // -- perform insertions --
+            $result = Set::insert($result, $offer_path.$offer_i, $r);
+
+            if (!array_key_exists($company_id, $companies_id)) {
+
+                // store current offer's company id for future reference
+                $companies_id[$company_id] = null;
+
+                // remember: $offer is the current record of the offers array
+                $company = &$offer['Company'];
+                unset($company['work_hour_count']);
+
+                $result = Set::insert(
+                    $result, $company_path.$company_i, $company);
+
+                ++$company_i;
+            }
+
+            ++$offer_i;
         }
-
-        unset($r['offer']['offer_category_id']);
-        $r['offer']['offer_category'] = $data['OfferCategory']['name'];
-
-        unset($r['offer']['offer_type_id']);
-        $r['offer']['offer_type'] = $data['OfferType']['name'];
-
-        unset($r['offer']['offer_state_id']);
-        $r['offer']['offer_state'] = $data['OfferState']['name'];
-
-
-        // work hours (referred to as `offer_hours')
-        $r['offer']['offer_hours'] = array();
-        foreach ($data['WorkHour'] as $wh) {
-            unset($wh['id']);
-            unset($wh['company_id']);
-            unset($wh['offer_id']);
-            $r['offer']['offer_hours'][] = $wh;
-        }
-
-        $r['company'] = $data['Company'];
-        unset($r['company']['work_hour_count']);
 
         // make any additional alterations, specifically for xml format
         if ($is_xml) {
-            $this->xml_alter_view(&$r, $date_format);
+
+            // create a simple wrapper of entities to be formatted
+            // in case of Index operation, just omit the enclosing `offers' and
+            // `companies' tags
+            if ($is_index) {
+                $wrap = array(
+                    'offer' => $result['offers']['offer'],
+                    'company' => $result['companies']['company']);
+            } else {
+                $wrap = &$result;
+            }
+
+            $this->xml_alter_view(&$wrapper,$date_format);
         }
 
         return $r;
     }
 
-    // Makes necessary modifications to the supplied array `r' so that it may
-    // properly be rendered in XML format.
+    // Makes necessary modifications to the supplied array `data' so that it may
+    // properly be rendered in XML format. Currently, it is assumed that each
+    // element possess an `id' field and several date fields. The latter are
+    // defined inside the function.
     //
-    // @param $r array containing `'offer' and `company' sub-arrays
+    // @param $data array containing `'offer' and `company' sub-arrays. Note
+    //      that this param is passed by reference
     // @param $date_format a string or predefined date format to apply to all
     //      dates
-    private function xml_alter_view(&$r, $date_format) {
+    private function xml_alter_view(&$data, $date_format) {
 
         // all the date fields that are to be formatted
         $date_fields = array(
-            'offer.started',
-            'offer.ended',
-            'offer.autostart',
-            'offer.autoend',
-            'offer.created',
-            'offer.modified',
-            'company.created',
-            'company.modified');
+            'offer' => array(
+                'started',
+                'ended',
+                'autostart',
+                'autoend',
+                'created',
+                'modified'),
+            'company' => array(
+                'created',
+                'modified'));
 
-        // format dates
-        foreach ($date_fields as $field) {
-            $date = Set::get($r, $field);
-            if (!empty($date)) {
-                Set::insert(&$r, $field, date($date_format, strtotime($date)));
+        // it is assumed that all entities possess an `id' attribute and,
+        // potentially, dates; if not, a different approach is due
+        foreach ($data as $type => $entities) {
+
+            foreach ($entities as $index => $entity) {
+
+                // make offer id appear as attribute
+                $entity['@id'] = $entity['id'];
+                unset($entity['id']);
+
+                // format dates for this entity's date fields
+                foreach ($date_fields[$type] as $field) {
+
+                    // get entitys's date from field $field
+                    $date = $entity[$field];
+                    if (!empty($date)) {
+                        // format date
+                        $entity[$field] = date($date_format, strtotime($date));
+                    }
+                }
+
+                // insert updated offer back to the results
+                $data[$type][$index] = $entity;
             }
         }
-
-        // make offer id appear as attribute
-        $r['offer']['@id'] = $r['offer']['id'];
-        unset($r['offer']['id']);
-
-        // make company id appear as attribute
-        $r['company']['@id'] = $r['company']['id'];
-        unset($r['company']['id']);
     }
 }

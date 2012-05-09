@@ -15,7 +15,8 @@ class AppController extends Controller{
                 'Ldap',
                 'Form'
             )
-        )
+        ),
+        'RequestHandler'
     );
 
     public $helpers = array(
@@ -57,4 +58,142 @@ class AppController extends Controller{
         return false;
     }
 
+    // Convenience method for throwing exceptions while maintaining support for
+    // the webservice api. This is to replace all occurences of `throw new
+    // Exception(…)' where access is granted via the api.
+    //
+    // NOTE: Do NOT use this method when all is needed is to return an error
+    // code in response to a webservice api call. Use
+    // AppController::notify() instead.
+    //
+    // @param $exception the name of the exception that is to be thrown in case
+    //      of html response type, eg `NotFoundException'
+    // @param $message the message to display to the user. For api calls, this
+    //      affects the content; the header defaults to the description of the
+    //      defined code
+    // @param $code the code of the exception; must be a valid code as in
+    //      accordance with CakeResponse->httpCodes()
+    protected function alert($exception, $message, $code = 0) {
+        // the following two variables should be initialized elsewhere as they
+        // are oftenly used
+        $is_webservice =
+            $this->RequestHandler->prefers(array('xml', 'json', 'js')) != null;
+
+        if ($is_webservice) {
+
+            // should URI be passed in as $extra, or should this become the
+            // default behaviour?
+            $this->api_compile_response($message, $code);
+
+        } else {
+
+            throw new $exception($message, $code);
+        }
+
+    }
+
+    // Convenience method that displays an instant message. It removes the need
+    // to manually either call Session::setFlash() method or prepare a response
+    // to be returned to an api call. It also enables javascript errors (jsonp)
+    // to be returned.
+    //
+    // May also be used to return an error code specifically for a webservice
+    // api call. For example:
+    //  $this->notify('Argument missing', null, 406. $this->request->here());
+    //
+    // @param $flash 0-based array of parameters to be passed into
+    //      SessionComponent::setFlash() method directly; must contain AT LEAST
+    //      one parameter (which corresponds to the message itself).
+    //      NOTE: If it is certain that a webservice api call will be serviced,
+    //      a string may be passed in, as well!
+    // @param $redirect 0-based array of parameters to be passed into
+    //      AppController::redirect() method directly. If left empty or omitted,
+    //      no redirection takes place; defaults to null.
+    // @param $status affects the status code that appears in the *body* and
+    //      *header* of an xml/json(p) response; defaults to 200. NOTE: simply
+    //      setting this to an error code does NOT result in an exception to be
+    //      thrown for HTML response type; this only affects the webservice
+    //      behaviour
+    // @param $extra additional messages to be returned in a webservice api
+    //      call. Numeric keys are NOT supported. The following should NOT be
+    //      used either: `status', `@status' `message', '_serialize'
+    protected function notify(
+            $flash, $redirect = null, $status = null, $extra = null) {
+
+        // the following two variables should be initialized elsewhere as they
+        // are oftenly used
+        $is_webservice =
+            $this->RequestHandler->prefers(array('xml', 'json', 'js')) != null;
+
+        $response_type = $this->RequestHandler->prefers();
+
+        if ($is_webservice || true) {
+
+            // get message from setFlash parameters
+            if (is_array($flash)) {
+                $flash = reset($flash);
+            }
+            $this->api_compile_response($flash, $status, $extra);
+
+        } else {
+
+            call_user_func_array(array(&$this->Session, 'setFlash'), $flash);
+
+            // redirection does not take place in the webservice api
+            if (!empty($redirect)) {
+                call_user_func_array(array(&$this, 'redirect'), $redirect);
+            }
+        }
+    }
+
+    // Performs the necessary initializations so that a webservice api call
+    // response may be rendered.
+    private function api_compile_response($message, $code, $extra) {
+        // get value of this from elsewhere
+        $response_type = $this->RequestHandler->prefers();
+
+        // status code should appear as an attribute in an xml response
+        $status_key = (($response_type == 'xml')?'@':'') . 'status_code';
+
+        $response = array(
+            $status_key => $code,
+            'message' => $message);
+
+        // get format description for this status $code and set the header
+        $code_desc = $this->response->httpCodes($code);
+        $this->response->header('HTTP/1.1 '.$code, $code_desc);
+
+        // append any extra information
+        if (!empty($extra)) {
+            $response = array_merge($response, $extra);
+        }
+
+        // make preparation for views
+        if ($response_type == 'js') {
+
+            // get callback and set layout
+            $callback = $this->request->query['callback'];
+
+            $this->set('callback', $callback);
+            $this->set('data', $response);
+            $this->layout = 'js/status';
+
+        } else {
+
+            // this is required so that CakePHP automatically presents the
+            // response with Xml/JsonView
+            $response['_serialize'] = array_keys($response);
+            $this->set($response);
+        }
+    }
+
 }
+
+
+
+
+
+
+
+
+

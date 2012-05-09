@@ -1,3 +1,3 @@
 <?php
-    echo "$callback(" . json_encode($data) . ');";
+    echo "$callback(" . json_encode($data) . ');';
 ?>

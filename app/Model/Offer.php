@@ -25,6 +25,31 @@ class Offer extends AppModel {
         return $results;
     }
 
+    // custom find types for the 3 main offer types
+    //      * happyhour
+    //      * coupon
+    //      * limited
+    //
+    // These types are not very configurable and have a limited
+    // number of duplicate lines *sic*. This way the method calls
+    // are very simple without the need for (many) extra parameters
+    // eg: $this->Offer->find('coupon');
+
+    // return all valid happy hour type offers
+    protected function _findHappyhour($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $query['conditions'] = array(
+                'Offer.offer_type_id' => TYPE_HAPPYHOUR,
+                'Offer.offer_state_id' => STATE_ACTIVE,
+                'Offer.is_spam' => 0,
+                'Company.is_enabled' => 1
+            );
+            $query['order'] = array('Offer.modified' => 'desc');
+            return $query;
+        }
+        return $results;
+    }
+
     // @param $company_id limits find to offers that belong to the specified
     // company
     // return an array with keys: `draft', `active', `inactive', each of which

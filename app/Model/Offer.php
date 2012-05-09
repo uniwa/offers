@@ -8,7 +8,8 @@ class Offer extends AppModel {
         'valid' => true,
         'hapyhour' => true,
         'coupon' => true,
-        'limited' => true
+        'limited' => true,
+        'tag' => true
     );
 
     // 'valid' custom find type
@@ -70,6 +71,27 @@ class Offer extends AppModel {
         if ($state === 'before') {
             $query['conditions'] = array(
                 'Offer.offer_type_id' => TYPE_LIMITED,
+                'Offer.offer_state_id' => STATE_ACTIVE,
+                'Offer.is_spam' => 0,
+                'Company.is_enabled' => 1
+            );
+            $query['order'] = array('Offer.modified' => 'desc');
+            return $query;
+        }
+        return $results;
+    }
+
+    // find offers based on keywords
+    // searches in `tags` field in offers table
+    //
+    // on call accepts an array of the form:
+    //      array('tag' => 'tagname')
+    // eg:
+    //      $this->Offer->find('tag', array('tag' => 'tagname'));
+    protected function _findTag($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $query['conditions'] = array(
+                'Offer.tags LIKE' => "%{$query['tag']}%",
                 'Offer.offer_state_id' => STATE_ACTIVE,
                 'Offer.is_spam' => 0,
                 'Company.is_enabled' => 1

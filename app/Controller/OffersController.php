@@ -72,6 +72,14 @@ class OffersController extends AppController {
         $this->render('index');
     }
 
+    public function coupons() {
+        $this->paginate = array('coupons');
+        $offers = $this->paginate();
+        $this->minify_desc($offers, 160);
+        $this->set('offers', $offers);
+        $this->render('index');
+    }
+
     private function minify_desc( &$array, $limit ) {
         foreach($array as &$rec) {
             // the text to cut at a word-boundary for a maximum of $limit chars

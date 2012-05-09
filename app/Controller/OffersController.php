@@ -30,7 +30,10 @@ class OffersController extends AppController {
         $role = $this->Auth->user('role');
 
         // All registered users can view offers
-        if (in_array($this->action, array('index', 'home', 'view'))) {
+        if (in_array(
+                $this->action,
+                array('index', 'view', 'happyhour', 'coupons', 'limited'))
+        ) {
             return true;
         }
 

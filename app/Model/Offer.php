@@ -6,8 +6,8 @@ class Offer extends AppModel {
     public $hasMany = array('Coupon', 'Image', 'WorkHour');
     public $findMethods = array(
         'valid' => true,
-        'hapyhour' => true,
-        'coupon' => true,
+        'happyhour' => true,
+        'coupons' => true,
         'limited' => true,
         'tag' => true
     );
@@ -52,7 +52,7 @@ class Offer extends AppModel {
     }
 
     // return all valid coupon type offers
-    protected function _findCoupon($state, $query, $results = array()) {
+    protected function _findCoupons($state, $query, $results = array()) {
         if ($state === 'before') {
             $query['conditions'] = array(
                 'Offer.offer_type_id' => TYPE_COUPONS,

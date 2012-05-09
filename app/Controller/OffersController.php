@@ -62,30 +62,6 @@ class OffersController extends AppController {
         $offers = $this->paginate();
         $this->minify_desc($offers, 160);
         $this->set('offers', $offers);
-        $this->set('happyOffers', array());
-    }
-
-    public function home() {
-        //get last 3 happy hour offers
-        $happyOffers = $this->Offer->find('all', array(
-            'conditions'=>array(
-                'Offer.offer_type_id' => 1,
-                'Offer.offer_state_id' => OfferStates::Active,
-                'Offer.is_spam' => 0),
-            'limit' => 3,
-            'recursive' => -1,
-            'order' => 'Offer.started DESC'));
-
-        //minify description strings
-        $this->minify_desc($happyOffers, 100);
-        $this->set('happyOffers', $happyOffers);
-
-        $offers = $this->paginate('Offer', array(
-            'Offer.offer_type_id !=' => 1,
-            'Offer.offer_state_id' => OfferStates::Active,
-            'Offer.is_spam' => 0));
-        $this->minify_desc($offers, 160);
-        $this->set('offers', $offers);
     }
 
     private function minify_desc( &$array, $limit ) {

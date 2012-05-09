@@ -4,21 +4,103 @@ class Offer extends AppModel {
     public $name = 'Offer';
     public $belongsTo = array('Company', 'OfferType', 'OfferCategory', 'OfferState');
     public $hasMany = array('Coupon', 'Image', 'WorkHour');
-	public $findMethods = array('valid' => true);
+    public $findMethods = array(
+        'valid' => true,
+        'happyhour' => true,
+        'coupons' => true,
+        'limited' => true,
+        'tag' => true
+    );
 
     // 'valid' custom find type
     // returns active offers from enabled companies, not spam
-	protected function _findValid($state, $query, $results = array()) {
-	    if ($state === 'before') {
-			$query['conditions'] = array(
+    protected function _findValid($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $query['conditions'] = array(
                 'Offer.offer_state_id' => STATE_ACTIVE,
                 'Offer.is_spam' => 0,
                 'Company.is_enabled' => 1);
-			$query['order'] = array('Offer.modified' => 'desc');
-			return $query;
-		}
-		return $results;
-	}
+            $query['order'] = array('Offer.modified' => 'desc');
+            return $query;
+        }
+        return $results;
+    }
+
+    // custom find types for the 3 main offer types
+    //      * happyhour
+    //      * coupon
+    //      * limited
+    //
+    // These types are not very configurable and have a limited
+    // number of duplicate lines *sic*. This way the method calls
+    // are very simple without the need for (many) extra parameters
+    // eg: $this->Offer->find('coupon');
+
+    // return all valid happy hour type offers
+    protected function _findHappyhour($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $query['conditions'] = array(
+                'Offer.offer_type_id' => TYPE_HAPPYHOUR,
+                'Offer.offer_state_id' => STATE_ACTIVE,
+                'Offer.is_spam' => 0,
+                'Company.is_enabled' => 1
+            );
+            $query['order'] = array('Offer.modified' => 'desc');
+            return $query;
+        }
+        return $results;
+    }
+
+    // return all valid coupon type offers
+    protected function _findCoupons($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $query['conditions'] = array(
+                'Offer.offer_type_id' => TYPE_COUPONS,
+                'Offer.offer_state_id' => STATE_ACTIVE,
+                'Offer.is_spam' => 0,
+                'Company.is_enabled' => 1
+            );
+            $query['order'] = array('Offer.modified' => 'desc');
+            return $query;
+        }
+        return $results;
+    }
+
+    // return all valid limited type offers
+    protected function _findLimited($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $query['conditions'] = array(
+                'Offer.offer_type_id' => TYPE_LIMITED,
+                'Offer.offer_state_id' => STATE_ACTIVE,
+                'Offer.is_spam' => 0,
+                'Company.is_enabled' => 1
+            );
+            $query['order'] = array('Offer.modified' => 'desc');
+            return $query;
+        }
+        return $results;
+    }
+
+    // find offers based on keywords
+    // searches in `tags` field in offers table
+    //
+    // on call accepts an array of the form:
+    //      array('tag' => 'tagname')
+    // eg:
+    //      $this->Offer->find('tag', array('tag' => 'tagname'));
+    protected function _findTag($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $query['conditions'] = array(
+                'Offer.tags LIKE' => "%{$query['tag']}%",
+                'Offer.offer_state_id' => STATE_ACTIVE,
+                'Offer.is_spam' => 0,
+                'Company.is_enabled' => 1
+            );
+            $query['order'] = array('Offer.modified' => 'desc');
+            return $query;
+        }
+        return $results;
+    }
 
     // @param $company_id limits find to offers that belong to the specified
     // company

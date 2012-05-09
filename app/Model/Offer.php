@@ -65,6 +65,21 @@ class Offer extends AppModel {
         return $results;
     }
 
+    // return all valid limited type offers
+    protected function _findLimited($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $query['conditions'] = array(
+                'Offer.offer_type_id' => TYPE_LIMITED,
+                'Offer.offer_state_id' => STATE_ACTIVE,
+                'Offer.is_spam' => 0,
+                'Company.is_enabled' => 1
+            );
+            $query['order'] = array('Offer.modified' => 'desc');
+            return $query;
+        }
+        return $results;
+    }
+
     // @param $company_id limits find to offers that belong to the specified
     // company
     // return an array with keys: `draft', `active', `inactive', each of which

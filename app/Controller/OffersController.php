@@ -67,21 +67,22 @@ class OffersController extends AppController {
         $should_serialize = false;
         switch ($response_type) {
             case 'xml':
-                $offer_info = $this->api_prepare_view($offers);
+                $data = $this->api_prepare_view($offers);
 
                 $should_serialize = true;
                 break;
 
             case 'json':
-                $offer_info = $this->api_prepare_view($offers, false);
+                $data = $this->api_prepare_view($offers, false);
                 $should_serialize = true;
                 break;
         }
 
         if ($should_serialize) {
-            $this->set(
-                array('offers' => $offers,
-                '_serialize' => array('offers')));
+            $this->set(array(
+                'offers' => $data['offers'],
+                'companies' => $data['companies'],
+                '_serialize' => array('offers', 'companies')));
         } else {
             $this->set('offers', $offers);
             $this->set('happyOffers', array());
@@ -959,16 +960,16 @@ class OffersController extends AppController {
             // `companies' tags
             if ($is_index) {
                 $wrap = array(
-                    'offer' => $result['offers']['offer'],
-                    'company' => $result['companies']['company']);
+                    'offer' => &$result['offers']['offer'],
+                    'company' => &$result['companies']['company']);
             } else {
                 $wrap = &$result;
             }
 
-            $this->xml_alter_view(&$wrapper,$date_format);
+            $this->xml_alter_view(&$wrap,$date_format);
         }
 
-        return $r;
+        return $result;
     }
 
     // Makes necessary modifications to the supplied array `data' so that it may

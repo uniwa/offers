@@ -32,7 +32,7 @@ class OffersController extends AppController {
         // All registered users can view offers
         if (in_array(
                 $this->action,
-                array('index', 'view', 'happyhour', 'coupons', 'limited'))
+                array('index', 'view', 'happyhour', 'coupons', 'limited', 'tag'))
         ) {
             return true;
         }
@@ -85,6 +85,14 @@ class OffersController extends AppController {
 
     public function limited() {
         $this->paginate = array('limited');
+        $offers = $this->paginate();
+        $this->minify_desc($offers, 160);
+        $this->set('offers', $offers);
+        $this->render('index');
+    }
+
+    public function tag($tag) {
+        $this->paginate = array('tag', array('tag' => $tag));
         $offers = $this->paginate();
         $this->minify_desc($offers, 160);
         $this->set('offers', $offers);

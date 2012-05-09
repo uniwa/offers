@@ -91,7 +91,7 @@ class Offer extends AppModel {
     protected function _findTag($state, $query, $results = array()) {
         if ($state === 'before') {
             $query['conditions'] = array(
-                'Offer.tags LIKE' => "%{$query[0]['tag']}%",
+                'Offer.tags LIKE' => "%{$query['tag']}%",
                 'Offer.offer_state_id' => STATE_ACTIVE,
                 'Offer.is_spam' => 0,
                 'Company.is_enabled' => 1

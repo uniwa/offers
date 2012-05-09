@@ -92,7 +92,7 @@ class OffersController extends AppController {
     }
 
     public function tag($tag) {
-        $this->paginate = array('tag', array('tag' => $tag));
+        $this->paginate = array('tag', 'tag' => $tag);
         $offers = $this->paginate();
         $this->minify_desc($offers, 160);
         $this->set('offers', $offers);

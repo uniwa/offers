@@ -955,6 +955,12 @@ class OffersController extends AppController {
             }
 
             $this->xml_alter_view(&$wrap,$date_format);
+        } else {
+            // remove redundant index when requesting just one offer
+            if (!$is_index) {
+                $result['offer'] = $result['offer'][0];
+                $result['company'] = $result['company'][0];
+            }
         }
 
         return $result;

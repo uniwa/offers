@@ -86,10 +86,6 @@ class AppController extends Controller{
     //      code and in accordance with CakeResponse::httpCodes(). Generally, it
     //      is a good idea to specify a code.
     protected function alert($exception, $message, $code = 0) {
-        // the following two variables should be initialized elsewhere as they
-        // are oftenly used
-        $is_webservice =
-            $this->RequestHandler->prefers(array('xml', 'json', 'js')) != null;
 
         // if no `code' was specified, instantiate the exception to get its
         // default code
@@ -99,7 +95,7 @@ class AppController extends Controller{
             $code = $throwable->getCode();
         }
 
-        if ($is_webservice) {
+        if ($this->is_webservice) {
 
             // should URI be passed in as $extra, or should this become the
             // default behaviour?
@@ -144,14 +140,7 @@ class AppController extends Controller{
     protected function notify(
             $flash, $redirect = null, $status = null, $extra = null) {
 
-        // the following two variables should be initialized elsewhere as they
-        // are oftenly used
-        $is_webservice =
-            $this->RequestHandler->prefers(array('xml', 'json', 'js')) != null;
-
-        $response_type = $this->RequestHandler->prefers();
-
-        if ($is_webservice) {
+        if ($this->is_webservice) {
 
             // get message from setFlash parameters
             if (is_array($flash)) {
@@ -181,23 +170,24 @@ class AppController extends Controller{
     public function api_compile_response(
             $message = null, $code = 200, $extra = array()) {
 
-        // get value of this from elsewhere
-        $response_type = $this->RequestHandler->prefers();
+        $response = array();
 
         // status code should appear as an attribute in an xml response
-        $status_key = (($response_type == 'xml')?'@':'') . 'status_code';
-
-        $response = array();
-        if (!empty($code)) {
-            $response[$status_key] = $code;
+        if ($this->webservice_type == 'xml') {
+            $status_key = '@status_code';
+        } else {
+            $status_key = 'status_code';
         }
+
+        $response[$status_key] = $code;
+
+        // get formal description for this status $code and set the header
+        $code_desc = $this->response->httpCodes($code);
+        $this->response->header('HTTP/1.1 '.$code, $code_desc);
+
         if (!empty($message)) {
             $response['message'] = $message;
         }
-
-        // get format description for this status $code and set the header
-        $code_desc = $this->response->httpCodes($code);
-        $this->response->header('HTTP/1.1 '.$code, $code_desc);
 
         // append any extra information
         if (!empty($extra)) {
@@ -205,7 +195,7 @@ class AppController extends Controller{
         }
 
         // make preparation for views
-        if ($response_type == 'js') {
+        if ($this->webservice_type == 'js') {
             // get callback and set layout
             $callback = $this->request->query['callback'];
 
@@ -245,12 +235,3 @@ class AppController extends Controller{
         }
     }
 }
-
-
-
-
-
-
-
-
-

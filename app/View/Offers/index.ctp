@@ -34,7 +34,7 @@ if (empty($offers)) {
         if ($offer['Offer']['tags'] == NULL)
             continue;
 
-        $tags = explode(' ', $offer['Offer']['tags']);
+        $tags = explode(' ', trim($offer['Offer']['tags']));
         $tag_num = count($tags);
         $tag_counter = 0;
 

@@ -32,7 +32,7 @@ class OffersController extends AppController {
         // All registered users can view offers
         if (in_array(
                 $this->action,
-                array('index', 'view', 'happyhour', 'coupons', 'limited', 'tag'))
+                array('index', 'category', 'view', 'happyhour', 'coupons', 'limited', 'tag'))
         ) {
             return true;
         }
@@ -93,6 +93,17 @@ class OffersController extends AppController {
 
     public function tag($tag) {
         $this->paginate = array('tag', 'tag' => $tag);
+        $offers = $this->paginate();
+        $this->minify_desc($offers, 160);
+        $this->set('offers', $offers);
+        $this->render('index');
+    }
+
+    public function category($id) {
+        // TODO throw exception if invalid/non-existent id
+        $id = (int)$id; // Sanitize id input
+        $conditions['Offer.offer_category_id'] = $id;
+        $this->paginate = array('valid', 'conditions' => $conditions);
         $offers = $this->paginate();
         $this->minify_desc($offers, 160);
         $this->set('offers', $offers);

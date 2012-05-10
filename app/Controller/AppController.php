@@ -60,7 +60,7 @@ class AppController extends Controller{
 
     // Convenience method for throwing exceptions while maintaining support for
     // the webservice api. This is to replace all occurences of `throw new
-    // Exception(…)' where access is granted via the api.
+    // Exception(…)' where access to the webservice api is granted.
     //
     // NOTE: Do NOT use this method when all is needed is to return an error
     // code in response to a webservice api call. Use
@@ -71,13 +71,22 @@ class AppController extends Controller{
     // @param $message the message to display to the user. For api calls, this
     //      affects the content; the header defaults to the description of the
     //      defined code
-    // @param $code the code of the exception; must be a valid code as in
-    //      accordance with CakeResponse->httpCodes()
+    // @param $code the code of the exception; if specified, it must be a valid
+    //      code and in accordance with CakeResponse->httpCodes(). Generally, it
+    //      is a good idea to specify a code.
     protected function alert($exception, $message, $code = 0) {
         // the following two variables should be initialized elsewhere as they
         // are oftenly used
         $is_webservice =
             $this->RequestHandler->prefers(array('xml', 'json', 'js')) != null;
+
+        // if no `code' was specified, instantiate the exception to get its
+        // default code
+        if ($code == 0) {
+
+            $throwable = new $exception($message);
+            $code = $throwable->getCode();
+        }
 
         if ($is_webservice) {
 
@@ -87,9 +96,13 @@ class AppController extends Controller{
 
         } else {
 
-            throw new $exception($message, $code);
+            // if `code' was specified, then the exception object will not have
+            // been instantiated yet
+            if (empty($throwable)) {
+                $throwable = new $exception($message, $code);
+            }
+            throw $throwable;
         }
-
     }
 
     // Convenience method that displays an instant message. It removes the need
@@ -99,7 +112,7 @@ class AppController extends Controller{
     //
     // May also be used to return an error code specifically for a webservice
     // api call. For example:
-    //  $this->notify('Argument missing', null, 406. $this->request->here());
+    //  $this->notify('Argument missing', null, 406, $this->request->here());
     //
     // @param $flash 0-based array of parameters to be passed into
     //      SessionComponent::setFlash() method directly; must contain AT LEAST
@@ -148,7 +161,7 @@ class AppController extends Controller{
 
     // Performs the necessary initializations so that a webservice api call
     // response may be rendered.
-    private function api_compile_response($message, $code, $extra) {
+    private function api_compile_response($message, $code, $extra = array()) {
         // get value of this from elsewhere
         $response_type = $this->RequestHandler->prefers();
 
@@ -170,16 +183,13 @@ class AppController extends Controller{
 
         // make preparation for views
         if ($response_type == 'js') {
-
             // get callback and set layout
             $callback = $this->request->query['callback'];
 
             $this->set('callback', $callback);
             $this->set('data', $response);
             $this->layout = 'js/status';
-
         } else {
-
             // this is required so that CakePHP automatically presents the
             // response with Xml/JsonView
             $response['_serialize'] = array_keys($response);

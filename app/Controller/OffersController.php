@@ -19,7 +19,7 @@ class OffersController extends AppController {
 
     function beforeFilter(){
         if (! $this->is_authorized($this->Auth->user()))
-            throw new ForbiddenException();
+            $this->alert('ForbiddenException', 'Δεν επιτρέπεται η πρόσβαση', 403);
 
         parent::beforeFilter();
         $this->Auth->allow('index');
@@ -41,9 +41,13 @@ class OffersController extends AppController {
             'terminate_from_company', 'terminate_from_offer',
             'activate_from_company', 'activate_from_offer'))) {
 
-            $offer_id = $this->request->params['pass'][0];
-            if ($this->Offer->is_owned_by($offer_id, $user['id'])) {
-                return true;
+            // no id may have been supplied in the url
+            if (array_key_exists(0,$this->request->params['pass'])) {
+
+                $offer_id = $this->request->params['pass'][0];
+                if ($this->Offer->is_owned_by($offer_id, $user['id'])) {
+                    return true;
+                }
             }
         }
 
@@ -260,32 +264,29 @@ class OffersController extends AppController {
     // creation of a new offer may take place.
     public function webservice_add($param = null) {
 
-        // params should not appear in URI
-        if (empty($param)) {
+        $is_supported = $this->RequestHandler->prefers(array('xml','json', 'js'));
 
-            $is_supported = $this->RequestHandler->prefers(array('xml','json'));
+        // this function is available to webservice api calls only
+        if ($is_supported) {
 
-            // this function is available for specific requests only
-            if ($is_supported) {
+            $request = $this->request->data;
 
-                $request = $this->request->data;
+            if (!empty($request)) {
 
-                if (!empty($request)) {
+                // remove wrapping
+                // later on, xsd-compliance checks must also be performed
+                $data = reset($request);
 
-                    // remove wrapping
-                    // later on, xsd-compliance checks must also be performed
-                    $data = reset($request);
-
-                    if (Set::check($data, 'Offer.offer_type_id')) {
-                        $this->modify($data['Offer']['offer_type_id'], ADD);
-                        return;
-                    }
+                if (Set::check($data, 'Offer.offer_type_id')) {
+                    $this->modify($data['Offer']['offer_type_id'], ADD);
+                    return;
                 }
             }
         }
 
-        throw new BadRequestException(
-            'Η δομή του αιτήματος δεν είναι η αναμενόμενη');
+        $this->alert(
+            'BadRequestException',
+            'Η δομή του αιτήματος δεν είναι η αναμενόμενη', 406);
     }
 
     // Wrapper functions for 'edit offer' action
@@ -298,7 +299,9 @@ class OffersController extends AppController {
     // if $id is -1, add a new offer
     // else edit the offer with the corresponding id
     private function modify($offer_type_id, $id=null) {
-        if (is_null($id)) throw new BadRequestException();
+        if (is_null($id)) $this->alert(
+            'BadRequestException',
+            'Δεν έχει προσδιοριστεί το id της προσφοράς', 406);
 
         // determines whether redirects or responses should take place
         $should_serialize =
@@ -376,14 +379,11 @@ class OffersController extends AppController {
             if ($error) {
                 $transaction->rollback();
 
-                if ($should_serialize) {
-                    // throw Exception so that it may be rendered as a response
-                    throw new BadRequestException('Παρουσιάστηκε κάποιο σφάλμα');
-                } else {
-                    $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
-                        'default',
-                        array('class' => Flash::Error));
-                }
+                $this->notify(
+                    array(  'Παρουσιάστηκε κάποιο σφάλμα',
+                            'default',
+                            array('class' => Flash::Error)),
+                    null, 400);
             } else {
                 $transaction->commit();
 
@@ -402,7 +402,6 @@ class OffersController extends AppController {
                                 $this->set('callback', $callback);
                                 $this->set('data', $response);
                                 $this->layout = 'js/status';
-
                                 return;
                             }
                         }

@@ -319,10 +319,6 @@ class OffersController extends AppController {
             'BadRequestException',
             'Δεν έχει προσδιοριστεί το id της προσφοράς', 400);
 
-        // determines whether redirects or responses should take place
-        $should_serialize =
-            $this->RequestHandler->prefers(array('xml', 'json', 'js')) != null;
-
         // special treatment for xml
         $is_xml = $this->RequestHandler->requestedWith('xml');
 
@@ -419,12 +415,10 @@ class OffersController extends AppController {
             }
         } else {
 
-            if ($should_serialize) {
+            if ($this->is_webservice) {
                 // if data is empty, webservice call should be terminated
-                $this->notify(  'Η δομή του αιτήματος δεν είναι η αναμενόμενη',
-                                null, 400);
-                // no reason to continue execution
-                return;
+                return $this->notify(
+                    'Η δομή του αιτήματος δεν είναι η αναμενόμενη', null, 400);
             }
 
             // Add/edit offer

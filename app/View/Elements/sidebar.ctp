@@ -16,6 +16,13 @@ $limited = $this->Html->link(
     array('controller' => 'offers', 'action' => 'limited'),
     array('class' => '')
 );
+$html = '';
+foreach($offer_categories as $id => $name) {
+    $html .= "<li>";
+    $html .= $this->Html->link($name, array(
+        'controller' => 'offers', 'action' => 'category', $id));
+    $html .= "</li>";
+}
 ?>
     <div class="span3">
           <div class="well sidebar-nav">
@@ -25,13 +32,7 @@ $limited = $this->Html->link(
               <li><?php echo $coupons ?></li>
               <li><?php echo $limited ?></li>
               <li class="nav-header">Ειδη Προσφορων</li>
-              <li><a href="#">Φαγητό</a></li>
-              <li><a href="#">Διασκέδαση</a></li>
-              <li><a href="#">Δραστηριότητες & Χόμπι</a></li>
-              <li><a href="#">Υπηρεσίες</a></li>
-              <li><a href="#">Ένδυση & Υπόδηση</a></li>
-              <li><a href="#">Υγεία </a></li>
-              <li><a href="#">Προϊόντα </a></li>
+              <?php echo $html; ?>
             </ul>
           </div><!--/.well -->
     </div><!--/span-->

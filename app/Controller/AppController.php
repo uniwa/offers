@@ -223,7 +223,8 @@ class AppController extends Controller{
 
         // ensure callback was specified (for jsonp)
         if ($type == 'js') {
-            if ($this->request->data('callback') == null) {
+            if (!array_key_exists('callback', $this->request->query) ||
+                empty($this->request->query['callback'])) {
 
                 $this->is_webservice = true;
                 $this->webservice_type = 'xml';

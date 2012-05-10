@@ -17,17 +17,6 @@ class OffersController extends AppController {
 
     public $components = array('Common', 'RequestHandler');
 
-    // the next two properties alleviate the need to make checks manually; they
-    // should be initiliazed early on, before any action is run (by calling
-    // $this->api_initialize())
-        // boolean; determines if a webservice api call was made
-    protected $is_webservice;
-        // string; the response type based on the request's Content-Type and/or
-        // Accept headers for a webservice api call
-        // possible values: xml, json, js
-    protected $webservice_type;
-
-
     function beforeFilter(){
         // this call should precede all actions that return data (exceptions
         // included)
@@ -1033,30 +1022,4 @@ class OffersController extends AppController {
             }
         }
     }
-
-    // Initializes the properties `is_webservice' and `webservice_type'.
-    // Later on, this function will perform all necessary actions so that
-    // default types (to xml or to that of another header) are supported.
-    // Should be invoked before any operation is performed.
-    private function api_initialize() {
-
-        $type = $this->RequestHandler->prefers(array('js', 'json', 'xml'));
-
-        $this->is_webservice = $type != null;
-        $this->webservice_type = $type;
-
-        // ensure callback was specified (for jsonp)
-        if ($type == 'js') {
-            if ($this->request->data('callback') == null) {
-
-                $this->is_webservice = true;
-                $this->webservice_type = 'xml';
-                $this->alert(
-                    'BadRequestException',
-                    'Δεν έχει προσδιοριστεί η απαιτούμενη παράμετρος callback',
-                    400);
-            }
-        }
-    }
-
 }

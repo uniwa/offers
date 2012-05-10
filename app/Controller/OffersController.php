@@ -157,8 +157,9 @@ class OffersController extends AppController {
         $options['recursive'] = 1;
         $offer = $this->Offer->find('first', $options);
 
-        if (empty($offer))
-            throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
+        if (empty($offer)) {
+            return $this->alert('NotFoundException', 'Η προσφορά δεν βρέθηκε', 404);
+        }
 
         $this->set('offer', $offer);
 
@@ -286,7 +287,7 @@ class OffersController extends AppController {
 
         $this->alert(
             'BadRequestException',
-            'Η δομή του αιτήματος δεν είναι η αναμενόμενη', 406);
+            'Η δομή του αιτήματος δεν είναι η αναμενόμενη', 400);
     }
 
     // Wrapper functions for 'edit offer' action
@@ -301,7 +302,7 @@ class OffersController extends AppController {
     private function modify($offer_type_id, $id=null) {
         if (is_null($id)) $this->alert(
             'BadRequestException',
-            'Δεν έχει προσδιοριστεί το id της προσφοράς', 406);
+            'Δεν έχει προσδιοριστεί το id της προσφοράς', 400);
 
         // determines whether redirects or responses should take place
         $should_serialize =
@@ -402,6 +403,15 @@ class OffersController extends AppController {
                     array(  'id' => $this->Offer->id));
             }
         } else {
+
+            if ($should_serialize) {
+                // if data is empty, webservice call should be terminated
+                $this->notify(  'Η δομή του αιτήματος δεν είναι η αναμενόμενη',
+                                null, 400);
+                // no reason to continue execution
+                return;
+            }
+
             // Add/edit offer
             if ($id !== -1) {
                 // Edit existing offer
@@ -779,31 +789,44 @@ class OffersController extends AppController {
 
             if ($error === true) {
                 $transaction->rollback();
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
-                                         'default',
-                                         array('class' => Flash::Error));
-                $this->redirect(array(
-                                    'controller' => 'offers',
+
+                return $this->notify(
+                    // `setFlash' params
+                    array(  'Παρουσιάστηκε κάποιο σφάλμα',
+                             'default',
+                             array('class' => Flash::Error)),
+                    // `redirect' params
+                    array(  array(  'controller' => 'offers',
                                     'action' => 'view',
-                                    $offer['Offer']['id']));
+                                    $offer['Offer']['id'])),
+                    // webservice api call status and extra info
+                    400,
+                    array(  'id' => $id));
+
             } else {
                 $transaction->commit();
-                $this->Session->setFlash('Η προσφορά διαγράφηκε επιτυχώς.',
-                                         'default',
-                                         array('class' => Flash::Success));
-                $this->redirect(array(
-                                    'controller' => 'companies',
+
+                return $this->notify(
+                    array(  'Η προσφορά διαγράφηκε επιτυχώς',
+                             'default',
+                             array('class' => Flash::Success)),
+                    array(  array(  'controller' => 'companies',
                                     'action' => 'view',
-                                    $offer['Company']['id']));
+                                    $offer['Company']['id'])),
+                    200,
+                    array(  'id' => $id));
             }
         } else {
-            $this->Session->setFlash('Η προσφορά δεν μπορεί να διαγραφεί',
-                                     'default',
-                                     array('class' => Flash::Info));
-            $this->redirect(array(
-                                'controller' => 'offers',
+
+            return $this->notify(
+                array(  'Η προσφορά δεν μπορεί να διαγραφεί',
+                         'default',
+                         array('class' => Flash::Info)),
+                array(  array(  'controller' => 'offers',
                                 'action' => 'view',
-                                $offer['Offer']['id']));
+                                $offer['Offer']['id'])),
+                400,
+                array(  'id' => $id));
         }
     }
 

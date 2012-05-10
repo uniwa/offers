@@ -46,6 +46,11 @@
                 'action' => 'view',
                 '[method]' => 'GET'));
 
+    Router::connect('/webservice/offers/*',
+        array(  'controller' => 'offers',
+                'action' => 'index',
+                '[method]' => 'GET'));
+
     Router::connect('/webservice/offer/*',
         array(  'controller' => 'offers',
                 'action' => 'edit',

@@ -72,7 +72,7 @@ class AppController extends Controller{
     //      affects the content; the header defaults to the description of the
     //      defined code
     // @param $code the code of the exception; if specified, it must be a valid
-    //      code and in accordance with CakeResponse->httpCodes(). Generally, it
+    //      code and in accordance with CakeResponse::httpCodes(). Generally, it
     //      is a good idea to specify a code.
     protected function alert($exception, $message, $code = 0) {
         // the following two variables should be initialized elsewhere as they
@@ -161,16 +161,28 @@ class AppController extends Controller{
 
     // Performs the necessary initializations so that a webservice api call
     // response may be rendered.
-    private function api_compile_response($message, $code, $extra = array()) {
+    // @param $message convenience for passing a single string for the `message'
+    //      element; may be omitted
+    // @param $code the HTTP status code of the response; defaults to 200
+    // @param $extra additional messages to be returned in a webservice api
+    //      call. Numeric keys are NOT supported. The following should NOT be
+    //      used either: `status', `@status' `message', '_serialize'
+    public function api_compile_response(
+            $message = null, $code = 200, $extra = array()) {
+
         // get value of this from elsewhere
         $response_type = $this->RequestHandler->prefers();
 
         // status code should appear as an attribute in an xml response
         $status_key = (($response_type == 'xml')?'@':'') . 'status_code';
 
-        $response = array(
-            $status_key => $code,
-            'message' => $message);
+        $response = array();
+        if (!empty($code)) {
+            $response[$status_key] = $code;
+        }
+        if (!empty($message)) {
+            $response['message'] = $message;
+        }
 
         // get format description for this status $code and set the header
         $code_desc = $this->response->httpCodes($code);

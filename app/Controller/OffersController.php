@@ -387,39 +387,19 @@ class OffersController extends AppController {
             } else {
                 $transaction->commit();
 
-                if ($should_serialize) {
-
-                    $response = array(
-                        'name' => 'Η προσφορά αποθηκεύτηκε',
-                        'id' => $this->Offer->id);
-
-                    if ($this->RequestHandler->prefers('js')) {
-                        if (array_key_exists('callback', $this->request->query)) {
-
-                            $callback = $this->request->query['callback'];
-                            if (!empty($callback)) {
-
-                                $this->set('callback', $callback);
-                                $this->set('data', $response);
-                                $this->layout = 'js/status';
-                                return;
-                            }
-                        }
-                    }
-
-                    // serialize a simple array to inform of success (xml/json)
-                    $response['_serialize'] = array('name', 'id');
-                    $this->set($response);
-
-                } else {
-                    $this->Session->setFlash('Η προσφορά αποθηκεύτηκε',
-                        'default',
-                        array('class' => Flash::Success));
-                    $this->redirect(array(
-                        'controller' => 'companies',
-                        'action' => 'view',
-                        $company['Company']['id']));
-                }
+                $this->notify(
+                    // the message to appear (parameters of `setFlash')
+                    array(  'Η προσφορά αποθηκεύτηκε',
+                            'default',
+                            array('class' => Flash::Success)),
+                    // parameters of `redirect' (in case of html response)
+                    array(  array(  'controller' => 'companies',
+                                    'action' => 'view',
+                                    $company['Company']['id'])),
+                    // status of response (in case of webservice api call)
+                    200,
+                    // additional info (in case of webservice api call)
+                    array(  'id' => $this->Offer->id));
             }
         } else {
             // Add/edit offer

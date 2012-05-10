@@ -140,7 +140,7 @@ class AppController extends Controller{
 
         $response_type = $this->RequestHandler->prefers();
 
-        if ($is_webservice || true) {
+        if ($is_webservice) {
 
             // get message from setFlash parameters
             if (is_array($flash)) {

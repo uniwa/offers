@@ -70,27 +70,21 @@ class OffersController extends AppController {
         $offers = $this->paginate();
         $this->minify_desc($offers, 160);
 
-        $response_type = $this->RequestHandler->prefers();
-        // automatic rendering (for xml and json)
-        $should_serialize = false;
-        switch ($response_type) {
-            case 'xml':
-                $data = $this->api_prepare_view($offers);
+        if ($this->is_webservice) {
+            switch ($this->webservice_type) {
+                case 'js':
+                case 'json':
+                    $data = $this->api_prepare_view($offers, false);
+                    break;
 
-                $should_serialize = true;
-                break;
+                case 'xml':
+                    $data = $this->api_prepare_view($offers);
+                    break;
+            }
+            $this->api_compile_response(
+                null, 200, array(   'offers' => $data['offers'],
+                                    'companies' => $data['companies']));
 
-            case 'json':
-                $data = $this->api_prepare_view($offers, false);
-                $should_serialize = true;
-                break;
-        }
-
-        if ($should_serialize) {
-            $this->set(array(
-                'offers' => $data['offers'],
-                'companies' => $data['companies'],
-                '_serialize' => array('offers', 'companies')));
         } else {
             $this->set('offers', $offers);
             $this->set('happyOffers', array());
@@ -174,30 +168,24 @@ class OffersController extends AppController {
             $this->set('student', $student);
         }
 
-        $response_type = $this->RequestHandler->prefers();
-        // automatic rendering (for xml and json)
-        $should_serialize = false;
-        switch ($response_type) {
-            case 'xml':
-                $offer_info = $this->api_prepare_view($offer);
-                $should_serialize = true;
-                break;
+        if ($this->is_webservice) {
+            switch ($this->webservice_type) {
+                case 'js':
+                case 'json':
+                    $offer_info = $this->api_prepare_view($offer, false);
+                    break;
 
-            case 'json':
-                $offer_info = $this->api_prepare_view($offer, false);
-                $should_serialize = true;
-                break;
+                case 'xml':
+                    $offer_info = $this->api_prepare_view($offer);
+                    break;
+            }
+            $this->api_compile_response(null, 200, array(
+                'offer' => $offer_info['offer'],
+                'company' => $offer_info['company']));
 
-            default:
-                // Prepare information for view
-                $offer_info = $this->prepare_view($offer);
-        }
-
-        if ($should_serialize) {
-            $this->set(
-                array('offer_info' => $offer_info,
-                '_serialize' => array('offer_info')));
         } else {
+            // Prepare information for view
+            $offer_info = $this->prepare_view($offer);
             $this->set('offer_info', $offer_info);
         }
     }

@@ -69,6 +69,7 @@ class AppController extends Controller{
         return false;
     }
 
+    // DEPRECATED -- soon to be removed: thow Exceptions instead, as usual
     // Convenience method for throwing exceptions while maintaining support for
     // the webservice api. This is to replace all occurences of `throw new
     // Exception(…)' where access to the webservice api is granted.
@@ -228,10 +229,8 @@ class AppController extends Controller{
 
                 $this->is_webservice = true;
                 $this->webservice_type = 'xml';
-                $this->alert(
-                    'BadRequestException',
-                    'Δεν έχει προσδιοριστεί η απαιτούμενη παράμετρος callback',
-                    400);
+                throw new BadRequestException(
+                    'Δεν έχει προσδιοριστεί η απαιτούμενη παράμετρος callback');
             }
         }
     }

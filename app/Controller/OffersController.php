@@ -23,7 +23,7 @@ class OffersController extends AppController {
         $this->api_initialize();
 
         if (! $this->is_authorized($this->Auth->user()))
-            $this->alert('ForbiddenException', 'Δεν επιτρέπεται η πρόσβαση', 403);
+            throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
 
         parent::beforeFilter();
         $this->Auth->allow('index');
@@ -156,7 +156,7 @@ class OffersController extends AppController {
         $offer = $this->Offer->find('first', $options);
 
         if (empty($offer)) {
-            return $this->alert('NotFoundException', 'Η προσφορά δεν βρέθηκε', 404);
+            throw new NotFoundException('Η προσφορά δεν βρέθηκε');
         }
 
         $this->set('offer', $offer);
@@ -277,9 +277,8 @@ class OffersController extends AppController {
             }
         }
 
-        $this->alert(
-            'BadRequestException',
-            'Η δομή του αιτήματος δεν είναι η αναμενόμενη', 400);
+        throw new BadRequestException(
+            'Η δομή του αιτήματος δεν είναι η αναμενόμενη');
     }
 
     // Wrapper functions for 'edit offer' action
@@ -292,9 +291,10 @@ class OffersController extends AppController {
     // if $id is -1, add a new offer
     // else edit the offer with the corresponding id
     private function modify($offer_type_id, $id=null) {
-        if (is_null($id)) $this->alert(
-            'BadRequestException',
-            'Δεν έχει προσδιοριστεί το id της προσφοράς', 400);
+        if (is_null($id)) {
+            throw new BadRequestException(
+                'Δεν έχει προσδιοριστεί το id της προσφοράς');
+        }
 
         // special treatment for xml
         $is_xml = $this->RequestHandler->requestedWith('xml');

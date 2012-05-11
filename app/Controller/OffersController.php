@@ -70,9 +70,8 @@ class OffersController extends AppController {
     }
 
     public function index() {
-        $this->paginate = array('valid');
-        $offers = $this->paginate();
-        $this->minify_desc($offers, 160);
+        $params = array('valid');
+        $offers = $this->display($params);
 
         if ($this->is_webservice) {
             switch ($this->webservice_type) {
@@ -95,35 +94,36 @@ class OffersController extends AppController {
     }
 
     public function happyhour() {
-        $this->paginate = array('happyhour');
-        $offers = $this->paginate();
-        $this->minify_desc($offers, 160);
-        $this->set('offers', $offers);
-        $this->render('index');
+        $params = array('happyhour');
+        $this->display($params);
     }
 
     public function coupons() {
-        $this->paginate = array('coupons');
-        $offers = $this->paginate();
-        $this->minify_desc($offers, 160);
-        $this->set('offers', $offers);
-        $this->render('index');
+        $params = array('coupons');
+        $this->display($params);
     }
 
     public function limited() {
-        $this->paginate = array('limited');
-        $offers = $this->paginate();
-        $this->minify_desc($offers, 160);
-        $this->set('offers', $offers);
-        $this->render('index');
+        $params = array('limited');
+        $this->display($params);
     }
 
     public function tag($tag) {
-        $this->paginate = array('tag', 'tag' => $tag);
+        $params = array('tag', 'tag' => $tag);
+        $this->display($params);
+    }
+
+    // Displays offers in list according to passed criteria and sorting params
+    private function display($params, $render = true) {
+        $this->paginate = $params;
         $offers = $this->paginate();
         $this->minify_desc($offers, 160);
-        $this->set('offers', $offers);
-        $this->render('index');
+        if ($render) {
+            $this->set('offers', $offers);
+            $this->render('index');
+        } else {
+            return $offers;
+        }
     }
 
     public function category($id) {

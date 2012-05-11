@@ -8,6 +8,8 @@ App::import('Vendor', 'Flash');
 
 class AppController extends Controller{
 
+    public $uses = array('OfferCategory');
+
     public $components = array(
         'Session',
         'Auth' => array(
@@ -41,6 +43,12 @@ class AppController extends Controller{
     function beforeFilter() {
         //clear authError default message
         $this->Auth->authError = " ";
+
+        // Prepare offer categories for default sidebar
+        $this->OfferCategory->recursive = -1;
+        $offer_categories = $this->OfferCategory->find('list');
+        $categories_links = array();
+        $this->set('offer_categories', $offer_categories);
 
         // When logged user has not accepted terms,
         // redirect to terms of use (only allow logout)

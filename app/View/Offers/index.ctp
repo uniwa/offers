@@ -14,6 +14,8 @@ if (empty($offers)) {
     $sep = 3;
 
     //offers
+    // TODO: make this a f***** list - stop the <br/> abuse
+    // (when dealing with layout)
     foreach ($offers as $key => $offer) {
         $offer_type_id = $offer['Offer']['offer_type_id'];
         $tag_classes = array('info', 'warning', 'success');
@@ -27,6 +29,31 @@ if (empty($offers)) {
         $html .= " ".$label;
         $html .= "<br /><i>{$offer['Offer']['modified']}</i>";
         $html .= $description;
+
+        // print tags as links if available
+        if ($offer['Offer']['tags'] == NULL)
+            continue;
+
+        $tags = explode(' ', trim($offer['Offer']['tags']));
+        $tag_num = count($tags);
+        $tag_counter = 0;
+
+        $html .= "<p>Tags: ";
+        foreach ($tags as $tag) {
+            $html .= $this->Html->link(
+                $tag,
+                array('controller' => 'offers', 'action' => 'tag', $tag)
+            );
+
+            // this is the only (and horrible) solution
+            // because CakePHP is a lie and does not provide a
+            // template engine and thus no mechanism to make this
+            // intuitive
+            $tag_counter++;
+            if ($tag_counter !== $tag_num)
+                $html .= ", ";
+        }
+        $html .= "</p>";
     }
 }
 echo $html;

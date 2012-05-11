@@ -34,7 +34,10 @@ class OffersController extends AppController {
         $role = $this->Auth->user('role');
 
         // All registered users can view offers
-        if (in_array($this->action, array('index', 'home', 'view'))) {
+        if (in_array(
+                $this->action,
+                array('index', 'category', 'view', 'happyhour', 'coupons', 'limited', 'tag'))
+        ) {
             return true;
         }
 
@@ -87,31 +90,50 @@ class OffersController extends AppController {
 
         } else {
             $this->set('offers', $offers);
-            $this->set('happyOffers', array());
         }
     }
 
-    public function home() {
-        //get last 3 happy hour offers
-        $happyOffers = $this->Offer->find('all', array(
-            'conditions'=>array(
-                'Offer.offer_type_id' => 1,
-                'Offer.offer_state_id' => OfferStates::Active,
-                'Offer.is_spam' => 0),
-            'limit' => 3,
-            'recursive' => -1,
-            'order' => 'Offer.started DESC'));
-
-        //minify description strings
-        $this->minify_desc($happyOffers, 100);
-        $this->set('happyOffers', $happyOffers);
-
-        $offers = $this->paginate('Offer', array(
-            'Offer.offer_type_id !=' => 1,
-            'Offer.offer_state_id' => OfferStates::Active,
-            'Offer.is_spam' => 0));
+    public function happyhour() {
+        $this->paginate = array('happyhour');
+        $offers = $this->paginate();
         $this->minify_desc($offers, 160);
         $this->set('offers', $offers);
+        $this->render('index');
+    }
+
+    public function coupons() {
+        $this->paginate = array('coupons');
+        $offers = $this->paginate();
+        $this->minify_desc($offers, 160);
+        $this->set('offers', $offers);
+        $this->render('index');
+    }
+
+    public function limited() {
+        $this->paginate = array('limited');
+        $offers = $this->paginate();
+        $this->minify_desc($offers, 160);
+        $this->set('offers', $offers);
+        $this->render('index');
+    }
+
+    public function tag($tag) {
+        $this->paginate = array('tag', 'tag' => $tag);
+        $offers = $this->paginate();
+        $this->minify_desc($offers, 160);
+        $this->set('offers', $offers);
+        $this->render('index');
+    }
+
+    public function category($id) {
+        // TODO throw exception if invalid/non-existent id
+        $id = (int)$id; // Sanitize id input
+        $conditions['Offer.offer_category_id'] = $id;
+        $this->paginate = array('valid', 'conditions' => $conditions);
+        $offers = $this->paginate();
+        $this->minify_desc($offers, 160);
+        $this->set('offers', $offers);
+        $this->render('index');
     }
 
     private function minify_desc( &$array, $limit ) {

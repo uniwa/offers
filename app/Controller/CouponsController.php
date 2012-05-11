@@ -18,18 +18,11 @@ class CouponsController extends AppController {
         if ($id === null)
             throw new BadRequestException();
 
-        // TODO DEPRECATE
-        // will use custom model function that checks for offer validity too
-        // ----
-        // check that the offer exists
-        $this->Offer->recursive = -1;
-        $conditions = array('Offer.id' => $id);
-        $offer = $this->Offer->find('first',
+        // check if offer exists and is valid
+        $offer = $this->Offer->find('valid',
                                     array('conditions' => $conditions));
-
         if (! $offer)
             throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
-        // --------------
 
         // don't read from session all the time
         $student_id = $this->Session->read('Auth.Student.id');

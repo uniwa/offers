@@ -82,8 +82,8 @@ class OffersController extends AppController {
                     break;
             }
             $this->api_compile_response(
-                null, 200, array(   'offers' => $data['offers'],
-                                    'companies' => $data['companies']));
+                200, array( 'offers' => $data['offers'],
+                            'companies' => $data['companies']));
 
         } else {
             $this->set('offers', $offers);
@@ -179,7 +179,7 @@ class OffersController extends AppController {
                     $offer_info = $this->api_prepare_view($offer);
                     break;
             }
-            $this->api_compile_response(null, 200, array(
+            $this->api_compile_response(200, array(
                 'offer' => $offer_info['offer'],
                 'company' => $offer_info['company']));
 

@@ -115,18 +115,20 @@ class AppController extends Controller{
 
     // Convenience method that displays an instant message. It removes the need
     // to manually either call Session::setFlash() method or prepare a response
-    // to be returned to an api call. It also enables javascript errors (jsonp)
-    // to be returned.
+    // to be returned to an api call. It also enables javascript responses.
     //
-    // May also be used to return an error code specifically for a webservice
-    // api call. For example:
-    //  $this->notify('Argument missing', null, 406, $this->request->here());
+    // May also be used to return an error message specifically for a webservice
+    // api call. For example (in any controller):
+    //  if ($this->is_webservice) return $this->notify(
+    //      'Argument missing', null, 406,
+    //      array('url' => $this->request->here()));
+    //  Note: in the example above, `return' is used to cease execution of
+    //  current function.
     //
-    // @param $flash 0-based array of parameters to be passed into
-    //      SessionComponent::setFlash() method directly; must contain AT LEAST
-    //      one parameter (which corresponds to the message itself).
-    //      NOTE: If it is certain that a webservice api call will be serviced,
-    //      a string may be passed in, as well!
+    // @param $flash array or string: a 0-based array of parameters to be passed
+    //      into SessionComponent::setFlash() method directly -- must contain AT
+    //      LEAST one parameter (which corresponds to the message itself);
+    //      a string may be passed in if `setFlash()'
     // @param $redirect 0-based array of parameters to be passed into
     //      AppController::redirect() method directly. If left empty or omitted,
     //      no redirection takes place; defaults to null.
@@ -139,7 +141,7 @@ class AppController extends Controller{
     //      call. Numeric keys are NOT supported. The following should NOT be
     //      used either: `status', `@status' `message', '_serialize'
     protected function notify(
-            $flash, $redirect = null, $status = null, $extra = null) {
+            $flash, $redirect = null, $status = null, $extra = array()) {
 
         if ($this->is_webservice) {
 
@@ -147,11 +149,29 @@ class AppController extends Controller{
             if (is_array($flash)) {
                 $flash = reset($flash);
             }
-            $this->api_compile_response($flash, $status, $extra);
+
+            // the message is given a tag
+            $msg_param = array('message' => $flash);
+
+            // the message parameter is placed within `extra' in the beggining
+            // of the response
+            if (empty($extra)) {
+                $extra = $msg_param;
+            } else {
+                $extra = array_merge($msg_param, $extra);
+            }
+
+            $this->api_compile_response($status, $extra);
 
         } else {
+            $callback = array(&$this->Session, 'setFlash');
 
-            call_user_func_array(array(&$this->Session, 'setFlash'), $flash);
+            // call `setFlash' with just one param or an array of params
+            if (is_array($flash)) {
+                call_user_func_array($callback, $flash);
+            } else {
+                call_user_func($callback, $flash);
+            }
 
             // redirection does not take place in the webservice api
             if (!empty($redirect)) {
@@ -162,14 +182,11 @@ class AppController extends Controller{
 
     // Performs the necessary initializations so that a webservice api call
     // response may be rendered.
-    // @param $message convenience for passing a single string for the `message'
-    //      element; may be omitted
     // @param $code the HTTP status code of the response; defaults to 200
     // @param $extra additional messages to be returned in a webservice api
     //      call. Numeric keys are NOT supported. The following should NOT be
-    //      used either: `status', `@status' `message', '_serialize'
-    public function api_compile_response(
-            $message = null, $code = 200, $extra = array()) {
+    //      used either: `status', `@status', '_serialize'
+    public function api_compile_response($code = 200, $extra = array()) {
 
         $response = array();
 
@@ -185,10 +202,6 @@ class AppController extends Controller{
         // get formal description for this status $code and set the header
         $code_desc = $this->response->httpCodes($code);
         $this->response->header('HTTP/1.1 '.$code, $code_desc);
-
-        if (!empty($message)) {
-            $response['message'] = $message;
-        }
 
         // append any extra information
         if (!empty($extra)) {

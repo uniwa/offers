@@ -977,7 +977,7 @@ class OffersController extends AppController {
                 $wrap = &$result;
             }
 
-            $this->xml_alter_view(&$wrap,$date_format);
+            $this->xml_alter_view($wrap,$date_format);
         } else {
             // remove redundant index when requesting just one offer
             if ($is_index) {

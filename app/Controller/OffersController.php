@@ -32,21 +32,22 @@ class OffersController extends AppController {
 
     public function is_authorized($user) {
         $role = $this->Auth->user('role');
+        $allow = array('index', 'category', 'view', 'happyhour', 'coupons',
+            'limited', 'tag');
+        $owner = array('edit', 'delete', 'imageedit', 'terminate_from_company',
+            'terminate_from_offer', 'activate_from_company',
+            'activate_from_offer');
+        $companies = array('add_happyhour', 'add_coupons', 'add_limited',
+            'webservice_add');
 
         // All registered users can view offers
-        if (in_array(
-                $this->action,
-                array('index', 'category', 'view', 'happyhour', 'coupons', 'limited', 'tag'))
-        ) {
+        if (in_array($this->action, $allow)) {
             return true;
         }
 
         // The owner of an offer can edit and delete it, as well as activate and
         //  terminate it
-        if (in_array($this->action, array(
-            'edit', 'delete', 'imageedit',
-            'terminate_from_company', 'terminate_from_offer',
-            'activate_from_company', 'activate_from_offer'))) {
+        if (in_array($this->action, $owner)) {
 
             // no id may have been supplied in the url
             if (array_key_exists(0,$this->request->params['pass'])) {
@@ -59,7 +60,7 @@ class OffersController extends AppController {
         }
 
         // Only companies can add an offer
-        if (in_array($this->action, array('add_happyhour', 'add_coupons', 'add_limited', 'webservice_add'))) {
+        if (in_array($this->action, $companies)) {
             if ($role === ROLE_COMPANY) {
                 return true;
             }

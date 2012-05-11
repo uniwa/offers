@@ -71,7 +71,7 @@ class OffersController extends AppController {
 
     public function index() {
         $params = array('valid');
-        $offers = $this->display($params);
+        $offers = $this->display($params, false);
 
         if ($this->is_webservice) {
             switch ($this->webservice_type) {

@@ -19,6 +19,7 @@ class CouponsController extends AppController {
             throw new BadRequestException();
 
         // check if offer exists and is valid
+        $conditions = array('Offer.id' => $id);
         $offer = $this->Offer->find('valid',
                                     array('conditions' => $conditions));
         if (! $offer)

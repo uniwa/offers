@@ -32,21 +32,22 @@ class OffersController extends AppController {
 
     public function is_authorized($user) {
         $role = $this->Auth->user('role');
+        $allow = array('index', 'category', 'view', 'happyhour', 'coupons',
+            'limited', 'tag');
+        $owner = array('edit', 'delete', 'imageedit', 'terminate_from_company',
+            'terminate_from_offer', 'activate_from_company',
+            'activate_from_offer');
+        $companies = array('add_happyhour', 'add_coupons', 'add_limited',
+            'webservice_add');
 
         // All registered users can view offers
-        if (in_array(
-                $this->action,
-                array('index', 'category', 'view', 'happyhour', 'coupons', 'limited', 'tag'))
-        ) {
+        if (in_array($this->action, $allow)) {
             return true;
         }
 
         // The owner of an offer can edit and delete it, as well as activate and
         //  terminate it
-        if (in_array($this->action, array(
-            'edit', 'delete', 'imageedit',
-            'terminate_from_company', 'terminate_from_offer',
-            'activate_from_company', 'activate_from_offer'))) {
+        if (in_array($this->action, $owner)) {
 
             // no id may have been supplied in the url
             if (array_key_exists(0,$this->request->params['pass'])) {
@@ -59,7 +60,7 @@ class OffersController extends AppController {
         }
 
         // Only companies can add an offer
-        if (in_array($this->action, array('add_happyhour', 'add_coupons', 'add_limited', 'webservice_add'))) {
+        if (in_array($this->action, $companies)) {
             if ($role === ROLE_COMPANY) {
                 return true;
             }
@@ -69,9 +70,8 @@ class OffersController extends AppController {
     }
 
     public function index() {
-        $this->paginate = array('valid');
-        $offers = $this->paginate();
-        $this->minify_desc($offers, 160);
+        $params = array('valid');
+        $offers = $this->display($params);
 
         if ($this->is_webservice) {
             switch ($this->webservice_type) {
@@ -94,35 +94,36 @@ class OffersController extends AppController {
     }
 
     public function happyhour() {
-        $this->paginate = array('happyhour');
-        $offers = $this->paginate();
-        $this->minify_desc($offers, 160);
-        $this->set('offers', $offers);
-        $this->render('index');
+        $params = array('happyhour');
+        $this->display($params);
     }
 
     public function coupons() {
-        $this->paginate = array('coupons');
-        $offers = $this->paginate();
-        $this->minify_desc($offers, 160);
-        $this->set('offers', $offers);
-        $this->render('index');
+        $params = array('coupons');
+        $this->display($params);
     }
 
     public function limited() {
-        $this->paginate = array('limited');
-        $offers = $this->paginate();
-        $this->minify_desc($offers, 160);
-        $this->set('offers', $offers);
-        $this->render('index');
+        $params = array('limited');
+        $this->display($params);
     }
 
     public function tag($tag) {
-        $this->paginate = array('tag', 'tag' => $tag);
+        $params = array('tag', 'tag' => $tag);
+        $this->display($params);
+    }
+
+    // Displays offers in list according to passed criteria and sorting params
+    private function display($params, $render = true) {
+        $this->paginate = $params;
         $offers = $this->paginate();
         $this->minify_desc($offers, 160);
-        $this->set('offers', $offers);
-        $this->render('index');
+        if ($render) {
+            $this->set('offers', $offers);
+            $this->render('index');
+        } else {
+            return $offers;
+        }
     }
 
     public function category($id) {
@@ -978,7 +979,7 @@ class OffersController extends AppController {
                 $wrap = &$result;
             }
 
-            $this->xml_alter_view(&$wrap,$date_format);
+            $this->xml_alter_view($wrap,$date_format);
         } else {
             // remove redundant index when requesting just one offer
             if ($is_index) {

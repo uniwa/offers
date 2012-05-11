@@ -209,7 +209,7 @@ class AppController extends Controller{
 
         // get formal description for this status $code and set the header
         $code_desc = $this->response->httpCodes($code);
-        $this->response->header('HTTP/1.1 '.$code, $code_desc);
+        $this->response->header('HTTP/1.1 '.$code, $code_desc[$code]);
 
         // append any extra information
         if (!empty($extra)) {

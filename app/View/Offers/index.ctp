@@ -24,9 +24,12 @@ if (empty($offers)) {
         $title = $offers[$key]['Offer']['title'];
         $label = "<span class='label label-{$tag_class}'>{$tag_name}</span>";
         $description = "<p>{$offers[$key]['Offer']['description']}</p>";
+        $vote_count = $offers[$key]['Offer']['vote_count'];
+        $vote_class = ($vote_count >= 0)?'green':'red';
+        $votes = "<span class='votes {$vote_class}'>{$vote_count}</span>";
         $html .=  $this->Html->link($title,
             array('action' => 'view', $offers[$key]['Offer']['id']));
-        $html .= " ".$label;
+        $html .= " {$label} {$votes}";
         $html .= "<br /><i>{$offer['Offer']['modified']}</i>";
         $html .= $description;
 

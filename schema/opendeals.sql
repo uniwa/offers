@@ -354,6 +354,33 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
+-- -----------------------------------------------------
+-- Table `opendeals`.`votes`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `opendeals`.`votes` ;
+
+CREATE  TABLE IF NOT EXISTS `opendeals`.`votes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `offer_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `vote` tinyint(1) NOT NULL COMMENT '0 negative, 1 positive',
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_votes_offers1` (`offer_id` ASC) ,
+  INDEX `fk_votes_students1` (`student_id` ASC) ,
+  CONSTRAINT `fk_votes_offers1`
+    FOREIGN KEY (`offer_id` )
+    REFERENCES `opendeals`.`offers` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_votes_students1`
+    FOREIGN KEY (`student_id` )
+    REFERENCES `opendeals`.`students` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

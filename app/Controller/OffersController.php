@@ -750,11 +750,13 @@ class OffersController extends AppController {
 
         if ($should_terminate == true ) {
             if ($this->Offer->terminate($id)) {
-                $this->Session->setFlash('Η προσφορά απενεργοποιήθηκε.');
+                $this->notify(array('Η προσφορά απενεργοποιήθηκε',
+                'default', array('class' => Flash::Success)));
             }
         } else {
             if ($this->Offer->activate($id)) {
-                $this->Session->setFlash('Η προσφορά ενεργοποιήθηκε.');
+                $this->notify(array('Η προσφορά ενεργοποιήθηκε',
+                'default', array('class' => Flash::Success)));
             }
         }
 

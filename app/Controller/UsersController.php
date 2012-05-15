@@ -9,6 +9,7 @@ class UsersController extends AppController {
 
     function beforeFilter() {
         parent::beforeFilter();
+        $this->api_initialize();
         $this->Auth->allow('register');
 
         // In case user tries to register when logged in
@@ -34,10 +35,12 @@ class UsersController extends AppController {
 
                     if (! $enabled) {
                         $this->Auth->logout();
-                        $this->Session->setFlash(
-                            __("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"),
-                            'default',
-                            array('class' => Flash::Error));
+                        $this->notify(
+                            array(
+                                __("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"),
+                                'default',
+                                array('class' => Flash::Error)),
+                            null, 403);
                         return;
                     }
                 }
@@ -83,12 +86,15 @@ class UsersController extends AppController {
                     }
                 }
 
-                return $this->redirect($this->Auth->redirect());
+                $this->notify(
+                    'Η αυθεντικοποίηση ολοκληρώθηκε με επιτυχία',
+                    array($this->Auth->redirect()));
             } else {
-                $this->Session->setFlash(
-                    __("Δώστε έγκυρο όνομα και κωδικό χρήστη"),
-                    'default',
-                    array('class' => Flash::Error));
+                $this->notify(
+                    array(  __("Δώστε έγκυρο όνομα και κωδικό χρήστη"),
+                            'default',
+                            array('class' => Flash::Error)),
+                    null, 403);
             }
         }
     }

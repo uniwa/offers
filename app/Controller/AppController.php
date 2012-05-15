@@ -121,6 +121,10 @@ class AppController extends Controller{
         }
     }
 
+    public function is_webservice() {
+        return $this->is_webservice;
+    }
+
     // Convenience method that displays an instant message. It removes the need
     // to manually either call Session::setFlash() method or prepare a response
     // to be returned to an api call. It also enables javascript responses.
@@ -133,10 +137,16 @@ class AppController extends Controller{
     //  Note: in the example above, `return' is used to cease execution of
     //  current function.
     //
-    // @param $flash array or string: a 0-based array of parameters to be passed
-    //      into SessionComponent::setFlash() method directly -- must contain AT
+    // @param $flash mixed
+    //      ### array:
+    //      a 0-based array of parameters to be passed into
+    //      SessionComponent::setFlash() method directly -- must contain AT
     //      LEAST one parameter (which corresponds to the message itself);
-    //      a string may be passed in if `setFlash()'
+    //
+    //      ### string:
+    //      a string that corresponds to a message returned to a webservice call
+    //      NOTE: passing in a string effectively bypasses `setFlash' as the
+    //      message will not be displayed to an HTML response.
     // @param $redirect 0-based array of parameters to be passed into
     //      AppController::redirect() method directly. If left empty or omitted,
     //      no redirection takes place; defaults to null.
@@ -149,7 +159,7 @@ class AppController extends Controller{
     //      call. Numeric keys are NOT supported. The following should NOT be
     //      used either: `status', `@status' `message', '_serialize'
     protected function notify(
-            $flash, $redirect = null, $status = null, $extra = array()) {
+            $flash, $redirect = null, $status = 200, $extra = array()) {
 
         if ($this->is_webservice) {
 
@@ -174,11 +184,9 @@ class AppController extends Controller{
         } else {
             $callback = array(&$this->Session, 'setFlash');
 
-            // call `setFlash' with just one param or an array of params
+            // call `setFlash' if an array was supplied; ignore Flash, otherwise
             if (is_array($flash)) {
                 call_user_func_array($callback, $flash);
-            } else {
-                call_user_func($callback, $flash);
             }
 
             // redirection does not take place in the webservice api
@@ -209,7 +217,7 @@ class AppController extends Controller{
 
         // get formal description for this status $code and set the header
         $code_desc = $this->response->httpCodes($code);
-        $this->response->header('HTTP/1.1 '.$code, $code_desc);
+        $this->response->header('HTTP/1.1 '.$code, $code_desc[$code]);
 
         // append any extra information
         if (!empty($extra)) {
@@ -236,7 +244,7 @@ class AppController extends Controller{
     // Later on, this function will perform all necessary actions so that
     // default types (to xml or to that of another header) are supported.
     // Should be invoked before any operation is performed.
-    protected function api_initialize() {
+    public function api_initialize() {
 
         $type = $this->RequestHandler->prefers(array('js', 'json', 'xml'));
 
@@ -248,10 +256,12 @@ class AppController extends Controller{
             if (!array_key_exists('callback', $this->request->query) ||
                 empty($this->request->query['callback'])) {
 
-                $this->is_webservice = true;
-                $this->webservice_type = 'xml';
-                throw new BadRequestException(
-                    'Δεν έχει προσδιοριστεί η απαιτούμενη παράμετρος callback');
+                //TODO: how to react if no callback param was specified?
+                $this->request->query['callback'] = 'jsonp_callback';
+#                $this->is_webservice = true;
+#                $this->webservice_type = 'xml';
+#                throw new BadRequestException(
+#                    'Δεν έχει προσδιοριστεί η απαιτούμενη παράμετρος callback');
             }
         }
     }

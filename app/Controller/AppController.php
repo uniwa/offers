@@ -121,6 +121,10 @@ class AppController extends Controller{
         }
     }
 
+    public function is_webservice() {
+        return $this->is_webservice;
+    }
+
     // Convenience method that displays an instant message. It removes the need
     // to manually either call Session::setFlash() method or prepare a response
     // to be returned to an api call. It also enables javascript responses.
@@ -236,7 +240,7 @@ class AppController extends Controller{
     // Later on, this function will perform all necessary actions so that
     // default types (to xml or to that of another header) are supported.
     // Should be invoked before any operation is performed.
-    protected function api_initialize() {
+    public function api_initialize() {
 
         $type = $this->RequestHandler->prefers(array('js', 'json', 'xml'));
 
@@ -248,10 +252,12 @@ class AppController extends Controller{
             if (!array_key_exists('callback', $this->request->query) ||
                 empty($this->request->query['callback'])) {
 
-                $this->is_webservice = true;
-                $this->webservice_type = 'xml';
-                throw new BadRequestException(
-                    'Δεν έχει προσδιοριστεί η απαιτούμενη παράμετρος callback');
+                //TODO: how to react if no callback param was specified?
+                $this->request->query['callback'] = 'jsonp_callback';
+#                $this->is_webservice = true;
+#                $this->webservice_type = 'xml';
+#                throw new BadRequestException(
+#                    'Δεν έχει προσδιοριστεί η απαιτούμενη παράμετρος callback');
             }
         }
     }

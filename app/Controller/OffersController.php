@@ -226,6 +226,9 @@ class OffersController extends AppController {
         $new_elem['label'] = "Κατηγορία";
         $new_elem['value'] = $offer['OfferCategory']['name'];
         $offer_info[] = $new_elem;
+        $new_elem['label'] = "Άθροισμα ψήφων";
+        $new_elem['value'] = $offer['Offer']['vote_count'];
+        $offer_info[] = $new_elem;
         $new_elem['label'] = "Λέξεις-κλειδιά";
         $new_elem['value'] = $offer['Offer']['tags'];
         $offer_info[] = $new_elem;

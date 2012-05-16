@@ -125,9 +125,22 @@ class CouponsController extends AppController {
         if ($user['is_banned'] == 0) {
             if (in_array($this->action, array('add', 'view'))) {
                 // only students can get coupons
-                if ($user['role'] !== ROLE_STUDENT)
+                if ($user['role'] !== ROLE_STUDENT) {
                     return false;
+                }
                 return true;
+            }
+            if ($this->action === 'delete') {
+                if ($user['role'] !== ROLE_STUDENT) {
+                    return false;
+                }
+
+                $student_id = $this->Session->read('Auth.Student.id');
+                if ($this->Coupon->is_owned_by($this->request->params['pass'],
+                                               $student_id)) {
+                    return true;
+                }
+                return false;
             }
         }
 

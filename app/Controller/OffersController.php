@@ -191,6 +191,16 @@ class OffersController extends AppController {
             $this->set('student', $student);
         }
 
+        //get coupons for offer if user is owner
+        if ($this->Offer->is_owned_by($id, $this->Auth->User('id'))) {
+            $fields = array('Coupon.id', 'Coupon.serial_number', 'Coupon.created');
+            $order = array('Coupon.created DESC');
+            $coupons = $this->Offer->Coupon->find('all',
+                array('fields' => $fields, 'order' => $order));
+            $this->set('is_owner', true);
+            $this->set('coupons', $coupons);
+        }
+
         if ($this->is_webservice) {
             switch ($this->webservice_type) {
                 case 'js':

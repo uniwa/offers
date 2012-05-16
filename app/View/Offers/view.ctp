@@ -105,3 +105,51 @@ if (!empty($offer['Image']))
         }
 
 echo $html;
+
+// show coupons for offer
+// only if visitor == owner
+if (isset($is_owner) and $is_owner == true) {
+?>
+    <br />
+    <div class="well">
+        <h4>Κουπόνια</h4>
+        <br />
+        <table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>Α/Α</th>
+                    <th>Κωδικός κουπονιού</th>
+                    <th>Ημ/νία δέσμευσης</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    $counter = 0;
+                    foreach ($coupons as $c) {
+                        $counter++;
+
+                        $date = $c['Coupon']['created'];
+                        $serial_number = $c['Coupon']['serial_number'];
+
+                        $coupon_link = $this->Html->link(
+                            $serial_number,
+                            array(
+                                'controller' => 'coupons',
+                                'action' => 'view',
+                                $c['Coupon']['id']
+                            ),
+                            array()
+                        );
+
+                        echo "<tr>";
+                        echo "<td>{$counter}</td>";
+                        echo "<td>{$serial_number}</td>";
+                        echo "<td>{$this->Time->format('d-m-Y',$date)}</td>";
+                        echo "</tr>";
+                    }
+                ?>
+            </tbody>
+        </table>
+    </div>
+<?php
+}

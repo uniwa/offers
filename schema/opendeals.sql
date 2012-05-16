@@ -302,7 +302,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`coupons` (
   `modified` DATETIME NULL DEFAULT NULL ,
   `is_used` TINYINT(1)  NOT NULL DEFAULT 0 ,
   `offer_id` INT NOT NULL ,
-  `student_id` INT NOT NULL ,
+  `student_id` INT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_coupons_offers1` (`offer_id` ASC) ,
   INDEX `fk_coupons_students1` (`student_id` ASC) ,

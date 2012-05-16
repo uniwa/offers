@@ -26,4 +26,13 @@ class Coupon extends AppModel {
 
         return $student_coupons >= $offer_coupons;
     }
+
+    public function is_owned_by($coupon_id, $student_id) {
+        $conditions = array('Coupon.id' => $coupon_id);
+        // notice:
+        //   $this->field is inconsistent with other methods
+        //   so array('conditions' => $conditions) will not work
+        $coupon_student = $this->field('student_id', $conditions);
+        return $coupon_student === $student_id;
+    }
 }

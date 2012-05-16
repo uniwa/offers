@@ -39,10 +39,20 @@ switch($offer['Offer']['offer_type_id']){
         $label_class = 'label-success';
         break;
 }
-$label_text = offer_type($offer['Offer']['offer_type_id']);
-$html .= "<p><span class='label {$label_class}'>{$label_text}</span></p>";
-$html .= "<h4>Προσφορά {$offer['Offer']['id']}</h4><br/>";
+$offer_type_id = $offer['Offer']['offer_type_id'];
+$label_text = offer_type($offer_type_id);
 
+$icon_thumbs_up = "<i class='icon-thumbs-up'></i>";
+$icon_thumbs_down = "<i class='icon-thumbs-down'></i>";
+$link_up = $this->Html->link($icon_thumbs_up,
+    array('controller' => 'offers', 'action' => 'vote_up', $offer_type_id),
+    array('escape' => false));
+$link_down = $this->Html->link($icon_thumbs_down,
+    array('controller' => 'offers', 'action' => 'vote_down', $offer_type_id),
+    array('escape' => false));
+$html .= "<p><span class='label {$label_class}'>{$label_text}</span></p>";
+$html .= "<h4>Προσφορά {$offer['Offer']['id']}</h4>";
+$html .= "<p>{$link_up} {$link_down}</p>";
 if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
     $html .= $this->Html->link('Εταιρία: '.$offer['Company']['name'], array(
         'controller' => 'companies', 'action' => 'view', $offer['Company']['id']));
@@ -71,7 +81,7 @@ if ($is_user_the_owner) {
               'action' => 'activate_from_offer',
               $offer['Offer']['id']),
           null,
-          'Οι ενεργοποιημένες προσφορές δε δύναται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+          'Οι ενεργοποιημένες προσφορές δε δύνανται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
     }
 }
 

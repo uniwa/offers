@@ -48,10 +48,10 @@ if ($this->Session->read('Auth.User.role') === ROLE_STUDENT) {
     $icon_thumbs_up = "<i class='icon-thumbs-up'></i>";
     $icon_thumbs_down = "<i class='icon-thumbs-down'></i>";
     $link_up = $this->Html->link($icon_thumbs_up,
-        array('controller' => 'offers', 'action' => 'vote_up', $offer_type_id),
+        array('controller' => 'offers', 'action' => 'vote_up', $offer['Offer']['id']),
         array('escape' => false));
     $link_down = $this->Html->link($icon_thumbs_down,
-        array('controller' => 'offers', 'action' => 'vote_down', $offer_type_id),
+        array('controller' => 'offers', 'action' => 'vote_down', $offer['Offer']['id']),
         array('escape' => false));
     $html .= "<p>{$link_up} {$link_down}</p>";
 }

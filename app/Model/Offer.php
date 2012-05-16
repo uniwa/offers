@@ -279,26 +279,52 @@ class Offer extends AppModel {
         );
     }
 
+    // rules that apply at all times
     public $validate = array(
 
         'title' => array(
             'not_empty' => array(
                 'rule' => 'notEmpty',
-                'message' => 'Παρακαλώ εισάγετε τον τίτλο.',
-                'required' => true
+                'message' => 'Ο τίτλος δεν μπορεί να παραμείνει κενός.',
+                'required' => true,
+                // if was left empty or not even included, it's redundant to
+                // check whether the (non-existent) value is valid or not
+                'last' => true,
+                // it should not be required for an update
+                'on' => 'create'
+            ),
+            // this rule ensures that if the title key was specified, although
+            // not mandatory for an update, its value should not be empty
+            // only reason for implementing this is to present a more appopriate
+            // error message
+            'not_empty_on_update' => array(
+                'rule' => 'notEmpty',
+                'required' => false,
+                'message' => 'Ο τίτλος δεν μπορεί να παραμείνει κενός.',
+                'last' => true,
+                'on' => 'update'
             ),
             'valid' => array(
                 'rule' => '/^[\w\dαβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΆάΈέΎΉήύΊίΌόΏώϊϋΐΰς\-,. &]+$/',
-                'allowEmpty' => true,
-                'message' => 'Η επωνυμία περιέχει μη έγκυρους χαρακτήρες.'
+                'allowEmpty' => false,
+                'message' => 'Ο τίτλος περιέχει μη έγκυρους χαρακτήρες.'
             ),
         ),
 
         'description' => array(
             'not_empty' => array(
                 'rule' => 'notEmpty',
-                'message' => 'Παρακαλώ εισάγετε περιγραφή.',
-                'required' => true
+                'message' => 'Η περιγραφή δεν μπορεί να παραμείνει κενή.',
+                'required' => true,
+                'last' => true,
+                'on' => 'create'
+            ),
+            'not_empty_on_update' => array(
+                'rule' => 'notEmpty',
+                'message' => 'Η περιγραφή δεν μπορεί να παραμείνει κενή.',
+                'required' => false,
+                'last' => true,
+                'on' => 'update'
             ),
         ),
 
@@ -310,6 +336,18 @@ class Offer extends AppModel {
             ),
         ),
 
+        // --------------------------
+        // ADDITIONAL RULES MAY APPLY
+        // --------------------------
+        // Bear in mind that extra rules may apply under specific conditions.
+        // See the property `extra_rules' and the method `beforeValidate' below
+        // for more info.
+    );
+
+    // rules to integrate into the validation proccess only when certain
+    // conditions meet as implemented by `beforeValidate()'
+    public $extra_rules = array(
+        // Coupons only
         'total_quantity' => array(
             'not_empty' => array(
                 'rule' => 'notEmpty',
@@ -326,7 +364,8 @@ class Offer extends AppModel {
             )
         ),
 
-         'max_per_student' => array(
+        // Coupons only
+        'max_per_student' => array(
             'not_empty' => array(
                 'rule' => 'notEmpty',
                 'message' => 'Παρακαλώ εισάγετε μια τιμή.',
@@ -336,12 +375,21 @@ class Offer extends AppModel {
                  'message' => 'Ο αριθμός πρέπει να είναι θετικός ή μηδέν.',
              ),
             'select' => array(
-                'rule' => '/^0|1|2|3|5|10$/',
-                 'message' => 'Παρακαλώ επιλέξτε μία από τις προκαθορισμένες τιμές.',
+                'rule' => array('inList', array(0, 1, 2, 3, 5, 10)),
+                 'message' => 'Επιλέξτε μία από τις προκαθορισμένες τιμές.',
              )
          ),
-
     );
+
+    // @Override
+    // The purpose of overriding this method is to provide additional validation
+    // rules only when certain conditions meet. For example, the field
+    // `total_quantity' will only be validated if the type of the offer is
+    // Coupons.
+    public function beforeValidate($options = array()) {
+
+        return parent::beforeValidate($options);
+    }
 
     public function is_owned_by($offer_id, $user_id) {
         $company_id = $this->Company->field('id', array('user_id' => $user_id));

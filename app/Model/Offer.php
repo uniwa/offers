@@ -319,6 +319,12 @@ class Offer extends AppModel {
                 'last' => true,
                 'on' => 'create'
             ),
+
+            // this rule ensures that if the description key was specified,
+            // although not mandatory for an update, its value should not be
+            // left empty
+            // generally, such check is only required when no (more specific)
+            // rules (eg is_numeric) are applied
             'not_empty_on_update' => array(
                 'rule' => 'notEmpty',
                 'message' => 'Η περιγραφή δεν μπορεί να παραμείνει κενή.',
@@ -351,7 +357,10 @@ class Offer extends AppModel {
         'total_quantity' => array(
             'not_empty' => array(
                 'rule' => 'notEmpty',
-                'message' => 'Παρακαλώ εισάγετε μια τιμή.',
+                'required' => true,
+                'message' => 'Συμπληρώστε τον αριθμό διαθέσιμων κουπονιών.',
+                'last' => true,
+                'on' => 'create',
             ),
             'integer' => array(
                 'rule' => '/^\d+$/',
@@ -368,14 +377,17 @@ class Offer extends AppModel {
         'max_per_student' => array(
             'not_empty' => array(
                 'rule' => 'notEmpty',
+                'required' => true,
                 'message' => 'Παρακαλώ εισάγετε μια τιμή.',
+                'last' => true,
+                'on' => 'create',
             ),
             'integer' => array(
                 'rule' => '/^\d+$/',
                  'message' => 'Ο αριθμός πρέπει να είναι θετικός ή μηδέν.',
              ),
             'select' => array(
-                'rule' => array('inList', array(0, 1, 2, 3, 5, 10)),
+                'rule' => array('inList', array('0', '1', '2', '3', '5', '10')),
                  'message' => 'Επιλέξτε μία από τις προκαθορισμένες τιμές.',
              )
          ),
@@ -386,7 +398,37 @@ class Offer extends AppModel {
     // rules only when certain conditions meet. For example, the field
     // `total_quantity' will only be validated if the type of the offer is
     // Coupons.
+    //
+    // IMPORTANT:
+    // In order to determine which additional rules to include, certain keys
+    // must already be set in the current model instance. See below which keys
+    // are currently required:
+    // offer_type_id; alternatively, on update: id, so that the value of
+    //      offer_type_id may be determined from the db. In the (unlikely) event
+    //      that neither key is present, then the conditions are not appended.
     public function beforeValidate($options = array()) {
+
+        $type_id = $this->data['Offer']['offer_type_id'];
+
+        if (empty($type_id)) {
+            $id = $this->id;
+
+            if (!empty($id)) {
+
+                $this->recursive = -1;
+                $res = $this->findById($id, array('offer_type_id'));
+
+                $type_id = $res['Offer']['offer_type_id'];
+                $this->data['Offer']['offer_type_id'] = $type_id;
+            }
+        }
+
+        // append additional rule for Coupons
+        if ($type_id == TYPE_COUPONS) {
+            $p = &$this->validate;
+            $p['total_quantity'] = $this->extra_rules['total_quantity'];
+            $p['max_per_student'] = $this->extra_rules['max_per_student'];
+        }
 
         return parent::beforeValidate($options);
     }

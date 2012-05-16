@@ -8,6 +8,8 @@ class CouponsController extends AppController {
     public $components = array('RequestHandler');
 
     public function beforeFilter() {
+        $this->api_initialize();
+
         if (! $this->is_authorized($this->Auth->user()))
             throw new ForbiddenException();
 
@@ -111,6 +113,27 @@ class CouponsController extends AppController {
 
         $this->set('coupon', $coupon);
     }
+
+    public function delete($id = null) {
+        $this->Coupon->id = $id;
+        $result = $this->Coupon->saveField('student_id', 
+            null, $validate = false);
+
+        if ($result == false) {
+            $flash = array('Παρουσιάστηκε ένα σφάλμα κατα την διαγραφή του κουπονιού.',
+                'default',
+                array('class' => Flash::Error));
+            $status = 500;
+        } else {
+            $flash = array('Το κουπόνι διεγράφη με επιτυχία.',
+                'default',
+                array('class' => Flash::Success));
+            $status = 200;
+        }
+        $redirect = array($this->referer());
+        $this->notify($flash, $redirect, $status);
+    }
+
 
     private function generate_uuid() {
         $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',

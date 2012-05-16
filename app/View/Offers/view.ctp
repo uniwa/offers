@@ -41,19 +41,27 @@ switch($offer['Offer']['offer_type_id']){
 }
 $offer_type_id = $offer['Offer']['offer_type_id'];
 $label_text = offer_type($offer_type_id);
-
 $html .= "<p><span class='label {$label_class}'>{$label_text}</span></p>";
 $html .= "<h4>Προσφορά {$offer['Offer']['id']}</h4>";
+if (!is_null($student_vote)) {
+    $vote_class = ($student_vote)?'green':'red';
+    $my_vote = ($student_vote)?'+1':'-1';
+    $html .= "<div class='{$vote_class}'>{$my_vote}</div>";
+}
 if ($this->Session->read('Auth.User.role') === ROLE_STUDENT) {
     $icon_thumbs_up = "<i class='icon-thumbs-up'></i>";
     $icon_thumbs_down = "<i class='icon-thumbs-down'></i>";
+    $icon_cancel = "<i class='icon-remove'></i>";
     $link_up = $this->Html->link($icon_thumbs_up,
-        array('controller' => 'offers', 'action' => 'vote_up', $offer['Offer']['id']),
+        array('controller' => 'votes', 'action' => 'vote_up', $offer['Offer']['id']),
         array('escape' => false));
     $link_down = $this->Html->link($icon_thumbs_down,
-        array('controller' => 'offers', 'action' => 'vote_down', $offer['Offer']['id']),
+        array('controller' => 'votes', 'action' => 'vote_down', $offer['Offer']['id']),
         array('escape' => false));
-    $html .= "<p>{$link_up} {$link_down}</p>";
+    $link_cancel = $this->Html->link($icon_cancel,
+        array('controller' => 'votes', 'action' => 'vote_cancel', $offer['Offer']['id']),
+        array('escape' => false));
+    $html .= "<p>{$link_up} {$link_down} {$link_cancel}</p>";
 }
 if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
     $html .= $this->Html->link('Εταιρία: '.$offer['Company']['name'], array(

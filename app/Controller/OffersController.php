@@ -3,7 +3,8 @@
 class OffersController extends AppController {
 
     public $name = 'Offers';
-    public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day', 'Coupon', 'Student');
+    public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day',
+        'Coupon', 'Student', 'Vote');
     public $paginate = array(
 //        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
@@ -39,6 +40,7 @@ class OffersController extends AppController {
             'activate_from_offer');
         $companies = array('add_happyhour', 'add_coupons', 'add_limited',
             'webservice_add');
+        $students = array('vote_up', 'vote_down');
 
         // All registered users can view offers
         if (in_array($this->action, $allow)) {
@@ -59,7 +61,7 @@ class OffersController extends AppController {
             }
         }
 
-        // Only companies can add an offer
+        // Only companies
         if (in_array($this->action, $companies)) {
             if ($role === ROLE_COMPANY) {
                 return true;
@@ -220,6 +222,13 @@ class OffersController extends AppController {
             // Prepare information for view
             $offer_info = $this->prepare_view($offer);
             $this->set('offer_info', $offer_info);
+            $student_id = $this->Session->read('Auth.Student.id');
+            $options['conditions'] = array(
+                'Vote.offer_id' => $id,
+                'Vote.student_id' => $student_id);
+            $options['recursive'] = -1;
+            $vote = $this->Vote->find('first', $options);
+            $this->set('student_vote', $vote['Vote']['vote']);
         }
     }
 

@@ -977,13 +977,17 @@ class OffersController extends AppController {
             // not needed
             unset($r['work_hour_count']);
 
-            if ($is_owner) {
-
-                // properly format dates for xml
-            } else {
-
+            if (!$is_owner) {
                 $r['autostart'] = null;
                 $r['autoend'] = null;
+            }
+
+            // null-ify certain tags that wouldn't make sense for all offer
+            // types
+            if ($r['offer_type_id'] != TYPE_COUPONS) {
+                $r['coupon_terms'] = null;
+                $r['total_quantity'] = null;
+                $r['max_per_student'] = null;
             }
 
             unset($r['offer_category_id']);
@@ -1092,7 +1096,7 @@ class OffersController extends AppController {
                 // format dates for this entity's date fields
                 foreach ($date_fields[$type] as $field) {
 
-                    // get entitys's date from field $field
+                    // get entity's date from field $field
                     $date = $entity[$field];
                     if (!empty($date)) {
                         // format date

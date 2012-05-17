@@ -152,14 +152,8 @@ class Offer extends AppModel {
     // @param $id id of offer to activate
     // @throws ForbiddenException when activate conditions are not met
     public function activate($id = null) {
-
-        // TODO see if just offer_state_id and ended can be fetched and have
-        // this work still
-        if (empty($this->data)) {
-            // fetch only the fields required to be checked and updated
-            $this->recursive = -1;
-            $this->read('Offer.*', $id);
-        }
+        // fetch only the fields required to be checked and updated
+        $this->read(array('offer_state_id'), $id);
 
         // only active offers may be terminated
         if ($this->data['Offer']['offer_state_id'] == STATE_DRAFT) {
@@ -167,7 +161,7 @@ class Offer extends AppModel {
             $this->set('offer_state_id', STATE_ACTIVE);
             $this->set('started', date('Y-m-d H:i:s'));
 
-            return $this->save(null, false);
+            return $this->save(null, false) != false;
         } else {
             throw new ForbiddenException('Η προσφορά δεν δύναται ενεργοποίησης.');
         }
@@ -188,9 +182,9 @@ class Offer extends AppModel {
                 'offer_state_id' => STATE_INACTIVE,
                 'ended' => date('Y-m-d H:i:s')
             );
-            return $this->save($data, false);
+            return $this->save($data, false) != false;
         } else {
-            throw new ForbiddenException('Η προσφορά δεν δύναται απενεργοποίησης.');
+            throw new ForbiddenException('Η προσφορά δεν δύναται τερματισμού.');
         }
     }
 

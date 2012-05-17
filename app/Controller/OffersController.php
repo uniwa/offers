@@ -747,22 +747,34 @@ class OffersController extends AppController {
     // @throws ForbiddenException if necessary conditions for
     //      activation/termination are not met
     private function _change_state($id = null, $redirect = null, $should_terminate = false) {
-
-        if ($should_terminate == true ) {
+        $error = false;
+        $status = 200;
+        $class = Flash::Success;
+        if ($should_terminate) {
             if ($this->Offer->terminate($id)) {
-                $this->notify(array('Η προσφορά απενεργοποιήθηκε',
-                'default', array('class' => Flash::Success)));
+                $msg = 'Η προσφορά τερματίστηκε';
+            } else {
+                $error = true;
             }
         } else {
             if ($this->Offer->activate($id)) {
-                $this->notify(array('Η προσφορά ενεργοποιήθηκε',
-                'default', array('class' => Flash::Success)));
+                $msg = 'Η προσφορά ενεργοποιήθηκε';
+            } else {
+                $error = true;
             }
         }
 
-        if (!empty($redirect)) {
-            $this->redirect($redirect);
+        // this is unlinkely to occur
+        if ($error) {
+            $msg = 'Προέκυψε κάποιο σφάλμα';
+            $status = 400;
+            $class = Flash::Error;
         }
+
+        $this->notify(
+            array($msg, 'default', array('class' => $class)),
+            array($redirect),
+            $status);
     }
 
     private function get_time($time) {

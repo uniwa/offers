@@ -64,6 +64,26 @@ class AppController extends Controller{
         }
     }
 
+    public function beforeRender() {
+        // inform in missing geolocation information
+        if ($this->Auth->user('role') === ROLE_COMPANY) {
+            $conditions = array('Company.id' => $this->Session->read('Auth.Company.id'));
+            $fields = array('Company.longitude', 'Company.latitude');
+            $geo_info = $this->Company->find('first', array(
+                'conditions' => $conditions,
+                'fields' => $fields,
+                'recursive' => -1,
+            ));
+            if ($geo_info['Company']['longitude'] === null or
+                $get_info['Company']['latitude'] === null) {
+                    $msg = "Δεν έχετε συμπληρώσει γεοχωρικές πληροφορίες για την επιχείρηση σας. ";
+                    $msg .= "Προσφορές που αναρτάτε πιθανόν να μην είναι διαθέσιμες μέσο της εφαρμογής κινητού. ";
+                    $msg .= "Πατήστε <a href=\"#\">εδώ</a> για να καταχωρήσετε το στίγμα της επιχείρησης σας.";
+                    $this->notify(array($msg, 'default', array('class' => Flash::Info)));
+            }
+        }
+    }
+
     public function is_authorized($user) {
         // main authorization function
         // override in each controller

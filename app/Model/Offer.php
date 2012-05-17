@@ -345,8 +345,10 @@ class Offer extends AppModel {
         'total_quantity' => array(
             'not_empty' => array(
                 'rule' => 'notEmpty',
+                'required' => true,
                 'message' => 'Συμπληρώστε τον αριθμό διαθέσιμων κουπονιών.',
                 'last' => true,
+                'on' => 'create',
             ),
             'integer' => array(
                 'rule' => '/^\d+$/',
@@ -362,8 +364,10 @@ class Offer extends AppModel {
         'max_per_student' => array(
             'not_empty' => array(
                 'rule' => 'notEmpty',
+                'required' => true,
                 'message' => 'Παρακαλώ εισάγετε μια τιμή.',
                 'last' => true,
+                'on' => 'create',
             ),
             'integer' => array(
                 'rule' => '/^\d+$/',

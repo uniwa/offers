@@ -365,9 +365,7 @@ class OffersController extends AppController {
             // not be updated even if it was specified in the request.
             $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
 
-            // set the required default values
-            $this->request->data['Offer']['current_quantity'] = 0;
-            $this->request->data['Offer']['offer_state_id'] = OfferStates::Draft;
+            $this->set_default_values($this->request->data);
 
             // find the id of the Company related to the logged user
             // and assign it to Offer.company_id
@@ -645,6 +643,26 @@ class OffersController extends AppController {
                 unset($data['Offer'][$property]);
             }
         }
+    }
+
+    // Makes necessary initializations such as default values for all offers
+    // and dummy values for properties that should not be required for the
+    // current offer).
+    //
+    // @param $d data to alter; typically, $this->request->data
+    private function set_default_values(&$d) {
+
+        // make alterations to non-coupon offers so that they pass validation of
+        // coupon properties
+        if ($d['Offer']['offer_type_id'] != TYPE_COUPONS) {
+
+            $d['Offer']['total_quantity'] = 1;
+            $d['Offer']['max_per_student'] = '0';
+        }
+
+        // set the required default values
+        $d['Offer']['current_quantity'] = 0;
+        $d['Offer']['offer_state_id'] = STATE_DRAFT;
     }
 
     // Images administration

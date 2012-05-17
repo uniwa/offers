@@ -18,6 +18,9 @@ $config = array(
         'NOT_SPAM' => 0,
         'MAX_IMAGES' => 5,
         'MAX_UPLOAD_SIZE' => 2097152,
+        'VOTE_CANCEL' => -1,
+        'VOTE_DOWN' => 0,
+        'VOTE_UP' => 1,
     ),
     'Settings' => array(
         'offer_type' => array(

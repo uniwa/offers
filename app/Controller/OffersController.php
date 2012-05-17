@@ -332,6 +332,9 @@ class OffersController extends AppController {
                 $this->request->data = reset($request_data);
             }
 
+            // avoid blindly accepting values for all properties
+            $this->filter_fields($this->request->data);
+
             // ALWAYS set type, even if it's null (in which case
             // `Offer::beforeValidate' will remove it). This way, the field will
             // not be updated even if it was specified in the request.
@@ -601,6 +604,22 @@ class OffersController extends AppController {
         }
 
         return $input_elements;
+    }
+
+    // Unsets properties that should not be present in create or update
+    // requests.
+    //
+    // @param data to filter; typically, $this->request->data
+    private function filter_fields(&$data) {
+        $offer = array(
+            'id', 'started', 'ended', 'coupon_count', 'image_count', 'is_spam',
+            'work_hour_count', 'offer_state_id', 'created', 'modified');
+
+        foreach ($offer as $property) {
+            if (array_key_exists($property, $data['Offer'])) {
+                unset($data['Offer'][$property]);
+            }
+        }
     }
 
     // Images administration

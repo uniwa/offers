@@ -342,25 +342,11 @@ class Offer extends AppModel {
             ),
         ),
 
-        // --------------------------
-        // ADDITIONAL RULES MAY APPLY
-        // --------------------------
-        // Bear in mind that extra rules may apply under specific conditions.
-        // See the property `extra_rules' and the method `beforeValidate' below
-        // for more info.
-    );
-
-    // rules to integrate into the validation proccess only when certain
-    // conditions meet as implemented by `beforeValidate()'
-    public $extra_rules = array(
-        // Coupons only
         'total_quantity' => array(
             'not_empty' => array(
                 'rule' => 'notEmpty',
-                'required' => true,
                 'message' => 'Συμπληρώστε τον αριθμό διαθέσιμων κουπονιών.',
                 'last' => true,
-                'on' => 'create',
             ),
             'integer' => array(
                 'rule' => '/^\d+$/',
@@ -373,14 +359,11 @@ class Offer extends AppModel {
             )
         ),
 
-        // Coupons only
         'max_per_student' => array(
             'not_empty' => array(
                 'rule' => 'notEmpty',
-                'required' => true,
                 'message' => 'Παρακαλώ εισάγετε μια τιμή.',
                 'last' => true,
-                'on' => 'create',
             ),
             'integer' => array(
                 'rule' => '/^\d+$/',
@@ -394,40 +377,16 @@ class Offer extends AppModel {
     );
 
     // @Override
-    // The purpose of overriding this method is to provide additional validation
-    // rules only when certain conditions meet. For example, the field
-    // `total_quantity' will only be validated if the type of the offer is
-    // Coupons.
-    //
-    // IMPORTANT:
-    // In order to determine which additional rules to include, certain keys
-    // must already be set in the current model instance. See below which keys
-    // are currently required:
-    // offer_type_id; alternatively, on update: id, so that the value of
-    //      offer_type_id may be determined from the db. In the (unlikely) event
-    //      that neither key is present, then the conditions are not appended.
+    // The purpose of overriding this method is to provide pre-validation
+    // data preparation.
     public function beforeValidate($options = array()) {
 
-        $type_id = $this->data['Offer']['offer_type_id'];
-
-        if (empty($type_id)) {
-            $id = $this->id;
-
-            if (!empty($id)) {
-
-                $this->recursive = -1;
-                $res = $this->findById($id, array('offer_type_id'));
-
-                $type_id = $res['Offer']['offer_type_id'];
-                $this->data['Offer']['offer_type_id'] = $type_id;
+        // an empty `offer_type_id' designates that this is an update action
+        // the type should only be specified on create
+        if (array_key_exists('offer_type_id', $this->data['Offer'])) {
+            if ($this->data['Offer'] == null) {
+                unset($this->data['Offer']['offer_type_id']);
             }
-        }
-
-        // append additional rule for Coupons
-        if ($type_id == TYPE_COUPONS) {
-            $p = &$this->validate;
-            $p['total_quantity'] = $this->extra_rules['total_quantity'];
-            $p['max_per_student'] = $this->extra_rules['max_per_student'];
         }
 
         return parent::beforeValidate($options);

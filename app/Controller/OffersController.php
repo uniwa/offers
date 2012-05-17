@@ -332,8 +332,12 @@ class OffersController extends AppController {
                 $this->request->data = reset($request_data);
             }
 
-            // set the required default values
+            // ALWAYS set type, even if it's null (in which case
+            // `Offer::beforeValidate' will remove it). This way, the field will
+            // not be updated even if it was specified in the request.
             $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
+
+            // set the required default values
             $this->request->data['Offer']['current_quantity'] = 0;
             $this->request->data['Offer']['offer_state_id'] = OfferStates::Draft;
 
@@ -396,7 +400,7 @@ class OffersController extends AppController {
                     array(  'Παρουσιάστηκε κάποιο σφάλμα',
                             'default',
                             array('class' => Flash::Error)),
-                    null, 400);
+                    null, 400, $this->Offer->validationErrors);
             } else {
                 $transaction->commit();
 

@@ -39,10 +39,30 @@ switch($offer['Offer']['offer_type_id']){
         $label_class = 'label-success';
         break;
 }
-$label_text = offer_type($offer['Offer']['offer_type_id']);
+$offer_type_id = $offer['Offer']['offer_type_id'];
+$label_text = offer_type($offer_type_id);
 $html .= "<p><span class='label {$label_class}'>{$label_text}</span></p>";
-$html .= "<h4>Προσφορά {$offer['Offer']['id']}</h4><br/>";
-
+$html .= "<h4>Προσφορά {$offer['Offer']['id']}</h4>";
+if (!is_null($student_vote)) {
+    $vote_class = ($student_vote)?'green':'red';
+    $my_vote = ($student_vote)?'+1':'-1';
+    $html .= "<div class='{$vote_class}'>{$my_vote}</div>";
+}
+if ($this->Session->read('Auth.User.role') === ROLE_STUDENT) {
+    $icon_thumbs_up = "<i class='icon-thumbs-up'></i>";
+    $icon_thumbs_down = "<i class='icon-thumbs-down'></i>";
+    $icon_cancel = "<i class='icon-remove'></i>";
+    $link_up = $this->Html->link($icon_thumbs_up,
+        array('controller' => 'votes', 'action' => 'vote_up', $offer['Offer']['id']),
+        array('escape' => false));
+    $link_down = $this->Html->link($icon_thumbs_down,
+        array('controller' => 'votes', 'action' => 'vote_down', $offer['Offer']['id']),
+        array('escape' => false));
+    $link_cancel = $this->Html->link($icon_cancel,
+        array('controller' => 'votes', 'action' => 'vote_cancel', $offer['Offer']['id']),
+        array('escape' => false));
+    $html .= "<p>{$link_up} {$link_down} {$link_cancel}</p>";
+}
 if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
     $html .= $this->Html->link('Εταιρία: '.$offer['Company']['name'], array(
         'controller' => 'companies', 'action' => 'view', $offer['Company']['id']));
@@ -71,7 +91,7 @@ if ($is_user_the_owner) {
               'action' => 'activate_from_offer',
               $offer['Offer']['id']),
           null,
-          'Οι ενεργοποιημένες προσφορές δε δύναται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+          'Οι ενεργοποιημένες προσφορές δε δύνανται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
     }
 }
 
@@ -105,3 +125,51 @@ if (!empty($offer['Image']))
         }
 
 echo $html;
+
+// show coupons for offer
+// only if visitor == owner
+if (isset($is_owner) and $is_owner == true) {
+?>
+    <br />
+    <div class="well">
+        <h4>Κουπόνια</h4>
+        <br />
+        <table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>Α/Α</th>
+                    <th>Κωδικός κουπονιού</th>
+                    <th>Ημ/νία δέσμευσης</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                    $counter = 0;
+                    foreach ($coupons as $c) {
+                        $counter++;
+
+                        $date = $c['Coupon']['created'];
+                        $serial_number = $c['Coupon']['serial_number'];
+
+                        $coupon_link = $this->Html->link(
+                            $serial_number,
+                            array(
+                                'controller' => 'coupons',
+                                'action' => 'view',
+                                $c['Coupon']['id']
+                            ),
+                            array()
+                        );
+
+                        echo "<tr>";
+                        echo "<td>{$counter}</td>";
+                        echo "<td>{$serial_number}</td>";
+                        echo "<td>{$this->Time->format('d-m-Y',$date)}</td>";
+                        echo "</tr>";
+                    }
+                ?>
+            </tbody>
+        </table>
+    </div>
+<?php
+}

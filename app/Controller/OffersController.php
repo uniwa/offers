@@ -3,7 +3,8 @@
 class OffersController extends AppController {
 
     public $name = 'Offers';
-    public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day', 'Coupon', 'Student');
+    public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day',
+        'Coupon', 'Student', 'Vote');
     public $paginate = array(
 //        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
@@ -39,6 +40,7 @@ class OffersController extends AppController {
             'activate_from_offer');
         $companies = array('add_happyhour', 'add_coupons', 'add_limited',
             'webservice_add');
+        $students = array('vote_up', 'vote_down');
 
         // All registered users can view offers
         if (in_array($this->action, $allow)) {
@@ -59,7 +61,7 @@ class OffersController extends AppController {
             }
         }
 
-        // Only companies can add an offer
+        // Only companies
         if (in_array($this->action, $companies)) {
             if ($role === ROLE_COMPANY) {
                 return true;
@@ -191,6 +193,16 @@ class OffersController extends AppController {
             $this->set('student', $student);
         }
 
+        //get coupons for offer if user is owner
+        if ($this->Offer->is_owned_by($id, $this->Auth->User('id'))) {
+            $fields = array('Coupon.id', 'Coupon.serial_number', 'Coupon.created');
+            $order = array('Coupon.created DESC');
+            $coupons = $this->Offer->Coupon->find('all',
+                array('fields' => $fields, 'order' => $order));
+            $this->set('is_owner', true);
+            $this->set('coupons', $coupons);
+        }
+
         if ($this->is_webservice) {
             switch ($this->webservice_type) {
                 case 'js':
@@ -210,6 +222,13 @@ class OffersController extends AppController {
             // Prepare information for view
             $offer_info = $this->prepare_view($offer);
             $this->set('offer_info', $offer_info);
+            $student_id = $this->Session->read('Auth.Student.id');
+            $options['conditions'] = array(
+                'Vote.offer_id' => $id,
+                'Vote.student_id' => $student_id);
+            $options['recursive'] = -1;
+            $vote = $this->Vote->find('first', $options);
+            $this->set('student_vote', $vote['Vote']['vote']);
         }
     }
 
@@ -225,6 +244,12 @@ class OffersController extends AppController {
         $offer_info[] = $new_elem;
         $new_elem['label'] = "Κατηγορία";
         $new_elem['value'] = $offer['OfferCategory']['name'];
+        $offer_info[] = $new_elem;
+        $vote_count = $offer['Offer']['vote_count'];
+        $vote_class = ($vote_count >= 0)?'green':'red';
+        $votes = "<span class='votes {$vote_class}'>{$vote_count}</span>";
+        $new_elem['label'] = "Άθροισμα ψήφων";
+        $new_elem['value'] = $votes;
         $offer_info[] = $new_elem;
         $new_elem['label'] = "Λέξεις-κλειδιά";
         $new_elem['value'] = $offer['Offer']['tags'];

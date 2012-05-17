@@ -226,6 +226,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   `work_hour_count` INT NOT NULL DEFAULT 0 ,
   `offer_state_id` INT NOT NULL DEFAULT 1 ,
   `is_spam` TINYINT(1) NOT NULL DEFAULT 0 ,
+  `vote_count` INT(11) NOT NULL DEFAULT 0 ,
   `created` DATETIME NULL DEFAULT NULL ,
   `modified` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,
@@ -301,7 +302,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`coupons` (
   `modified` DATETIME NULL DEFAULT NULL ,
   `is_used` TINYINT(1)  NOT NULL DEFAULT 0 ,
   `offer_id` INT NOT NULL ,
-  `student_id` INT NOT NULL ,
+  `student_id` INT NULL ,
   PRIMARY KEY (`id`) ,
   INDEX `fk_coupons_offers1` (`offer_id` ASC) ,
   INDEX `fk_coupons_students1` (`student_id` ASC) ,
@@ -348,6 +349,33 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`work_hours` (
   CONSTRAINT `fk_work_hours_offers1`
     FOREIGN KEY (`offer_id` )
     REFERENCES `opendeals`.`offers` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- -----------------------------------------------------
+-- Table `opendeals`.`votes`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `opendeals`.`votes` ;
+
+CREATE  TABLE IF NOT EXISTS `opendeals`.`votes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `offer_id` int(11) NOT NULL,
+  `student_id` int(11) NOT NULL,
+  `vote` tinyint(1) NOT NULL COMMENT '0 negative, 1 positive',
+  PRIMARY KEY (`id`) ,
+  INDEX `fk_votes_offers1` (`offer_id` ASC) ,
+  INDEX `fk_votes_students1` (`student_id` ASC) ,
+  CONSTRAINT `fk_votes_offers1`
+    FOREIGN KEY (`offer_id` )
+    REFERENCES `opendeals`.`offers` (`id` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_votes_students1`
+    FOREIGN KEY (`student_id` )
+    REFERENCES `opendeals`.`students` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

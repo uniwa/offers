@@ -41,6 +41,16 @@
 
     Router::parseExtensions('rss', 'xml', 'json');
 
+    Router::connect('/webservice/offer/activate/*',
+        array(  'controller' => 'offers',
+                'action' => 'activate_from_offer',
+                '[method]' => 'GET'));
+
+    Router::connect('/webservice/offer/terminate/*',
+        array(  'controller' => 'offers',
+                'action' => 'terminate_from_offer',
+                '[method]' => 'GET'));
+
     Router::connect('/webservice/offer/*',
         array(  'controller' => 'offers',
                 'action' => 'view',

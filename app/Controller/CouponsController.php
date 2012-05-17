@@ -8,6 +8,8 @@ class CouponsController extends AppController {
     public $components = array('RequestHandler');
 
     public function beforeFilter() {
+        $this->api_initialize();
+
         if (! $this->is_authorized($this->Auth->user()))
             throw new ForbiddenException();
 
@@ -112,6 +114,27 @@ class CouponsController extends AppController {
         $this->set('coupon', $coupon);
     }
 
+    public function delete($id = null) {
+        $this->Coupon->id = $id;
+        $result = $this->Coupon->saveField('student_id', 
+            null, $validate = false);
+
+        if ($result == false) {
+            $flash = array('Παρουσιάστηκε ένα σφάλμα κατα την διαγραφή του κουπονιού.',
+                'default',
+                array('class' => Flash::Error));
+            $status = 500;
+        } else {
+            $flash = array('Το κουπόνι διεγράφη με επιτυχία.',
+                'default',
+                array('class' => Flash::Success));
+            $status = 200;
+        }
+        $redirect = array($this->referer());
+        $this->notify($flash, $redirect, $status);
+    }
+
+
     private function generate_uuid() {
         $uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             mt_rand(0, 0xffff), mt_rand(0, 0xffff), mt_rand(0, 0xffff),
@@ -125,9 +148,22 @@ class CouponsController extends AppController {
         if ($user['is_banned'] == 0) {
             if (in_array($this->action, array('add', 'view'))) {
                 // only students can get coupons
-                if ($user['role'] !== ROLE_STUDENT)
+                if ($user['role'] !== ROLE_STUDENT) {
                     return false;
+                }
                 return true;
+            }
+            if ($this->action === 'delete') {
+                if ($user['role'] !== ROLE_STUDENT) {
+                    return false;
+                }
+
+                $student_id = $this->Session->read('Auth.Student.id');
+                if ($this->Coupon->is_owned_by($this->request->params['pass'],
+                                               $student_id)) {
+                    return true;
+                }
+                return false;
             }
         }
 

@@ -5,6 +5,7 @@
 <?php
     echo $this->Html->charset();
     echo $this->Html->css( 'bootstrap' );
+    echo $this->Html->css( 'global' );
 ?>
 <style type="text/css">
   body {

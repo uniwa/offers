@@ -68,6 +68,9 @@ if (empty($company['Offer']['Active'])) {
 } else {
     echo 'Ενεργές προσφορές:<br/>';
     foreach ($company['Offer']['Active'] as $active) {
+        $vote_class = ($active['vote_count'] >= 0)?'green':'red';
+        $votes = "<span class='votes {$vote_class}'>{$active['vote_count']} </span>";
+        echo $votes;
         echo $this->Html->link($active['title'],
                                array('controller' => 'offers',
                                      'action' => 'view', $active['id'])
@@ -98,6 +101,9 @@ if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
     } else {
         echo 'Μη ενεργοποιημένες προσφορές:<br/>';
         foreach ($company['Offer']['Draft'] as $draft) {
+            $vote_class = ($draft['vote_count'] >= 0)?'green':'red';
+            $votes = "<span class='votes {$vote_class}'>{$draft['vote_count']} </span>";
+            echo $votes;
             echo $this->Html->link($draft['title'],
                                    array('controller' => 'offers',
                                          'action' => 'view', $draft['id'])
@@ -127,6 +133,9 @@ if (empty($company['Offer']['Inactive'])) {
 } else {
     echo 'Παλαιότερες προσφορές:<br/>';
     foreach ($company['Offer']['Inactive'] as $inactive) {
+        $vote_class = ($inactive['vote_count'] >= 0)?'green':'red';
+        $votes = "<span class='votes {$vote_class}'>{$inactive['vote_count']} </span>";
+        echo $votes;
         echo $this->Html->link($inactive['title'],
                                array('controller' => 'offers',
                                      'action' => 'view', $inactive['id'])

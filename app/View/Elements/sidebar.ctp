@@ -8,7 +8,7 @@ $happyhour = $this->Html->link(
 $happyhour_rss = $this->Html->link(
     ' ',
     array('controller' => 'offers', 'action' => 'happyhour.rss'),
-    array('class' => 'rss-happyhour')
+    array('class' => 'rss-happyhour', 'title' => 'RSS feed for HappyHour offers')
 );
 
 $coupons = $this->Html->link(
@@ -20,7 +20,7 @@ $coupons = $this->Html->link(
 $coupons_rss = $this->Html->link(
     '',
     array('controller' => 'offers', 'action' => 'coupons.rss'),
-    array('class' => 'rss-coupons')
+    array('class' => 'rss-coupons', 'title' => 'RSS feed for Coupon offers')
 );
 
 $limited = $this->Html->link(
@@ -32,7 +32,7 @@ $limited = $this->Html->link(
 $limited_rss = $this->Html->link(
     '',
     array('controller' => 'offers', 'action' => 'limited.rss'),
-    array('class' => 'rss-limited')
+    array('class' => 'rss-limited', 'title' => 'RSS feed for limited offers')
 );
 
 $html = '';

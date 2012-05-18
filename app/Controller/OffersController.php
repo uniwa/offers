@@ -365,7 +365,7 @@ class OffersController extends AppController {
 
             // set the required default values
             $this->request->data['Offer']['current_quantity'] = 0;
-            $this->request->data['Offer']['offer_state_id'] = OfferStates::Draft;
+            $this->request->data['Offer']['offer_state_id'] = STATE_DRAFT;
 
             // find the id of the Company related to the logged user
             // and assign it to Offer.company_id
@@ -473,6 +473,12 @@ class OffersController extends AppController {
                     if($offer_type_id !== COPY)
                         throw new ForbiddenException();
 
+                // Unset autostart & autoend for copy
+                if($offer_type_id === COPY) {
+                    unset($offer['Offer']['autostart']);
+                    unset($offer['Offer']['autoend']);
+                }
+
                 // Set offer type
                 $offer_type_id = $offer['Offer']['offer_type_id'];
 
@@ -508,11 +514,6 @@ class OffersController extends AppController {
                     }
                     $offer['WorkHour'] = $fill_week;
                 }
-/*
-                if ($id === -2) {
-                    $offer['Offer']['id'] = ADD;
-                }
-*/
                 $this->request->data = $offer;
             }
             $this->request->data['Offer']['offer_type_id'] = $offer_type_id;

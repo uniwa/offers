@@ -79,7 +79,7 @@ class AppController extends Controller{
                     $msg = "Δεν έχετε συμπληρώσει γεοχωρικές πληροφορίες για την επιχείρηση σας. ";
                     $msg .= "Προσφορές που αναρτάτε πιθανόν να μην είναι διαθέσιμες μέσο της εφαρμογής κινητού. ";
                     $msg .= "Πατήστε <a href=\"#\">εδώ</a> για να καταχωρήσετε το στίγμα της επιχείρησης σας.";
-                    $this->notify(array($msg, 'default', array('class' => Flash::Info)));
+                    $this->notify(array($msg, 'default', array('class' => Flash::Warning)));
             }
         }
     }

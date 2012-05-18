@@ -246,11 +246,15 @@ class OffersController extends AppController {
         $new_elem['label'] = "Κατηγορία";
         $new_elem['value'] = $offer['OfferCategory']['name'];
         $offer_info[] = $new_elem;
-        $vote_count = $offer['Offer']['vote_count'];
-        $vote_class = ($vote_count >= 0)?'green':'red';
-        $votes = "<span class='votes {$vote_class}'>{$vote_count}</span>";
+        $vote_sum = $offer['Offer']['vote_sum'];
+        $vote_class = ($vote_sum >= 0)?'green':'red';
+        $votes = "<span class='votes {$vote_class}'>{$vote_sum}</span>";
         $new_elem['label'] = "Άθροισμα ψήφων";
         $new_elem['value'] = $votes;
+        $offer_info[] = $new_elem;
+        $vote_count = $offer['Offer']['vote_count'];
+        $new_elem['label'] = "Σύνολο ψήφων";
+        $new_elem['value'] = $vote_count;
         $offer_info[] = $new_elem;
         $new_elem['label'] = "Λέξεις-κλειδιά";
         $new_elem['value'] = $offer['Offer']['tags'];

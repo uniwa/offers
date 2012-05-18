@@ -133,7 +133,7 @@ echo $html;
 
 // show coupons for offer
 // only if visitor == owner and offer type = coupons
-if (isset($is_owner) and $is_owner == true && $offer_type_id == TYPE_COUPONS) {
+if (isset($is_owner) and $is_owner == true) {
 ?>
     <br />
     <div class="well">

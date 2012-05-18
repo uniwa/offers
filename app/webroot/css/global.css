@@ -9,3 +9,29 @@
 .red{
     color: #f00;
 }
+
+/* rss icons for offer categories */
+.sidebar-nav ul li a {
+    display: inline;
+}
+
+.rss-happyhour {
+    float: right;
+    background-image: url('../img/rss-blue-small.png');
+    background-repeat: no-repeat;
+    height: 24px;
+}
+
+.rss-coupons {
+    float: right;
+    background-image: url('../img/rss-orange-small.png');
+    background-repeat: no-repeat;
+    height: 24px;
+}
+
+.rss-limited {
+    float: right;
+    background-image: url('../img/rss-green-small.png');
+    background-repeat: no-repeat;
+    height: 24px;
+}

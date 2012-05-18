@@ -14,7 +14,7 @@ class OffersController extends AppController {
         'recursive' => -1
     );
 
-    public $helpers = array('Html', 'Time');
+    public $helpers = array('Html', 'Time', 'Text');
 
     public $components = array('Common', 'RequestHandler');
 

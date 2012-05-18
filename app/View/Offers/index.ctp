@@ -28,7 +28,8 @@ if (empty($offers)) {
         $vote_count = $offers[$key]['Offer']['vote_count'];
         $vote_class = ($vote_sum >= 0)?'green':'red';
         $votes = "<span class='votes {$vote_class}'>{$vote_sum}</span> ";
-        $votes .= "({$vote_count} ψήφοι)";
+        $postfix = ($vote_count == 1)?'ς':'ι';
+        $votes .= "({$vote_count} ψήφο{$postfix})";
         $html .=  $this->Html->link($title,
             array('action' => 'view', $offers[$key]['Offer']['id']));
         $html .= " {$label} {$votes}";

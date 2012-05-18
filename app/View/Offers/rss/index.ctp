@@ -3,6 +3,7 @@
 $this->set('channelData', array(
     'title' => __("Τελευταίες προσφορές"),
     'link' => $this->Html->url('/', true),
+    'description' => __("Κατηγορία \"{$this->params['action']}\""),
     'language' => 'en-us'));
 
 App::uses('Sanitize', 'Utility');

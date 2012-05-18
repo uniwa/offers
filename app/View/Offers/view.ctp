@@ -109,7 +109,7 @@ foreach($offer_info as $elem) {
 if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
     $offer['Offer']['offer_type_id'] !== TYPE_HAPPYHOUR) {
     $html .= "<br/><br/>";
-    if ($offer['Offer']['offer_type_id'] == TYPE_COUPONS) {
+    if ($offer_type_id == TYPE_COUPONS) {
         if ($offer['Offer']['coupon_count'] < $offer['Offer']['total_quantity']) {
             $html .= $this->Form->create(false, array('type' => 'post',
                 'url' => array('controller' => 'coupons',
@@ -132,8 +132,8 @@ if (!empty($offer['Image']))
 echo $html;
 
 // show coupons for offer
-// only if visitor == owner
-if (isset($is_owner) and $is_owner == true) {
+// only if visitor == owner and offer type = coupons
+if (isset($is_owner) and $is_owner == true && $offer_type_id == TYPE_COUPONS) {
 ?>
     <br />
     <div class="well">

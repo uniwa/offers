@@ -2,30 +2,60 @@
 $html = '';
 
 // TODO: move to controller
-$is_user_the_owner = $this->Session->read('Auth.User.id') == $offer['Company']['user_id'];
-if ($this->Session->read('Auth.User.id') == $offer['Company']['user_id'] &&
-    $offer['Offer']['offer_state_id'] == OfferStates::Draft)
-{
-    $html .= $this->Html->link('Διαγραφή', array(
-        'controller' => 'offers', 'action' => 'delete', $offer['Offer']['id']),
-        array(), 'Να διαγραφεί η προσφορα;');
-    $html .= '<br>';
-
-    $html .= $this->Html->link('Επεξεργασία', array(
-                                            'controller' => 'offers',
-                                            'action' => 'edit',
-                                            $offer['Offer']['id']));
-    $html .= '<br>';
-
-    $html .= $this->Html->link('Εικόνες', array(
-                                            'controller' => 'offers',
-                                            'action' => 'imageedit',
-                                            $offer['Offer']['id']));
-    $html .= '<br>';
-}
-
-$is_spam = $offer['Offer']['is_spam'];
 $offer_state_id = $offer['Offer']['offer_state_id'];
+$offer_type_id = $offer['Offer']['offer_type_id'];
+$label_text = offer_type($offer_type_id);
+$is_spam = $offer['Offer']['is_spam'];
+$is_user_the_owner = $this->Session->read('Auth.User.id') == $offer['Company']['user_id'];
+$is_offer_draft = $offer_state_id == STATE_DRAFT;
+$is_offer_active = $offer_state_id == STATE_ACTIVE;
+
+// Offer actions (copy,images, etc.)
+if ($is_user_the_owner) {
+    $html .= $this->Html->link('Αντιγραφή', array(
+        'controller' => 'offers',
+        'action' => 'copy',
+        $offer['Offer']['id']));
+    $html .= '<br>';
+
+    if ($is_offer_draft) {
+        $html .= $this->Html->link('Διαγραφή', array(
+            'controller' => 'offers',
+            'action' => 'delete',
+            $offer['Offer']['id']),
+            array(), 'Να διαγραφεί η προσφορα;');
+        $html .= '<br>';
+
+        $html .= $this->Html->link('Επεξεργασία', array(
+            'controller' => 'offers',
+            'action' => 'edit',
+            $offer['Offer']['id']));
+        $html .= '<br>';
+
+        $html .= $this->Html->link(
+          '[Ενεργοποίηση]', array(
+                'controller' => 'offers',
+                'action' => 'activate_from_offer',
+                $offer['Offer']['id']), null,
+                'Οι ενεργοποιημένες προσφορές δε δύνανται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+        $html .= '<br>';
+    }
+
+    if ($is_offer_active) {
+        $html .= $this->Html->link('Εικόνες', array(
+            'controller' => 'offers',
+            'action' => 'imageedit',
+            $offer['Offer']['id']));
+        $html .= '<br>';
+
+        $html .= $this->Html->link('[Τερματισμός]', array(
+            'controller' => 'offers',
+            'action' => 'terminate_from_offer',
+            $offer['Offer']['id']), null,
+            'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+    }
+
+}
 
 // TODO: move to controller
 switch($offer['Offer']['offer_type_id']){
@@ -39,8 +69,7 @@ switch($offer['Offer']['offer_type_id']){
         $label_class = 'label-success';
         break;
 }
-$offer_type_id = $offer['Offer']['offer_type_id'];
-$label_text = offer_type($offer_type_id);
+
 $html .= "<p><span class='label {$label_class}'>{$label_text}</span></p>";
 $html .= "<h4>Προσφορά {$offer['Offer']['id']}</h4>";
 if (!is_null($student_vote)) {
@@ -69,30 +98,6 @@ if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
 }
 if ($is_spam) {
     echo 'Η προσφορά έχει χαρακτηρισθεί ως SPAM.<br/><br/>';
-}
-
-if ($is_user_the_owner) {
-    if ($offer_state_id == STATE_ACTIVE) {
-      echo $this->Html->link(
-          '[Τερματισμός]',
-          array(
-              'controller' => 'offers',
-              'action' => 'terminate_from_offer',
-              $offer['Offer']['id']),
-          null,
-          'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
-
-    } else if ($offer_state_id == STATE_DRAFT) {
-
-      $html .= $this->Html->link(
-          '[Ενεργοποίηση]',
-          array(
-              'controller' => 'offers',
-              'action' => 'activate_from_offer',
-              $offer['Offer']['id']),
-          null,
-          'Οι ενεργοποιημένες προσφορές δε δύνανται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
-    }
 }
 
 $html .= '<br>';

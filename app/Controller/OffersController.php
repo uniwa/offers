@@ -196,10 +196,16 @@ class OffersController extends AppController {
 
         //get coupons for offer if user is owner
         if ($this->Offer->is_owned_by($id, $this->Auth->User('id'))) {
+            // build query
             $fields = array('Coupon.id', 'Coupon.serial_number', 'Coupon.created');
             $order = array('Coupon.created DESC');
-            $coupons = $this->Offer->Coupon->find('all',
-                array('fields' => $fields, 'order' => $order));
+            $conditions = array('Offer.id' => $id);
+
+            $coupons = $this->Offer->Coupon->find('all', array(
+                'conditions' => $conditions,
+                'fields' => $fields,
+                'order' => $order));
+
             $this->set('is_owner', true);
             $this->set('coupons', $coupons);
         }

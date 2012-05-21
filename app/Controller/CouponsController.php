@@ -46,6 +46,9 @@ class CouponsController extends AppController {
         $coupon['Coupon']['offer_id'] = $id;
 
         if ($this->Coupon->save($coupon)) {
+
+            $this->mail_success();
+
             // success getting coupon
             // differentiate responses based on Accept header parameter
             if ($this->RequestHandler->prefers('html')) {
@@ -169,6 +172,18 @@ class CouponsController extends AppController {
 
         // admin can see banned users too
         return parent::is_authorized($user);
+    }
+
+    private function mail_success() {
+        $student_email = $this->Session->read('Auth.User.email');
+
+        $email = new CakeEmail('smtp');
+        $result = $email
+            ->to($student_email)
+            ->subject('Κράτηση κουπονιού')
+            ->template('coupon_reservation', 'default')
+            ->emailFormat('text')
+            ->send();
     }
 
 }

@@ -4,7 +4,7 @@ class OffersController extends AppController {
 
     public $name = 'Offers';
     public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day',
-        'Coupon', 'Student', 'Vote');
+        'Coupon', 'Student', 'Vote', 'Sanitize');
     public $paginate = array(
 //        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
@@ -13,6 +13,11 @@ class OffersController extends AppController {
         ),
         'recursive' => -1
     );
+
+    public $order = array(
+        'recent' => array('Offer.modified' => 'desc'),
+        'votes' => array('Offer.vote_count' => 'desc'),
+        'rank' => array('Offer.vote_sum' => 'desc'));
 
     public $helpers = array('Html', 'Time', 'Text');
 
@@ -74,6 +79,7 @@ class OffersController extends AppController {
 
     public function index() {
         $params = array('valid');
+        $this->ordering($params);
         $offers = $this->display($params, false);
 
         if ($this->is_webservice) {
@@ -98,22 +104,36 @@ class OffersController extends AppController {
 
     public function happyhour() {
         $params = array('happyhour');
+        $this->ordering($params);
         $this->display($params);
     }
 
     public function coupons() {
         $params = array('coupons');
+        $this->ordering($params);
         $this->display($params);
     }
 
     public function limited() {
         $params = array('limited');
+        $this->ordering($params);
         $this->display($params);
     }
 
     public function tag($tag) {
         $params = array('tag', 'tag' => $tag);
+        $this->ordering($params);
         $this->display($params);
+    }
+
+    // Add ordering into params
+    private function ordering(&$params) {
+        $criterion = $this->params['named']['order'];
+        $valid_criterion = array_key_exists($criterion, $this->order);
+        if ($valid_criterion)
+            $params['order'] = $this->order[$criterion];
+
+        return $valid_criterion;
     }
 
     // Displays offers in list according to passed criteria and sorting params

@@ -10,8 +10,14 @@ if (empty($offers)) {
         'label' => '<span class="label label-info">Offers</span>',
         'message' => 'Δεν υπάρχουν προσφορές'));
 } else {
-    //separate in blocks of 3
-    $sep = 3;
+    // Ordering
+    $select_order = '';
+    foreach ($order_options as $k => $v) {
+        $action = $this->params['action'];
+        $select_order .= " ".$this->Html->link($v['title'],
+            array('action' => $action, 'orderby' => $k));
+    }
+    $html .= "<p>Ταξινόμηση: {$select_order}</p><br />";
 
     //offers
     // TODO: make this a f***** list - stop the <br/> abuse
@@ -23,7 +29,7 @@ if (empty($offers)) {
         $tag_name = offer_type($offer_type_id);
         $title = $offers[$key]['Offer']['title'];
         $label = "<span class='label label-{$tag_class}'>{$tag_name}</span>";
-        $description = "<p>{$offers[$key]['Offer']['description']}</p>";
+//        $description = "<p>{$offers[$key]['Offer']['description']}</p>";
         $vote_sum = $offers[$key]['Offer']['vote_sum'];
         $vote_count = $offers[$key]['Offer']['vote_count'];
         $vote_class = ($vote_sum >= 0)?'green':'red';
@@ -34,7 +40,7 @@ if (empty($offers)) {
             array('action' => 'view', $offers[$key]['Offer']['id']));
         $html .= " {$label} {$votes}";
         $html .= "<br /><i>{$offer['Offer']['modified']}</i>";
-        $html .= $description;
+//        $html .= $description;
 
         // print tags as links if available
         if ($offer['Offer']['tags'] == NULL)
@@ -62,21 +68,14 @@ if (empty($offers)) {
         $html .= "</p>";
     }
 }
-echo $html;
-?>
-<div class = 'pagination'>
-<ul>
-<?php
-$html_page = $this->Paginator->numbers(array(
+$this->Paginator->options(array('url' => $this->passedArgs));
+$html .= "<div class = 'pagination'><ul>";
+$html .= $this->Paginator->numbers(array(
     'first' => 2,
     'last' => 2,
     'modulus' => 3,
     'separator' => ' ',
-    'tag' => 'li',
-    'ellipsis' => '<a href=" ">...</a>'));
+    'tag' => 'li'));
+$html .= "</ul></div></div>";
 
-echo $html_page;
-?>
-</ul>
-</div>
-</div>
+echo $html;

@@ -20,10 +20,14 @@ class OffersController extends AppController {
             'value' => array('Offer.modified' => 'desc')),
         'votes' => array(
             'title' => 'ψήφοι',
-            'value' => array('Offer.vote_count' => 'desc')),
+            'value' => array(
+                'Offer.vote_count' => 'desc',
+                'Offer.vote_sum' => 'desc')),
         'rank' => array(
             'title' => 'βαθμός',
-            'value' => array('Offer.vote_sum' => 'desc')));
+            'value' => array(
+                'Offer.vote_sum' => 'desc',
+                'Offer.vote_count' => 'desc',)));
 
     public $helpers = array('Html', 'Time', 'Text');
 

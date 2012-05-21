@@ -15,9 +15,15 @@ class OffersController extends AppController {
     );
 
     public $order = array(
-        'recent' => array('title' => 'πρόσφατα', 'value' => array('Offer.modified' => 'desc')),
-        'votes' => array('title' => 'ψήφοι', 'value' => array('Offer.vote_count' => 'desc')),
-        'rank' => array('title' => 'βαθμός', 'value' => array('Offer.vote_sum' => 'desc')));
+        'recent' => array(
+            'title' => 'πρόσφατα',
+            'value' => array('Offer.modified' => 'desc')),
+        'votes' => array(
+            'title' => 'ψήφοι',
+            'value' => array('Offer.vote_count' => 'desc')),
+        'rank' => array(
+            'title' => 'βαθμός',
+            'value' => array('Offer.vote_sum' => 'desc')));
 
     public $helpers = array('Html', 'Time', 'Text');
 
@@ -126,6 +132,15 @@ class OffersController extends AppController {
         $this->display($params);
     }
 
+    public function category($id) {
+        // TODO throw exception if invalid/non-existent id
+        $id = (int)$id; // Sanitize id input
+        $conditions['Offer.offer_category_id'] = $id;
+        $params = array('valid', 'conditions' => $conditions);
+        $this->ordering($params);
+        $this->display($params);
+    }
+
     // Add ordering into params
     private function ordering(&$params) {
         $order_options = array_keys($this->order);
@@ -149,7 +164,6 @@ class OffersController extends AppController {
         $params = array_merge($params, array('limit' => $pagination_limit));
         $this->paginate = $params;
         $offers = $this->paginate();
-
         $this->minify_desc($offers, 160);
         if ($render) {
             $this->set('offers', $offers);
@@ -157,17 +171,6 @@ class OffersController extends AppController {
         } else {
             return $offers;
         }
-    }
-
-    public function category($id) {
-        // TODO throw exception if invalid/non-existent id
-        $id = (int)$id; // Sanitize id input
-        $conditions['Offer.offer_category_id'] = $id;
-        $this->paginate = array('valid', 'conditions' => $conditions);
-        $offers = $this->paginate();
-        $this->minify_desc($offers, 160);
-        $this->set('offers', $offers);
-        $this->render('index');
     }
 
     private function minify_desc( &$array, $limit ) {

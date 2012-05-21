@@ -14,8 +14,9 @@ if (empty($offers)) {
     $select_order = '';
     foreach ($order_options as $k => $v) {
         $action = $this->params['action'];
+        $pass = (isset($this->params['pass'][0]))?$this->params['pass'][0]:null;
         $select_order .= " ".$this->Html->link($v['title'],
-            array('action' => $action, 'orderby' => $k));
+            array('action' => $action, $pass, 'orderby' => $k));
     }
     $html .= "<p>Ταξινόμηση: {$select_order}</p><br />";
 

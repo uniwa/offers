@@ -15,9 +15,9 @@ class OffersController extends AppController {
     );
 
     public $order = array(
-        'recent' => array('Offer.modified' => 'desc'),
-        'votes' => array('Offer.vote_count' => 'desc'),
-        'rank' => array('Offer.vote_sum' => 'desc'));
+        'recent' => array('title' => 'πρόσφατα', 'value' => array('Offer.modified' => 'desc')),
+        'votes' => array('title' => 'ψήφοι', 'value' => array('Offer.vote_count' => 'desc')),
+        'rank' => array('title' => 'βαθμός', 'value' => array('Offer.vote_sum' => 'desc')));
 
     public $helpers = array('Html', 'Time', 'Text');
 
@@ -128,18 +128,28 @@ class OffersController extends AppController {
 
     // Add ordering into params
     private function ordering(&$params) {
-        $criterion = $this->params['named']['order'];
-        $valid_criterion = array_key_exists($criterion, $this->order);
-        if ($valid_criterion)
-            $params['order'] = $this->order[$criterion];
+        $order_options = array_keys($this->order);
+        $this->set('order_options', $this->order);
 
-        return $valid_criterion;
+        if (isset($this->params['named']['orderby'])) {
+            $criterion = $this->params['named']['orderby'];
+            $valid_criterion = in_array($criterion, $order_options);
+            if ($valid_criterion)
+                $params['order'] = $this->order[$criterion]['value'];
+
+            return $valid_criterion;
+        } else {
+            return false;
+        }
     }
 
     // Displays offers in list according to passed criteria and sorting params
     private function display($params, $render = true) {
+        $pagination_limit = 10;
+        $params = array_merge($params, array('limit' => $pagination_limit));
         $this->paginate = $params;
         $offers = $this->paginate();
+
         $this->minify_desc($offers, 160);
         if ($render) {
             $this->set('offers', $offers);

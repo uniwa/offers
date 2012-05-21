@@ -4,7 +4,7 @@ class OffersController extends AppController {
 
     public $name = 'Offers';
     public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day',
-        'Coupon', 'Student', 'Vote');
+        'Coupon', 'Student', 'Vote', 'Sanitize');
     public $paginate = array(
 //        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
@@ -14,7 +14,12 @@ class OffersController extends AppController {
         'recursive' => -1
     );
 
-    public $helpers = array('Html', 'Time');
+    public $order = array(
+        'recent' => array('Offer.modified' => 'desc'),
+        'votes' => array('Offer.vote_count' => 'desc'),
+        'rank' => array('Offer.vote_sum' => 'desc'));
+
+    public $helpers = array('Html', 'Time', 'Text');
 
     public $components = array('Common', 'RequestHandler');
 
@@ -29,6 +34,7 @@ class OffersController extends AppController {
         parent::beforeFilter();
         $this->Auth->allow('index');
         define('ADD', -1);
+        define('COPY', -2);
     }
 
     public function is_authorized($user) {
@@ -37,7 +43,7 @@ class OffersController extends AppController {
             'limited', 'tag');
         $owner = array('edit', 'delete', 'imageedit', 'terminate_from_company',
             'terminate_from_offer', 'activate_from_company',
-            'activate_from_offer');
+            'activate_from_offer', 'copy');
         $companies = array('add_happyhour', 'add_coupons', 'add_limited',
             'webservice_add');
         $students = array('vote_up', 'vote_down');
@@ -73,6 +79,7 @@ class OffersController extends AppController {
 
     public function index() {
         $params = array('valid');
+        $this->ordering($params);
         $offers = $this->display($params, false);
 
         if ($this->is_webservice) {
@@ -97,22 +104,36 @@ class OffersController extends AppController {
 
     public function happyhour() {
         $params = array('happyhour');
+        $this->ordering($params);
         $this->display($params);
     }
 
     public function coupons() {
         $params = array('coupons');
+        $this->ordering($params);
         $this->display($params);
     }
 
     public function limited() {
         $params = array('limited');
+        $this->ordering($params);
         $this->display($params);
     }
 
     public function tag($tag) {
         $params = array('tag', 'tag' => $tag);
+        $this->ordering($params);
         $this->display($params);
+    }
+
+    // Add ordering into params
+    private function ordering(&$params) {
+        $criterion = $this->params['named']['order'];
+        $valid_criterion = array_key_exists($criterion, $this->order);
+        if ($valid_criterion)
+            $params['order'] = $this->order[$criterion];
+
+        return $valid_criterion;
     }
 
     // Displays offers in list according to passed criteria and sorting params
@@ -193,14 +214,22 @@ class OffersController extends AppController {
             $this->set('student', $student);
         }
 
-        //get coupons for offer if user is owner
-        if ($this->Offer->is_owned_by($id, $this->Auth->User('id'))) {
-            $fields = array('Coupon.id', 'Coupon.serial_number', 'Coupon.created');
-            $order = array('Coupon.created DESC');
-            $coupons = $this->Offer->Coupon->find('all',
-                array('fields' => $fields, 'order' => $order));
-            $this->set('is_owner', true);
-            $this->set('coupons', $coupons);
+        //get coupons for offer if user is owner and coupon is of type 'COUPONS'
+        if ($offer['Offer']['offer_type_id'] == TYPE_COUPONS) {
+            if ($this->Offer->is_owned_by($id, $this->Auth->User('id'))) {
+                // build query
+                $fields = array('Coupon.id', 'Coupon.serial_number', 'Coupon.created');
+                $order = array('Coupon.created DESC');
+                $conditions = array('Offer.id' => $id);
+
+                $coupons = $this->Offer->Coupon->find('all', array(
+                    'conditions' => $conditions,
+                    'fields' => $fields,
+                    'order' => $order));
+
+                $this->set('is_owner', true);
+                $this->set('coupons', $coupons);
+            }
         }
 
         if ($this->is_webservice) {
@@ -245,11 +274,15 @@ class OffersController extends AppController {
         $new_elem['label'] = "Κατηγορία";
         $new_elem['value'] = $offer['OfferCategory']['name'];
         $offer_info[] = $new_elem;
-        $vote_count = $offer['Offer']['vote_count'];
-        $vote_class = ($vote_count >= 0)?'green':'red';
-        $votes = "<span class='votes {$vote_class}'>{$vote_count}</span>";
+        $vote_sum = $offer['Offer']['vote_sum'];
+        $vote_class = ($vote_sum >= 0)?'green':'red';
+        $votes = "<span class='votes {$vote_class}'>{$vote_sum}</span>";
         $new_elem['label'] = "Άθροισμα ψήφων";
         $new_elem['value'] = $votes;
+        $offer_info[] = $new_elem;
+        $vote_count = $offer['Offer']['vote_count'];
+        $new_elem['label'] = "Σύνολο ψήφων";
+        $new_elem['value'] = $vote_count;
         $offer_info[] = $new_elem;
         $new_elem['label'] = "Λέξεις-κλειδιά";
         $new_elem['value'] = $offer['Offer']['tags'];
@@ -329,16 +362,21 @@ class OffersController extends AppController {
             'Η δομή του αιτήματος δεν είναι η αναμενόμενη');
     }
 
-    // Wrapper functions for 'edit offer' action
-    public function edit($id=null) {
+    // Wrapper function for 'edit offer' action
+    public function edit($id = null) {
         $this->modify(null, $id);
+    }
+
+    // Wrapper function for 'clone offer' action
+    public function copy($id = null) {
+        $this->modify(COPY, $id);
     }
 
     // Function for adding/editing offer
     // $offer_type_id same as global, 1-happy hour, 2-coupons, 3-limited
     // if $id is -1, add a new offer
     // else edit the offer with the corresponding id
-    private function modify($offer_type_id, $id=null) {
+    private function modify($offer_type_id, $id = null) {
         if (is_null($id)) {
             throw new BadRequestException(
                 'Δεν έχει προσδιοριστεί το id της προσφοράς');
@@ -377,7 +415,10 @@ class OffersController extends AppController {
             $company = $this->Company->find('first', $options);
             $this->request->data['Offer']['company_id'] = $company['Company']['id'];
 
-            $this->Offer->id = $id;
+            // Leave id null for copy
+            if ($offer_type_id !== COPY) {
+                $this->Offer->id = $id;
+            }
             $transaction = $this->Offer->getDataSource();
             $transaction->begin();
             $error = false;
@@ -453,7 +494,7 @@ class OffersController extends AppController {
             }
 
             // Add/edit offer
-            if ($id !== -1) {
+            if ($id !== ADD) {
                 // Edit existing offer
                 $options['conditions'] = array('Offer.id' => $id);
                 $options['recursive'] = 0;
@@ -464,8 +505,17 @@ class OffersController extends AppController {
                 if ($offer['Company']['user_id'] != $this->Auth->User('id'))
                     throw new ForbiddenException();
 
+                // Deny edit for non-draft offer
+                // Allow copy
                 if ($offer['Offer']['offer_state_id'] != STATE_DRAFT)
-                    throw new ForbiddenException();
+                    if($offer_type_id !== COPY)
+                        throw new ForbiddenException();
+
+                // Unset autostart & autoend for copy
+                if($offer_type_id === COPY) {
+                    unset($offer['Offer']['autostart']);
+                    unset($offer['Offer']['autoend']);
+                }
 
                 // Set offer type
                 $offer_type_id = $offer['Offer']['offer_type_id'];
@@ -552,13 +602,7 @@ class OffersController extends AppController {
         $new_elem['options']['label'] = 'Περιγραφή';
         $new_elem['options']['type'] = 'textarea';
         $input_elements[] = $new_elem;
-/*
-        $new_elem = array();
-        $new_elem['title'] = 'Image.0';
-        $new_elem['options']['label'] = 'Εικόνα';
-        $new_elem['options']['type'] = 'file';
-        $input_elements[] = $new_elem;
-*/
+
         $new_elem = array();
         $new_elem['title'] = 'Offer.tags';
         $new_elem['options']['label'] = 'Λέξεις-κλειδιά';
@@ -681,7 +725,7 @@ class OffersController extends AppController {
         if ($offer['Company']['user_id'] != $this->Auth->User('id'))
             throw new ForbiddenException();
 
-        if ($offer['Offer']['offer_state_id'] != STATE_DRAFT)
+        if ($offer['Offer']['offer_state_id'] === STATE_DRAFT)
             throw new ForbiddenException();
 
         $this->set('offer', $offer);

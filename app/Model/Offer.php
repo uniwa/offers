@@ -20,7 +20,8 @@ class Offer extends AppModel {
                 'Offer.offer_state_id' => STATE_ACTIVE,
                 'Offer.is_spam' => 0,
                 'Company.is_enabled' => 1));
-			$query['order'] = array('Offer.modified' => 'desc');
+			if (!isset($query['order']))
+    			$query['order'] = array('Offer.modified' => 'desc');
 			return $query;
 		}
         return $results;

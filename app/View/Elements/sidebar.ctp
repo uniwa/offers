@@ -5,10 +5,22 @@ $happyhour = $this->Html->link(
     array('class' => '')
 );
 
+$happyhour_rss = $this->Html->link(
+    ' ',
+    array('controller' => 'offers', 'action' => 'happyhour.rss'),
+    array('class' => 'rss-happyhour', 'title' => 'RSS feed for HappyHour offers')
+);
+
 $coupons = $this->Html->link(
     'Coupons',
     array('controller' => 'offers', 'action' => 'coupons'),
     array('class' => '')
+);
+
+$coupons_rss = $this->Html->link(
+    '',
+    array('controller' => 'offers', 'action' => 'coupons.rss'),
+    array('class' => 'rss-coupons', 'title' => 'RSS feed for Coupon offers')
 );
 
 $limited = $this->Html->link(
@@ -16,6 +28,13 @@ $limited = $this->Html->link(
     array('controller' => 'offers', 'action' => 'limited'),
     array('class' => '')
 );
+
+$limited_rss = $this->Html->link(
+    '',
+    array('controller' => 'offers', 'action' => 'limited.rss'),
+    array('class' => 'rss-limited', 'title' => 'RSS feed for limited offers')
+);
+
 $html = '';
 foreach($offer_categories as $id => $name) {
     $html .= "<li>";
@@ -28,9 +47,9 @@ foreach($offer_categories as $id => $name) {
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header">Κατηγοριες Προσφορων</li>
-              <li><?php echo $happyhour ?></li>
-              <li><?php echo $coupons ?></li>
-              <li><?php echo $limited ?></li>
+              <li><?php echo $happyhour, $happyhour_rss ?></li>
+              <li><?php echo $coupons, $coupons_rss?></li>
+              <li><?php echo $limited, $limited_rss ?></li>
               <li class="nav-header">Ειδη Προσφορων</li>
               <?php echo $html; ?>
             </ul>

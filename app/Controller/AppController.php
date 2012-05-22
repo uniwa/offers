@@ -8,7 +8,7 @@ App::import('Vendor', 'Flash');
 
 class AppController extends Controller{
 
-    public $uses = array('OfferCategory');
+    public $uses = array('OfferCategory', 'Company');
 
     public $components = array(
         'Session',

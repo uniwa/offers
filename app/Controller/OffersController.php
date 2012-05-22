@@ -90,26 +90,7 @@ class OffersController extends AppController {
     public function index() {
         $params = array('valid');
         $this->ordering($params);
-        $offers = $this->display($params, false);
-
-        if ($this->is_webservice) {
-            switch ($this->webservice_type) {
-                case 'js':
-                case 'json':
-                    $data = $this->api_prepare_view($offers, false);
-                    break;
-
-                case 'xml':
-                    $data = $this->api_prepare_view($offers);
-                    break;
-            }
-            $this->api_compile_response(
-                200, array( 'offers' => $data['offers'],
-                            'companies' => $data['companies']));
-
-        } else {
-            $this->set('offers', $offers);
-        }
+        $this->display($params);
     }
 
     public function happyhour() {
@@ -163,17 +144,31 @@ class OffersController extends AppController {
     }
 
     // Displays offers in list according to passed criteria and sorting params
-    private function display($params, $render = true) {
+    private function display($params) {
         $pagination_limit = 10;
         $params = array_merge($params, array('limit' => $pagination_limit));
         $this->paginate = $params;
         $offers = $this->paginate();
         $this->minify_desc($offers, 160);
-        if ($render) {
+
+        if ($this->is_webservice) {
+            switch ($this->webservice_type) {
+                case 'js':
+                case 'json':
+                    $data = $this->api_prepare_view($offers, false);
+                    break;
+
+                case 'xml':
+                    $data = $this->api_prepare_view($offers);
+                    break;
+            }
+            $this->api_compile_response(
+                200, array( 'offers' => $data['offers'],
+                            'companies' => $data['companies']));
+
+        } else {
             $this->set('offers', $offers);
             $this->render('index');
-        } else {
-            return $offers;
         }
     }
 

@@ -227,6 +227,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   `offer_state_id` INT NOT NULL DEFAULT 1 ,
   `is_spam` TINYINT(1) NOT NULL DEFAULT 0 ,
   `vote_count` INT(11) NOT NULL DEFAULT 0 ,
+  `vote_sum` INT(11) NOT NULL DEFAULT 0 ,
   `created` DATETIME NULL DEFAULT NULL ,
   `modified` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,

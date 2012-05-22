@@ -9,6 +9,7 @@ class Offer extends AppModel {
         'happyhour' => true,
         'coupons' => true,
         'limited' => true,
+        'search' => true,
         'tag' => true
     );
 
@@ -100,6 +101,30 @@ class Offer extends AppModel {
                 'Offer.is_spam' => 0,
                 'Company.is_enabled' => 1
             );
+			if (!isset($query['order']))
+    			$query['order'] = array('Offer.modified' => 'desc');
+            return $query;
+        }
+        return $results;
+    }
+
+    // find offers based on keywords
+    // searches in title, description, tags fields in offers table
+    protected function _findSearch($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $conditions = array();
+            foreach ($query['words'] as $word) {
+                $condition[] = array('Offer.title LIKE' => "%{$word}%");
+                $condition[] = array('Offer.description LIKE' => "%{$word}%");
+                $condition[] = array('Offer.tags LIKE' => "%{$word}%");
+            }
+            $conditions['OR'] = $condition;
+
+            $query['conditions'] = array_merge($conditions, array(
+                'Offer.offer_state_id' => STATE_ACTIVE,
+                'Offer.is_spam' => 0,
+                'Company.is_enabled' => 1
+            ));
 			if (!isset($query['order']))
     			$query['order'] = array('Offer.modified' => 'desc');
             return $query;

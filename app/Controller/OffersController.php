@@ -50,7 +50,7 @@ class OffersController extends AppController {
     public function is_authorized($user) {
         $role = $this->Auth->user('role');
         $allow = array('index', 'category', 'view', 'happyhour', 'coupons',
-            'limited', 'tag');
+            'limited', 'tag', 'search');
         $owner = array('edit', 'delete', 'imageedit', 'terminate_from_company',
             'terminate_from_offer', 'activate_from_company',
             'activate_from_offer', 'copy');
@@ -89,6 +89,20 @@ class OffersController extends AppController {
 
     public function index() {
         $params = array('valid');
+        $this->ordering($params);
+        $this->display($params);
+    }
+
+    public function search($search = null) {
+        $request = $this->request->data;
+
+        if (!empty($request)) {
+            $search = $request['Offer']['search'];
+        }
+
+        $alphanum = preg_replace("/[^a-zA-Zα-ωΑ-Ω0-9\s]/", " ", $search);
+        $words = explode(' ', $alphanum);
+        $params = array('search', 'words' => $words);
         $this->ordering($params);
         $this->display($params);
     }

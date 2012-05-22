@@ -15,9 +15,19 @@ class OffersController extends AppController {
     );
 
     public $order = array(
-        'recent' => array('Offer.modified' => 'desc'),
-        'votes' => array('Offer.vote_count' => 'desc'),
-        'rank' => array('Offer.vote_sum' => 'desc'));
+        'recent' => array(
+            'title' => 'πρόσφατα',
+            'value' => array('Offer.modified' => 'desc')),
+        'votes' => array(
+            'title' => 'ψήφοι',
+            'value' => array(
+                'Offer.vote_count' => 'desc',
+                'Offer.vote_sum' => 'desc')),
+        'rank' => array(
+            'title' => 'βαθμός',
+            'value' => array(
+                'Offer.vote_sum' => 'desc',
+                'Offer.vote_count' => 'desc',)));
 
     public $helpers = array('Html', 'Time', 'Text');
 
@@ -126,18 +136,36 @@ class OffersController extends AppController {
         $this->display($params);
     }
 
+    public function category($id) {
+        // TODO throw exception if invalid/non-existent id
+        $id = (int)$id; // Sanitize id input
+        $conditions['Offer.offer_category_id'] = $id;
+        $params = array('valid', 'conditions' => $conditions);
+        $this->ordering($params);
+        $this->display($params);
+    }
+
     // Add ordering into params
     private function ordering(&$params) {
-        $criterion = $this->params['named']['order'];
-        $valid_criterion = array_key_exists($criterion, $this->order);
-        if ($valid_criterion)
-            $params['order'] = $this->order[$criterion];
+        $order_options = array_keys($this->order);
+        $this->set('order_options', $this->order);
 
-        return $valid_criterion;
+        if (isset($this->params['named']['orderby'])) {
+            $criterion = $this->params['named']['orderby'];
+            $valid_criterion = in_array($criterion, $order_options);
+            if ($valid_criterion)
+                $params['order'] = $this->order[$criterion]['value'];
+
+            return $valid_criterion;
+        } else {
+            return false;
+        }
     }
 
     // Displays offers in list according to passed criteria and sorting params
     private function display($params, $render = true) {
+        $pagination_limit = 10;
+        $params = array_merge($params, array('limit' => $pagination_limit));
         $this->paginate = $params;
         $offers = $this->paginate();
         $this->minify_desc($offers, 160);
@@ -147,17 +175,6 @@ class OffersController extends AppController {
         } else {
             return $offers;
         }
-    }
-
-    public function category($id) {
-        // TODO throw exception if invalid/non-existent id
-        $id = (int)$id; // Sanitize id input
-        $conditions['Offer.offer_category_id'] = $id;
-        $this->paginate = array('valid', 'conditions' => $conditions);
-        $offers = $this->paginate();
-        $this->minify_desc($offers, 160);
-        $this->set('offers', $offers);
-        $this->render('index');
     }
 
     private function minify_desc( &$array, $limit ) {

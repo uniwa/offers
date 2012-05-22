@@ -46,7 +46,7 @@ foreach($offer_categories as $id => $name) {
 $searchbox = $this->Form->create(null, array(
     'controller' => 'offers',
     'action' => 'search'));
-$searchbox .= $this->Form->input('search', array('label' => '', 'type' => 'text'));
+$searchbox .= $this->Form->input('search', array('label' => '', 'type' => 'text', 'value' => $search_string));
 $searchbox .= $this->Form->end();
 ?>
     <div class="span3">

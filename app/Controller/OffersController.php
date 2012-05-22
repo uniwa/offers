@@ -109,6 +109,7 @@ class OffersController extends AppController {
                 $alphanum));
         }
 
+        $this->set('search_string', $alphanum);
         $words = explode(' ', $alphanum);
         $params = array('search', 'words' => $words);
         $this->ordering($params);

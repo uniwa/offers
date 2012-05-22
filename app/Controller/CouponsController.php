@@ -201,7 +201,7 @@ class CouponsController extends AppController {
             $offer['Company']['Municipality']['County']['name'] : null;
 
         $email = new CakeEmail('default');
-        $result = $email
+        $email
             ->to($student_email)
 
             ->subject("Κουπόνι προσφοράς «{$offer_title}»")
@@ -214,9 +214,13 @@ class CouponsController extends AppController {
                 'coupon_uuid' => $coupon_uuid,
                 'company' => $offer['Company'],
                 'municipality' => $municipality,
-                'county' => $county))
+                'county' => $county));
 
-            ->send();
+        try {
+            $email->send();
+        } catch ($e) {
+            //do what with it?
+        }
     }
 
 }

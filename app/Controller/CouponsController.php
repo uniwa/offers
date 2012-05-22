@@ -6,7 +6,7 @@ App::uses('CakeEmail', 'Network/Email');
 class CouponsController extends AppController {
 
     public $name = 'Coupons';
-    public $uses = array('Coupon', 'Offer', 'Company');
+    public $uses = array('Coupon', 'Offer');
     public $helpers = array('Html', 'Time');
     public $components = array('RequestHandler');
 
@@ -52,25 +52,15 @@ class CouponsController extends AppController {
         if ($this->Coupon->save($coupon)) {
 
             $coupon_id = $this->Coupon->id;
-            // get data to send to email composer
-            $this->Offer->recursive = -1;
-            $res = $this->Offer->findById($id, array('title', 'company_id'));
-            $offer_title = $res['Offer']['title'];
-            $company_id = $res['Offer']['company_id'];
 
-            // get Municipality, but avoid fetching unwanted models
-            // Note: these changes apply only for the following ONE find
-            $this->Company->recursive = 2;
-            $this->Company->unbindModel(array(
-                'belongsTo' => array('User'),
-                'hasMany' => array('Offer', 'Image')));
-            $company = $this->Company->findById($company_id, array(
-                'name', 'address', 'postalcode', 'phone', 'fax', 'service_type',
-                'municipality_id'));
+            // this could have been done above to avoid a second query, but is
+            // containable worth it?
+            $this->Offer->Behaviors->attach('Containable');
+            $this->Offer->contain(array('Company.Municipality.County'));
+            $res = $this->Offer->findById($id);
 
             // send email
-            $this->mail_success(
-                $id, $offer_title, $coupon_id, $coupon_uuid, $company);
+            $this->mail_success($res, $coupon_id, $coupon_uuid);
 
 
             // success getting coupon
@@ -198,15 +188,17 @@ class CouponsController extends AppController {
         return parent::is_authorized($user);
     }
 
-    private function mail_success($offer_id, $offer_title, $coupon_id, $coupon_uuid, $company) {
+    private function mail_success($offer, $coupon_id, $coupon_uuid) {
         $student_email = $this->Session->read('Auth.User.email');
 
-        $municipality = Set::check($company, 'Municipality.name') ?
-            $company['Municipality']['name'] : null;
+        $offer_title = $offer['Offer']['title'];
+
+        $municipality = Set::check($offer, 'Company.Municipality.name') ?
+            $offer['Company']['Municipality']['name'] : null;
 
         // could it be that a company may specify county but not municipality?
-        $county = Set::check($company, 'Municipality.County.name') ?
-            $company['Municipality']['County']['name'] : null;
+        $county = Set::check($offer, 'Company.Municipality.County.name') ?
+            $offer['Company']['Municipality']['County']['name'] : null;
 
         $email = new CakeEmail('default');
         $result = $email
@@ -216,11 +208,11 @@ class CouponsController extends AppController {
             ->template('coupon_reservation', 'default')
             ->emailFormat('both')
             ->viewVars(array(
-                'offer_id' => $offer_id,
+                'offer_id' => $offer['Offer']['id'],
                 'offer_title' => $offer_title,
                 'coupon_id' => $coupon_id,
                 'coupon_uuid' => $coupon_uuid,
-                'company' => $company,
+                'company' => $offer['Company'],
                 'municipality' => $municipality,
                 'county' => $county))
 

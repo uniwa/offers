@@ -10,7 +10,7 @@ $offer_url = $this->Html->link($offer_url, $offer_url);
 
 
 // get all keys in `Company' as prefixed variables to avoid (future) collisions
-extract($company['Company'], EXTR_PREFIX_ALL | EXTR_REFS, 'comp');
+extract($company, EXTR_PREFIX_ALL | EXTR_REFS, 'comp');
 
 $company_url = $this->Html->url(array(
     'controller' => 'companies', 'action' => 'view', $comp_id), true);

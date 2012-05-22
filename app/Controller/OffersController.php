@@ -100,7 +100,15 @@ class OffersController extends AppController {
             $search = $request['Offer']['search'];
         }
 
-        $alphanum = preg_replace("/[^a-zA-Zα-ωΑ-Ω0-9\s]/", " ", $search);
+        $alphanum = preg_replace("/[^a-zA-Zα-ωΑ-Ω0-9 ]/", " ", $search);
+
+        if (!empty($request)) {
+            $this->redirect(array(
+                'controller' => 'offers',
+                'action' => 'search',
+                $alphanum));
+        }
+
         $words = explode(' ', $alphanum);
         $params = array('search', 'words' => $words);
         $this->ordering($params);

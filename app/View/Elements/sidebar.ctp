@@ -43,6 +43,9 @@ foreach($offer_categories as $id => $name) {
     $html .= "</li>";
 }
 
+if (!isset($search_string)) {
+    $search_string = '';
+}
 $searchbox = $this->Form->create(null, array(
     'controller' => 'offers',
     'action' => 'search'));

@@ -1,5 +1,8 @@
 <?php
 
+//TODO: maybe place this elsewhere?
+App::uses('CakeEmail', 'Network/Email');
+
 class CouponsController extends AppController {
 
     public $name = 'Coupons';
@@ -39,13 +42,27 @@ class CouponsController extends AppController {
         }
 
         // create a unique id
-        $coupon['Coupon']['serial_number'] = $this->generate_uuid();
+        $coupon_uuid = $this->generate_uuid();
+        $coupon['Coupon']['serial_number'] = $coupon_uuid;
 
         $coupon['Coupon']['is_used'] = 0;
         $coupon['Coupon']['student_id'] = $student_id;
         $coupon['Coupon']['offer_id'] = $id;
 
         if ($this->Coupon->save($coupon)) {
+
+            $coupon_id = $this->Coupon->id;
+
+            // this could have been done above to avoid a second query, but is
+            // containable worth it?
+            $this->Offer->Behaviors->attach('Containable');
+            $this->Offer->contain(array('Company.Municipality.County'));
+            $res = $this->Offer->findById($id);
+
+            // send email
+            $this->mail_success($res, $coupon_id, $coupon_uuid);
+
+
             // success getting coupon
             // differentiate responses based on Accept header parameter
             if ($this->RequestHandler->prefers('html')) {
@@ -56,7 +73,7 @@ class CouponsController extends AppController {
             else if ($this->RequestHandler->prefers(array('xml', 'json'))) {
                 $this->set(array(
                     'coupon' => array(
-                        'id' => $this->Coupon->id,
+                        'id' => $coupon_id,
                         'serial_number' => $coupon['Coupon']['serial_number']),
                     '_serialize' => array('coupon')
                 ));
@@ -169,6 +186,41 @@ class CouponsController extends AppController {
 
         // admin can see banned users too
         return parent::is_authorized($user);
+    }
+
+    private function mail_success($offer, $coupon_id, $coupon_uuid) {
+        $student_email = $this->Session->read('Auth.User.email');
+
+        $offer_title = $offer['Offer']['title'];
+
+        $municipality = Set::check($offer, 'Company.Municipality.name') ?
+            $offer['Company']['Municipality']['name'] : null;
+
+        // could it be that a company may specify county but not municipality?
+        $county = Set::check($offer, 'Company.Municipality.County.name') ?
+            $offer['Company']['Municipality']['County']['name'] : null;
+
+        $email = new CakeEmail('default');
+        $email
+            ->to($student_email)
+
+            ->subject("Κουπόνι προσφοράς «{$offer_title}»")
+            ->template('coupon_reservation', 'default')
+            ->emailFormat('both')
+            ->viewVars(array(
+                'offer_id' => $offer['Offer']['id'],
+                'offer_title' => $offer_title,
+                'coupon_id' => $coupon_id,
+                'coupon_uuid' => $coupon_uuid,
+                'company' => $offer['Company'],
+                'municipality' => $municipality,
+                'county' => $county));
+
+        try {
+            $email->send();
+        } catch ($e) {
+            //do what with it?
+        }
     }
 
 }

@@ -76,10 +76,10 @@ class AppController extends Controller{
             ));
             if ($geo_info['Company']['longitude'] === null or
                 $get_info['Company']['latitude'] === null) {
-                    $msg = "Δεν έχετε συμπληρώσει γεοχωρικές πληροφορίες για την επιχείρηση σας. ";
-                    $msg .= "Προσφορές που αναρτάτε πιθανόν να μην είναι διαθέσιμες μέσο της εφαρμογής κινητού. ";
+                    $msg = "Δεν έχετε συμπληρώσει γεωχωρικές πληροφορίες για την επιχείρηση σας. ";
+                    $msg .= "Προσφορές που αναρτάτε πιθανόν να μην είναι διαθέσιμες μέσω της εφαρμογής κινητού. ";
                     $msg .= "Πατήστε <a href=\"#\">εδώ</a> για να καταχωρήσετε το στίγμα της επιχείρησης σας.";
-                    $this->notify(array($msg, 'default', array('class' => Flash::Warning)));
+                    $this->Session->setFlash($msg, 'default', array('class' => Flash::Info));
             }
         }
     }

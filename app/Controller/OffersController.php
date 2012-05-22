@@ -412,9 +412,15 @@ class OffersController extends AppController {
                 $this->request->data = reset($request_data);
             }
 
-            // set the required default values
-            $this->request->data['Offer']['current_quantity'] = 0;
-            $this->request->data['Offer']['offer_state_id'] = STATE_DRAFT;
+            // avoid blindly accepting values for all properties
+            $this->filter_fields($this->request->data);
+
+            // ALWAYS set type, even if it's null (in which case
+            // `Offer::beforeValidate' will remove it). This way, the field will
+            // not be updated even if it was specified in the request.
+            $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
+
+            $this->set_default_values($this->request->data);
 
             // find the id of the Company related to the logged user
             // and assign it to Offer.company_id
@@ -478,7 +484,7 @@ class OffersController extends AppController {
                     array(  'Παρουσιάστηκε κάποιο σφάλμα',
                             'default',
                             array('class' => Flash::Error)),
-                    null, 400);
+                    null, 400, $this->Offer->validationErrors);
             } else {
                 $transaction->commit();
 
@@ -682,6 +688,42 @@ class OffersController extends AppController {
         }
 
         return $input_elements;
+    }
+
+    // Unsets properties that should not be present in create or update
+    // requests.
+    //
+    // @param data to filter; typically, $this->request->data
+    private function filter_fields(&$data) {
+        $offer = array(
+            'id', 'started', 'ended', 'coupon_count', 'image_count', 'is_spam',
+            'work_hour_count', 'offer_state_id', 'created', 'modified');
+
+        foreach ($offer as $property) {
+            if (array_key_exists($property, $data['Offer'])) {
+                unset($data['Offer'][$property]);
+            }
+        }
+    }
+
+    // Makes necessary initializations such as default values for all offers
+    // and dummy values for properties that should not be required for the
+    // current offer).
+    //
+    // @param $d data to alter; typically, $this->request->data
+    private function set_default_values(&$d) {
+
+        // make alterations to non-coupon offers so that they pass validation of
+        // coupon properties
+        if ($d['Offer']['offer_type_id'] != TYPE_COUPONS) {
+
+            $d['Offer']['total_quantity'] = 1;
+            $d['Offer']['max_per_student'] = '0';
+        }
+
+        // set the required default values
+        $d['Offer']['current_quantity'] = 0;
+        $d['Offer']['offer_state_id'] = STATE_DRAFT;
     }
 
     // Images administration

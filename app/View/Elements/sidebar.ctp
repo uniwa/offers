@@ -42,10 +42,18 @@ foreach($offer_categories as $id => $name) {
         'controller' => 'offers', 'action' => 'category', $id));
     $html .= "</li>";
 }
+
+$searchbox = $this->Form->create(null, array(
+    'controller' => 'offers',
+    'action' => 'search'));
+$searchbox .= $this->Form->input('search', array('label' => '', 'type' => 'text'));
+$searchbox .= $this->Form->end();
 ?>
     <div class="span3">
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
+              <li class="nav-header">Αναζητηση</li>
+              <li><?php echo $searchbox ?></li>
               <li class="nav-header">Κατηγοριες Προσφορων</li>
               <li><?php echo $happyhour, $happyhour_rss ?></li>
               <li><?php echo $coupons, $coupons_rss?></li>

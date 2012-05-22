@@ -51,6 +51,7 @@ class CouponsController extends AppController {
 
         if ($this->Coupon->save($coupon)) {
 
+            $coupon_id = $this->Coupon->id;
             // get data to send to email composer
             $this->Offer->recursive = -1;
             $res = $this->Offer->findById($id, array('title', 'company_id'));
@@ -68,7 +69,8 @@ class CouponsController extends AppController {
                 'municipality_id'));
 
             // send email
-            $this->mail_success($id, $offer_title, $coupon_uuid, $company);
+            $this->mail_success(
+                $id, $offer_title, $coupon_id, $coupon_uuid, $company);
 
 
             // success getting coupon
@@ -81,7 +83,7 @@ class CouponsController extends AppController {
             else if ($this->RequestHandler->prefers(array('xml', 'json'))) {
                 $this->set(array(
                     'coupon' => array(
-                        'id' => $this->Coupon->id,
+                        'id' => $coupon_id,
                         'serial_number' => $coupon['Coupon']['serial_number']),
                     '_serialize' => array('coupon')
                 ));
@@ -196,7 +198,7 @@ class CouponsController extends AppController {
         return parent::is_authorized($user);
     }
 
-    private function mail_success($offer_id, $offer_title, $coupon_uuid, $company) {
+    private function mail_success($offer_id, $offer_title, $coupon_id, $coupon_uuid, $company) {
         $student_email = $this->Session->read('Auth.User.email');
 
         $municipality = Set::check($company, 'Municipality.name') ?
@@ -206,17 +208,17 @@ class CouponsController extends AppController {
         $county = Set::check($company, 'Municipality.County.name') ?
             $company['Municipality']['County']['name'] : null;
 
-
         $email = new CakeEmail('default');
         $result = $email
             ->to($student_email)
 
-            ->subject('Κράτηση κουπονιού')
+            ->subject("Κουπόνι προσφοράς «{$offer_title}»")
             ->template('coupon_reservation', 'default')
-            ->emailFormat('text')
+            ->emailFormat('both')
             ->viewVars(array(
                 'offer_id' => $offer_id,
                 'offer_title' => $offer_title,
+                'coupon_id' => $coupon_id,
                 'coupon_uuid' => $coupon_uuid,
                 'company' => $company,
                 'municipality' => $municipality,

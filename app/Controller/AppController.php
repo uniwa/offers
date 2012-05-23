@@ -32,18 +32,16 @@ class AppController extends Controller{
     // the next two properties alleviate the need to make checks manually; they
     // should be initiliazed early on, before any action is run (by calling
     // $this->api_initialize())
-        // boolean; determines if a webservice api call was made
+    // boolean; determines if a webservice api call was made
     protected $is_webservice;
-        // string; the response type based on the request's Content-Type and/or
-        // Accept headers for a webservice api call
-        // possible values: xml, json, js
+
+    // string; the response type based on the request's Content-Type and/or
+    // Accept headers for a webservice api call
+    // possible values: xml, json, js
     protected $webservice_type;
 
 
     function beforeFilter() {
-        //clear authError default message
-        $this->Auth->authError = " ";
-
         // Prepare offer categories for default sidebar
         $this->OfferCategory->recursive = -1;
         $offer_categories = $this->OfferCategory->find('list');
@@ -97,50 +95,6 @@ class AppController extends Controller{
         return false;
     }
 
-    // DEPRECATED -- soon to be removed: thow Exceptions instead, as usual
-    // Convenience method for throwing exceptions while maintaining support for
-    // the webservice api. This is to replace all occurences of `throw new
-    // Exception(…)' where access to the webservice api is granted.
-    //
-    // NOTE: Do NOT use this method when all is needed is to return an error
-    // code in response to a webservice api call. Use
-    // AppController::notify() instead.
-    //
-    // @param $exception the name of the exception that is to be thrown in case
-    //      of html response type, eg `NotFoundException'
-    // @param $message the message to display to the user. For api calls, this
-    //      affects the content; the header defaults to the description of the
-    //      defined code
-    // @param $code the code of the exception; if specified, it must be a valid
-    //      code and in accordance with CakeResponse::httpCodes(). Generally, it
-    //      is a good idea to specify a code.
-    protected function alert($exception, $message, $code = 0) {
-
-        // if no `code' was specified, instantiate the exception to get its
-        // default code
-        if ($code == 0) {
-
-            $throwable = new $exception($message);
-            $code = $throwable->getCode();
-        }
-
-        if ($this->is_webservice) {
-
-            // should URI be passed in as $extra, or should this become the
-            // default behaviour?
-            $this->api_compile_response($message, $code);
-
-        } else {
-
-            // if `code' was specified, then the exception object will not have
-            // been instantiated yet
-            if (empty($throwable)) {
-                $throwable = new $exception($message, $code);
-            }
-            throw $throwable;
-        }
-    }
-
     public function is_webservice() {
         return $this->is_webservice;
     }
@@ -178,8 +132,8 @@ class AppController extends Controller{
     // @param $extra additional messages to be returned in a webservice api
     //      call. Numeric keys are NOT supported. The following should NOT be
     //      used either: `status', `@status' `message', '_serialize'
-    protected function notify(
-            $flash, $redirect = null, $status = 200, $extra = array()) {
+    protected function notify($flash, $redirect = null, $status = 200,
+                              $extra = array()) {
 
         if ($this->is_webservice) {
 

@@ -131,8 +131,8 @@ class AppController extends Controller{
     // @param $extra additional messages to be returned in a webservice api
     //      call. Numeric keys are NOT supported. The following should NOT be
     //      used either: `status', `@status' `message', '_serialize'
-    protected function notify(
-            $flash, $redirect = null, $status = 200, $extra = array()) {
+    protected function notify($flash, $redirect = null, $status = 200,
+                              $extra = array()) {
 
         if ($this->is_webservice) {
 

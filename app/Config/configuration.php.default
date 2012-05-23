@@ -21,6 +21,8 @@ $config = array(
         'VOTE_CANCEL' => -1,
         'VOTE_DOWN' => 0,
         'VOTE_UP' => 1,
+        'OFFER_ADD' => -1,
+        'OFFER_COPY' => -2,
     ),
     'Settings' => array(
         'offer_type' => array(

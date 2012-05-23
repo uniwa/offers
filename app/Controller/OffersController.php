@@ -42,9 +42,6 @@ class OffersController extends AppController {
             throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
 
         parent::beforeFilter();
-
-        define('ADD', -1);
-        define('COPY', -2);
     }
 
     public function is_authorized($user) {
@@ -356,20 +353,20 @@ class OffersController extends AppController {
 
     // Wrapper functions for 'add offer' action
     public function add_happyhour() {
-        $this->modify(TYPE_HAPPYHOUR, ADD);
+        $this->modify(TYPE_HAPPYHOUR, OFFER_ADD);
     }
 
     public function add_coupons() {
-        $this->modify(TYPE_COUPONS, ADD);
+        $this->modify(TYPE_COUPONS, OFFER_ADD);
     }
 
     public function add_limited() {
-        $this->modify(TYPE_LIMITED, ADD);
+        $this->modify(TYPE_LIMITED, OFFER_ADD);
     }
 
     // The purpose of this function is to replace the wrapper functions add_*,
     // but this time for the webservice api. All it does is to call `modify'
-    // with the appropriate parameters (offer_type_id, and id == ADD) so the
+    // with the appropriate parameters (offer_type_id, and id == OFFER_ADD) so the
     // creation of a new offer may take place.
     public function webservice_add($param = null) {
 
@@ -387,7 +384,7 @@ class OffersController extends AppController {
                 $data = reset($request);
 
                 if (Set::check($data, 'Offer.offer_type_id')) {
-                    $this->modify($data['Offer']['offer_type_id'], ADD);
+                    $this->modify($data['Offer']['offer_type_id'], OFFER_ADD);
                     return;
                 }
             }
@@ -404,7 +401,7 @@ class OffersController extends AppController {
 
     // Wrapper function for 'clone offer' action
     public function copy($id = null) {
-        $this->modify(COPY, $id);
+        $this->modify(OFFER_COPY, $id);
     }
 
     // Function for adding/editing offer
@@ -451,7 +448,7 @@ class OffersController extends AppController {
             $this->request->data['Offer']['company_id'] = $company['Company']['id'];
 
             // Leave id null for copy
-            if ($offer_type_id !== COPY) {
+            if ($offer_type_id !== OFFER_COPY) {
                 $this->Offer->id = $id;
             }
             $transaction = $this->Offer->getDataSource();
@@ -529,7 +526,7 @@ class OffersController extends AppController {
             }
 
             // Add/edit offer
-            if ($id !== ADD) {
+            if ($id !== OFFER_ADD) {
                 // Edit existing offer
                 $options['conditions'] = array('Offer.id' => $id);
                 $options['recursive'] = 0;
@@ -543,11 +540,11 @@ class OffersController extends AppController {
                 // Deny edit for non-draft offer
                 // Allow copy
                 if ($offer['Offer']['offer_state_id'] != STATE_DRAFT)
-                    if($offer_type_id !== COPY)
+                    if($offer_type_id !== OFFER_COPY)
                         throw new ForbiddenException();
 
                 // Unset autostart & autoend for copy
-                if($offer_type_id === COPY) {
+                if($offer_type_id === OFFER_COPY) {
                     unset($offer['Offer']['autostart']);
                     unset($offer['Offer']['autoend']);
                 }

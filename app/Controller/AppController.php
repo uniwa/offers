@@ -42,6 +42,11 @@ class AppController extends Controller{
 
 
     function beforeFilter() {
+        // allow everything
+        // we fine-tune access in is_authorized() for each
+        // controller and action
+        $this->Auth->allow('*');
+
         // Prepare offer categories for default sidebar
         $this->OfferCategory->recursive = -1;
         $offer_categories = $this->OfferCategory->find('list');

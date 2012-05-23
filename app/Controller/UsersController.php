@@ -10,7 +10,6 @@ class UsersController extends AppController {
     function beforeFilter() {
         parent::beforeFilter();
         $this->api_initialize();
-        $this->Auth->allow('register');
 
         // In case user tries to register when logged in
         if ($this->Auth->user() && $this->request['action'] == 'register') {

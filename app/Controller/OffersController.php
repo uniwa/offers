@@ -42,7 +42,7 @@ class OffersController extends AppController {
             throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
 
         parent::beforeFilter();
-        $this->Auth->allow('index');
+
         define('ADD', -1);
         define('COPY', -2);
     }

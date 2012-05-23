@@ -32,11 +32,12 @@ class AppController extends Controller{
     // the next two properties alleviate the need to make checks manually; they
     // should be initiliazed early on, before any action is run (by calling
     // $this->api_initialize())
-        // boolean; determines if a webservice api call was made
+    // boolean; determines if a webservice api call was made
     protected $is_webservice;
-        // string; the response type based on the request's Content-Type and/or
-        // Accept headers for a webservice api call
-        // possible values: xml, json, js
+
+    // string; the response type based on the request's Content-Type and/or
+    // Accept headers for a webservice api call
+    // possible values: xml, json, js
     protected $webservice_type;
 
 

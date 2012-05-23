@@ -41,9 +41,6 @@ class AppController extends Controller{
 
 
     function beforeFilter() {
-        //clear authError default message
-        $this->Auth->authError = " ";
-
         // Prepare offer categories for default sidebar
         $this->OfferCategory->recursive = -1;
         $offer_categories = $this->OfferCategory->find('list');
@@ -95,50 +92,6 @@ class AppController extends Controller{
 
         // default deny
         return false;
-    }
-
-    // DEPRECATED -- soon to be removed: thow Exceptions instead, as usual
-    // Convenience method for throwing exceptions while maintaining support for
-    // the webservice api. This is to replace all occurences of `throw new
-    // Exception(…)' where access to the webservice api is granted.
-    //
-    // NOTE: Do NOT use this method when all is needed is to return an error
-    // code in response to a webservice api call. Use
-    // AppController::notify() instead.
-    //
-    // @param $exception the name of the exception that is to be thrown in case
-    //      of html response type, eg `NotFoundException'
-    // @param $message the message to display to the user. For api calls, this
-    //      affects the content; the header defaults to the description of the
-    //      defined code
-    // @param $code the code of the exception; if specified, it must be a valid
-    //      code and in accordance with CakeResponse::httpCodes(). Generally, it
-    //      is a good idea to specify a code.
-    protected function alert($exception, $message, $code = 0) {
-
-        // if no `code' was specified, instantiate the exception to get its
-        // default code
-        if ($code == 0) {
-
-            $throwable = new $exception($message);
-            $code = $throwable->getCode();
-        }
-
-        if ($this->is_webservice) {
-
-            // should URI be passed in as $extra, or should this become the
-            // default behaviour?
-            $this->api_compile_response($message, $code);
-
-        } else {
-
-            // if `code' was specified, then the exception object will not have
-            // been instantiated yet
-            if (empty($throwable)) {
-                $throwable = new $exception($message, $code);
-            }
-            throw $throwable;
-        }
     }
 
     public function is_webservice() {

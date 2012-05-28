@@ -14,17 +14,21 @@ if (empty($offers)) {
     $select_order = '';
     $orderby = (isset($this->params['named']['orderby']))
         ?$this->params['named']['orderby']:null;
-    define('DEFAULT_ORDERBY', 'recent');
-    $new_order = "<strong>{$order_options[DEFAULT_ORDERBY]['title']}</strong>";
+    $action = $this->params['action'];
+    $pass = (isset($this->params['pass'][0]))?$this->params['pass'][0]:null;
+    $default_orderby = (($action === 'limited') && (is_null($pass)))?
+        'autoend':'recent';
+    $new_order = "<strong>{$order_options[$default_orderby]['title']}</strong>";
     foreach ($order_options as $k => $v) {
-        $action = $this->params['action'];
-        $pass = (isset($this->params['pass'][0]))?$this->params['pass'][0]:null;
+        if ($k == 'autoend')
+            if ($action !== 'limited')
+                continue;
         if (!is_null($orderby) && ($k === $orderby)) {
             $select_order .= " <strong>{$v['title']}</strong>";
             continue;
         }
-        if (is_null($orderby) && ($k === DEFAULT_ORDERBY)) {
-            $select_order .= $new_order;
+        if (is_null($orderby) && ($k === $default_orderby)) {
+            $select_order .= " {$new_order}";
             continue;
         }
         $select_order .= " ".$this->Html->link($v['title'],

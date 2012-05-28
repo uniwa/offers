@@ -15,6 +15,11 @@ class OffersController extends AppController {
     );
 
     public $order = array(
+        'autoend' => array(
+            'title' => 'ημ.λήξης',
+            'value' => array(
+                'Offer.autoend' => 'desc',
+                'Offer.vote_sum' => 'desc',)),
         'recent' => array(
             'title' => 'πρόσφατα',
             'value' => array('Offer.modified' => 'desc')),
@@ -154,11 +159,15 @@ class OffersController extends AppController {
         if (isset($this->params['named']['orderby'])) {
             $criterion = $this->params['named']['orderby'];
             $valid_criterion = in_array($criterion, $order_options);
-            if ($valid_criterion)
+            if ($valid_criterion &&
+                ($this->params['action'] === 'limited') ||
+                ($criterion !== 'autoend'))
+            {
                 $params['order'] = $this->order[$criterion]['value'];
 
-            return $valid_criterion;
-        } else {
+                return $valid_criterion;
+            }
+
             return false;
         }
     }

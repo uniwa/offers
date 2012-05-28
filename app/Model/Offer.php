@@ -412,7 +412,7 @@ class Offer extends AppModel {
         // an empty `offer_type_id' designates that this is an update action
         // the type should only be specified on create
         if (array_key_exists('offer_type_id', $this->data['Offer'])) {
-            if ($this->data['Offer'] == null) {
+            if ($this->data['Offer']['offer_type_id'] == null) {
                 unset($this->data['Offer']['offer_type_id']);
             }
         }

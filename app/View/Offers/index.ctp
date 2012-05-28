@@ -37,6 +37,7 @@ if (empty($offers)) {
         $votes = "<span class='votes {$vote_class}'>{$vote_sum}</span> ";
         $postfix = ($vote_count == 1)?'ς':'ι';
         $votes .= "({$vote_count} ψήφο{$postfix})";
+        $html .= "<p>";
         $html .=  $this->Html->link($title,
             array('action' => 'view', $offers[$key]['Offer']['id']));
         $html .= " {$label} {$votes}";
@@ -44,14 +45,16 @@ if (empty($offers)) {
 //        $html .= $description;
 
         // print tags as links if available
-        if ($offer['Offer']['tags'] == NULL)
+        if ($offer['Offer']['tags'] == NULL){
+            $html .= "</p>";
             continue;
+        }
 
         $tags = explode(' ', trim($offer['Offer']['tags']));
         $tag_num = count($tags);
         $tag_counter = 0;
 
-        $html .= "<p>Tags: ";
+        $html .= "<br />Tags: ";
         foreach ($tags as $tag) {
             $html .= $this->Html->link(
                 $tag,

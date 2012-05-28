@@ -67,11 +67,11 @@ $searchbox .= $this->Form->end();
             <ul class="nav nav-list">
               <li class="nav-header">Αναζητηση</li>
               <li><?php echo $searchbox ?></li>
-              <li class="nav-header">Κατηγοριες Προσφορων</li>
+              <li class="nav-header">Ειδη Προσφορων</li>
               <li><?php echo $happyhour, $happyhour_rss ?></li>
               <li><?php echo $coupons, $coupons_rss?></li>
               <li><?php echo $limited, $limited_rss ?></li>
-              <li class="nav-header">Ειδη Προσφορων</li>
+              <li class="nav-header">Κατηγοριες Προσφορων</li>
               <?php echo $html; ?>
             </ul>
           </div><!--/.well -->

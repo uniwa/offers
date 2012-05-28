@@ -318,7 +318,7 @@ class OffersController extends AppController {
         $offer_info[] = $new_elem;
         $new_elem['label'] = "Λέξεις-κλειδιά";
         $new_elem['value'] = $offer['Offer']['tags'];
-        $offer_info[] = $new_elem;
+        $offer_info['tags'] = $new_elem;
         if (($offer_type_id == TYPE_COUPONS) &&
             $offer['Offer']['coupon_count'] >= 0) {
             $new_elem['label'] = "Δεσμευμένα κουπόνια";

@@ -102,9 +102,16 @@ if ($is_spam) {
 
 $html .= '<br>';
 
+$tag_link = array('controller' => 'offers', 'action' => 'tag');
+// use helper to generate tags
+$tag_options = array('element' => 'span', 'link' => $tag_link, 'label' => '');
+$offer_info['tags']['value'] = $this->Tag->generate($offer_info['tags']['value'], $tag_options);
+
 foreach($offer_info as $elem) {
     $html .= "<strong>{$elem['label']}:</strong> {$elem['value']}<br />";
 }
+
+
 
 if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
     $offer['Offer']['offer_type_id'] !== TYPE_HAPPYHOUR) {

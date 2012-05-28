@@ -132,6 +132,18 @@ class CouponsController extends AppController {
     }
 
     public function delete($id = null) {
+        // get offer id
+        $offer_id = $this->Coupon->field('offer_id', array(
+            'id' => $id));
+
+        // check if offer has ended
+        $has_ended = $this->Offer->field('ended', array(
+            'id' => $offer_id));
+
+        if (! $has_ended) {
+            throw new ForbiddenException();
+        }
+
         $this->Coupon->id = $id;
         $result = $this->Coupon->saveField('student_id', 
             null, $validate = false);

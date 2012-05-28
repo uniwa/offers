@@ -50,26 +50,12 @@ if (empty($offers)) {
             continue;
         }
 
-        $tags = explode(' ', trim($offer['Offer']['tags']));
-        $tag_num = count($tags);
-        $tag_counter = 0;
-
-        $html .= "<br />Tags: ";
-        foreach ($tags as $tag) {
-            $html .= $this->Html->link(
-                $tag,
-                array('controller' => 'offers', 'action' => 'tag', $tag)
-            );
-
-            // this is the only (and horrible) solution
-            // because CakePHP is a lie and does not provide a
-            // template engine and thus no mechanism to make this
-            // intuitive
-            $tag_counter++;
-            if ($tag_counter !== $tag_num)
-                $html .= ", ";
-        }
-        $html .= "</p>";
+        $html .= "<br />";
+        // where tag links should go
+        $tag_link = array('controller' => 'offers', 'action' => 'tag');
+        // use helper to generate tags
+        $tag_options = array('element' => 'p', 'link' => $tag_link);
+        $html .= $this->Tag->generate($offer['Offer']['tags'], $tag_options);
     }
 }
 $this->Paginator->options(array('url' => $this->passedArgs));

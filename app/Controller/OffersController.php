@@ -132,6 +132,8 @@ class OffersController extends AppController {
 
     public function limited() {
         $params = array('limited');
+        if (!$this->RequestHandler->isRss())
+            $params['orderby'] = 'autoend';
         $this->ordering($params);
         $this->display($params);
     }
@@ -156,8 +158,11 @@ class OffersController extends AppController {
         $order_options = array_keys($this->order);
         $this->set('order_options', $this->order);
 
-        if (isset($this->params['named']['orderby'])) {
+        if (isset($params['orderby']))
+            $criterion = $params['orderby'];
+        if (isset($this->params['named']['orderby']))
             $criterion = $this->params['named']['orderby'];
+        if (isset($criterion)) {
             $valid_criterion = in_array($criterion, $order_options);
             if ($valid_criterion &&
                 ($this->params['action'] === 'limited') ||

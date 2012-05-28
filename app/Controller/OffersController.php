@@ -29,7 +29,7 @@ class OffersController extends AppController {
                 'Offer.vote_sum' => 'desc',
                 'Offer.vote_count' => 'desc',)));
 
-    public $helpers = array('Html', 'Time', 'Text');
+    public $helpers = array('Html', 'Time', 'Text', 'Tag');
 
     public $components = array('Common', 'RequestHandler');
 

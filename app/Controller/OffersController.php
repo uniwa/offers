@@ -430,10 +430,14 @@ class OffersController extends AppController {
             // avoid blindly accepting values for all properties
             $this->filter_fields($this->request->data);
 
-            // ALWAYS set type, even if it's null (in which case
+            // Avoid changing type through update:
+            // ALWAYS set type, even to null (in which case
             // `Offer::beforeValidate' will remove it). This way, the field will
             // not be updated even if it was specified in the request.
-            $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
+            // Still, preserve the type in case of cloning an offer.
+            if ($offer_type_id != OFFER_COPY) {
+                $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
+            }
 
             $this->set_default_values($this->request->data);
 

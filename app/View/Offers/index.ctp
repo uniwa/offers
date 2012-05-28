@@ -62,11 +62,10 @@ if (empty($offers)) {
 
         // print tags as links if available
         if ($offer['Offer']['tags'] == NULL){
-            $html .= "</p>";
+            $html .= "</p><br />";
             continue;
         }
 
-        $html .= "<br />";
         // where tag links should go
         $tag_link = array('controller' => 'offers', 'action' => 'tag');
         // use helper to generate tags

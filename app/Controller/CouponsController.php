@@ -23,6 +23,8 @@ class CouponsController extends AppController {
         if ($id === null)
             throw new BadRequestException();
 
+        $redirect = array($this->referer());
+
         // check if offer exists and is valid
         $conditions = array('Offer.id' => $id);
         $offer = $this->Offer->find('valid',
@@ -36,9 +38,13 @@ class CouponsController extends AppController {
         // check if user is allowed to get the coupon due to maximum
         // coupon number acquired
         if ($this->Coupon->max_coupons_reached($id, $student_id)) {
-            // TODO: make this a non 500 error
-            throw new MaxCouponsException('Έχετε δεσμεύσει τον μέγιστο ' .
-                'αριθμό κουπονιών για αυτήν την προσφορά.');
+
+            $flash = array('Έχετε δεσμεύσει τον μέγιστο αριθμό κουπονιών για '
+                           .'αυτήν την προσφορά.',
+                           'default',
+                           array('class' => Flash::Error));
+
+            return $this->notify($flash, $redirect, 400);
         }
 
         // create a unique id

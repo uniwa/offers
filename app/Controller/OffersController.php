@@ -102,7 +102,7 @@ class OffersController extends AppController {
             $search = $request['Offer']['search'];
         }
 
-        $alphanum = preg_replace("/[^a-zA-Zα-ωΑ-Ω0-9 ]/", " ", $search);
+        $alphanum = Mb_Eregi_Replace("/[^a-zA-Zα-ωΑ-Ω0-9 ]/", " ", $search);
 
         if (!empty($request)) {
             $this->redirect(array(

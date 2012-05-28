@@ -12,9 +12,21 @@ if (empty($offers)) {
 } else {
     // Ordering
     $select_order = '';
+    $orderby = (isset($this->params['named']['orderby']))
+        ?$this->params['named']['orderby']:null;
+    define('DEFAULT_ORDERBY', 'recent');
+    $new_order = "<strong>{$order_options[DEFAULT_ORDERBY]['title']}</strong>";
     foreach ($order_options as $k => $v) {
         $action = $this->params['action'];
         $pass = (isset($this->params['pass'][0]))?$this->params['pass'][0]:null;
+        if (!is_null($orderby) && ($k === $orderby)) {
+            $select_order .= " <strong>{$v['title']}</strong>";
+            continue;
+        }
+        if (is_null($orderby) && ($k === DEFAULT_ORDERBY)) {
+            $select_order .= $new_order;
+            continue;
+        }
         $select_order .= " ".$this->Html->link($v['title'],
             array('action' => $action, $pass, 'orderby' => $k));
     }

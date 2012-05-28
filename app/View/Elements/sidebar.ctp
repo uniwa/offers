@@ -40,6 +40,12 @@ foreach($offer_categories as $id => $name) {
     $html .= "<li>";
     $html .= $this->Html->link($name, array(
         'controller' => 'offers', 'action' => 'category', $id));
+    $html .= $this->Html->link(
+        '',
+        array('controller' => 'offers', 'action' => 'category', "{$id}.rss"),
+        array('class' => 'rss-category', 'title' => "RSS feed for category {$id}")
+    );
+
     $html .= "</li>";
 }
 

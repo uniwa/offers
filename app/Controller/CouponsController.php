@@ -71,39 +71,27 @@ class CouponsController extends AppController {
 
             // success getting coupon
             // differentiate responses based on Accept header parameter
-            if ($this->RequestHandler->prefers('html')) {
-                $this->Session->setFlash('Το κουπόνι δεσμεύτηκε επιτυχώς',
-                                         'default',
-                                         array('class' => Flash::Success));
-            }
-            else if ($this->RequestHandler->prefers(array('xml', 'json'))) {
-                $this->set(array(
-                    'coupon' => array(
-                        'id' => $coupon_id,
-                        'serial_number' => $coupon['Coupon']['serial_number']),
-                    '_serialize' => array('coupon')
-                ));
-                return;
-            }
+            $flash = array('Το κουπόνι δεσμεύτηκε επιτυχώς',
+                           'default',
+                           array('class' => Flash::Success));
+
+            $status = 200;
+            $extra = array('id' => $coupon_id,
+                           'serial_number' => $coupon_uuid);
 
         }
         else {
             // error getting coupon
             // differentiate responses based on Accept header parameter
-            if ($this->RequestHandler->prefers('html')) {
-                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
-                                         'default',
-                                         array('class' => Flash::Error));
-            }
-            else if ($this->RequestHandler->prefers(array('xml', 'json'))) {
-                $this->set(array(
-                    'error' => 'Παρουσιάστηκε σφάλμα κατά την δέσμευση του κουπονιού',
-                    '_serialize' => array('error')
-                ));
-            }
+            $flash = array('Παρουσιάστηκε κάποιο σφάλμα',
+                           'default',
+                           array('class' => Flash::Error));
+            $status = 400;
+
+            $extra = array();
         }
 
-        $this->redirect($this->referer());
+        $this->notify($flash, $redirect, $status, $extra);
     }
 
     public function view($id = null) {

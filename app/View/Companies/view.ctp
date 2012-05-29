@@ -73,14 +73,14 @@ if (isset($comp['latitude']) && isset($comp['longitude'])) {
     echo "<script>var map = new L.Map('map');$('#map').css('width',{$map_width}).css('height',{$map_height});";
     echo "var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/{$api_key}/997/256/{z}/{x}/{y}.png';";
     echo "var cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18});";
-    echo "var tei = new L.LatLng({$lat},{$lng});";
-    echo "map.setView(tei, 15).addLayer(cloudmade);";
+    echo "var company = new L.LatLng({$lat},{$lng});";
+    echo "map.setView(company, 15).addLayer(cloudmade);";
     echo "var MyIcon = L.Icon.extend({iconUrl:'{$images_path}marker.png',";
     echo "shadowUrl:'{$images_path}marker-shadow.png',iconSize:new L.Point(25,41),";
     echo "shadowSize:new L.Point(41,41),iconAnchor: new L.Point(13,21),";
     echo "popupAnchor:new L.Point(-3,-41)});";
     echo "var icon = new MyIcon();";
-    echo "var marker = new L.Marker(tei,{icon: icon});";
+    echo "var marker = new L.Marker(company,{icon: icon});";
     echo "map.addLayer(marker);</script>";
     echo "<noscript>";
     echo "<img src='http://staticmap.openstreetmap.de/staticmap.php?";

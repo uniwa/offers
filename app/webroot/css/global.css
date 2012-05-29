@@ -39,3 +39,10 @@
 .help-text {
     cursor: help;
 }
+
+.rss-category{
+    float: right;
+    background-image: url('../img/rss-gray-small.png');
+    background-repeat: no-repeat;
+    height: 24px;
+}

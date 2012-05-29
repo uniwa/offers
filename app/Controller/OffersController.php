@@ -53,9 +53,8 @@ class OffersController extends AppController {
         $role = $this->Auth->user('role');
         $allow = array('index', 'category', 'view', 'happyhour', 'coupons',
             'limited', 'tag', 'search');
-        $owner = array('edit', 'delete', 'imageedit', 'terminate_from_company',
-            'terminate_from_offer', 'activate_from_company',
-            'activate_from_offer', 'copy');
+        $owner = array('edit', 'delete', 'imageedit', 'activate', 'terminate',
+            'copy');
         $companies = array('add_happyhour', 'add_coupons', 'add_limited',
             'webservice_add');
         $students = array('vote_up', 'vote_down');
@@ -865,38 +864,25 @@ class OffersController extends AppController {
         return false;
     }
 
-    // Wrapper functions of `_change_state' for the activation of an offer
-    // specifying a redirect target.
-    //
-    // @param $id offer id to activate
-    public function activate_from_company($id = null) {
-        $this->_change_state($id, array(
-            'controller' => 'companies',
-            'action' => 'view'));
-    }
-    public function activate_from_offer($id = null) {
-        $this->_change_state($id, array(
-            'controller' => 'offers',
-            'action' => 'view', $id));
+    // Wrapper function of `_change_state' for the activation of an offer.
+    public function activate($id = null) {
+        if (is_null($id)) {
+            throw new BadRequestException(
+                'Δεν έχει προσδιοριστεί το id της προσφοράς');
+        }
+
+        return $this->_change_state($id, false);
     }
 
-    // Wrapper functions of `_change_state' for the termination of an offer
-    // specifying a redirect target.
-    //
-    // @param $id offer id to terminate
-    public function terminate_from_company($id = null) {
-        $this->_change_state($id, array(
-            'controller' => 'companies',
-            'action' => 'view'), true);
+    // Wrapper function of `_change_state' for the termination of an offer.
+    public function terminate($id = null) {
+        if (is_null($id)) {
+            throw new BadRequestException(
+                'Δεν έχει προσδιοριστεί το id της προσφοράς');
+        }
+
+        return $this->_change_state($id, true);
     }
-    public function terminate_from_offer($id = null) {
-        $this->_change_state($id, array(
-            'controller' => 'offers',
-            'action' => 'view', $id), true);
-    }
-    // this will (potentially) be used in the administrative page of all offers
-#    public function terminate_from_admin($id = null) {
-#    }
 
     // Responsible for manipulating the state of an offer. After execution,
     // redirects back to the referer.

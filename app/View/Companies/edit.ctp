@@ -3,7 +3,8 @@
 echo $this->Form->create(false, array(
                                     'url' => array(
                                         'controller' => 'companies',
-                                        'action' => 'edit', $company['Company']['id']
+                                        'action' => 'edit',
+                                        $company['Company']['id']
                                     ),
                                     'type' => 'POST',
                                     'enctype' => 'multipart/form-data',

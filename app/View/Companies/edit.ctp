@@ -49,9 +49,7 @@ echo $this->Form->input('Company.fax', array(
                         'class' => 'span2',
                         'type'  => 'text'
                        ));
-?>
 
-<?php 
 echo $this->element( "work_hours", array(
     "work_hour_count" => $company['Company']['work_hour_count'],
     "timeFormat" => 24,
@@ -62,9 +60,7 @@ echo $this->element( "work_hours", array(
     //"input_label" => null, //default
     //"staring_time_label" => null, //default
     //"ending_time_lebel" => null, //default
-) );?>
-
-<?php
+) );
 
 foreach ($company['Image'] as $image) {
     echo $this->Html->image('/images/view/'.$image['id']);

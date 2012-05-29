@@ -35,7 +35,7 @@ if ($is_user_the_owner) {
         $html .= $this->Html->link(
           '[Ενεργοποίηση]', array(
                 'controller' => 'offers',
-                'action' => 'activate_from_offer',
+                'action' => 'activate',
                 $offer['Offer']['id']), null,
                 'Οι ενεργοποιημένες προσφορές δε δύνανται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
         $html .= '<br>';
@@ -50,7 +50,7 @@ if ($is_user_the_owner) {
 
         $html .= $this->Html->link('[Τερματισμός]', array(
             'controller' => 'offers',
-            'action' => 'terminate_from_offer',
+            'action' => 'terminate',
             $offer['Offer']['id']), null,
             'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
     }

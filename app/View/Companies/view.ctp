@@ -84,7 +84,7 @@ if (empty($company['Offer']['Active'])) {
               '[Τερματισμός]',
               array(
                   'controller' => 'offers',
-                  'action' => 'terminate_from_company',
+                  'action' => 'terminate',
                   $active['id']),
               null,
               'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
@@ -117,7 +117,7 @@ if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
                   '[Ενεργοποίηση]',
                   array(
                       'controller' => 'offers',
-                      'action' => 'activate_from_company',
+                      'action' => 'activate',
                       $draft['id']),
                   null,
                   'Οι ενεργοποιημένες προσφορές δε δύναται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');

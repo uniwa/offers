@@ -774,7 +774,7 @@ class OffersController extends AppController {
         if ($offer['Company']['user_id'] != $this->Auth->User('id'))
             throw new ForbiddenException();
 
-        if ($offer['Offer']['offer_state_id'] === STATE_DRAFT)
+        if ($offer['Offer']['offer_state_id'] != STATE_DRAFT)
             throw new ForbiddenException();
 
         $this->set('offer', $offer);

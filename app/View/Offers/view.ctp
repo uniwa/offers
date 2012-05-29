@@ -41,7 +41,7 @@ if ($is_user_the_owner) {
         $html .= '<br>';
     }
 
-    if ($is_offer_active) {
+    if ($is_offer_draft) {
         $html .= $this->Html->link('Εικόνες', array(
             'controller' => 'offers',
             'action' => 'imageedit',

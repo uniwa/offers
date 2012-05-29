@@ -74,16 +74,6 @@ foreach ($company['Image'] as $image) {
                           ).'<br/>';
 }
 
-echo $this->Form->input('Image.0', array(
-                            'label' => 'Φωτογραφία',
-                            'type' => 'file'
-                       ));
-
-echo $this->Form->input('Image.1', array(
-                            'label' => 'Φωτογραφία',
-                            'type' => 'file'
-                       ));
-
 echo $this->Form->hidden('User.id');
 echo $this->Form->hidden('Company.id');
 echo $this->Form->hidden('Company.user_id');

@@ -43,12 +43,12 @@
 
     Router::connect('/webservice/offer/activate/*',
         array(  'controller' => 'offers',
-                'action' => 'activate_from_offer',
+                'action' => 'activate',
                 '[method]' => 'GET'));
 
     Router::connect('/webservice/offer/terminate/*',
         array(  'controller' => 'offers',
-                'action' => 'terminate_from_offer',
+                'action' => 'terminate',
                 '[method]' => 'GET'));
 
     Router::connect('/webservice/offer/*',

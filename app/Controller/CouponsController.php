@@ -230,5 +230,3 @@ class CouponsController extends AppController {
     }
 
 }
-
-class MaxCouponsException extends CakeException {};

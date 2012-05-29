@@ -82,8 +82,17 @@
                     $username = $this->Session->read( 'Auth.User.username' );
                     $role = $this->Session->read( 'Auth.User.role' );
 
-                    $profile = $this->Html->link( __('Το προφίλ μου'),
-                        ($role == ROLE_COMPANY)?"/companies/view/":"/students/view/");
+                    if ($role == ROLE_STUDENT) {
+                        $controller = 'students';
+                    } else if ($role == ROLE_COMPANY) {
+                        $controller = 'companies';
+                    } else if ($role == ROLE_ADMIN) {
+                        $controller = 'admins';
+                    }
+
+                    $profile = $this->Html->link('Το προφίλ μου', array(
+                                                    'controller' => $controller,
+                                                    'action' => 'view'));
 
                     $logout = $this->Html->link( __('Αποσύνδεση '), array( 'controller' => 'users', 'action' => 'logout') );
 

@@ -767,7 +767,6 @@ class OffersController extends AppController {
         $options['conditions'] = array('Offer.id' => $id);
         $options['recursive'] = 1;
         $offer = $this->Offer->find('first', $options);
-        $max_images = count($offer['Image']) >= MAX_IMAGES;
 
         if (empty($offer)) throw new NotFoundException();
 
@@ -779,17 +778,24 @@ class OffersController extends AppController {
 
         $this->set('offer', $offer);
 
-        if (!$max_images) {
-            $new_elem = array();
-            $new_elem['title'] = 'Image';
-            $new_elem['options']['label'] = 'Προσθήκη εικόνας';
-            $new_elem['options']['type'] = 'file';
-            $input_elements[] = $new_elem;
-
-            $this->set('input_elements', $input_elements);
+        // bail with a flash if max images reached
+        if (count($offer['Image']) >= MAX_IMAGES) {
+            $this->Session->setFlash(
+                'Έχετε φτάσει τον μέγιστο επιτρεπτό αρθμό εικόνων',
+                'default',
+                array('class' => Flash::Warning));
+                return;
         }
 
-        if (!empty($this->request->data) && !$max_images) {
+        // create input element
+        $new_elem = array();
+        $new_elem['title'] = 'Image';
+        $new_elem['options']['label'] = 'Προσθήκη εικόνας';
+        $new_elem['options']['type'] = 'file';
+        $input_elements[] = $new_elem;
+        $this->set('input_elements', $input_elements);
+
+        if (!empty($this->request->data)) {
             // check if user pressed upload without image
             if (empty($this->request->data['Image']['name']))
                 $this->upload_error($id, 'empty');

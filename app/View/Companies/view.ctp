@@ -60,6 +60,12 @@ foreach ($company['Image'] as $image) {
     echo $this->Html->image('/images/view/'.$image['id']).'<br/>';
 }
 */
+if (isset($comp['longitude']) && isset($comp['latitude'])) {
+    echo "<img src='http://staticmap.openstreetmap.de/staticmap.php?";
+    echo "center={$comp['longitude']},{$comp['latitude']}&zoom=15&size=400x280&";
+    echo "markers={$comp['longitude']},{$comp['latitude']},ol-marker-gold' /><br/>";
+}
+
 echo '<br/>';
 
 // display Active offers

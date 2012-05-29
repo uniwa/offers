@@ -898,44 +898,41 @@ class OffersController extends AppController {
 #    public function terminate_from_admin($id = null) {
 #    }
 
-    // Responsible for manipulating the state of an offer.
+    // Responsible for manipulating the state of an offer. After execution,
+    // redirects back to the referer.
     //
     // @param $id the offer to activate/terminate
-    // @param $redirect passed into $this->redirect; if omitted,no redirection
-    //      will take place
     // @param $should_terminate determines if offer should be activated or
     //      terminated; defaults to false, resulting in its activation
     // @throws ForbiddenException if necessary conditions for
     //      activation/termination are not met
-    private function _change_state($id = null, $redirect = null, $should_terminate = false) {
-        $error = false;
-        $status = 200;
-        $class = Flash::Success;
+    private function _change_state($id = null, $should_terminate = false) {
+
         if ($should_terminate) {
-            if ($this->Offer->terminate($id)) {
-                $msg = 'Η προσφορά τερματίστηκε';
-            } else {
-                $error = true;
-            }
+            $method = 'terminate';
+            $success_verb = 'τερματίστηκε';
         } else {
-            if ($this->Offer->activate($id)) {
-                $msg = 'Η προσφορά ενεργοποιήθηκε';
-            } else {
-                $error = true;
-            }
+            $method = 'activate';
+            $success_verb = 'ενεργοποιήθηκε';
         }
 
-        // this is unlinkely to occur
-        if ($error) {
+        if ($this->Offer->{$method}($id)) {
+            $msg = "Η προσφορά $success_verb";
+            $status = 200;
+            $class = Flash::Success;
+        } else {
+            // this is unlinkely to occur
             $msg = 'Προέκυψε κάποιο σφάλμα';
             $status = 400;
             $class = Flash::Error;
         }
 
-        $this->notify(
-            array($msg, 'default', array('class' => $class)),
-            array($redirect),
-            $status);
+        $redirect = $this->is_webservice
+                        ? null : array($this->request->referer());
+
+        $this->notify(array($msg, 'default', array('class' => $class)),
+                      $redirect,
+                      $status);
     }
 
     private function get_time($time) {

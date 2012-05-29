@@ -27,8 +27,10 @@ class CompaniesController extends AppController {
             }
         }
 
-        // filter only enabled companies
-        $options['conditions'] += array('Company.is_enabled' => 1);
+        // filter only enabled companies, but not for admin
+        if ($this->Auth->user('role') != ROLE_ADMIN) {
+            $options['conditions'] += array('Company.is_enabled' => 1);
+        }
         $options['recursive'] = 1;
 
         // ignore offers for the following `find'

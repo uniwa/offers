@@ -32,12 +32,17 @@ class AdminsController extends AppController {
         // let's be lightweight - fetch only required attributes
         $fields = array('Company.id',
                         'Company.name',
-                        'Company.is_enabled');
+                        'Company.is_enabled',
+                        'User.username',
+                        'User.email',
+                        'User.is_banned');
 
         $this->paginate = array('limit' => $pagination_limit,
                                 'fields' => $fields,
-                                'recursive' => -1);
+                                'recursive' => 0);
 
+        $this->Company->Behaviors->attach('Containable');
+        $this->Company->contain(array('User'));
         $data = $this->paginate();
 
         $this->set('data', $data);

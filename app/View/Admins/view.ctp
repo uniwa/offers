@@ -1,11 +1,14 @@
 
 <h6>Επιχειρησεις</h6>
-<table class="table table-condensed table-striped">
+<table class="table">
     <thead>
         <tr>
             <th>Α/Α</th>
             <th>Όνομα επιχείρησης</th>
-            <th>Κατάσταση</th>
+            <th>μπορεί να αναρτά;</th>
+            <th>Όνομα χρήστη</th>
+            <th>e-mail</th>
+            <th>μπορεί να συνδεθεί;</th>
         </tr>
     </thead>
     <tbody>
@@ -15,25 +18,29 @@
             $counter = (int) $this->Paginator->counter('{:start}');
             foreach ($data as $r) {
 
-                $comp_id = $r['Company']['id'];
                 $comp_name = $r['Company']['name'];
-
                 $comp_url = array('controller' => 'companies',
                                   'action' => 'view',
-                                  $comp_id);
+                                  $r['Company']['id']);
 
-                $comp_title = $this->Html->link($comp_name, $comp_url);
+                $comp_state = $r['Company']['is_enabled']
+                                    ? '<i class="icon-ok"></i>'
+                                    : '<i class="icon-remove"></i>';
 
-                if ($r['Company']['is_enabled']) {
-                    $state = '<i class="icon-ok"></i>';
-                } else {
-                    $state = '<i class="icon-remove"></i>';
-                }
+                $user_name = $r['User']['username'];
+                $user_email = $r['User']['email'];
+
+                $user_state = $r['User']['is_banned']
+                                    ? '<i class="icon-remove"></i>'
+                                    : '<i class="icon-ok"></i>';
 
                 echo '<tr>';
                 echo "<td>$counter</td>";
-                echo "<td>$comp_title</td>";
-                echo "<td>$state</td>";
+                echo "<td>{$this->Html->link($comp_name, $comp_url)}</td>";
+                echo "<td>$comp_state</td>";
+                echo "<td>$user_name</td>";
+                echo "<td>$user_email</td>";
+                echo "<td>$user_state</td>";
                 echo '</tr>';
 
                 ++$counter;

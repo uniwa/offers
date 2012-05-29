@@ -1,0 +1,60 @@
+<?php
+
+class RequestsController extends Controller {
+    /*
+     *  A controller to make external requests
+     *  allowing access only from localhost. It speaks
+     *  JSON.
+     *
+     *  We make these requests using ajax from the application.
+     *  PHP dependencies:
+     *      - curl
+     *      - json
+     *
+     */
+    public function beforeFilter() {
+        $this->autoLayout = false;
+        $this->autoRender = false;
+
+        $localhost = array('127.0.0.1', '::1');
+        if (! in_array($_SERVER['REMOTE_ADDR'], $localhost))  {
+            // you should not be here, bail hard
+            exit;
+        }
+    }
+
+    public function index() {
+        // safequard - unconditional gtfo
+        exit;
+    }
+
+    public function coordinates() {
+        // request coordinates from Nominatim service
+        if (! isset($_POST['address'])) {
+            return json_encode(array('error' => 'bad parameters'));
+        }
+
+        // prepare request parameters
+        $url = "http://nominatim.openstreetmap.org/search.php?q=";
+        $q = urlencode($_POST['address']) . '&format=json';
+
+        // prepare curl
+        $c = curl_init($url.$q);
+        curl_setopt($c, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($c, CURLOPT_TIMEOUT, '5');
+
+        // make request and handle response
+        $res = curl_exec($c);
+        if (curl_errno($c)) {
+            curl_close($c);
+            return json_encode(array('error' => 'request failed'));
+        }
+        curl_close($c);
+        // json -> array
+        $res_r = json_decode($res, true);
+
+        return json_encode(array(
+            'lon' => $res_r[0]['lon'],
+            'lat' => $res_r[0]['lat']));
+    }
+}

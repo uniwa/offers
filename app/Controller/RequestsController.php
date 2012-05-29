@@ -45,9 +45,9 @@ class RequestsController extends Controller {
 
         // make request and handle response
         $res = curl_exec($c);
-        if(curl_errno($ch)) {
+        if (curl_errno($c)) {
             curl_close($c);
-            return json_encode('error' => 'request failed');
+            return json_encode(array('error' => 'request failed'));
         }
         curl_close($c);
         // json -> array

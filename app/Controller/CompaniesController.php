@@ -168,6 +168,81 @@ class CompaniesController extends AppController {
         $this->redirect($referer);
     }
 
+    public function imageedit() {
+        // Get company info
+        $company_id = $this->Session->read('Auth.Company.id');
+        if (is_null($company_id))
+            throw new BadRequestException();
+        $options['conditions'] = array('Company.id' => $company_id);
+        $options['recursive'] = -1;
+        $company = $this->Company->find('first', $options);
+
+
+        if ($offer['Company']['user_id'] != $this->Auth->User('id'))
+            throw new ForbiddenException();
+
+        // bail with a flash if max images reached
+        if (count($company['Company']['image_count']) >= MAX_COMPANY_IMAGES) {
+            $this->Session->setFlash(
+                'Έχετε φτάσει τον μέγιστο επιτρεπτό αρθμό εικόνων',
+                'default',
+                array('class' => Flash::Warning));
+                return;
+        }
+
+        // create input element
+        $new_elem = array();
+        $new_elem['title'] = 'Image';
+        $new_elem['options']['label'] = 'Προσθήκη εικόνας';
+        $new_elem['options']['type'] = 'file';
+        $input_elements[] = $new_elem;
+        $this->set('input_elements', $input_elements);
+
+        if (!empty($this->request->data)) {
+            // check if user pressed upload without image
+            if (empty($this->request->data['Image']['name']))
+                $this->upload_error($id, 'empty');
+
+            // check if image is uploaded
+            if (!is_uploaded_file($this->request->data['Image']['tmp_name'])) {
+                $this->upload_error($id, 'size');
+            } else {
+                $tmp_size = filesize($this->request->data['Image']['tmp_name']);
+                if ($tmp_size > MAX_UPLOAD_SIZE)
+                    $this->upload_error($id, 'size');
+            }
+
+            // check file type
+            if (!$this->valid_type($this->data['Image']['tmp_name']))
+                $this->upload_error($id, 'filetype');
+
+            $photo = $this->Image->process($this->request->data['Image']);
+            // add company_id
+            $photo['company_id'] = $company_id;
+
+            // try to save images
+            //
+            // TODO: do we really need trasnaction here? O_o
+            //
+            $transaction = $this->Image->getDataSource();
+            $transaction->begin();
+            $error = false;
+            if (!empty($photo) && !$this->Image->save($photo))
+                $error = true;
+            if ($error) {
+                $transaction->rollback();
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
+                    'default', array('class' => Flash::Error));
+            } else {
+                $transaction->commit();
+                $this->Session->setFlash('Η εικόνα προστέθηκε',
+                    'default', array('class' => Flash::Success));
+                $this->redirect(array(
+                    'controller' => 'companies', 'action' => 'imageedit'));
+            }
+        }
+    }
+
     public function is_authorized($user) {
         $admin_actions = array('enable','disable');
 

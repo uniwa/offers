@@ -4,9 +4,17 @@ class Image extends AppModel {
 
     public $name = 'Image';
     public $hasOne = array('Student');
+    // Auto increment image_count when adding images for offers and companies
+    //
+    // Images should be auto incremented for companies, *only* when the
+    // offer_id field is not set in the image. This denotes that the image is
+    // associated with the company's profile (logo/company's photos) and not
+    // with the offer.
     public $belongsTo = array(
                               'Company' => array(
-                                    'counterCache' => true
+                                  'counterCache' => true,
+                                  'counterScope' => array(
+                                      'Image.offer_id' => null)
                               ),
                               'Offer' => array(
                                     'counterCache' => true

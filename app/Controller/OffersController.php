@@ -815,6 +815,9 @@ class OffersController extends AppController {
 
             $photo = $this->Image->process($this->request->data['Image'],
                 array('offer_id' => $id));
+            // add company_id
+            $company_id = $this->Session->read('Auth.Company.id');
+            $photo['company_id'] = $company_id;
 
             // try to save images
             $transaction = $this->Image->getDataSource();

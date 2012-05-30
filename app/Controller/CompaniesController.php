@@ -178,7 +178,7 @@ class CompaniesController extends AppController {
         $company = $this->Company->find('first', $options);
 
 
-        if ($offer['Company']['user_id'] != $this->Auth->User('id'))
+        if ($company['Company']['user_id'] != $this->Auth->User('id'))
             throw new ForbiddenException();
 
         // bail with a flash if max images reached

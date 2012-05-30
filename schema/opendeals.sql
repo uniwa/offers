@@ -175,7 +175,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`images` (
   `data_thumb` LONGBLOB NOT NULL ,
   `offer_id` INT NULL DEFAULT NULL ,
   `company_id` INT NULL DEFAULT NULL ,
-  `image_category_id` INT NOT NULL ,
+  `image_category` INT NOT NULL ,
   `created` DATETIME NULL DEFAULT NULL ,
   `modified` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`id`) ,

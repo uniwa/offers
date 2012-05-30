@@ -779,7 +779,7 @@ class OffersController extends AppController {
         $this->set('offer', $offer);
 
         // bail with a flash if max images reached
-        if (count($offer['Image']) >= MAX_OFFER_IMAGES) {
+        if ((int)$offer['Offer']['image_count'] >= MAX_OFFER_IMAGES) {
             $this->Session->setFlash(
                 'Έχετε φτάσει τον μέγιστο επιτρεπτό αρθμό εικόνων',
                 'default',

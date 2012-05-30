@@ -182,7 +182,7 @@ class CompaniesController extends AppController {
             throw new ForbiddenException();
 
         // bail with a flash if max images reached
-        if (count($company['Company']['image_count']) >= MAX_COMPANY_IMAGES) {
+        if ((int)$company['Company']['image_count'] >= MAX_COMPANY_IMAGES) {
             $this->Session->setFlash(
                 'Έχετε φτάσει τον μέγιστο επιτρεπτό αρθμό εικόνων',
                 'default',

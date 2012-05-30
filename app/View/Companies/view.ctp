@@ -4,6 +4,24 @@ echo $this->Html->css('leaflet');
 echo $this->Html->script('leaflet');
 $comp = $company['Company'];
 $is_user_the_owner = $this->Session->read('Auth.User.id') == $comp['user_id'];
+$is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
+
+if ($is_user_admin) {
+        if ($comp['is_enabled']) {
+            $enabled_title = "[Απενεργοποίηση]";
+            $enabled_action = 'disable';
+        } else {
+            $enabled_title = "[Ενεργοποίηση]";
+            $enabled_action = 'enable';
+        }
+
+        $html = $this->Html->link($enabled_title, array(
+            'controller' => 'companies',
+            'action' => $enabled_action,
+            $comp['id']));
+        $html .= '<br>';
+        echo $html;
+}
 
 if ($is_user_the_owner) {
     echo "<p>";

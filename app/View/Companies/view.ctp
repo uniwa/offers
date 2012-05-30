@@ -141,8 +141,9 @@ if (empty($company['Offer']['Active'])) {
     }
 }
 
-// display Drafts only for the owner of this company
-if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
+// display Drafts only for the owner of this company and admins
+if (($this->Session->read('Auth.User.id') == $comp['user_id'])
+    || ($this->Session->read('Auth.User.role') === ROLE_ADMIN)) {
     if (empty($company['Offer']['Draft'])) {
         echo 'Δεν υπάρχουν μη ενεργοποιημένες προσφορές.<br/>';
     } else {

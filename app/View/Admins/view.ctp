@@ -1,11 +1,31 @@
+<?php
+    // create sort order links; these will be placed as table headers
+    $comp_header = $this->Paginator->sort('Company.name', 'Όνομα επιχείρησης');
+    $user_header = $this->Paginator->sort('User.username', 'Όνομα χρήστη');
+
+    // set sort order icon in appropriate table header
+    $sort_key = $this->Paginator->sortKey();
+    if (isset($sort_key)) {
+        $order = $this->Paginator->sortDir();
+        $order_icon = $order == 'asc' ? 'up' : 'down';
+        $order_icon = " <i class=\"icon-chevron-{$order_icon}\"></i>";
+
+        // append icon tag to appropriate header link
+        if ($sort_key == 'Company.name') {
+            $comp_header .= $order_icon;
+        } else if ($sort_key == 'User.username') {
+            $user_header .= $order_icon;
+        }
+    }
+?>
 
 <h6>Επιχειρησεις</h6>
-<table class="table">
+<table class="table table-condensed">
     <thead>
         <tr>
             <th>Α/Α</th>
-            <th>Όνομα επιχείρησης</th>
-            <th>Όνομα χρήστη</th>
+            <?php echo "<th>{$comp_header}</th>" ?>
+            <?php echo "<th>{$user_header}</th>" ?>
             <th>Διεύθυνση e-mail</th>
             <th>είναι κλειδωμένος;</th>
             <th>έχει ενεργοποιηθεί;</th>

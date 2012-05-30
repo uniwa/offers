@@ -28,9 +28,10 @@ class CompaniesController extends AppController {
         }
 
         // filter only enabled companies, but not for admin
-        if ($this->Auth->user('role') != ROLE_ADMIN) {
+        if ($this->Auth->user('role') !== ROLE_ADMIN) {
             $options['conditions'] += array('Company.is_enabled' => 1);
         }
+
         $options['recursive'] = 1;
 
         // ignore offers for the following `find'
@@ -127,7 +128,62 @@ class CompaniesController extends AppController {
         }
     }
 
+    public function enable($id = null, $view = null) {
+        $this->alter($id, $view, true);
+    }
+
+    public function disable($id = null, $view = null) {
+        $this->alter($id, $view, false);
+    }
+
+    public function alter($id = null, $view = null, $enable = true) {
+        if ($id == null) throw new BadRequestException();
+
+        $options['conditions'] = array('Company.id' => $id);
+        $options['recursive'] = -1;
+        $company = $this->Company->find('first', $options);
+        if (empty($company))
+            throw new NotFoundException('Η συγκεκριμένη επιχείρηση δε βρέθηκε.');
+
+        $data = array('id' => $id, 'is_enabled' => $enable);
+
+//        $transaction = $this->Company->getDataSource();
+//        $transaction->begin();
+        $error = false;
+        $saved = $this->Company->save($data, false);
+        if (!$saved)
+            $error = true;
+
+        if ($error) {
+//            $transaction->rollback();
+            $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
+                'default', array('class' => Flash::Error));
+        } else {
+//            $transaction->commit();
+            $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν.',
+                'default', array('class' => Flash::Success));
+        }
+
+        $action = 'view';
+        if (is_null($view)) {
+            $controller = 'companies';
+        }
+
+        if ($view === 'admin') {
+            $controller = 'admin';
+            $id = null;
+        }
+
+
+        $target = array(
+            'controller' => $controller, 'action' => $action, $id);
+
+        $this->redirect($target);
+    }
+
     public function is_authorized($user) {
+        $admin_actions = array('enable','disable');
+
         if ($user['is_banned'] == 0) {
             // all users can view company views that are not banned
             if ($this->action === 'view') {
@@ -143,6 +199,12 @@ class CompaniesController extends AppController {
                 }
                 // admin cannot edit company profiles
                 return false;
+            }
+
+            if (in_array($this->action, $admin_actions)) {
+                if (isset($user['role']) && $user['role'] === ROLE_ADMIN) {
+                    return true;
+                }
             }
         }
 

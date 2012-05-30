@@ -177,7 +177,7 @@ class CompaniesController extends AppController {
                 return true;
             }
 
-            if ($this->action === 'edit') {
+            if (in_array($this->action, array('edit', 'imageedit'))) {
                 if (isset($user['role']) && $user['role'] === ROLE_COMPANY) {
                     $company_id = $this->request->params['pass'][0];
                     if ($this->Company->is_owned_by($company_id, $user['id'])) {

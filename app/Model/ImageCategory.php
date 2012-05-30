@@ -1,5 +1,7 @@
 <?php
-
+// -----------------------------------
+// DEPRECATED
+// -----------------------------------
 class ImageCategory extends AppModel {
 
     public $name = 'ImageCategory';

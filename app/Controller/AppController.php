@@ -78,7 +78,7 @@ class AppController extends Controller{
                 'recursive' => -1,
             ));
             if ($geo_info['Company']['longitude'] === null or
-                $get_info['Company']['latitude'] === null) {
+                $geo_info['Company']['latitude'] === null) {
                     $msg = "Δεν έχετε συμπληρώσει γεωχωρικές πληροφορίες για την επιχείρηση σας. ";
                     $msg .= "Προσφορές που αναρτάτε πιθανόν να μην είναι διαθέσιμες μέσω της εφαρμογής κινητού. ";
                     $msg .= "Πατήστε <a href=\"#\">εδώ</a> για να καταχωρήσετε το στίγμα της επιχείρησης σας.";

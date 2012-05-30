@@ -137,6 +137,7 @@ class CompaniesController extends AppController {
     }
 
     public function alter($id = null, $view = null, $enable = true) {
+        $referer = $this->referer();
         if ($id == null) throw new BadRequestException();
 
         $options['conditions'] = array('Company.id' => $id);
@@ -147,38 +148,24 @@ class CompaniesController extends AppController {
 
         $data = array('id' => $id, 'is_enabled' => $enable);
 
-//        $transaction = $this->Company->getDataSource();
-//        $transaction->begin();
+        $transaction = $this->Company->getDataSource();
+        $transaction->begin();
         $error = false;
         $saved = $this->Company->save($data, false);
         if (!$saved)
             $error = true;
 
         if ($error) {
-//            $transaction->rollback();
+            $transaction->rollback();
             $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
                 'default', array('class' => Flash::Error));
         } else {
-//            $transaction->commit();
+            $transaction->commit();
             $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν.',
                 'default', array('class' => Flash::Success));
         }
 
-        $action = 'view';
-        if (is_null($view)) {
-            $controller = 'companies';
-        }
-
-        if ($view === 'admin') {
-            $controller = 'admins';
-            $id = null;
-        }
-
-
-        $target = array(
-            'controller' => $controller, 'action' => $action, $id);
-
-        $this->redirect($target);
+        $this->redirect($referer);
     }
 
     public function is_authorized($user) {

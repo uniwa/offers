@@ -818,6 +818,7 @@ class OffersController extends AppController {
             // add company_id
             $company_id = $this->Session->read('Auth.Company.id');
             $photo['company_id'] = $company_id;
+            $photo['image_category'] = IMG_OFFER;
 
             // try to save images
             $transaction = $this->Image->getDataSource();

@@ -219,6 +219,7 @@ class CompaniesController extends AppController {
             $photo = $this->Image->process($this->request->data['Image']);
             // add company_id
             $photo['company_id'] = $company_id;
+            $photo['image_category'] = IMG_COMPANY;
 
             // try to save images
             //

@@ -170,7 +170,7 @@ class CompaniesController extends AppController {
         }
 
         if ($view === 'admin') {
-            $controller = 'admin';
+            $controller = 'admins';
             $id = null;
         }
 

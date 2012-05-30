@@ -161,7 +161,11 @@ class CompaniesController extends AppController {
                 'default', array('class' => Flash::Error));
         } else {
             $transaction->commit();
-            $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν.',
+            $company_name = $company['Company']['name'];
+            $success_message = ($enable)
+                ?"Η επιχείρηση '{$company_name}' ενεργοποιήθηκε."
+                :"Η επιχείρηση '{$company_name}' απενεργοποιήθηκε.";
+            $this->Session->setFlash($success_message,
                 'default', array('class' => Flash::Success));
         }
 

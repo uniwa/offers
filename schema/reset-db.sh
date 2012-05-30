@@ -9,7 +9,7 @@ data=("insert_offer_categories.sql"
       "insert_offer_types.sql"
       "insert_offer_states.sql"
       "insert_days.sql"
-      "insert_image_categories.sql"
+#      "insert_image_categories.sql"
       "insert_counties.sql"
       "insert_municipalities.sql")
 

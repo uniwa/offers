@@ -4,9 +4,17 @@ class Image extends AppModel {
 
     public $name = 'Image';
     public $hasOne = array('Student');
-    public $belongsTo = array('ImageCategory',
+    // Auto increment image_count when adding images for offers and companies
+    //
+    // Images should be auto incremented for companies, *only* when the
+    // offer_id field is not set in the image. This denotes that the image is
+    // associated with the company's profile (logo/company's photos) and not
+    // with the offer.
+    public $belongsTo = array(
                               'Company' => array(
-                                    'counterCache' => true
+                                  'counterCache' => true,
+                                  'counterScope' => array(
+                                      'Image.offer_id' => null)
                               ),
                               'Offer' => array(
                                     'counterCache' => true
@@ -44,7 +52,6 @@ class Image extends AppModel {
      * Note: already existing images are _not_ duplicated
      *
      * @param $images The array of images, or image
-     * @param $image_category The category of the image according to table opendeals.image_categories
      * @param $generate_thumbs Create or not thumbnails for the given images
      * @param $thumb_size An array with the desired width and height of thumbnail
      * @param $foreign_keys Key => Value array containing required foreign key values
@@ -57,7 +64,6 @@ class Image extends AppModel {
      */
     public function process($images,
                                    $foreign_keys = array(),
-                                   $image_category = IMG_NORMAL,
                                    $generate_thumbs = true,
                                    $thumb_size = null
                                    )
@@ -75,7 +81,7 @@ class Image extends AppModel {
         if (isset($images['tmp_name'])) $images = array($images);
 
         foreach ($images as $image) {
-            $tmp = $this->_process($image, $image_category, $foreign_keys);
+            $tmp = $this->_process($image, $foreign_keys);
             if (!empty($tmp)) {
                 $photo = $tmp;
                 if ($generate_thumbs === true)
@@ -93,7 +99,6 @@ class Image extends AppModel {
      * information about the image in the returned array.
      *
      * @param $image The image to process
-     * @param $image_category The category of image
      * @param $foreign_keys Key => Value array containing required foreign key values
      *
      * @throws ImageExtensionException
@@ -101,7 +106,7 @@ class Image extends AppModel {
      *
      * @return Array containing image information and data
      */
-    private function _process($image, $image_category, $foreign_keys) {
+    private function _process($image, $foreign_keys) {
         if ((isset($image['tmp_name']) && $image['tmp_name'] == null ) ||
              isset($image['id']))
             return array();
@@ -114,7 +119,6 @@ class Image extends AppModel {
 
         $file = fread(fopen($image['tmp_name'], 'r'), $image['size']);
         $image['data'] = $file;
-        $image['image_category_id'] = $image_category;
         // set the foreign keys if needed
         foreach (array_keys($foreign_keys) as $key)
             $image[$key] = $foreign_keys[$key];

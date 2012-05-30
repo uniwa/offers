@@ -767,29 +767,35 @@ class OffersController extends AppController {
         $options['conditions'] = array('Offer.id' => $id);
         $options['recursive'] = 1;
         $offer = $this->Offer->find('first', $options);
-        $max_images = count($offer['Image']) >= MAX_IMAGES;
 
         if (empty($offer)) throw new NotFoundException();
 
         if ($offer['Company']['user_id'] != $this->Auth->User('id'))
             throw new ForbiddenException();
 
-        if ($offer['Offer']['offer_state_id'] === STATE_DRAFT)
+        if ($offer['Offer']['offer_state_id'] != STATE_DRAFT)
             throw new ForbiddenException();
 
         $this->set('offer', $offer);
 
-        if (!$max_images) {
-            $new_elem = array();
-            $new_elem['title'] = 'Image';
-            $new_elem['options']['label'] = 'Προσθήκη εικόνας';
-            $new_elem['options']['type'] = 'file';
-            $input_elements[] = $new_elem;
-
-            $this->set('input_elements', $input_elements);
+        // bail with a flash if max images reached
+        if ((int)$offer['Offer']['image_count'] >= MAX_OFFER_IMAGES) {
+            $this->Session->setFlash(
+                'Έχετε φτάσει τον μέγιστο επιτρεπτό αρθμό εικόνων',
+                'default',
+                array('class' => Flash::Warning));
+                return;
         }
 
-        if (!empty($this->request->data) && !$max_images) {
+        // create input element
+        $new_elem = array();
+        $new_elem['title'] = 'Image';
+        $new_elem['options']['label'] = 'Προσθήκη εικόνας';
+        $new_elem['options']['type'] = 'file';
+        $input_elements[] = $new_elem;
+        $this->set('input_elements', $input_elements);
+
+        if (!empty($this->request->data)) {
             // check if user pressed upload without image
             if (empty($this->request->data['Image']['name']))
                 $this->upload_error($id, 'empty');
@@ -812,6 +818,7 @@ class OffersController extends AppController {
             // add company_id
             $company_id = $this->Session->read('Auth.Company.id');
             $photo['company_id'] = $company_id;
+            $photo['image_category'] = IMG_OFFER;
 
             // try to save images
             $transaction = $this->Image->getDataSource();

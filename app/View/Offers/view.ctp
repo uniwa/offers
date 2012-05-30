@@ -41,7 +41,7 @@ if ($is_user_the_owner) {
         $html .= '<br>';
     }
 
-    if ($is_offer_active) {
+    if ($is_offer_draft) {
         $html .= $this->Html->link('Εικόνες', array(
             'controller' => 'offers',
             'action' => 'imageedit',
@@ -128,13 +128,13 @@ if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
     }
 }
 
-if (!empty($offer['Image']))
-    foreach ($offer['Image'] as $image)
-        if ($image['image_category_id'] == IMG_NORMAL) {
-            $html .= "<div class='image_frame'>";
-            $html .= $this->Html->image('/images/view/'.$image['id']);
-            $html .= "</div>";
-        }
+if (!empty($offer['Image'])) {
+    foreach ($offer['Image'] as $image) {
+        $html .= "<div class='image_frame'>";
+        $html .= $this->Html->image('/images/view/'.$image['id']);
+        $html .= "</div>";
+    }
+}
 
 echo $html;
 

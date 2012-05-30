@@ -3,7 +3,8 @@
 echo $this->Form->create(false, array(
                                     'url' => array(
                                         'controller' => 'companies',
-                                        'action' => 'edit', $company['Company']['id']
+                                        'action' => 'edit',
+                                        $company['Company']['id']
                                     ),
                                     'type' => 'POST',
                                     'enctype' => 'multipart/form-data',
@@ -48,9 +49,7 @@ echo $this->Form->input('Company.fax', array(
                         'class' => 'span2',
                         'type'  => 'text'
                        ));
-?>
 
-<?php 
 echo $this->element( "work_hours", array(
     "work_hour_count" => $company['Company']['work_hour_count'],
     "timeFormat" => 24,
@@ -61,9 +60,7 @@ echo $this->element( "work_hours", array(
     //"input_label" => null, //default
     //"staring_time_label" => null, //default
     //"ending_time_lebel" => null, //default
-) );?>
-
-<?php
+) );
 
 foreach ($company['Image'] as $image) {
     echo $this->Html->image('/images/view/'.$image['id']);
@@ -76,16 +73,6 @@ foreach ($company['Image'] as $image) {
                            'Να διαγραφεί η εικόνα;'
                           ).'<br/>';
 }
-
-echo $this->Form->input('Image.0', array(
-                            'label' => 'Φωτογραφία',
-                            'type' => 'file'
-                       ));
-
-echo $this->Form->input('Image.1', array(
-                            'label' => 'Φωτογραφία',
-                            'type' => 'file'
-                       ));
 
 echo $this->Form->hidden('User.id');
 echo $this->Form->hidden('Company.id');

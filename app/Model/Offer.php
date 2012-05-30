@@ -402,6 +402,22 @@ class Offer extends AppModel {
                  'message' => 'Επιλέξτε μία από τις προκαθορισμένες τιμές.',
              )
          ),
+
+        'autostart' => array(
+            'valid_date' => array(
+                'rule' => 'datetime',
+                'allowEmpty' => true,
+                'message' => 'Εισάγετε μία έγκυρη ημερομηνία έναρξης.',
+            ),
+        ),
+
+        'autoend' => array(
+            'valid_date' => array(
+                'rule' => 'datetime',
+                'allowEmpty' => true,
+                'message' => 'Εισάγετε μία έγκυρη ημερομηνία λήξης.',
+            ),
+        ),
     );
 
     // @Override

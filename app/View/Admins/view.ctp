@@ -14,6 +14,11 @@
     <tbody>
         <?php
 
+            $enabled_title = "[απενεργοποίηση]";
+            $enabled_action = 'disable';
+            $disabled_title = "[ενεργοποίηση]";
+            $disabled_action = 'enable';
+
             // incremental id; start counting from current's page 1st result
             $counter = (int) $this->Paginator->counter('{:start}');
             foreach ($data as $r) {
@@ -23,9 +28,18 @@
                                   'action' => 'view',
                                   $r['Company']['id']);
 
+                $link_disable = $this->Html->link($enabled_title, array(
+                    'controller' => 'companies',
+                    'action' => $enabled_action,
+                    $r['Company']['id']));
+                $link_enable = $this->Html->link($disabled_title, array(
+                    'controller' => 'companies',
+                    'action' => $disabled_action,
+                    $r['Company']['id']));
+
                 $comp_state = $r['Company']['is_enabled']
-                                    ? '<i class="icon-ok"></i>'
-                                    : '<i class="icon-remove"></i>';
+                                    ? '<i class="icon-ok"></i> '.$link_disable
+                                    : '<i class="icon-remove"></i> '.$link_enable;
 
                 $user_name = $r['User']['username'];
                 $user_email = $r['User']['email'];

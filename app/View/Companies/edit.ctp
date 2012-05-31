@@ -62,18 +62,6 @@ echo $this->element( "work_hours", array(
     //"ending_time_lebel" => null, //default
 ) );
 
-foreach ($company['Image'] as $image) {
-    echo $this->Html->image('/images/view/'.$image['id']);
-    echo $this->Html->link('Διαγραφή',
-                           array(
-                                'controller' => 'images',
-                                'action' => 'delete',
-                                $image['id']),
-                           array(),
-                           'Να διαγραφεί η εικόνα;'
-                          ).'<br/>';
-}
-
 echo $this->Form->hidden('User.id');
 echo $this->Form->hidden('Company.id');
 echo $this->Form->hidden('Company.user_id');

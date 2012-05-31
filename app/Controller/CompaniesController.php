@@ -67,6 +67,10 @@ class CompaniesController extends AppController {
         $this->set('days', $this->Day->find('list'));
 
         $options['conditions'] = array('Company.id' => $id);
+        $options['contain'] = array('Image.conditions' => array(
+            'Image.company_id' => $id,
+            'Image.offer_id' => null)
+        );
         $options['recursive'] = 1;
         $company = $this->Company->find('first', $options);
         $this->set('company', $company);

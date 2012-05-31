@@ -3,7 +3,6 @@
 class Image extends AppModel {
 
     public $name = 'Image';
-    public $hasOne = array('Student');
     // Auto increment image_count when adding images for offers and companies
     //
     // Images should be auto incremented for companies, *only* when the

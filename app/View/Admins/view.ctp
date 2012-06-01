@@ -1,4 +1,36 @@
 <?php
+
+    // == search panel ==
+    // get params from request to fill-in the form
+    $search_text = isset($request['search']) ? $request['search'] : '';
+    $search_banned = isset($request['banned']) ? $request['banned'] : '';
+    $search_enabled = isset($request['enabled']) ? $request['enabled'] : '';
+
+    $search_form = $this->Form->create(false);
+
+    $search_form .= $this->Form->input('search', array(
+        'label' => 'Μερικό όνομα ή e-mail',
+        'value' => $search_text,
+    ));
+
+    $search_form .= $this->Form->input('banned', array(
+        'label' => 'κλειδωμένος',
+        'type' => 'select',
+        'options' => array('αδιάφορο', 'ναι', 'όχι'),
+        'value' => $search_banned,
+    ));
+
+    $search_form .= $this->Form->input('enabled', array(
+        'label' => 'ενεργός',
+        'type' => 'select',
+        'options' => array('αδιάφορο', 'ναι', 'όχι'),
+        'value' => $search_enabled,
+    ));
+
+    $search_form .= $this->Form->submit();
+    $search_form .= $this->Form->end();
+
+    // == companies listing ==
     // create sort order links; these will be placed as table headers
     $comp_header = $this->Paginator->sort('Company.name', 'Όνομα επιχείρησης');
     $user_header = $this->Paginator->sort('User.username', 'Όνομα χρήστη');
@@ -18,6 +50,8 @@
         }
     }
 ?>
+
+<?php echo $search_form; ?>
 
 <h6>Επιχειρησεις</h6>
 <table class="table table-condensed">

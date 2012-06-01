@@ -100,11 +100,15 @@ class CompaniesController extends AppController {
             if (!$this->User->saveField('email', $this->request->data['User']['email']))
                 $error = true;
 
-            $photos = $this->Image->process($this->request->data['Image'],
-                                     array('company_id' => $company['Company']['id']),
-                                     1, false);
-            if (!empty($photos) && !$this->Image->saveMany($photos))
-                $error = true;
+            // ---------------------------------------------------------
+            // use separate controller action to support multiple images
+            // ---------------------------------------------------------
+            //
+            //$photos = $this->Image->process($this->request->data['Image'],
+            //                         array('company_id' => $company['Company']['id']),
+            //                         1, false);
+            //if (!empty($photos) && !$this->Image->saveMany($photos))
+            //    $error = true;
 
             if ($error) {
                 $transaction->rollback();

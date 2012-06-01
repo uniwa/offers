@@ -490,7 +490,7 @@ class OffersController extends AppController {
                                 $h1 = $this->get_time($input_hours[$i]['ending']);
                                 $work_hours[] = array(
                                     'offer_id' => $this->Offer->id,
-                                    'day_id' => ''.$i,
+                                    'day_id' => $i,
                                     'starting' => $h0,
                                     'ending' => $h1);
                             }

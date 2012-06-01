@@ -89,22 +89,38 @@ class CompaniesController extends AppController {
                 $error = true;
 
             if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
-                for ($i = 0; $i < count($this->request->data['WorkHour']); $i++)
-                    $this->request->data['WorkHour'][$i]['company_id'] = $company['Company']['id'];
+                $input_hours = $this->request->data['WorkHour'];
+                $work_hours = array();
+                for ($i = 1; $i < count($input_hours); $i++) {
+                    if (! empty($input_hours[$i]['starting']) and
+                        ! empty($input_hours[$i]['ending'])) {
+                            $work_hours[] = array(
+                                'day_id' => $i,
+                                'company_id' => $id,
+                                'starting' => $input_hours[$i]['starting'],
+                                'ending' => $input_hours[$i]['ending']
+                            );
+                    }
+                }
 
-                if (!$this->WorkHour->saveAll($this->request->data['WorkHour']))
+                if (!$this->WorkHour->saveAll($work_hours)) {
                     $error = true;
+                }
             }
 
             $this->User->id = $company['Company']['user_id'];
             if (!$this->User->saveField('email', $this->request->data['User']['email']))
                 $error = true;
 
-            $photos = $this->Image->process($this->request->data['Image'],
-                                     array('company_id' => $company['Company']['id']),
-                                     1, false);
-            if (!empty($photos) && !$this->Image->saveMany($photos))
-                $error = true;
+            // ---------------------------------------------------------
+            // use separate controller action to support multiple images
+            // ---------------------------------------------------------
+            //
+            //$photos = $this->Image->process($this->request->data['Image'],
+            //                         array('company_id' => $company['Company']['id']),
+            //                         1, false);
+            //if (!empty($photos) && !$this->Image->saveMany($photos))
+            //    $error = true;
 
             if ($error) {
                 $transaction->rollback();

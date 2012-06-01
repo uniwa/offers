@@ -109,8 +109,8 @@ echo <<< __EOF__
 
     function onMarkerDragEnd(e) {
         popup.setLatLng(marker.getLatLng());
-        $('#comp-longitude').val(marker.getLatLng()['lat']);
-        $('#comp-latitude').val(marker.getLatLng()['lng']);
+        $('#comp-longitude').val(marker.getLatLng()['lng']);
+        $('#comp-latitude').val(marker.getLatLng()['lat']);
     }
 
     // show map

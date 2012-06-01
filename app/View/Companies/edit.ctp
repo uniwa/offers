@@ -110,7 +110,7 @@ echo <<< __EOF__
         shadowSize:new L.Point(41,41),iconAnchor: new L.Point(13,21),
         popupAnchor:new L.Point(-3,-41)});
     var icon = new MyIcon();
-    var marker = new L.Marker(company,{icon: icon});
+    var marker = new L.Marker(company, {icon: icon, draggable: true});
     map.addLayer(marker);
 
     // show popup

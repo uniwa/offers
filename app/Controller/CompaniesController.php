@@ -73,9 +73,6 @@ class CompaniesController extends AppController {
 
         if (empty($company)) throw new NotFoundException();
 
-        if ($company['Company']['user_id'] !== $this->Auth->User('id'))
-            throw new ForbiddenException();
-
         if (empty($this->request->data)) {
             $this->request->data = $company;
         } else {

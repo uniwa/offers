@@ -1,10 +1,16 @@
 <?php
 
     // == search panel ==
+    // get params from request to fill-in the form
+    $search_text = isset($request['search']) ? $request['search'] : '';
+    $search_banned = isset($request['banned']) ? $request['banned'] : '';
+    $search_enabled = isset($request['enabled']) ? $request['enabled'] : '';
+
     $search_form = $this->Form->create(false);
 
     $search_form .= $this->Form->input('search', array(
         'label' => 'Μερικό όνομα ή e-mail',
+        'value' => $search_text,
     ));
 
     $search_form .= $this->Form->input('banned', array(
@@ -12,6 +18,7 @@
         'type' => 'select',
         'empty' => true,
         'options' => array('ναι', 'όχι'),
+        'value' => $search_banned,
     ));
 
     $search_form .= $this->Form->input('enabled', array(
@@ -19,6 +26,7 @@
         'type' => 'select',
         'empty' => true,
         'options' => array('ναι', 'όχι'),
+        'value' => $search_enabled,
     ));
 
     $search_form .= $this->Form->submit();

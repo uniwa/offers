@@ -89,6 +89,9 @@ class AdminsController extends AppController {
         $this->Company->contain(array('User'));
         $data = $this->paginate();
 
+        // data to display
         $this->set('data', $data);
+        // search options with which to fill-in the form
+        $this->set('request', $request);
     }
 }

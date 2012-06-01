@@ -17,7 +17,7 @@
         'label' => 'κλειδωμένος',
         'type' => 'select',
         'empty' => true,
-        'options' => array('ναι', 'όχι'),
+        'options' => array('όχι', 'ναι'),
         'value' => $search_banned,
     ));
 
@@ -25,7 +25,7 @@
         'label' => 'ενεργός',
         'type' => 'select',
         'empty' => true,
-        'options' => array('ναι', 'όχι'),
+        'options' => array('όχι', 'ναι'),
         'value' => $search_enabled,
     ));
 

@@ -47,19 +47,14 @@ class AdminsController extends AppController {
 
         if (isset($request['banned'])) {
 
-            $is_banned = $request['banned'];
-            if ($is_banned !== null && $is_banned !== '') {
-                $is_banned = $request['banned'] === '0';
-                $options[] = array('User.is_banned' => $is_banned);
-            }
+            $is_banned = $request['banned'] === '1';
+            $options[] = array('User.is_banned' => $is_banned);
         }
 
         if (isset($request['enabled'])) {
-            $is_enabled = $request['enabled'];
-            if ($is_enabled !== null && $is_enabled !== '') {
-                $is_enabled = $request['enabled'] === '0';
-                $options[] = array('Company.is_enabled' => $is_enabled);
-            }
+
+            $is_enabled = $request['enabled'] === '1';
+            $options[] = array('Company.is_enabled' => $is_enabled);
         }
 
         // == apply pagination options ==

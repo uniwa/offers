@@ -94,7 +94,7 @@ echo <<< __EOF__
 <script type="text/javascript">
     // map callback functions
     function onMarkerClick(e) {
-        map.openPopup(popup)
+        map.openPopup(popup);
     };
 
     // show map

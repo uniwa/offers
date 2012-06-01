@@ -26,7 +26,28 @@ class AdminsController extends AppController {
 
     public function view($id = null) {
 
-        $request = $this->request->data;
+        // == force a redirect so as to display pretty options ==
+        if (! empty($this->request->data)) {
+            // basis of the redirection params
+            $redirect = array('controller' => 'admins',
+                              'action' => 'view');
+
+            // keep current params but replace those found in POST data
+            $redirect = array_merge($redirect,
+                                    $this->request->named,
+                                    $this->request->data);
+
+            // do NOT preserve page (because results may be differect)
+            if (isset($redirect['page'])) unset($redirect['page']);
+
+            // remove empty filters from uri
+            $redirect = array_filter($redirect);
+
+            $this->redirect($redirect);
+        }
+
+        // POST data have been moved to uri as 'pretty' params
+        $request = $this->request->named;
 
         // == create filter conditions ==
         // will be used to contain filtering options

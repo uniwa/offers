@@ -16,16 +16,14 @@
     $search_form .= $this->Form->input('banned', array(
         'label' => 'κλειδωμένος',
         'type' => 'select',
-        'empty' => true,
-        'options' => array('όχι', 'ναι'),
+        'options' => array('αδιάφορο', 'ναι', 'όχι'),
         'value' => $search_banned,
     ));
 
     $search_form .= $this->Form->input('enabled', array(
         'label' => 'ενεργός',
         'type' => 'select',
-        'empty' => true,
-        'options' => array('όχι', 'ναι'),
+        'options' => array('αδιάφορο', 'ναι', 'όχι'),
         'value' => $search_enabled,
     ));
 

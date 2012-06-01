@@ -1,4 +1,30 @@
 <?php
+
+    // == search panel ==
+    $search_form = $this->Form->create(false);
+
+    $search_form .= $this->Form->input('search', array(
+        'label' => 'Μερικό όνομα ή e-mail',
+    ));
+
+    $search_form .= $this->Form->input('banned', array(
+        'label' => 'κλειδωμένος',
+        'type' => 'select',
+        'empty' => true,
+        'options' => array('ναι', 'όχι'),
+    ));
+
+    $search_form .= $this->Form->input('enabled', array(
+        'label' => 'ενεργός',
+        'type' => 'select',
+        'empty' => true,
+        'options' => array('ναι', 'όχι'),
+    ));
+
+    $search_form .= $this->Form->submit();
+    $search_form .= $this->Form->end();
+
+    // == companies listing ==
     // create sort order links; these will be placed as table headers
     $comp_header = $this->Paginator->sort('Company.name', 'Όνομα επιχείρησης');
     $user_header = $this->Paginator->sort('User.username', 'Όνομα χρήστη');
@@ -18,6 +44,8 @@
         }
     }
 ?>
+
+<?php echo $search_form; ?>
 
 <h6>Επιχειρησεις</h6>
 <table class="table table-condensed">

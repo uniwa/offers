@@ -52,6 +52,16 @@ echo $this->Form->input('Company.fax', array(
                         'type'  => 'text'
                        ));
 
+echo $this->Form->input('Company.longitude', array(
+                        'id' => 'comp-longitude',
+                        'type'  => 'hidden'
+                       ));
+
+echo $this->Form->input('Company.latitude', array(
+                        'id' => 'comp-latitude',
+                        'type'  => 'hidden'
+                       ));
+
 echo $this->element( "work_hours", array(
     "work_hour_count" => $company['Company']['work_hour_count'],
     "timeFormat" => 24,

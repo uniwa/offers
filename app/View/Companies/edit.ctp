@@ -114,7 +114,7 @@ echo <<< __EOF__
     map.addLayer(marker);
 
     // show popup
-    var popup = new L.Popup();
+    var popup = new L.Popup({maxWidth: 400});
     popup.setLatLng(new L.LatLng({$lat}, ${lng}));
     popup.setContent("Σύρετε τον δείκτη για να καταδείξετε την επιχείρησή σας.");
     map.openPopup(popup);

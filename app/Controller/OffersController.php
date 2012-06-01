@@ -23,16 +23,19 @@ class OffersController extends AppController {
         'recent' => array(
             'title' => 'πρόσφατα',
             'value' => array('Offer.modified' => 'desc')),
+        'rank' => array(
+            'title' => 'βαθμός',
+            'value' => array(
+                'Offer.vote_sum' => 'desc',
+                'Offer.vote_count' => 'desc',)),
         'votes' => array(
             'title' => 'ψήφοι',
             'value' => array(
                 'Offer.vote_count' => 'desc',
                 'Offer.vote_sum' => 'desc')),
-        'rank' => array(
-            'title' => 'βαθμός',
-            'value' => array(
-                'Offer.vote_sum' => 'desc',
-                'Offer.vote_count' => 'desc',)));
+        'distance' => array(
+            'title' => 'απόσταση',
+            'value' => array()));
 
     public $helpers = array('Html', 'Time', 'Text', 'Tag');
 

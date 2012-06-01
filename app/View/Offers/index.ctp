@@ -1,9 +1,8 @@
 <?php
-    echo $this->element('sidebar');
-?>
-<div class='span9'>
-<?php
 $html = '';
+$html .= $this->element('sidebar');
+$html .= "<div class='span9'>";
+
 if (empty($offers)) {
     $html .= $this->element('alert', array(
         'type' => 'info',
@@ -20,6 +19,10 @@ if (empty($offers)) {
         'autoend':'recent';
     $new_order = "<strong>{$order_options[$default_orderby]['title']}</strong>";
     foreach ($order_options as $k => $v) {
+        $geolocation = $this->Session->read('Auth.User.geolocation');
+        if ($k == 'distance')
+            if (is_null($geolocation))
+                continue;
         if ($k == 'autoend')
             if ($action !== 'limited')
                 continue;

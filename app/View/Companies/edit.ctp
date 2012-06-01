@@ -97,6 +97,10 @@ echo <<< __EOF__
         map.openPopup(popup);
     };
 
+    function onMarkerDragEnd(e) {
+        popup.setLatLng(marker.getLatLng());
+    }
+
     // show map
     var map = new L.Map('map');$('#map').css('width',{$map_width}).css('height',{$map_height});
     var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/{$api_key}/997/256/{z}/{x}/{y}.png';
@@ -119,6 +123,6 @@ echo <<< __EOF__
     popup.setContent("Σύρετε τον δείκτη για να καταδείξετε την επιχείρησή σας.");
     map.openPopup(popup);
     marker.on('click', onMarkerClick);
-
+    marker.on('dragend', onMarkerDragEnd);
 </script>
 __EOF__;

@@ -200,6 +200,14 @@ class CompaniesController extends AppController {
         $options['recursive'] = -1;
         $company = $this->Company->find('first', $options);
 
+        // fetch only company images
+        $conditions['conditions'] = array(
+            'Image.company_id' => $company['Company']['id'],
+            'Image.offer_id' => null);
+        $conditions['recursive'] = -1;
+        $company['Image'] = $company_img = $this->Image->find('all', $conditions);
+        $this->set('company', $company);
+
         // bail with a flash if max images reached
         if ((int)$company['Company']['image_count'] >= MAX_COMPANY_IMAGES) {
             $this->Session->setFlash(

@@ -94,7 +94,13 @@ if (isset($comp['working_hours']))
 foreach ($company['Image'] as $image) {
     echo $this->Html->image('/images/view/'.$image['id']).'<br/>';
 }
-*/
+ */
+
+if (! empty($company['WorkHour'])) {
+    foreach($company['WorkHour'] as $wh) {
+        echo "<span class=\"bold\">{$wh['name']}:</span> {$wh['time']}";
+    }
+}
 
 if (isset($comp['latitude']) && isset($comp['longitude'])) {
     $lat = $comp['latitude'];

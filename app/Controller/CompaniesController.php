@@ -34,14 +34,30 @@ class CompaniesController extends AppController {
             $options['conditions'] += array('Company.is_enabled' => 1);
         }
 
-        $options['recursive'] = 0;
+        $options['recursive'] = 1;
 
         // ignore offers for the following `find'
         $this->Company->unbindModel(array('hasMany' => array('Offer')));
+
+        // we need the company's working hours
+        $this->Company->Behaviors->attach('Containable');
+        $this->Company->contain(array('WorkHour'));
+
         $company = $this->Company->find('first', $options);
         if (empty($company))
             throw new NotFoundException('Η συγκεκριμένη επιχείρηση δεν
                                         βρέθηκε.');
+
+        // format working hours
+        $wh_tmp = array();
+        foreach($company['WorkHour'] as $wh) {
+            $new_elem['name'] = day($wh['day_id']);
+            $wh['starting'] = $this->trim_time($wh['starting']);
+            $wh['ending'] = $this->trim_time($wh['ending']);
+            $new_elem['time'] = "{$wh['starting']} - {$wh['ending']}";
+            $wh_tmp[] = $new_elem;
+        }
+        $company['WorkHour'] = $wh_tmp;
 
         $company_id = $company['Company']['id'];
 
@@ -311,4 +327,9 @@ class CompaniesController extends AppController {
         }
         return false;
     }
+
+    private function trim_time($time) {
+        return substr($time, 0, -3);
+    }
+
 }

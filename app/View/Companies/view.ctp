@@ -43,6 +43,12 @@ if ($is_user_the_owner) {
                            array('controller' => 'companies',
                            'action' => 'edit',
                            $company['Company']['id']));
+    echo "</h6>";
+    echo "<h6>";
+    echo $this->Html->link('Επεξεργασία φωτογραφιών επιχείρησης',
+                           array('controller' => 'companies',
+                           'action' => 'imageedit',
+                           $company['Company']['id']));
     echo "</h6><br/>";
 }
 

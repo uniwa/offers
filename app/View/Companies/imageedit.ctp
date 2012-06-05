@@ -1,22 +1,19 @@
 <?php
 $html = '';
-//$html .= "<p>{$offer['Offer']['title']}</p>";
 $html .= "<p>Διαχείριση εικόνων επιχείρησης</p>";
 
-/*
-if (!empty($offer['Image'])) {
-    foreach ($offer['Image'] as $image) {
+if (!empty($company['Image'])) {
+    foreach ($company['Image'] as $image) {
             $html .= "<div class='image_frame'>";
-            $html .= $this->Html->image('/images/thumb/'.$image['id']);
+            $html .= $this->Html->image('/images/thumb/'.$image['Image']['id']);
             $link_delete = $this->Html->link('διαγραφή', array(
-                'controller' => 'images', 'action' => 'delete', $image['id']),
+                'controller' => 'images', 'action' => 'delete', $image['Image']['id']),
                 null, 'Η εικόνα θα διαγραφεί. Θέλετε να συνεχίσετε;');
             $html .= "<p>$link_delete</p></div>";
     }
 } else {
     $html .= "Δεν υπάρχουν εικόνες για αυτή την προσφορά";
 }
- */
 
 if (isset($input_elements)) {
     $html .= $this->Form->create(false, array('type' => 'file'));

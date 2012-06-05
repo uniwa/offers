@@ -7,6 +7,8 @@ class CompaniesController extends AppController {
     public $uses = array('Company', 'Offer', 'Municipality',
                          'User', 'Day', 'WorkHour', 'Image');
 
+    public $components = array('Common');
+
     public function beforeFilter() {
         if (! $this->is_authorized($this->Auth->user()))
             throw new ForbiddenException();
@@ -32,7 +34,7 @@ class CompaniesController extends AppController {
             $options['conditions'] += array('Company.is_enabled' => 1);
         }
 
-        $options['recursive'] = 1;
+        $options['recursive'] = 0;
 
         // ignore offers for the following `find'
         $this->Company->unbindModel(array('hasMany' => array('Offer')));
@@ -52,6 +54,10 @@ class CompaniesController extends AppController {
         // append offers of this company
         $company['Offer'] = $this->Offer->find_all($company_id, $shows_spam);
 
+        // fetch only company images
+        $conditions['conditions'] = array('Image.company_id' => $company_id, 'Image.offer_id' => null);
+        $conditions['recursive'] = -1;
+        $company['Image'] = $company_img = $this->Image->find('all', $conditions);
         $this->set('company', $company);
     }
 
@@ -194,9 +200,13 @@ class CompaniesController extends AppController {
         $options['recursive'] = -1;
         $company = $this->Company->find('first', $options);
 
-
-        if ($company['Company']['user_id'] != $this->Auth->User('id'))
-            throw new ForbiddenException();
+        // fetch only company images
+        $conditions['conditions'] = array(
+            'Image.company_id' => $company['Company']['id'],
+            'Image.offer_id' => null);
+        $conditions['recursive'] = -1;
+        $company['Image'] = $company_img = $this->Image->find('all', $conditions);
+        $this->set('company', $company);
 
         // bail with a flash if max images reached
         if ((int)$company['Company']['image_count'] >= MAX_COMPANY_IMAGES) {
@@ -290,5 +300,15 @@ class CompaniesController extends AppController {
 
         // admin can see banned users too
         return parent::is_authorized($user);
+    }
+
+    private function valid_type($file) {
+        // check if uploaded image has a valid filetype
+        $valid_types = array('png', 'jpg', 'jpeg', 'gif');
+
+        if (in_array($this->Common->upload_file_type($file), $valid_types)) {
+            return true;
+        }
+        return false;
     }
 }

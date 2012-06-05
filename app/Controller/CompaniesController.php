@@ -7,6 +7,8 @@ class CompaniesController extends AppController {
     public $uses = array('Company', 'Offer', 'Municipality',
                          'User', 'Day', 'WorkHour', 'Image');
 
+    public $components = array('Common');
+
     public function beforeFilter() {
         if (! $this->is_authorized($this->Auth->user()))
             throw new ForbiddenException();
@@ -286,5 +288,15 @@ class CompaniesController extends AppController {
 
         // admin can see banned users too
         return parent::is_authorized($user);
+    }
+
+    private function valid_type($file) {
+        // check if uploaded image has a valid filetype
+        $valid_types = array('png', 'jpg', 'jpeg', 'gif');
+
+        if (in_array($this->Common->upload_file_type($file), $valid_types)) {
+            return true;
+        }
+        return false;
     }
 }

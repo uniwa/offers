@@ -447,13 +447,15 @@ class OffersController extends AppController {
             $this->filter_fields($this->request->data);
 
             // Avoid changing type through update:
-            // ALWAYS set type, even to null (in which case
-            // `Offer::beforeValidate' will remove it). This way, the field will
-            // not be updated even if it was specified in the request.
-            // Still, preserve the type in case of cloning an offer.
-            if ($offer_type_id != OFFER_COPY) {
-                $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
+            // EDIT, CLONE: type_id must be consistent; get from trustworthy db
+            // ADD: type_id *is* valid anyway
+            if ($id != OFFER_ADD) {
+                $valid_type = $this->Offer->field(
+                                           'offer_type_id', array('id' => $id));
+            } else {
+                $valid_type = $offer_type_id;
             }
+            $this->request->data['Offer']['offer_type_id'] = $valid_type;
 
             $this->set_default_values($this->request->data);
 
@@ -478,9 +480,9 @@ class OffersController extends AppController {
 
             if ($saved) {
                 $request_data = $this->request->data;
+
                 // try to save WorkHours only if Offer.category is HappyHour
-                if (array_key_exists('offer_type_id', $request_data['Offer']) &&
-                    $request_data['Offer']['offer_type_id'] == TYPE_HAPPYHOUR) {
+                if ($valid_type == TYPE_HAPPYHOUR) {
 
                     if (isset($this->request->data['WorkHour']) &&
                         !empty($this->request->data['WorkHour'])) {

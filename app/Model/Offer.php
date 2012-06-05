@@ -420,22 +420,6 @@ class Offer extends AppModel {
         ),
     );
 
-    // @Override
-    // The purpose of overriding this method is to provide pre-validation
-    // data preparation.
-    public function beforeValidate($options = array()) {
-
-        // an empty `offer_type_id' designates that this is an update action
-        // the type should only be specified on create
-        if (array_key_exists('offer_type_id', $this->data['Offer'])) {
-            if ($this->data['Offer']['offer_type_id'] == null) {
-                unset($this->data['Offer']['offer_type_id']);
-            }
-        }
-
-        return parent::beforeValidate($options);
-    }
-
     public function is_owned_by($offer_id, $user_id) {
         $company_id = $this->Company->field('id', array('user_id' => $user_id));
         $offer_company_id = $this->field('company_id', array('id' => $offer_id));

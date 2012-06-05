@@ -34,7 +34,7 @@ class CompaniesController extends AppController {
             $options['conditions'] += array('Company.is_enabled' => 1);
         }
 
-        $options['recursive'] = 1;
+        $options['recursive'] = 0;
 
         // ignore offers for the following `find'
         $this->Company->unbindModel(array('hasMany' => array('Offer')));
@@ -54,6 +54,10 @@ class CompaniesController extends AppController {
         // append offers of this company
         $company['Offer'] = $this->Offer->find_all($company_id, $shows_spam);
 
+        // fetch only company images
+        $conditions['conditions'] = array('Image.company_id' => $company_id, 'Image.offer_id' => null);
+        $conditions['recursive'] = -1;
+        $company['Image'] = $company_img = $this->Image->find('all', $conditions);
         $this->set('company', $company);
     }
 

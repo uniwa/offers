@@ -52,6 +52,16 @@ if ($is_user_the_owner) {
     echo "</h6><br/>";
 }
 
+if (! empty($company['Image']) ) {
+    $img = "";
+    foreach ($company['Image'] as $image) {
+        $img .= "<div class='image_frame'>";
+        $img .= $this->Html->image('/images/thumb/'.$image['Image']['id']);
+        $img .= "</div>";
+    }
+    echo $img;
+}
+
 echo 'Επιχείρηση '.$comp['id'].'<br/>';
 
 if (isset($comp['name']))

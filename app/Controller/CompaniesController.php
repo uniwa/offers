@@ -194,10 +194,6 @@ class CompaniesController extends AppController {
         $options['recursive'] = -1;
         $company = $this->Company->find('first', $options);
 
-
-        if ($company['Company']['user_id'] != $this->Auth->User('id'))
-            throw new ForbiddenException();
-
         // bail with a flash if max images reached
         if ((int)$company['Company']['image_count'] >= MAX_COMPANY_IMAGES) {
             $this->Session->setFlash(

@@ -7,12 +7,14 @@ function reverse_coordinates(req_url, req_address) {
                 address: req_address
             },
             beforeSend: function() {
-                //alert('sending request on:' + req_url);
+                $("#ajax-status").html('<img src="../../img/ajax-loader.gif" alt="searching" />');
             },
             success: function(data) {
+                $("#ajax-status").html('<i class="icon-ok"></i>');
                 return data;
             },
             error: function() {
+                $("#ajax-status").html('<i class="icon-warning-sign"></i>');
                 return {"error": "request failed"};
             }
         }

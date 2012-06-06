@@ -16,8 +16,7 @@ class RequestsController extends Controller {
         $this->autoLayout = false;
         $this->autoRender = false;
 
-        $localhost = array('127.0.0.1', '::1');
-        if (! in_array($_SERVER['REMOTE_ADDR'], $localhost))  {
+        if ($_SERVER['REMOTE_ADDR'] != $_SERVER['SERVER_ADDR'])  {
             // you should not be here, bail hard
             exit;
         }

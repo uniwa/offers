@@ -27,11 +27,19 @@ echo $this->Form->input('Company.municipality_id', array(
                         'label' => 'Δήμος',
                         'type'  => 'select'
                        ));
-echo $this->Form->input('Company.address', array(
-                        'label' => 'Διεύθυνση',
-                        'class' => 'span4',
-                        'type'  => 'text',
-                       ));
+// make these inline?
+echo '<div class="address-block">';
+    echo $this->Form->input('Company.address', array(
+                            'label' => 'Διεύθυνση',
+                            'class' => 'span4',
+                            'id' => 'address-field',
+                            'type'  => 'text',
+                           ));
+    echo $this->Form->button('Αναζήτηση', array(
+                             'id' => 'lookup',
+                             'type' => 'button'));
+    echo "<p id=\"ajax-status\"></p>";
+echo "</div>";
 echo $this->Form->input('Company.postalcode', array(
                         'label' => 'Ταχυδρομικός κώδικας',
                         'class' => 'span1',

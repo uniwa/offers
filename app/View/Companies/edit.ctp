@@ -1,6 +1,7 @@
 <?php
 echo $this->Html->css('leaflet');
 echo $this->Html->script('leaflet');
+echo $this->Html->script('reverse_address_lookup');
 
 echo $this->Form->create(false, array(
                                     'url' => array(
@@ -26,11 +27,19 @@ echo $this->Form->input('Company.municipality_id', array(
                         'label' => 'Δήμος',
                         'type'  => 'select'
                        ));
-echo $this->Form->input('Company.address', array(
-                        'label' => 'Διεύθυνση',
-                        'class' => 'span4',
-                        'type'  => 'text',
-                       ));
+// make these inline?
+echo '<div class="address-block">';
+    echo $this->Form->input('Company.address', array(
+                            'label' => 'Διεύθυνση',
+                            'class' => 'span4',
+                            'id' => 'address-field',
+                            'type'  => 'text',
+                           ));
+    echo $this->Form->button('Αναζήτηση', array(
+                             'id' => 'lookup',
+                             'type' => 'button'));
+    echo "<p id=\"ajax-status\"></p>";
+echo "</div>";
 echo $this->Form->input('Company.postalcode', array(
                         'label' => 'Ταχυδρομικός κώδικας',
                         'class' => 'span1',
@@ -99,10 +108,22 @@ $images_path = "/coupons/img/";
 $map_width = 400;
 $map_height = 280;
 
+// we need the application URL for the ajax call
+$app_url = trim(APP_URL, '/');
+
 echo <<< __EOF__
 <br /><div id='map'></div>
 <script type="text/javascript">
-    // map callback functions
+    // automatic map lookup from address field
+    // we need document ready because address_lookup use map and form elemets
+    $(document).ready(function() {
+         $("#lookup").live('click', function() {
+            var url="{$app_url}"+"/requests/coordinates";
+            var address=$("#address-field").val();
+            address_lookup(url, address);
+         });
+     });
+   // map callback functions
     function onMarkerClick(e) {
         map.openPopup(popup);
     };

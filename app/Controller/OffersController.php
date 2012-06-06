@@ -550,14 +550,6 @@ class OffersController extends AppController {
                 // required to fill the select boxes with the correct values
                 $this->set('work_hour_count', $offer['Offer']['work_hour_count']);
 
-                // find the images of this offer and put them in $offer variable
-                if ($offer['Offer']['image_count'] > 0) {
-                    $img_opts['conditions'] = array('Image.offer_id' => $offer['Offer']['id']);
-                    $img_opts['recursive'] = -1;
-                    $offer['Image'] = Set::extract('/Image/.',
-                                                   $this->Image->find('all', $img_opts));
-                }
-
                 // find the work_hours of this offer and put them in $offer variable
                 if ($offer['Offer']['work_hour_count'] > 0) {
                     $wh_opts['conditions'] = array('WorkHour.offer_id' => $offer['Offer']['id']);

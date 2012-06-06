@@ -50,11 +50,18 @@ class RequestsController extends Controller {
             return json_encode(array('error' => 'request failed'));
         }
         curl_close($c);
-        // json -> array
-        $res_r = json_decode($res, true);
 
-        return json_encode(array(
-            'lon' => $res_r[0]['lon'],
-            'lat' => $res_r[0]['lat']));
+        // build response
+        $res = json_decode($res, true);
+        if (empty($res)) {
+            $res = array(
+                'lng' => null,
+                'lat' => null);
+        } else {
+            $res = array(
+                'lng' => $res[0]['lon'],
+                'lat' => $res[0]['lat']);
+        }
+        return json_encode($res);
     }
 }

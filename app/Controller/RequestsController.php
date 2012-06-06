@@ -15,11 +15,6 @@ class RequestsController extends Controller {
     public function beforeFilter() {
         $this->autoLayout = false;
         $this->autoRender = false;
-
-        if ($_SERVER['REMOTE_ADDR'] != $_SERVER['SERVER_ADDR'])  {
-            // you should not be here, bail hard
-            exit;
-        }
     }
 
     public function index() {

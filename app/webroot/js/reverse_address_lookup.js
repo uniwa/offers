@@ -1,4 +1,4 @@
-function reverse_coordinates(req_url, req_address) {
+function address_lookup(req_url, req_address) {
     $.ajax(
         {
             type: 'POST',

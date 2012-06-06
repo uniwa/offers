@@ -425,6 +425,9 @@ class OffersController extends AppController {
     // if $id is -1, add a new offer
     // else edit the offer with the corresponding id
     private function modify($offer_type_id, $id = null) {
+        $is_copy = $offer_type_id === OFFER_COPY;
+        $is_add = $id === OFFER_ADD;
+
         if (is_null($id)) {
             throw new BadRequestException(
                 'Δεν έχει προσδιοριστεί το id της προσφοράς');
@@ -449,13 +452,12 @@ class OffersController extends AppController {
             // Avoid changing type through update:
             // EDIT, CLONE: type_id must be consistent; get from trustworthy db
             // ADD: type_id *is* valid anyway
-            if ($id != OFFER_ADD) {
-                $valid_type = $this->Offer->field(
+            if (! $is_add) {
+                $offer_type_id = $this->Offer->field(
                                            'offer_type_id', array('id' => $id));
-            } else {
-                $valid_type = $offer_type_id;
             }
-            $this->request->data['Offer']['offer_type_id'] = $valid_type;
+
+            $this->request->data['Offer']['offer_type_id'] = $offer_type_id;
 
             $this->set_default_values($this->request->data);
 
@@ -469,53 +471,25 @@ class OffersController extends AppController {
             $company = $this->Company->find('first', $options);
             $this->request->data['Offer']['company_id'] = $company['Company']['id'];
 
-            // Leave id null for copy
-            if ($offer_type_id !== OFFER_COPY) {
-                $this->Offer->id = $id;
-            }
-            $transaction = $this->Offer->getDataSource();
-            $transaction->begin();
-            $error = false;
-            $saved = $this->Offer->save($this->request->data);
-
-            if ($saved) {
-                $request_data = $this->request->data;
-
-                // try to save WorkHours only if Offer.category is HappyHour
-                if ($valid_type == TYPE_HAPPYHOUR) {
-
-                    if (isset($this->request->data['WorkHour']) &&
-                        !empty($this->request->data['WorkHour'])) {
-                        $input_hours = $this->request->data['WorkHour'];
-                        $work_hours = array();
-                        for ($i = 1; $i <= count($input_hours); $i++) {
-                            if (!empty($input_hours[$i]['starting']) &&
-                                !empty($input_hours[$i]['ending'])) {
-                                $h0 = $this->get_time($input_hours[$i]['starting']);
-                                $h1 = $this->get_time($input_hours[$i]['ending']);
-                                $work_hours[] = array(
-                                    'offer_id' => $this->Offer->id,
-                                    'day_id' => $i,
-                                    'starting' => $h0,
-                                    'ending' => $h1);
-                            }
-                        }
-                        if (!$this->WorkHour->deleteAll(
-                            array('Offer.id' => $this->Offer->id), false)) {
-                            $error = true;
-                        } else {
-                            if (!$this->WorkHour->saveMany($work_hours))
-                                $error = true;
-                        }
-                    } else
-                        $error = true;
-                }
+            // Leave id null for copy and add
+            // NOTE: request->data is altered so that saveAssociated() may be
+            // used when saving HappyHour offer
+            if ($is_add || $is_copy) {
+                $this->request->data['Offer']['id'] = null;
             } else {
-                $error = true;
+                $this->request->data['Offer']['id'] = $id;
+            }
+
+            $error = false;
+
+            if ($offer_type_id == TYPE_HAPPYHOUR) {
+                $error = $this->save_happy_offer($id, $is_add, $is_copy) === false;
+            } else {
+                // limited and coupon do not require special treatment
+                $error = $this->Offer->save($this->request->data) === false;
             }
 
             if ($error) {
-                $transaction->rollback();
 
                 $this->notify(
                     array(  'Παρουσιάστηκε κάποιο σφάλμα',
@@ -523,7 +497,6 @@ class OffersController extends AppController {
                             array('class' => Flash::Error)),
                     null, 400, $this->Offer->validationErrors);
             } else {
-                $transaction->commit();
 
                 $this->notify(
                     // the message to appear (parameters of `setFlash')
@@ -562,11 +535,11 @@ class OffersController extends AppController {
                 // Deny edit for non-draft offer
                 // Allow copy
                 if ($offer['Offer']['offer_state_id'] != STATE_DRAFT)
-                    if($offer_type_id !== OFFER_COPY)
+                    if(! $is_copy)
                         throw new ForbiddenException();
 
                 // Unset autostart & autoend for copy
-                if($offer_type_id === OFFER_COPY) {
+                if($is_copy) {
                     unset($offer['Offer']['autostart']);
                     unset($offer['Offer']['autoend']);
                 }
@@ -634,6 +607,72 @@ class OffersController extends AppController {
             $this->set('work_hours', $work_hours);
         }
         $this->render('edit');
+    }
+
+    private function save_happy_offer($offer_id, $is_add, $is_copy) {
+        $success = true;
+
+        $work_hours = array();
+        if (isset($this->request->data['WorkHour']) &&
+            !empty($this->request->data['WorkHour'])) {
+            $input_hours = $this->request->data['WorkHour'];
+
+            for ($i = 1; $i <= count($input_hours); $i++) {
+                if (!empty($input_hours[$i]['starting']) &&
+                    !empty($input_hours[$i]['ending'])) {
+                    $h0 = $this->get_time($input_hours[$i]['starting']);
+                    $h1 = $this->get_time($input_hours[$i]['ending']);
+                    $work_hours[] = array(
+                        // 'offer_id' => $this->Offer->id, // auto-set
+                        'day_id' => ''.$i,
+                        'starting' => $h0,
+                        'ending' => $h1);
+                }
+            }
+        }
+
+        // if no work hours were given, failure is due;
+        // report error but make other errors show as well
+        if (empty($work_hours)) {
+            $this->WorkHour->invalidate(
+                        'error',
+                        'Συμπληρώστε τουλάχιστον ένα ζεύγος ωρών.');
+
+            // though it is certain that validation fails (because no
+            // work hours were supplied), other errors should be
+            // displayed as well, so validate the rest of the data as
+            // well
+            $this->Offer->set($this->request->data);
+            $this->Offer->invalidFields();
+            $success = false;
+        } else {
+
+            $transaction = $this->Offer->getDataSource();
+            $transaction->begin();
+
+            // remove previous work hours, if any
+            if (! $is_add && ! $is_copy) {
+                if (! $this->WorkHour->deleteAll(
+                    array('offer_id' => $offer_id), false)) {
+
+                        $success = false;
+                }
+            }
+
+            if ($success) {
+
+                $this->request->data['WorkHour'] = $work_hours;
+                $success = $this->Offer->saveAssociated($this->request->data);
+            }
+
+            if ($success) {
+                $transaction->commit();
+            } else {
+                $transaction->rollback();
+            }
+        }
+
+        return $success;
     }
 
     private function prepare_edit_view($offer_type_id) {

@@ -30,6 +30,11 @@
     );
     $html .= $this->Form->input($name, $options);
 
+    // manually print potential errors on work hours
+    if ($this->Form->isFieldError('WorkHour.error')) {
+        $html .= $this->Form->error('WorkHour.error');
+    }
+
     $wh = option_hours(true);
     for ($d = 1; $d <= 7; $d++) {
         $name = 'WorkHour.'.$d;

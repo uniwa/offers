@@ -104,7 +104,7 @@ if (isset($comp['latitude']) && isset($comp['longitude'])) {
     $lng = '23.73';
 }
 $api_key = "6e88be5b35b842dca178fb0beb724a32";
-$images_path = "/coupons/img/";
+$images_path = "{$this->webroot}img/";
 $map_width = 400;
 $map_height = 280;
 

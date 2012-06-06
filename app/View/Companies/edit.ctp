@@ -108,6 +108,9 @@ $images_path = "/coupons/img/";
 $map_width = 400;
 $map_height = 280;
 
+// we need the application URL for the ajax call
+$app_url = trim(APP_URL, '/');
+
 echo <<< __EOF__
 <br /><div id='map'></div>
 <script type="text/javascript">

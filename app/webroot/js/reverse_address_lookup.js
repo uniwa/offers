@@ -17,6 +17,11 @@ function address_lookup(req_url, req_address) {
                     $('#ajax-status').html('<i class="icon-ok"></i>');
                     $('#comp-longitude').val(data.lng);
                     $('#comp-latitude').val(data.lat);
+                    // create a new coordinaes object for maps
+                    var latlng = new L.LatLng(data.lat, data.lng);
+                    // set marker position and update popup based on maker
+                    marker.setLatLng(latlng);
+                    popup.setLatLng(marker.getLatLng());
                 }
             },
             error: function() {

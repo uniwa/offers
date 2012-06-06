@@ -521,7 +521,7 @@ class OffersController extends AppController {
             }
 
             // Add/edit offer
-            if ($id !== OFFER_ADD) {
+            if (! $is_add) {
                 // Edit existing offer
                 $options['conditions'] = array('Offer.id' => $id);
                 $options['recursive'] = 0;
@@ -608,7 +608,6 @@ class OffersController extends AppController {
         if (isset($this->request->data['WorkHour']) &&
             !empty($this->request->data['WorkHour'])) {
             $input_hours = $this->request->data['WorkHour'];
-
             for ($i = 1; $i <= count($input_hours); $i++) {
                 if (!empty($input_hours[$i]['starting']) &&
                     !empty($input_hours[$i]['ending'])) {
@@ -623,21 +622,26 @@ class OffersController extends AppController {
             }
         }
 
-        // if no work hours were given, failure is due;
-        // report error but make other errors show as well
+        // do validation early-on to avoid altering request->data[WorkHour], if
+        // validation is going to fail. This way, the hour values the user has
+        // set will be available to be redisplayed on the edit form
+        $this->Offer->set($this->request->data);
+        $errors = $this->Offer->invalidFields();
+        if (! empty($errors)) $success = false;
+
+
+        // set manual error for WorkHours
         if (empty($work_hours)) {
             $this->WorkHour->invalidate(
                         'error',
                         'Συμπληρώστε τουλάχιστον ένα ζεύγος ωρών.');
 
-            // though it is certain that validation fails (because no
-            // work hours were supplied), other errors should be
-            // displayed as well, so validate the rest of the data as
-            // well
-            $this->Offer->set($this->request->data);
-            $this->Offer->invalidFields();
             $success = false;
-        } else {
+        }
+
+        if ($success) {
+            // getting in here means that all fields validate and that WorkHours
+            // are properly set and validated, as well
 
             $transaction = $this->Offer->getDataSource();
             $transaction->begin();
@@ -654,7 +658,9 @@ class OffersController extends AppController {
             if ($success) {
 
                 $this->request->data['WorkHour'] = $work_hours;
-                $success = $this->Offer->saveAssociated($this->request->data);
+                $success = $this->Offer->saveAssociated(
+                                                    $this->request->data,
+                                                    array('validate' => false));
             }
 
             if ($success) {

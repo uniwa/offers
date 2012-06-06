@@ -22,6 +22,7 @@ function address_lookup(req_url, req_address) {
                     // set marker position and update popup based on maker
                     marker.setLatLng(latlng);
                     popup.setLatLng(marker.getLatLng());
+                    map.setView(latlng, 15);
                 }
             },
             error: function() {

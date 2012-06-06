@@ -1,6 +1,7 @@
 <?php
 echo $this->Html->css('leaflet');
 echo $this->Html->script('leaflet');
+echo $this->Html->script('reverse_address_lookup');
 
 echo $this->Form->create(false, array(
                                     'url' => array(

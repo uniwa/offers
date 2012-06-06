@@ -114,7 +114,16 @@ $app_url = trim(APP_URL, '/');
 echo <<< __EOF__
 <br /><div id='map'></div>
 <script type="text/javascript">
-    // map callback functions
+    // automatic map lookup from address field
+    // we need document ready because address_lookup use map and form elemets
+    $(document).ready(function() {
+         $("#lookup").live('click', function() {
+            var url="{$app_url}"+"/requests/coordinates";
+            var address=$("#address-field").val();
+            address_lookup(url, address);
+         });
+     });
+   // map callback functions
     function onMarkerClick(e) {
         map.openPopup(popup);
     };

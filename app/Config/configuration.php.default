@@ -1,6 +1,7 @@
 <?php
 $config = array(
     'Constants' => array(
+        'APP_URL' => 'http://localhost',
         'ROLE_ADMIN' => 'admin',
         'ROLE_STUDENT' => 'student',
         'ROLE_COMPANY' => 'company',

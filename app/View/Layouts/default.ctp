@@ -123,26 +123,26 @@
             }
           ?>
           </div><!--/.nav-collapse -->
-		 </div>
+         </div>
       </div>
     </div>
 
-	<div class="container-fluid">
+    <div class="container-fluid">
     <!--renders notification message-->
         <?php echo $this->Session->flash(); ?>
-      	<div class="row-fluid">
-			<?php echo $content_for_layout;?>
-			<!--modal snipet-->
-		</div><!--/row-->
+        <div class="row-fluid">
+            <?php echo $content_for_layout;?>
+            <!--modal snipet-->
+        </div><!--/row-->
 
 
-	</div><!--/.fluid-container-->
+    </div><!--/.fluid-container-->
 
 
         <hr id = "footer">
 
-    	<footer>
-    	   	<p>&copy; Τ.Ε.Ι Αθήνας <?php echo date('Y'); ?></p>
+        <footer>
+            <p>&copy; Τ.Ε.Ι Αθήνας <?php echo date('Y'); ?></p>
         </footer>
 <!--will allow all scripts generated in layout elements to be output in one place-->
 <?php echo $this->Js->writeBuffer(); ?>

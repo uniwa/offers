@@ -424,7 +424,8 @@ END //
 DELIMITER //
 CREATE PROCEDURE `opendeals`.`updatedistances` (IN uid INT, IN lat DOUBLE, IN lng DOUBLE, IN r INT)
 BEGIN
-INSERT INTO distances (user_id, company_id, radius, distance)
+DELETE FROM `opendeals`.`distances` WHERE `distances`.`user_id` = uid;
+INSERT INTO `opendeals`.`distances` (user_id, company_id, radius, distance)
 SELECT users.id, companies.id, r, geodist(lat,lng,companies.latitude,companies.longitude) AS d
 FROM users,companies
 WHERE users.id = uid

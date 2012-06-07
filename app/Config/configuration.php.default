@@ -26,6 +26,9 @@ $config = array(
         'OFFER_COPY' => -2,
         'IMG_OFFER' => 1,
         'IMG_COMPANY' => 2,
+        'RADIUS_S' => 1,
+        'RADIUS_M' => 5,
+        'RADIUS_L' => 10,
     ),
     'Settings' => array(
         'offer_type' => array(

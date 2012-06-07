@@ -13,16 +13,35 @@ class Offer extends AppModel {
         'tag' => true
     );
 
+    // Find methods core processing
+    private function process_find(&$query) {
+        $query['conditions'] = array_merge($query['conditions'], array(
+            'Offer.offer_state_id' => STATE_ACTIVE,
+            'Offer.is_spam' => 0,
+            'Company.is_enabled' => 1));
+
+        // Handle distance ordering
+        if (isset($query['radius'])) {
+            $query['order'] = array('Distance.distance' => 'asc');
+            $query['conditions'] = array_merge(
+                $query['conditions'],
+                array('Distance.distance <=' => $query['radius']));
+            $query['joins'] = array(array(
+                'table' => 'distances',
+                'alias' => 'Distance',
+                'type' => 'LEFT',
+                'conditions' => array(
+                    'Offer.company_id = Distance.company_id')));
+        }
+        else
+            $query['order'] = array('Offer.modified' => 'desc');
+    }
+
     // 'valid' custom find type
     // returns active offers from enabled companies, not spam
     protected function _findValid($state, $query, $results = array()) {
         if ($state === 'before') {
-            $query['conditions'] = array_merge($query['conditions'], array(
-                'Offer.offer_state_id' => STATE_ACTIVE,
-                'Offer.is_spam' => 0,
-                'Company.is_enabled' => 1));
-            if (!isset($query['order']))
-                $query['order'] = array('Offer.modified' => 'desc');
+            $this->process_find($query);
             return $query;
         }
         return $results;
@@ -42,13 +61,8 @@ class Offer extends AppModel {
     protected function _findHappyhour($state, $query, $results = array()) {
         if ($state === 'before') {
             $query['conditions'] = array(
-                'Offer.offer_type_id' => TYPE_HAPPYHOUR,
-                'Offer.offer_state_id' => STATE_ACTIVE,
-                'Offer.is_spam' => 0,
-                'Company.is_enabled' => 1
-            );
-            if (!isset($query['order']))
-                $query['order'] = array('Offer.modified' => 'desc');
+                'Offer.offer_type_id' => TYPE_HAPPYHOUR,);
+            $this->process_find($query);
             return $query;
         }
         return $results;
@@ -58,13 +72,8 @@ class Offer extends AppModel {
     protected function _findCoupons($state, $query, $results = array()) {
         if ($state === 'before') {
             $query['conditions'] = array(
-                'Offer.offer_type_id' => TYPE_COUPONS,
-                'Offer.offer_state_id' => STATE_ACTIVE,
-                'Offer.is_spam' => 0,
-                'Company.is_enabled' => 1
-            );
-            if (!isset($query['order']))
-                $query['order'] = array('Offer.modified' => 'desc');
+                'Offer.offer_type_id' => TYPE_COUPONS,);
+            $this->process_find($query);
             return $query;
         }
         return $results;
@@ -74,13 +83,8 @@ class Offer extends AppModel {
     protected function _findLimited($state, $query, $results = array()) {
         if ($state === 'before') {
             $query['conditions'] = array(
-                'Offer.offer_type_id' => TYPE_LIMITED,
-                'Offer.offer_state_id' => STATE_ACTIVE,
-                'Offer.is_spam' => 0,
-                'Company.is_enabled' => 1
-            );
-            if (!isset($query['order']))
-                $query['order'] = array('Offer.modified' => 'desc');
+                'Offer.offer_type_id' => TYPE_LIMITED,);
+            $this->process_find($query);
             return $query;
         }
         return $results;
@@ -96,13 +100,8 @@ class Offer extends AppModel {
     protected function _findTag($state, $query, $results = array()) {
         if ($state === 'before') {
             $query['conditions'] = array(
-                'Offer.tags LIKE' => "%{$query['tag']}%",
-                'Offer.offer_state_id' => STATE_ACTIVE,
-                'Offer.is_spam' => 0,
-                'Company.is_enabled' => 1
-            );
-            if (!isset($query['order']))
-                $query['order'] = array('Offer.modified' => 'desc');
+                'Offer.tags LIKE' => "%{$query['tag']}%",);
+            $this->process_find($query);
             return $query;
         }
         return $results;
@@ -120,13 +119,7 @@ class Offer extends AppModel {
             }
             $conditions['OR'] = $condition;
 
-            $query['conditions'] = array_merge($conditions, array(
-                'Offer.offer_state_id' => STATE_ACTIVE,
-                'Offer.is_spam' => 0,
-                'Company.is_enabled' => 1
-            ));
-			if (!isset($query['order']))
-    			$query['order'] = array('Offer.modified' => 'desc');
+            $this->process_find($query);
             return $query;
         }
         return $results;

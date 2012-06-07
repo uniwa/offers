@@ -4,7 +4,7 @@ class OffersController extends AppController {
 
     public $name = 'Offers';
     public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day',
-        'Coupon', 'Student', 'Vote', 'Sanitize');
+        'Coupon', 'Student', 'Vote', 'Sanitize', 'Distance');
     public $paginate = array(
 //        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
@@ -35,7 +35,7 @@ class OffersController extends AppController {
                 'Offer.vote_sum' => 'desc')),
         'distance' => array(
             'title' => 'απόσταση',
-            'value' => array()));
+            'value' => array('Distance.distance' => 'asc')));
 
     public $helpers = array('Html', 'Time', 'Text', 'Tag');
 
@@ -166,13 +166,15 @@ class OffersController extends AppController {
             $criterion = $this->params['named']['orderby'];
         if (isset($criterion)) {
             $valid_criterion = in_array($criterion, $order_options);
-            if ($valid_criterion &&
-                ($this->params['action'] === 'limited') ||
-                ($criterion !== 'autoend'))
-            {
-                $params['order'] = $this->order[$criterion]['value'];
+            if ($valid_criterion) {
+                if (($this->params['action'] === 'limited') ||
+                    ($criterion !== 'autoend'))
+                    $params['order'] = $this->order[$criterion]['value'];
+                if ($criterion === 'distance') {
+                    $params['radius'] = $this->Session->read('Auth.User.radius');
+                }
 
-                return $valid_criterion;
+                return true;
             }
 
             return false;
@@ -186,7 +188,6 @@ class OffersController extends AppController {
         $this->paginate = $params;
         $offers = $this->paginate();
         $this->minify_desc($offers, 160);
-
         if ($this->is_webservice) {
             switch ($this->webservice_type) {
                 case 'js':
@@ -1044,6 +1045,40 @@ class OffersController extends AppController {
                 400,
                 array(  'id' => $id));
         }
+    }
+
+    // Computes the haversine distance between the to supplied locations. Each
+    // parameter must be an array that contains the keys 'latitude' and
+    // 'longitude'. If the [to] parameter is omitted (i.d., is_null on it
+    // returns true), the TEI of Athen's coordinates, will be used.
+    private function haversine_distance($from, $to=null) {
+        if (is_null($to)) {
+            if (is_null($this->Session->read('Auth.User.geolocation')))
+                throw new NotFoundException();
+            else {
+                $to = $this->Session->read('Auth.User.geolocation');
+            }
+        }
+
+        $radius = 6371;
+
+        if(!is_numeric( $from['lat'] ) ||
+            !is_numeric( $from['lng'])) {
+            return null;
+        }
+
+        $latFrom = deg2rad($from['lat']);
+        $latTo = deg2rad($to['lat']);
+        $latDiff = deg2rad($to['lat'] - $from['lat']);
+        $lngDiff = deg2rad($to['lng'] - $from['lng']);
+
+        $latHaversine = sin($latDiff/2)*sin($latDiff/2);
+        $lngHaversine = sin($lngDiff/2)*sin($lngDiff/2);
+
+        $root = sqrt($latHaversine+cos($latFrom)*cos($latTo)*sin($lngHaversine));
+        $distance = 2*$radius*asin($root);
+
+        return $distance;
     }
 
     // Transforms an array of offers in CakePHP's intrinsic format into an array

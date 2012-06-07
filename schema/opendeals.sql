@@ -384,6 +384,56 @@ ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 
+-- -----------------------------------------------------
+-- Table `opendeals`.`distances`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `distances`;
+
+CREATE TABLE IF NOT EXISTS `distances` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `company_id` int(11) NOT NULL,
+  `radius` int(11) NOT NULL,
+  `distance` double NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+DELIMITER //
+CREATE FUNCTION `opendeals`.`geodist` (fromlat DOUBLE, fromlng DOUBLE, tolat DOUBLE, tolng DOUBLE)
+RETURNS DOUBLE
+DETERMINISTIC
+BEGIN
+DECLARE latfrom,latto,latdiff,lngdiff DOUBLE;
+DECLARE lathvr,lnghvr,root,dist DOUBLE;
+DECLARE r INT;
+SET r = 6371;
+SET latfrom = radians(fromlat);
+SET latto = radians(tolat);
+SET latdiff = radians(tolat - fromlat);
+SET lngdiff = radians(tolng - fromlng);
+SET lathvr = sin(latdiff / 2) * sin(latdiff / 2);
+SET lnghvr = sin(lngdiff / 2) * sin(lngdiff / 2);
+SET root = sqrt(lathvr + cos(latfrom) * cos(latto) * sin(lnghvr));
+SET dist = 2 * r * asin(root);
+RETURN dist;
+END //
+
+
+DELIMITER //
+CREATE PROCEDURE `opendeals`.`updatedistances` (IN uid INT, IN lat DOUBLE, IN lng DOUBLE, IN r INT)
+BEGIN
+INSERT INTO distances (user_id, company_id, radius, distance)
+SELECT users.id, companies.id, r, geodist(lat,lng,companies.latitude,companies.longitude) AS d
+FROM users,companies
+WHERE users.id = uid
+GROUP BY companies.id
+HAVING d > 0 AND d < r
+ORDER BY d ASC;
+END //
+
+
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;

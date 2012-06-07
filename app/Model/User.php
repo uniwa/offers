@@ -3,6 +3,7 @@
 class User extends AppModel {
     public $name = 'User';
     public $hasOne = array( 'Company', 'Student' );
+    public $hasMany = array('Distance');
 
     public $validate = array(
 

@@ -2,7 +2,7 @@
 
 class UsersController extends AppController {
 
-    public $uses = array('User', 'Image', 'Day',
+    public $uses = array('User', 'Image', 'Day', 'Distance',
                          'WorkHour', 'Municipality', 'Company', 'Student');
 
     public $components = array('RequestHandler');
@@ -85,6 +85,9 @@ class UsersController extends AppController {
                     }
                 }
 
+                // Set default radius for offers by distance
+                $this->Session->write('Auth.User.radius', RADIUS_M);
+
                 $this->notify(
                     'Η αυθεντικοποίηση ολοκληρώθηκε με επιτυχία',
                     array($this->Auth->redirect()));
@@ -98,8 +101,10 @@ class UsersController extends AppController {
         }
     }
 
-
     function logout() {
+        $uid = $this->Session->read('Auth.User.id');
+        // Remove all distances for current user
+        $this->Distance->remove($uid);
         $this->redirect( $this->Auth->logout() );
     }
 
@@ -121,6 +126,26 @@ class UsersController extends AppController {
                                          'default',
                                          array('class' => Flash::Error));
         }
+    }
+
+    // Update user coordinates in session
+    public function coords() {
+        $lat = $this->params['named']['lat'];
+        $lng = $this->params['named']['lng'];
+        // Set session geolocation if valid
+        if (($lat >= -90) && ($lat <= 90) && ($lng >= -180) && ($lng <= 180)) {
+            $geolocation = array('lat' => $lat, 'lng' => $lng);
+            $this->Session->write('Auth.User.geolocation', $geolocation);
+            $uid = $this->Session->read('Auth.User.id');
+            // Define maximum radius
+            $r = RADIUS_L;
+            $this->Session->write('Auth.User.radius', $r);
+            // Update distances
+            $query = "CALL updatedistances($uid,$lat,$lng,$r)";
+            $this->User->query($query);
+        }
+
+        $this->redirect(array('controller' => 'offers', 'action' => 'index'));
     }
 
     //Terms of use action

@@ -86,4 +86,13 @@ $html .= $this->Paginator->numbers(array(
     'tag' => 'li'));
 $html .= "</ul></div></div>";
 
+// Request geolocation iformation for logged user if not already set
+if ($this->Session->check('Auth.User')) {
+    if ($this->Session->read('Auth.User.role') === ROLE_STUDENT) {
+        if (is_null($this->Session->read('Auth.User.geolocation'))) {
+            $html .= $this->Html->script('geolocation');
+        }
+    }
+}
+
 echo $html;

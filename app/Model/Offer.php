@@ -20,21 +20,23 @@ class Offer extends AppModel {
             'Offer.is_spam' => 0,
             'Company.is_enabled' => 1));
 
-        // Handle distance ordering
-        if (isset($query['radius'])) {
-            $query['order'] = array('Distance.distance' => 'asc');
-            $query['conditions'] = array_merge(
-                $query['conditions'],
-                array('Distance.distance <=' => $query['radius']));
-            $query['joins'] = array(array(
-                'table' => 'distances',
-                'alias' => 'Distance',
-                'type' => 'LEFT',
-                'conditions' => array(
-                    'Offer.company_id = Distance.company_id')));
-        }
-        else
+        if (isset($query['order'])) {
+            // Handle distance ordering
+            if (isset($query['radius'])) {
+                $query['order'] = array('Distance.distance' => 'asc');
+                $query['conditions'] = array_merge(
+                    $query['conditions'],
+                    array('Distance.distance <=' => $query['radius']));
+                $query['joins'] = array(array(
+                    'table' => 'distances',
+                    'alias' => 'Distance',
+                    'type' => 'LEFT',
+                    'conditions' => array(
+                        'Offer.company_id = Distance.company_id')));
+            }
+        } else {
             $query['order'] = array('Offer.modified' => 'desc');
+        }
     }
 
     // 'valid' custom find type

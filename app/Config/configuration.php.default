@@ -29,7 +29,6 @@ $config = array(
         'RADIUS_S' => 1,
         'RADIUS_M' => 5,
         'RADIUS_L' => 10,
-        'BASE_URL' => '/coupons',
     ),
     'Settings' => array(
         'offer_type' => array(

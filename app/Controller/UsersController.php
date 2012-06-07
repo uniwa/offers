@@ -105,7 +105,10 @@ class UsersController extends AppController {
         $uid = $this->Session->read('Auth.User.id');
         // Remove all distances for current user
         $this->Distance->remove($uid);
-        $this->redirect( $this->Auth->logout() );
+
+        $this->notify(
+            'Έχετε αποσυνδεθεί',
+            array( $this->Auth->logout() ));
     }
 
     function register() {

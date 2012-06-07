@@ -145,7 +145,9 @@ class UsersController extends AppController {
             $this->User->query($query);
         }
 
-        $this->redirect(array('controller' => 'offers', 'action' => 'index'));
+        $this->notify(
+            'Οι συντεταγμένες αποθηκεύτηκαν',
+            array(  array('controller' => 'offers', 'action' => 'index')));
     }
 
     //Terms of use action

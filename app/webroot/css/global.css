@@ -50,3 +50,11 @@
 .bold {
     font-weight: bold;
 }
+
+.footer-rss {
+    float: left;
+    background-image: url('../img/rss-footer.png');
+    background-repeat: no-repeat;
+    height: 32px;
+    width: 32px;
+}

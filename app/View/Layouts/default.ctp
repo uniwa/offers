@@ -143,6 +143,13 @@
 
         <footer>
             <p>&copy; Τ.Ε.Ι Αθήνας <?php echo date('Y'); ?></p>
+            <p>
+            <?php echo $this->Html->link(
+                '',
+                array('controller' => 'offers', 'action' => 'index.rss'),
+                array('class' => 'footer-rss', 'title' => 'rss προσφορών')
+            );?>
+            </p>
         </footer>
 <!--will allow all scripts generated in layout elements to be output in one place-->
 <?php echo $this->Js->writeBuffer(); ?>

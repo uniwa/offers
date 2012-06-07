@@ -11,7 +11,7 @@ function successCallback(position) {
     // object is guaranteed to be at most 10 minutes old.
 
     // redirect with new coordinates
-    var url = "/coupons/users/coords/lat:"+position['coords']['latitude']+"/lng:"+position['coords']['longitude']+"/";
+    var url = baseUrl + "/users/coords/lat:"+position['coords']['latitude']+"/lng:"+position['coords']['longitude']+"/";
     window.location.replace(url);
 }
 

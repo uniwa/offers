@@ -10,14 +10,12 @@ class UsersController extends AppController {
     function beforeFilter() {
         parent::beforeFilter();
         $this->api_initialize();
-
-        // In case user tries to register when logged in
-        if ($this->Auth->user() && $this->request['action'] == 'register') {
-            throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
-        }
     }
 
     function login() {
+        if ($this->Auth->user())
+            return $this->notify('Έχετε ήδη συνδεθεί', array('/'));
+
         if ($this->request->is('post')) {
             $userlogin = $this->Auth->login();
             if ($userlogin) {
@@ -112,6 +110,8 @@ class UsersController extends AppController {
     }
 
     function register() {
+        if ($this->Auth->user()) $this->redirect('/');
+
         if( !empty( $this->request->data ) ) {
             //is_enabled and is_banned is by default false
             //set registered User's role
@@ -133,6 +133,9 @@ class UsersController extends AppController {
 
     // Update user coordinates in session
     public function coords() {
+        if (! $this->Auth->user())
+            throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
+
         $lat = $this->params['named']['lat'];
         $lng = $this->params['named']['lng'];
         // Set session geolocation if valid

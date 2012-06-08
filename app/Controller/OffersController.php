@@ -1209,6 +1209,9 @@ class OffersController extends AppController {
             ++$offer_i;
         }
 
+        if (empty($result)) {
+            $result = array('offers' => null, 'companies' => null);
+        } else
         // make any additional alterations, specifically for xml format
         if ($is_xml) {
 
@@ -1265,6 +1268,8 @@ class OffersController extends AppController {
         // it is assumed that all entities possess an `id' attribute and,
         // potentially, dates; if not, a different approach is due
         foreach ($data as $type => $entities) {
+
+            if (empty($entities)) continue;
 
             foreach ($entities as $index => $entity) {
 

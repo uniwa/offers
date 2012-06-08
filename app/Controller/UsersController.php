@@ -132,28 +132,45 @@ class UsersController extends AppController {
     }
 
     // Update user coordinates in session
+    // Coordinates are passed as named arguments
+    // e.g. http:/coupons.teiath.gr/users/coords/lat:38.003/lng:23.668/
+    // Upon successful validation, the session variable Auth.User.geolocation
+    // is updated with the new values.
     public function coords() {
         if (! $this->Auth->user())
             throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
 
-        $lat = $this->params['named']['lat'];
-        $lng = $this->params['named']['lng'];
-        // Set session geolocation if valid
-        if (($lat >= -90) && ($lat <= 90) && ($lng >= -180) && ($lng <= 180)) {
-            $geolocation = array('lat' => $lat, 'lng' => $lng);
-            $this->Session->write('Auth.User.geolocation', $geolocation);
-            $uid = $this->Session->read('Auth.User.id');
-            // Define maximum radius
-            $r = RADIUS_L;
-            $this->Session->write('Auth.User.radius', $r);
-            // Update distances
-            $query = "CALL updatedistances($uid,$lat,$lng,$r)";
-            $this->User->query($query);
+        $named = $this->params['named'];
+        $message = 'Παρουσιάστηκε σφάλμα κατά την αποθήκευση των συντεταγμένων';
+        $flash = array($message, 'default', array('class' => Flash::Error));
+        $status = 400;
+
+        if (isset($named['lat']) && isset($named['lng'])) {
+            $lat = $named['lat'];
+            $lng = $named['lng'];
+            // Set session geolocation if valid
+            if (($lat >= -90) && ($lat <= 90) && ($lng >= -180) && ($lng <= 180)) {
+                $geolocation = array('lat' => $lat, 'lng' => $lng);
+                $this->Session->write('Auth.User.geolocation', $geolocation);
+                $uid = $this->Session->read('Auth.User.id');
+                // Define maximum radius
+                $r = RADIUS_L;
+                $this->Session->write('Auth.User.radius', $r);
+                // Update distances
+                $query = "CALL updatedistances($uid,$lat,$lng,$r)";
+                $this->User->query($query);
+
+                $message = 'Οι συντεταγμένες αποθηκεύτηκαν ('.$lat.','.$lng.')';
+                $flash = array($message, 'default',
+                    array('class' => Flash::Success));
+                $status = 200;
+            }
         }
 
         $this->notify(
-            'Οι συντεταγμένες αποθηκεύτηκαν',
-            array(  array('controller' => 'offers', 'action' => 'index')));
+            $flash,
+            array(array('controller' => 'offers', 'action' => 'index')),
+            $status);
     }
 
     //Terms of use action

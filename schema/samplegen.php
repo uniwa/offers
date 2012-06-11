@@ -892,8 +892,8 @@ for ($i = 1; $i <= NUM_COMPANIES; $i++) {
         $work_hour_count = 0;
         $offer_state_id = rand(1,3);
         $is_spam = 0;
-        $vote_sum = rand(0,100);
-        $vote_count = rand(-$vote_sum,$vote_sum);
+        $vote_count = rand(0,100);
+        $vote_sum = rand(-$vote_count,$vote_count);
 
 	    $insert_offer = "('{$offer_id}','{$title}','{$desc}','{$started}','{$ended}',";
 	    $insert_offer .= "'{$autostart}','{$autoend}','{$coupon_terms}','{$total_quantity}',";

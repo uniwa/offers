@@ -1,8 +1,8 @@
 INSERT INTO `users` VALUES
-(1,'user1','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','fifikos@fmail.com',0,'student',0,NULL),
-(2,'user2','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','fifoula@fmail.com',0,'student',0,NULL),
-(3,'user3','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','tlatsas@gmail.com',0,'student',0,NULL),
-(4,'admin','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','admin@admin.com',0,'admin',0,'2012-04-18 06:22:48'),
+(1,'user1','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','student1@tei.gr',0,'student',0,NULL),
+(2,'user2','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','student2@tei.gr',0,'student',0,NULL),
+(3,'user3','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','student3@tei.gr',0,'student',0,NULL),
+(4,'admin','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','admin@tei.gr',0,'admin',0,'2012-04-18 06:22:48'),
 ('101','company1','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','company1@tei.gr',0,'company',0,NULL),
 ('102','company2','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','company2@tei.gr',0,'company',0,NULL),
 ('103','company3','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','company3@tei.gr',0,'company',0,NULL),

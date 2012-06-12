@@ -24,6 +24,7 @@ class Offer extends AppModel {
             // Handle distance ordering
             if (isset($query['radius'])) {
                 $query['order'] = array('Distance.distance' => 'asc');
+                $query['group'] = array('Offer.id');
                 $query['conditions'] = array_merge(
                     $query['conditions'],
                     array('Distance.distance <=' => $query['radius']));

@@ -40,36 +40,45 @@
  */
 	CakePlugin::routes();
 
+    // webservice aliases
+    $ws = '[api|webservice]';
+
     Router::parseExtensions('rss', 'xml', 'json');
 
-    Router::connect('/webservice/offer/activate/*',
+    Router::connect('/:ws/offer/activate/*',
         array(  'controller' => 'offers',
                 'action' => 'activate',
+                'ws' => $ws,
                 '[method]' => 'GET'));
 
-    Router::connect('/webservice/offer/terminate/*',
+    Router::connect('/:ws/offer/terminate/*',
         array(  'controller' => 'offers',
                 'action' => 'terminate',
+                'ws' => $ws,
                 '[method]' => 'GET'));
 
-    Router::connect('/webservice/offer/*',
+    Router::connect('/:ws/offer/*',
         array(  'controller' => 'offers',
                 'action' => 'view',
+                'ws' => $ws,
                 '[method]' => 'GET'));
 
-    Router::connect('/webservice/offers/*',
+    Router::connect('/:ws/offers/*',
         array(  'controller' => 'offers',
                 'action' => 'index',
+                'ws' => $ws,
                 '[method]' => 'GET'));
 
-    Router::connect('/webservice/offer/*',
+    Router::connect('/:ws/offer/*',
         array(  'controller' => 'offers',
                 'action' => 'edit',
+                'ws' => $ws,
                 '[method]' => 'PUT'));
 
-    Router::connect('/webservice/offer',
+    Router::connect('/:ws/offer',
         array(  'controller' => 'offers',
                 'action' => 'webservice_add',
+                'ws' => $ws,
                 '[method]' => 'POST'));
 
 /**

@@ -75,7 +75,6 @@
 
             <!--Block dropdown form when user is inside login action-->
             <?php
-                if ($this->here != '/coupons/users/login') {
                 // Login functionality with dropdown
                 //if user is logged in take his profile link and logout link
                 if( $this->Session->check( 'Auth.User' ) ) {
@@ -120,7 +119,6 @@
                     </ul>
           <?php
                 }
-            }
           ?>
           </div><!--/.nav-collapse -->
          </div>

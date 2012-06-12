@@ -88,12 +88,20 @@ class CompaniesController extends AppController {
 
         $this->set('days', $this->Day->find('list'));
 
-        $options['conditions'] = array('Company.id' => $id);
-        $options['recursive'] = 0;
-        $company = $this->Company->find('first', $options);
-        $this->set('company', $company);
+        $this->Company->Behaviors->attach('Containable');
+        $this->Company->contain(array('User', 'Municipality', 'WorkHour'));
+        $company = $this->Company->findById($id);
 
         if (empty($company)) throw new NotFoundException();
+
+        $work_hours = array();
+        foreach ($company['WorkHour'] as $v) {
+            $day = $v['day_id'];
+            $work_hours[$day]['starting'] = substr($v['starting'], 0, -3);
+            $work_hours[$day]['ending'] = substr($v['ending'], 0, -3);
+        }
+        $company['WorkHour'] = $work_hours;
+        $this->set('company', $company);
 
         if (empty($this->request->data)) {
             $this->request->data = $company;

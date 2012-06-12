@@ -110,9 +110,9 @@ class CompaniesController extends AppController {
             if (!$this->WorkHour->deleteAll($del_opts, true, true))
                 $error = true;
 
+            $work_hours = array();
             if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
                 $input_hours = $this->request->data['WorkHour'];
-                $work_hours = array();
                 for ($i = 1; $i < count($input_hours); $i++) {
                     if (! empty($input_hours[$i]['starting']) and
                         ! empty($input_hours[$i]['ending'])) {
@@ -124,7 +124,9 @@ class CompaniesController extends AppController {
                             );
                     }
                 }
+            }
 
+            if (! empty($work_hours)) {
                 if (!$this->WorkHour->saveAll($work_hours)) {
                     $error = true;
                 }

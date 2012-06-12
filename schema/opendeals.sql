@@ -387,9 +387,9 @@ DEFAULT CHARACTER SET = utf8;
 -- -----------------------------------------------------
 -- Table `opendeals`.`distances`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `distances`;
+DROP TABLE IF EXISTS `opendeals`.`distances`;
 
-CREATE TABLE IF NOT EXISTS `distances` (
+CREATE TABLE IF NOT EXISTS `opendeals`.`distances` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `company_id` int(11) NOT NULL,

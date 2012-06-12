@@ -101,7 +101,9 @@
                    <!--TODO all inside element -->
                     <ul class="nav pull-right">
                         <li class="dropdown" id="login">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="users/login">Σύνδεση<b class="caret"></b></a>
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="users/login">
+                                Σύνδεση<span class="caret"></span>
+                            </a>
                             <ul class="dropdown-menu">
                                 <?php echo $this->Form->create('User', array(
                                     'action'=>'post', 'url'=>array(

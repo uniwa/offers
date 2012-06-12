@@ -96,6 +96,8 @@ class UsersController extends AppController {
                             array('class' => Flash::Error)),
                     null, 403);
             }
+        } else {
+            $this->set('hide_dropdown', true);
         }
     }
 

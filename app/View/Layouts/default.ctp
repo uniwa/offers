@@ -97,6 +97,7 @@
 
                     echo "<p class=\"navbar-text pull-right\">$profile&nbsp&nbsp&nbsp$logout( $username )</p>";
                 } else {
+                    if (!isset($hide_dropdown) || !$hide_dropdown) {
             ?>
                    <!--TODO all inside element -->
                     <ul class="nav pull-right">
@@ -120,6 +121,7 @@
                        </li>
                     </ul>
           <?php
+                    }
                 }
           ?>
           </div><!--/.nav-collapse -->

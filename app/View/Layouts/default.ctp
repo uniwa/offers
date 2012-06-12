@@ -102,9 +102,19 @@
                    <!--TODO all inside element -->
                     <ul class="nav pull-right">
                         <li class="dropdown" id="login">
-                            <a class="dropdown-toggle" data-toggle="dropdown" href="users/login">
-                                Σύνδεση<span class="caret"></span>
-                            </a>
+                            <?php
+                                echo $this->Html->link(
+                                    'Σύνδεση<span class="caret"></span>',
+                                    array(
+                                        'controller' => 'users',
+                                        'action' => 'login'),
+                                    array(
+                                        'class' => 'dropdown-toggle',
+                                        'data-toggle' => 'dropdown',
+                                        'data-target' => '#',
+                                        'escape' => false)
+                                    );
+                            ?>
                             <ul class="dropdown-menu">
                                 <?php echo $this->Form->create('User', array(
                                     'action'=>'post', 'url'=>array(

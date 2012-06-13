@@ -81,6 +81,12 @@
                 'ws' => $ws,
                 '[method]' => 'POST'));
 
+    Router::connect('/:ws/users/login',
+        array(  'controller' => 'users',
+                'action' => 'login',
+                'ws' => $ws,
+                '[method]' => 'POST'));
+
 /**
  * Load the CakePHP default routes. Remove this if you do not want to use
  * the built-in default routes.

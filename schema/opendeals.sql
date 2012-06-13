@@ -38,18 +38,6 @@ DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
--- Table `opendeals`.`offer_states`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `opendeals`.`offer_states` ;
-CREATE  TABLE IF NOT EXISTS `opendeals`.`offer_states` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` MEDIUMTEXT NOT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
 -- Table `opendeals`.`offer_categories`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `opendeals`.`offer_categories` ;
@@ -59,32 +47,6 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offer_categories` (
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `opendeals`.`offer_types`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `opendeals`.`offer_types` ;
-
-CREATE  TABLE IF NOT EXISTS `opendeals`.`offer_types` (
-  `id` INT NOT NULL AUTO_INCREMENT ,
-  `name` MEDIUMTEXT NOT NULL ,
-  PRIMARY KEY (`id`) )
-ENGINE = InnoDB
-DEFAULT CHARACTER SET = utf8;
-
-
--- -----------------------------------------------------
--- Table `opendeals`.`image_categories`
--- -----------------------------------------------------
--- DROP TABLE IF EXISTS `opendeals`.`image_categories` ;
-
--- CREATE TABLE IF NOT EXISTS `opendeals`.`image_categories` (
---   `id` INT NOT NULL AUTO_INCREMENT ,
---   `name` MEDIUMTEXT NOT NULL,
---   PRIMARY KEY (`id`) )
--- ENGINE = InnoDB
--- DEFAULT CHARACTER SET = utf8;
 
 
 -- -----------------------------------------------------
@@ -133,8 +95,8 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
   `fax` VARCHAR(10) NULL DEFAULT NULL ,
   `service_type` MEDIUMTEXT NULL DEFAULT NULL ,
   `afm` VARCHAR(9) NOT NULL ,
-  `longitude` DOUBLE NULL DEFAULT NULL ,
   `latitude` DOUBLE NULL DEFAULT NULL ,
+  `longitude` DOUBLE NULL DEFAULT NULL ,
   `is_enabled` TINYINT(1) NOT NULL DEFAULT FALSE ,
   `user_id` INT NOT NULL ,
   `municipality_id` INT NULL DEFAULT NULL ,
@@ -181,7 +143,6 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`images` (
   PRIMARY KEY (`id`) ,
   INDEX `fk_images_offers` (`offer_id` ASC) ,
   INDEX `fk_images_companies` (`company_id` ASC) ,
--- INDEX `fk_images_image_categories` (`image_category_id` ASC) ,
   CONSTRAINT `fk_images_offers`
     FOREIGN KEY (`offer_id`)
     REFERENCES `opendeals`.`offers` (`id`)
@@ -192,12 +153,6 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`images` (
     REFERENCES `opendeals`.`companies` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
---    ON UPDATE NO ACTION,
---  CONSTRAINT `fk_images_image_categories`
---    FOREIGN KEY (`image_category_id`)
---    REFERENCES `opendeals`.`image_categories` (`id`)
---    ON DELETE NO ACTION
---    ON UPDATE NO ACTION)
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8;
 
@@ -241,19 +196,9 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
     REFERENCES `opendeals`.`offer_categories` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_offers_offer_types1`
-    FOREIGN KEY (`offer_type_id` )
-    REFERENCES `opendeals`.`offer_types` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
   CONSTRAINT `fk_offers_companies1`
     FOREIGN KEY (`company_id` )
     REFERENCES `opendeals`.`companies` (`id` )
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_offers_offer_states`
-    FOREIGN KEY (`offer_state_id` )
-    REFERENCES `opendeals`.`offer_states` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB

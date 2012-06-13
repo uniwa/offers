@@ -55,6 +55,13 @@ function offer_type($key=null){
     }
 }
 
+// Wrapper getter for offer state
+function offer_state($key=null){
+    if(!is_null($key)){
+        return setting_read('offer_state', $key);
+    }
+}
+
 // Wrapper getter for day of the week
 function day($key=null){
     if(!is_null($key)){

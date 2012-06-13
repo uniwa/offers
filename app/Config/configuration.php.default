@@ -36,6 +36,11 @@ $config = array(
             2 => 'coupons',
             3 => 'limited',
         ),
+        'offer_state' => array(
+            1 => 'draft',
+            2 => 'active',
+            3 => 'inactive',
+        ),
         'day' => array(
             1 => 'Δευτέρα',
             2 => 'Τρίτη',

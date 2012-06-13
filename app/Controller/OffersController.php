@@ -578,7 +578,6 @@ class OffersController extends AppController {
         }
 
         // Required to fill the select boxes with the correct values
-        $this->set('offerTypes', $this->Offer->OfferType->find('list'));
         $this->set('offerCategories', $this->Offer->OfferCategory->find('list'));
         $this->set('days', $this->Day->find('list'));
 
@@ -1172,11 +1171,11 @@ class OffersController extends AppController {
             unset($r['offer_category_id']);
             $r['offer_category'] = $offer['OfferCategory']['name'];
 
+            $r['offer_type'] = offer_type($r['offer_type_id']);
             unset($r['offer_type_id']);
-            $r['offer_type'] = $offer['OfferType']['name'];
 
+            $r['offer_state'] = offer_state($r['offer_state_id']);
             unset($r['offer_state_id']);
-            $r['offer_state'] = $offer['OfferState']['name'];
 
 
             // work hours (will be displayed as `offer_hours')

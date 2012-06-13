@@ -87,6 +87,11 @@
                 'ws' => $ws,
                 '[method]' => 'POST'));
 
+    Router::connect('/:ws/coupon/*',
+        array(  'controller' => 'coupons',
+                'action' => 'view',
+                'ws' => $ws,
+                '[method]' => 'GET'));
 /**
  * Load the CakePHP default routes. Remove this if you do not want to use
  * the built-in default routes.

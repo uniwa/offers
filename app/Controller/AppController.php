@@ -3,7 +3,6 @@
 App::uses('ImageExtensionException', 'Error');
 App::uses('UploadFileException', 'Error');
 
-App::import('Vendor', 'OfferStates');
 App::import('Vendor', 'Flash');
 
 class AppController extends Controller{

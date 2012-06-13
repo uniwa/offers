@@ -119,7 +119,7 @@ if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
     if ($offer_type_id == TYPE_COUPONS) {
         // Check both coupon count and state, just in case
         if (($offer['Offer']['coupon_count'] < $offer['Offer']['total_quantity'])
-            && ($offer['Offer']['offer_state_id'] === STATE_ACTIVE))
+            && ($offer['Offer']['offer_state_id'] == STATE_ACTIVE))
         {
             $html .= $this->Form->create(false, array('type' => 'post',
                 'url' => array('controller' => 'coupons',

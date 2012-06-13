@@ -3,7 +3,7 @@
 class OffercategoriesController extends  AppController {
 
     public $name = 'Offercategories';
-    public $uses = array('OfferCategory');
+    public $uses = array('OfferCategory', 'Offer');
     public $helpers = array('Html', 'Form');
 
 
@@ -96,20 +96,29 @@ class OffercategoriesController extends  AppController {
 
         if ($id == null) throw new BadRequestException();
 
-        $options['conditions'] = array('OfferCategory.id' => $id);
-        $type = $this->OfferCategory->find('first', $options);
+        $category = $this->OfferCategory->findById($id);
+        if (empty($category)) throw new NotFoundException();
 
-        if (empty($type)) throw new NotFoundException();
-
-        if ($this->OfferCategory->delete($id)) {
-            $this->Session->setFlash('Η διαγραφή ήταν επιτυχής.',
-                                     'default',
-                                     array('class' => Flash::Success));
-            $this->redirect(array('controller' => 'offercategories', 'action' => 'index'));
+        // if (at least) an offer belongs to this category, then the latter may
+        // not be deleted
+        $this->Offer->recursive = -1;
+        if ($this->Offer->findByOfferCategoryId($id, array('id')) != false) {
+            $this->Session->setFlash(
+                   'Η κατηγορία διαθέτει προσφορές και δεν μπορεί να διαγραφεί',
+                   'default',
+                    array('class' => Flash::Error));
         } else {
-            $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
-                                     'default',
-                                     array('class' => Flash::Error));
+            if ($this->OfferCategory->delete($id)) {
+                $this->Session->setFlash('Η διαγραφή ήταν επιτυχής.',
+                                         'default',
+                                         array('class' => Flash::Success));
+            } else {
+                $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
+                                         'default',
+                                         array('class' => Flash::Error));
+            }
         }
+        $this->redirect(array('controller' => 'offercategories',
+                              'action' => 'index'));
     }
 }

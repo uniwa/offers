@@ -18,10 +18,27 @@ echo '<br/><br/>';
         <?php
             foreach ($results as $id => $name) {
 
+                $link_edit = $this->Html->link(
+                    '<i class="icon-edit"></i>',
+                    array('controller' => 'offercategories',
+                          'action' => 'edit',
+                           $id),
+                    array('escape' => false,
+                          'title' => "Επεξεργασία κατηγορίας &laquo;$name&raquo;"));
+
+                $link_delete = $this->Html->link(
+                    '<i class="icon-remove"></i>',
+                    array('controller' => 'offercategories',
+                          'action' => 'delete',
+                           $id),
+                    array('escape' => false,
+                            'title' => "Διαγραφή κατηγορίας &laquo;$name&raquo;",
+                          'confirm' => 'Είστε βέβαιοι;'));
+
                 echo '<tr>';
                 echo "<td>{$name}</td>";
-                echo "<td><i class=\"icon-edit\"></i></td>";
-                echo "<td><i class=\"icon-remove\"></i></td>";
+                echo "<td>{$link_edit}</td>";
+                echo "<td>{$link_delete}</td>";
                 echo '</tr>';
             }
         ?>

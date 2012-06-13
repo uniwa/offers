@@ -1,4 +1,3 @@
-<h6>Ανάρτηση Προσφοράς</h6>
 <?php
 echo $this->Html->css('leaflet');
 echo $this->Html->script('leaflet');
@@ -24,6 +23,7 @@ if ($is_user_admin) {
 }
 
 if ($is_user_the_owner) {
+    echo "<h6>Ανάρτηση Προσφοράς</h6>";
     echo "<p>";
     echo $this->Html->link(offer_type(1), array(
         'controller' => 'offers',
@@ -62,7 +62,7 @@ if (! empty($company['Image']) ) {
     echo $img;
 }
 
-echo 'Επιχείρηση '.$comp['id'].'<br/>';
+echo "<h4>Επιχείρηση {$comp['id']}</h4>";
 
 if (isset($comp['name']))
     echo 'Όνομα επιχείρησης : '.$comp['name'].'<br/>';

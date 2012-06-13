@@ -35,13 +35,15 @@ class OffercategoriesController extends  AppController {
 
     private function modify($id = null) {
         $is_add = $id == null;
+        $this->set('is_add', $is_add);
 
         if (! $is_add) {
 
             // ascertain the existence of the id - get current id data
             $info = $this->OfferCategory->findById($id);
-            if ($info == false)
-                throw new NotFoundException();
+            if ($info == false) throw new NotFoundException();
+
+            $this->set('offer_name', $info['OfferCategory']['name']);
         }
 
         if (empty($this->request->data)) {
@@ -53,14 +55,16 @@ class OffercategoriesController extends  AppController {
         } else {
 
             // make sure that the specified name is not already in use
-            $name = $this->request->data('OfferCategory.name');
-            $options = array('conditions' => array('id <>' => $id,
-                                                   'name' => $name));
+            $options = array('conditions' => array(
+                         'id <>' => $id,
+                         'name' => $this->request->data('OfferCategory.name')));
 
-            if ($this->OfferCategory->find('first', $options) != false) {
+            $original = $this->OfferCategory->find('first', $options);
+            if ($original != false) {
+                $cat_name = $df['OfferCategory']['name'];
                 // name is already in use
                 $this->Session->setFlash(
-                    'Η ονομασία αυτή χρησιμοποιείται ήδη',
+                    "Η κατηγορία &laquo;{$cat_name}&raquo; υφίσταται ήδη",
                     'default',
                     array('class' => Flash::Error));
             } else {
@@ -85,7 +89,7 @@ class OffercategoriesController extends  AppController {
             }
         }
 
-        $this->render('edit');
+        $this->render('modify');
     }
 
     public function delete ($id = null) {

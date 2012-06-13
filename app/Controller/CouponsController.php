@@ -122,7 +122,112 @@ class CouponsController extends AppController {
             throw new ForbiddenException('Η προσφορά για την οποία έχει'
                 .' δεσμευθεί το κουπόνι σας έχει χαρακτηριστεί σαν SPAM.');
 
-        $this->set('coupon', $coupon);
+        if ($this->is_webservice) {
+            switch ($this->webservice_type) {
+                case 'js':
+                case 'json':
+                    $coupon = $this->api_prepare_view($coupon, false);
+                    break;
+
+                case 'xml':
+                    $coupon = $this->api_prepare_view($coupon);
+                    break;
+            }
+
+            $this->api_compile_response(200, array(
+                'coupon' => $coupon));
+        } else {
+            $this->set('coupon', $coupon);
+        }
+    }
+
+    private function api_prepare_view($data, $is_xml = true) {
+        $coupon = array();
+        // format return data
+        $coupon['offer'] = $data['Offer'];
+        unset($coupon['offer']['Company']);
+
+        $coupon['coupon'] = $data['Coupon'];
+
+        $coupon['student'] = $data['Student'];
+        $coupon['company'] = $data['Offer']['Company'];
+        // fields we don't want in results
+        $unset_r = array(
+            'offer' => array('created', 'modified'),
+            'coupon' => array('modified', 'is_used'),
+            'student' => array(
+                'receive_email',
+                'token',
+                'created',
+                'modified',
+                'image_id'),
+            'company' => array(
+                'is_enabled',
+                'user_id',
+                // municipalities are not returned at all
+                // enable them in find query and then remove the following line
+                'municipality_id',
+                'image_count',
+                'work_hour_count',
+                'created',
+                'modified'
+            )
+        );
+
+        foreach ($coupon as $key => $val) {
+            foreach ($val as $skey => $sval) {
+                if (in_array($skey, $unset_r[$key])) {
+                    unset($coupon[$key][$skey]);
+                }
+            }
+        }
+
+        if ($is_xml) {
+            $this->xml_alter_view($coupon);
+        }
+
+        return $coupon;
+    }
+
+    private function xml_alter_view(&$data, $date_format='Y-m-d\TH:i:s') {
+
+        // all the date fields that are to be formatted
+        $date_fields = array(
+            'offer' => array(
+                'started',
+                'ended',
+                'autostart',
+                'autoend'),
+            'coupon' => array(
+                'created'));
+
+        // it is assumed that all entities possess an `id' attribute and,
+        // potentially, dates; if not, a different approach is due
+        foreach ($data as $type => $entities) {
+
+            if (empty($entities)) continue;
+
+            foreach ($entities as $index => $entity) {
+
+                // make offer id appear as attribute
+                $entity['@id'] = $entity['id'];
+                unset($entity['id']);
+
+                // format dates for this entity's date fields
+                foreach ($date_fields[$type] as $field) {
+
+                    // get entity's date from field $field
+                    $date = $entity[$field];
+                    if (!empty($date)) {
+                        // format date
+                        $entity[$field] = date($date_format, strtotime($date));
+                    }
+                }
+
+                // insert updated offer back to the results
+                $data[$type][$index] = $entity;
+            }
+        }
     }
 
     public function delete($id = null) {

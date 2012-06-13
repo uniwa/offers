@@ -1211,32 +1211,31 @@ class OffersController extends AppController {
         if (empty($result)) {
             $result = array('offers' => null, 'companies' => null);
         } else
-        // make any additional alterations, specifically for xml format
-        if ($is_xml) {
+            // make any additional alterations, specifically for xml format
+            if ($is_xml) {
 
-            // create a simple wrapper of entities to be formatted
-            // in case of Index operation, just omit the enclosing `offers' and
-            // `companies' tags
-            if ($is_index) {
-                $wrap = array(
-                    'offer' => &$result['offers']['offer'],
-                    'company' => &$result['companies']['company']);
+                // create a simple wrapper of entities to be formatted
+                // in case of Index operation, just omit the enclosing `offers' and
+                // `companies' tags
+                if ($is_index) {
+                    $wrap = array(
+                        'offer' => &$result['offers']['offer'],
+                        'company' => &$result['companies']['company']);
+                } else {
+                    $wrap = &$result;
+                }
+
+                $this->xml_alter_view($wrap,$date_format);
             } else {
-                $wrap = &$result;
+                // remove redundant index when requesting just one offer
+                if ($is_index) {
+                    $result['offers'] = &$result['offers']['offer'];
+                    $result['companies'] = &$result['companies']['company'];
+                } else {
+                    $result['offer'] = &$result['offer'][0];
+                    $result['company'] = &$result['company'][0];
+                }
             }
-
-            $this->xml_alter_view($wrap,$date_format);
-        } else {
-            // remove redundant index when requesting just one offer
-            if ($is_index) {
-                $result['offers'] = &$result['offers']['offer'];
-                $result['companies'] = &$result['companies']['company'];
-            } else {
-                $result['offer'] = &$result['offer'][0];
-                $result['company'] = &$result['company'][0];
-            }
-        }
-
         return $result;
     }
 

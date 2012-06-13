@@ -61,7 +61,7 @@ class OffercategoriesController extends  AppController {
 
             $original = $this->OfferCategory->find('first', $options);
             if ($original != false) {
-                $cat_name = $df['OfferCategory']['name'];
+                $cat_name = $original['OfferCategory']['name'];
                 // name is already in use
                 $this->Session->setFlash(
                     "Η κατηγορία &laquo;{$cat_name}&raquo; υφίσταται ήδη",

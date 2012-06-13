@@ -862,8 +862,8 @@ for ($i = 1; $i <= NUM_COMPANIES; $i++) {
 	$insert_user = "('{$uid}','{$username}','{$passwd}','{$email}',0,'company',0,NULL)";
 
 	$insert_company = "('{$uid}','{$name}','{$address}','{$postalcode}','{$phone}',";
-	$insert_company .= "'{$fax}','{$service_type}','{$afm}','{$longitude}',";
-	$insert_company .= "'{$latitude}','{$is_enabled}','{$uid}',";
+	$insert_company .= "'{$fax}','{$service_type}','{$afm}','{$latitude}',";
+	$insert_company .= "'{$longitude}','{$is_enabled}','{$uid}',";
 	$insert_company .= "'{$mu_id}','{$cimage_count}','{$work_hour_count}',";
     $insert_company .= "'{$created}', '{$modified}')";
 

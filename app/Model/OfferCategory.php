@@ -7,10 +7,14 @@ class OfferCategory extends AppModel {
     public $validate = array(
         'name' => array(
             'not_empty' => array(
-                'rule' => 'alphaNumeric',
-                'notEmpty' => true,
+                'rule' => 'notEmpty',
                 'required' => true,
-                'message' => 'Επιτρέπονται γράμματα και αριθμοί'
+                'message' => 'Συμπληρώστε την ονομασία της κατηγορίας.',
+                'last' => true,
+            ),
+            'valid' => array(
+                'rule' => '/^[\w\dαβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΆάΈέΎΉήύΊίΌόΏώϊϋΐΰς\-,. &]+$/',
+                'message' => 'Επιτρέπονται γράμματα, αριθμοί και τα σύμβολα -,.&',
             ),
         )
     );

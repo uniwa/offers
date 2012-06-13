@@ -823,6 +823,7 @@ $is_enabled = 1;
 $cimage_count = 0;
 $work_hour_count = 0;
 $passwd = 'd2519fa8217b0e44450caa12d8dab5eb773e5d6b';
+$email = 'tlatsas@edu.teiath.gr';
 
 $desc_pre = "Περιγραφή προσφοράς ";
 $coupon_terms = "Όροι εξαργύρωσης κουπονιού";
@@ -837,10 +838,10 @@ $offer_id = 0;
 
 echo count($company_names);
 $users1 = "INSERT INTO `users` VALUES\n";
-$users1 .= "(1,'user1','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','student1@tei.gr',0,'student',0,NULL),\n";
-$users1 .= "(2,'user2','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','student2@tei.gr',0,'student',0,NULL),\n";
-$users1 .= "(3,'user3','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','student3@tei.gr',0,'student',0,NULL),\n";
-$users1 .= "(4,'admin','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','admin@tei.gr',0,'admin',0,'2012-04-18 06:22:48'),\n";
+$users1 .= "(1,'user1','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',0,'student',0,NULL),\n";
+$users1 .= "(2,'user2','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',0,'student',0,NULL),\n";
+$users1 .= "(3,'user3','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',0,'student',0,NULL),\n";
+$users1 .= "(4,'admin','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',0,'admin',0,'2012-04-18 06:22:48'),\n";
 writeFile($fu, $users1);
 
 $company1 = "INSERT INTO `companies` VALUES\n";
@@ -852,7 +853,6 @@ writeFile($fo, $offer1);
 for ($i = 1; $i <= NUM_COMPANIES; $i++) {
     $username = 'company'.$i;
     $address = $streets[rand(0,2)]." ".$street_names[$i]." ".rand(1,100);
-    $email = $username.'@tei.gr';
     $name = $company_names[$i];
     $longitude = rand(LNG_MIN * 100000, LNG_MAX * 100000) / 100000;
     $latitude = rand(LAT_MIN * 100000, LAT_MAX * 100000) / 100000;
@@ -883,6 +883,10 @@ for ($i = 1; $i <= NUM_COMPANIES; $i++) {
         $desc = $desc_pre.$title;
         $total_quantity = rand(1,15) * 10;
         $max_per_student = $max_options[rand(0,count($max_options)-1)];
+        if (($offer_type_id === 2) && ($offer_state_id !== 3))
+            $coupon_count = $total_quantity;
+        else
+            $coupon_count = 0;
         $tags = '';
         $num_tags = rand(0,MAX_TAGS);
         for ($k = 0; $k < $num_tags; $k++)

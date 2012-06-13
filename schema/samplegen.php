@@ -830,7 +830,7 @@ $coupon_terms = "Όροι εξαργύρωσης κουπονιού";
 $started = "2012-01-01 00:00:00";
 $ended = 'NULL';
 $autostart = 'NULL';
-$autoend = 'NULL';
+$autoend = "2077-01-01 00:00:00";
 $coupon_count = 0;
 $max_options = array(1,2,3,5,10);
 $oimage_count = 0;
@@ -881,12 +881,6 @@ for ($i = 1; $i <= NUM_COMPANIES; $i++) {
         $offer_id++;
         $title = 'Προσφορά '.$offer_id;
         $desc = $desc_pre.$title;
-        $total_quantity = rand(1,15) * 10;
-        $max_per_student = $max_options[rand(0,count($max_options)-1)];
-        if (($offer_type_id === 2) && ($offer_state_id !== 3))
-            $coupon_count = $total_quantity;
-        else
-            $coupon_count = 0;
         $tags = '';
         $num_tags = rand(0,MAX_TAGS);
         for ($k = 0; $k < $num_tags; $k++)
@@ -895,6 +889,16 @@ for ($i = 1; $i <= NUM_COMPANIES; $i++) {
         $offer_type_id = rand(1,3);
         $work_hour_count = 0;
         $offer_state_id = rand(1,3);
+        $coupon_count = 0;
+        if ($offer_type_id === 2) {
+            $total_quantity = rand(1,15) * 10;
+            $max_per_student = $max_options[rand(0,count($max_options)-1)];
+            if ($offer_state_id === 3)
+                $coupon_count = $total_quantity;
+        } else {
+            $total_quantity = 0;
+            $max_per_student = 0;
+        }
         $is_spam = 0;
         $vote_count = rand(0,100);
         $vote_sum = rand(-$vote_count,$vote_count);

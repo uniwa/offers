@@ -5,21 +5,25 @@ echo $this->Html->link('Προσθήκη.',
 
 echo '<br/><br/>';
 
-if (isset($results)) {
-    foreach ($results as $ocategory) {
-        echo $ocategory['OfferCategory']['name'].' ';
-        echo $this->Html->link('Επεξεργασία',
-                               array('controller' => 'offercategories',
-                                     'action' => 'edit',
-                                     $ocategory['OfferCategory']['id'])
-                            ).' ';
-        echo $this->Html->link('Διαγραφή',
-                               array('controller' => 'offercategories',
-                                     'action' => 'delete',
-                                     $ocategory['OfferCategory']['id']),
-                               array(),
-                               'Να διαγραφεί η κατηγορία προσφοράς '
-                                    .$ocategory['OfferCategory']['name'].';'
-                            ).'<br/>';
-    }
-}
+?>
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Ονομασία κατηγορίας</th>
+            <th>Επεξεργασία</th>
+            <th>Διαγραφή</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+            foreach ($results as $id => $name) {
+
+                echo '<tr>';
+                echo "<td>{$name}</td>";
+                echo "<td><i class=\"icon-edit\"></i></td>";
+                echo "<td><i class=\"icon-remove\"></i></td>";
+                echo '</tr>';
+            }
+        ?>
+    </tbody>
+</table>

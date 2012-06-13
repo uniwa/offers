@@ -17,7 +17,7 @@ class OffercategoriesController extends  AppController {
 
     public function index () {
 
-        $offerCategories = $this->OfferCategory->find('all');
+        $offerCategories = $this->OfferCategory->find('list');
         $this->set('results', $offerCategories);
     }
 

@@ -1,7 +1,8 @@
 <?php
 
-echo $this->Html->link('Προσθήκη.',
-                       array('controller' => 'offercategories', 'action' => 'add'));
+echo $this->Html->link('Προσθήκη νέας κατηγορίας',
+                       array('controller' => 'offercategories', 'action' => 'add'),
+                       array('class' => 'btn'));
 
 echo '<br/><br/>';
 

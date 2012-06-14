@@ -134,8 +134,7 @@ class CouponsController extends AppController {
                     break;
             }
 
-            $this->api_compile_response(200, array(
-                'coupon' => $coupon));
+            $this->api_compile_response(200, $coupon);
         } else {
             $this->set('coupon', $coupon);
         }

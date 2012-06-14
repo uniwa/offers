@@ -87,6 +87,12 @@
                 'ws' => $ws,
                 '[method]' => 'POST'));
 
+    Router::connect('/:ws/coupons',
+        array(  'controller' => 'coupons',
+                'action' => 'index',
+                '[method]' => 'GET'),
+        array('ws' => $ws));
+
     Router::connect('/:ws/coupon/*',
         array(  'controller' => 'coupons',
                 'action' => 'view',

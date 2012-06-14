@@ -6,7 +6,6 @@ class OffercategoriesController extends  AppController {
     public $uses = array('OfferCategory', 'Offer');
     public $helpers = array('Html', 'Form');
 
-
     public function beforeFilter () {
         parent::beforeFilter();
         if ($this->Auth->User('role') !== ROLE_ADMIN) {
@@ -14,11 +13,28 @@ class OffercategoriesController extends  AppController {
         }
     }
 
-
     public function index () {
 
-        $offerCategories = $this->OfferCategory->find('list');
-        $this->set('results', $offerCategories);
+        // hasMany and hasAndBelongsToMany associations do NOT automatically
+        // join, so we need to do it ourselves
+        $joins = array(
+                    array('table' => 'offers',
+                          'alias' => 'Offer',
+                          'type' => 'LEFT',
+                          'conditions' => array(
+                              'OfferCategory.id = Offer.offer_category_id',
+                           )));
+
+        $options = array('fields' => array('OfferCategory.id',
+                                           'OfferCategory.name',
+                                           'COUNT(Offer.id) as offer_count'),
+                         'joins' => $joins,
+                         'group' => 'OfferCategory.id',
+                    );
+
+        $offer_categories = $this->OfferCategory->find('all', $options);
+
+        $this->set('results', $offer_categories);
     }
 
 

@@ -16,8 +16,10 @@ echo '<br/><br/>';
     </thead>
     <tbody>
         <?php
-            foreach ($results as $id => $name) {
+            foreach ($results as $category) {
 
+                $id = $category['OfferCategory']['id'];
+                $name = $category['OfferCategory']['name'];
                 $link_edit = $this->Html->link(
                     '<i class="icon-edit"></i>',
                     array('controller' => 'offercategories',

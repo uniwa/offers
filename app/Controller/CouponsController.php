@@ -141,23 +141,12 @@ class CouponsController extends AppController {
     }
 
     private function api_prepare_view($data, $is_xml = true) {
-        $coupon_data = array();
-        // format return data
-        $coupon_data['offer'] = $data['Offer'];
+        $is_index = !array_key_exists('Coupon', $data);
 
-        if (isset($coupon_data['offer']['Company'])) {
-            unset($coupon_data['offer']['Company']);
+        if (! $is_index) {
+            $data = array(0 => $data);
         }
 
-        $coupon_data['coupon'] = $data['Coupon'];
-
-        if (isset($data['Student'])) {
-            $coupon_data['student'] = $data['Student'];
-        }
-
-        if (isset($data['Company'])) {
-            $coupon_data['company'] = $data['Offer']['Company'];
-        }
         // fields we don't want in results
         $unset_r = array(
             'offer' => array('created', 'modified'),
@@ -181,19 +170,47 @@ class CouponsController extends AppController {
             )
         );
 
-        foreach ($coupon_data as $key => $val) {
-            foreach ($val as $skey => $sval) {
-                if (in_array($skey, $unset_r[$key])) {
-                    unset($coupon_data[$key][$skey]);
+        $api_data = array();
+        foreach ($data as $d) {
+            $coupon_data = array();
+            // format return data
+            $coupon_data['offer'] = $d['Offer'];
+
+            if (isset($coupon_data['offer']['Company'])) {
+                unset($coupon_data['offer']['Company']);
+            }
+
+            $coupon_data['coupon'] = $d['Coupon'];
+
+            if (isset($d['Student'])) {
+                $coupon_data['student'] = $d['Student'];
+            }
+
+            if (isset($d['Company'])) {
+                $coupon_data['company'] = $d['Offer']['Company'];
+            }
+
+            foreach ($coupon_data as $key => $val) {
+                foreach ($val as $skey => $sval) {
+                    if (in_array($skey, $unset_r[$key])) {
+                        unset($coupon_data[$key][$skey]);
+                    }
                 }
             }
+
+            if ($is_xml) {
+                $this->xml_alter_view($coupon_data);
+            }
+            $api_data[] = $coupon_data;
         }
 
-        if ($is_xml) {
-            $this->xml_alter_view($coupon_data);
+        if (! $is_index) {
+            $api_data = $api_data[0];
+        } else {
+            $api_data = array('coupons' => $api_data);
         }
 
-        return $coupon_data;
+        return $api_data;
     }
 
     private function xml_alter_view(&$data, $date_format='Y-m-d\TH:i:s') {

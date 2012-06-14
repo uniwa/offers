@@ -112,7 +112,7 @@ class CouponsController extends AppController {
         $coupon = $this->Coupon->find('first', array('conditions' => $cond));
 
         if (! $coupon)
-            throw new BadRequestException();
+            throw new NotFoundException();
 
         if ($coupon['Coupon']['student_id'] !==
             $this->Session->read('Auth.Student.id'))

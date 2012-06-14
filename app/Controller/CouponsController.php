@@ -141,15 +141,23 @@ class CouponsController extends AppController {
     }
 
     private function api_prepare_view($data, $is_xml = true) {
-        $coupon = array();
+        $coupon_data = array();
         // format return data
-        $coupon['offer'] = $data['Offer'];
-        unset($coupon['offer']['Company']);
+        $coupon_data['offer'] = $data['Offer'];
 
-        $coupon['coupon'] = $data['Coupon'];
+        if (isset($coupon_data['offer']['Company'])) {
+            unset($coupon_data['offer']['Company']);
+        }
 
-        $coupon['student'] = $data['Student'];
-        $coupon['company'] = $data['Offer']['Company'];
+        $coupon_data['coupon'] = $data['Coupon'];
+
+        if (isset($data['Student'])) {
+            $coupon_data['student'] = $data['Student'];
+        }
+
+        if (isset($data['Company'])) {
+            $coupon_data['company'] = $data['Offer']['Company'];
+        }
         // fields we don't want in results
         $unset_r = array(
             'offer' => array('created', 'modified'),
@@ -173,19 +181,19 @@ class CouponsController extends AppController {
             )
         );
 
-        foreach ($coupon as $key => $val) {
+        foreach ($coupon_data as $key => $val) {
             foreach ($val as $skey => $sval) {
                 if (in_array($skey, $unset_r[$key])) {
-                    unset($coupon[$key][$skey]);
+                    unset($coupon_data[$key][$skey]);
                 }
             }
         }
 
         if ($is_xml) {
-            $this->xml_alter_view($coupon);
+            $this->xml_alter_view($coupon_data);
         }
 
-        return $coupon;
+        return $coupon_data;
     }
 
     private function xml_alter_view(&$data, $date_format='Y-m-d\TH:i:s') {

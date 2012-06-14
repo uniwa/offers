@@ -33,7 +33,6 @@ class OffercategoriesController extends  AppController {
                     );
 
         $offer_categories = $this->OfferCategory->find('all', $options);
-
         $this->set('results', $offer_categories);
     }
 

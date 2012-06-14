@@ -28,14 +28,20 @@ echo '<br/><br/>';
                     array('escape' => false,
                           'title' => "Επεξεργασία κατηγορίας &laquo;$name&raquo;"));
 
-                $link_delete = $this->Html->link(
-                    '<i class="icon-remove"></i>',
-                    array('controller' => 'offercategories',
-                          'action' => 'delete',
-                           $id),
-                    array('escape' => false,
-                            'title' => "Διαγραφή κατηγορίας &laquo;$name&raquo;",
-                          'confirm' => 'Είστε βέβαιοι;'));
+                if ($category[0]['offer_count']) {
+                    $link_delete = '<i class="icon-lock" '
+                        .'title="Η κατηγορία διαθέτει προσφορές και δεν μπορεί '
+                        .'να διαγραφεί"></i>';
+                } else {
+                    $link_delete = $this->Html->link(
+                        '<i class="icon-remove"></i>',
+                        array('controller' => 'offercategories',
+                              'action' => 'delete',
+                               $id),
+                        array('escape' => false,
+                              'title' => "Διαγραφή κατηγορίας &laquo;$name&raquo;",
+                              'confirm' => 'Είστε βέβαιοι;'));
+                }
 
                 echo '<tr>';
                 echo "<td>{$name}</td>";

@@ -72,11 +72,21 @@ switch($offer['Offer']['offer_type_id']){
 
 $html .= "<p><span class='label {$label_class}'>{$label_text}</span></p>";
 $html .= "<h4>Προσφορά {$offer['Offer']['id']}</h4>";
+if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
+    $html .= $this->Html->link('Εταιρία: '.$offer['Company']['name'], array(
+        'controller' => 'companies', 'action' => 'view', $offer['Company']['id']));
+}
+
+if ($is_spam) {
+    echo 'Η προσφορά έχει χαρακτηρισθεί ως SPAM.<br/><br/>';
+}
+
 if (!is_null($student_vote)) {
     $vote_class = ($student_vote)?'green':'red';
     $my_vote = ($student_vote)?'+1':'-1';
     $html .= "<div class='{$vote_class}'>{$my_vote}</div>";
 }
+
 if ($this->Session->read('Auth.User.role') === ROLE_STUDENT) {
     $icon_thumbs_up = "<i class='icon-thumbs-up'></i>";
     $icon_thumbs_down = "<i class='icon-thumbs-down'></i>";
@@ -92,13 +102,28 @@ if ($this->Session->read('Auth.User.role') === ROLE_STUDENT) {
         array('escape' => false));
     $html .= "<p>{$link_up} {$link_down} {$link_cancel}</p>";
 }
-if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
-    $html .= $this->Html->link('Εταιρία: '.$offer['Company']['name'], array(
-        'controller' => 'companies', 'action' => 'view', $offer['Company']['id']));
-}
-if ($is_spam) {
-    echo 'Η προσφορά έχει χαρακτηρισθεί ως SPAM.<br/><br/>';
-}
+
+// Twitter settings
+// TODO: move to configuration?
+// TODO: create route 'http://coupons.teiath.gr/5' -> '[...]/offers/view/5'
+//       and use it as url to tweet
+$screenname = "TEIATHCoupons";
+$fullname = "TEIATH Coupons";
+$baseurl = "http://coupons.edu.teiath.gr";
+$url = "{$baseurl}/offers/view/{$offer['Offer']['id']}";
+//$url = $baseurl.$this->Html->url(null);
+$text = "Προσφορά: {$offer['Offer']['title']},";
+$count = "none";
+$related = $screenname.":".$fullname;
+
+$html .= "<a href='https://twitter.com/share' data-count='{$count}' ";
+$html .= "class='twitter-share-button' data-lang='el' ";
+$html .= "data-related='{$related}' data-text='{$text}' data-url='{$url}'>Tweet</a>";
+$html .= "<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];";
+$html .= "if(!d.getElementById(id)){js=d.createElement(s);js.id=id;";
+$html .= "js.src='//platform.twitter.com/widgets.js';";
+$html .= "fjs.parentNode.insertBefore(js,fjs);}}";
+$html .= "(document,'script','twitter-wjs');</script>";
 
 $html .= '<br>';
 

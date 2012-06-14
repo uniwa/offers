@@ -253,6 +253,52 @@ class CouponsController extends AppController {
         }
     }
 
+    public function index() {
+        $student_id = $this->Session->read('Auth.Student.id');
+        if (! $student_id) throw new ForbiddenException();
+
+        $cond = array('Coupon.student_id' => $student_id);
+        $order = array('Coupon.created DESC');
+        // fetch specific fields
+        $fields = array(
+            'Coupon.id',
+            'Coupon.serial_number',
+            'Coupon.created',
+            'Offer.title',
+            'Offer.description',
+            'Offer.coupon_terms',
+            'Offer.offer_category_id',
+            'Offer.offer_type_id',
+            'Offer.vote_count',
+            'Offer.vote_sum',
+            'Offer.company_id',
+        );
+        $this->Coupon->recursive = 0;
+
+        $coupons = $this->Coupon->find('all', array(
+            'conditions' => $cond,
+            'fields' => $fields,
+            'order' => $order)
+        );
+
+        if ($this->is_webservice) {
+            switch ($this->webservice_type) {
+                case 'js':
+                case 'json':
+                    $coupons = $this->api_prepare_view($coupons, false);
+                    break;
+
+                case 'xml':
+                    $coupons = $this->api_prepare_view($coupons);
+                    break;
+            }
+
+            $this->api_compile_response(200, $coupons);
+        } else {
+            throw new NotFoundException();
+        }
+    }
+
     public function delete($id = null) {
         // get offer id
         $offer_id = $this->Coupon->field('offer_id', array(
@@ -297,7 +343,7 @@ class CouponsController extends AppController {
 
     public function is_authorized($user) {
         if ($user['is_banned'] == 0) {
-            if (in_array($this->action, array('add', 'view'))) {
+            if (in_array($this->action, array('add', 'view', 'index'))) {
                 // only students can get coupons
                 if ($user['role'] !== ROLE_STUDENT) {
                     return false;
@@ -356,5 +402,4 @@ class CouponsController extends AppController {
             //do what with it?
         }
     }
-
 }

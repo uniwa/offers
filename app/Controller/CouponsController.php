@@ -202,30 +202,29 @@ class CouponsController extends AppController {
 
         // it is assumed that all entities possess an `id' attribute and,
         // potentially, dates; if not, a different approach is due
-        foreach ($data as $type => $entities) {
+        foreach ($data as $key => $val) {
+            // $key -> 'offer'
+            // $val -> array contents of 'offer' key
+            if (empty($val)) continue;
 
-            if (empty($entities)) continue;
+            // make offer id appear as attribute
+            $val['@id'] = $val['id'];
+            unset($val['id']);
 
-            foreach ($entities as $index => $entity) {
-
-                // make offer id appear as attribute
-                $entity['@id'] = $entity['id'];
-                unset($entity['id']);
-
-                // format dates for this entity's date fields
-                foreach ($date_fields[$type] as $field) {
-
-                    // get entity's date from field $field
-                    $date = $entity[$field];
+            // format dates for this val's date fields
+            if (array_key_exists($key, $date_fields)) {
+                foreach ($date_fields[$key] as $field) {
+                    // get val's date from field $field
+                    $date = $val[$field];
                     if (!empty($date)) {
                         // format date
-                        $entity[$field] = date($date_format, strtotime($date));
+                        $val[$field] = date($date_format, strtotime($date));
                     }
                 }
-
-                // insert updated offer back to the results
-                $data[$type][$index] = $entity;
             }
+
+            // insert updated offer back to the results
+            $data[$key] = $val;
         }
     }
 

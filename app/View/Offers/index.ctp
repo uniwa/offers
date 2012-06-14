@@ -63,6 +63,29 @@ if (empty($offers)) {
         $html .= "<br /><i>{$offer['Offer']['modified']}</i>";
 //        $html .= $description;
 
+        // Twitter settings
+        // TODO: move to configuration?
+        // TODO: create route 'http://coupons.teiath.gr/5' -> '[...]/offers/view/5'
+        //       and use it as url to tweet
+        $screenname = "TEIATHCoupons";
+        $fullname = "TEIATH Coupons";
+        $baseurl = "http://coupons.edu.teiath.gr";
+        $url = "{$baseurl}/offers/view/{$offer['Offer']['id']}";
+        //$url = $baseurl.$this->Html->url(null);
+        $text = "Προσφορά: {$offer['Offer']['title']},";
+        $count = "none";
+        $related = $screenname.":".$fullname;
+
+        $html .= "<br />";
+        $html .= "<a href='https://twitter.com/share' data-count='{$count}' ";
+        $html .= "class='twitter-share-button' data-lang='el' ";
+        $html .= "data-related='{$related}' data-text='{$text}' data-url='{$url}'>Tweet</a>";
+        $html .= "<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];";
+        $html .= "if(!d.getElementById(id)){js=d.createElement(s);js.id=id;";
+        $html .= "js.src='//platform.twitter.com/widgets.js';";
+        $html .= "fjs.parentNode.insertBefore(js,fjs);}}";
+        $html .= "(document,'script','twitter-wjs');</script>";
+
         // print tags as links if available
         if ($offer['Offer']['tags'] == NULL){
             $html .= "</p><br />";

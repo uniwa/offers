@@ -21,6 +21,11 @@ echo '<br/><br/>';
 
                 $id = $category['OfferCategory']['id'];
                 $name = $category['OfferCategory']['name'];
+
+                $link_name = $this->Html->link($name,
+                                                array('controller' => 'offers',
+                                                'action' => 'category', $id));
+
                 $link_edit = $this->Html->link(
                     '<i class="icon-edit"></i>',
                     array('controller' => 'offercategories',
@@ -45,7 +50,7 @@ echo '<br/><br/>';
                 }
 
                 echo '<tr>';
-                echo "<td>{$name}</td>";
+                echo "<td>{$link_name}</td>";
                 echo "<td>{$link_edit}</td>";
                 echo "<td>{$link_delete}</td>";
                 echo '</tr>';

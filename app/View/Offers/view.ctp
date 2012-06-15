@@ -116,16 +116,14 @@ $text = "Προσφορά: {$offer['Offer']['title']},";
 $count = "none";
 $related = $screenname.":".$fullname;
 
-$html .= "<a href='https://twitter.com/share' data-count='{$count}' ";
+$html .= "<p><a href='https://twitter.com/share' data-count='{$count}' ";
 $html .= "class='twitter-share-button' data-lang='el' ";
 $html .= "data-related='{$related}' data-text='{$text}' data-url='{$url}'>Tweet</a>";
 $html .= "<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];";
 $html .= "if(!d.getElementById(id)){js=d.createElement(s);js.id=id;";
 $html .= "js.src='//platform.twitter.com/widgets.js';";
 $html .= "fjs.parentNode.insertBefore(js,fjs);}}";
-$html .= "(document,'script','twitter-wjs');</script>";
-
-$html .= '<br>';
+$html .= "(document,'script','twitter-wjs');</script></p>";
 
 $tag_link = array('controller' => 'offers', 'action' => 'tag');
 // use helper to generate tags

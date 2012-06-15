@@ -233,17 +233,19 @@ class CouponsController extends AppController {
             if (empty($val)) continue;
 
             // make offer id appear as attribute
-            $val['@id'] = $val['id'];
-            unset($val['id']);
+            if (isset($val['id'])) {
+                $val['@id'] = $val['id'];
+                unset($val['id']);
+            }
 
-            // format dates for this val's date fields
+            // if array data key, has dates
             if (array_key_exists($key, $date_fields)) {
+                // iterate over possible date fields for key
                 foreach ($date_fields[$key] as $field) {
                     // get val's date from field $field
-                    $date = $val[$field];
-                    if (!empty($date)) {
+                    if (array_key_exists($field, $val)) {
                         // format date
-                        $val[$field] = date($date_format, strtotime($date));
+                        $val[$field] = date($date_format, strtotime($val[$field]));
                     }
                 }
             }

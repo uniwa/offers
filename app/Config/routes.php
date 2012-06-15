@@ -41,57 +41,70 @@
     CakePlugin::routes();
 
     // webservice aliases
-    $ws = '[api|webservice]';
+    $ws = 'api|webservice';
 
     Router::parseExtensions('rss', 'xml', 'json');
 
     Router::connect('/:ws/offer/activate/*',
         array(  'controller' => 'offers',
                 'action' => 'activate',
-                'ws' => $ws,
-                '[method]' => 'GET'));
+                '[method]' => 'GET'),
+        array('ws' => $ws));
 
     Router::connect('/:ws/offer/terminate/*',
         array(  'controller' => 'offers',
                 'action' => 'terminate',
-                'ws' => $ws,
-                '[method]' => 'GET'));
+                '[method]' => 'GET'),
+        array('ws' => $ws));
 
     Router::connect('/:ws/offer/*',
         array(  'controller' => 'offers',
                 'action' => 'view',
-                'ws' => $ws,
-                '[method]' => 'GET'));
+                '[method]' => 'GET'),
+        array('ws' => $ws));
 
     Router::connect('/:ws/offers/*',
         array(  'controller' => 'offers',
                 'action' => 'index',
-                'ws' => $ws,
-                '[method]' => 'GET'));
+                '[method]' => 'GET'),
+        array('ws' => $ws));
 
     Router::connect('/:ws/offer/*',
         array(  'controller' => 'offers',
                 'action' => 'edit',
-                'ws' => $ws,
-                '[method]' => 'PUT'));
+                '[method]' => 'PUT'),
+        array('ws' => $ws));
 
     Router::connect('/:ws/offer',
         array(  'controller' => 'offers',
                 'action' => 'webservice_add',
-                'ws' => $ws,
-                '[method]' => 'POST'));
+                '[method]' => 'POST'),
+        array('ws' => $ws));
 
     Router::connect('/:ws/users/login',
         array(  'controller' => 'users',
                 'action' => 'login',
-                'ws' => $ws,
-                '[method]' => 'POST'));
+                '[method]' => 'POST'),
+        array('ws' => $ws));
+
+    Router::connect('/:ws/coupons',
+        array(  'controller' => 'coupons',
+                'action' => 'index',
+                '[method]' => 'GET'),
+        array('ws' => $ws));
 
     Router::connect('/:ws/coupon/*',
         array(  'controller' => 'coupons',
                 'action' => 'view',
-                'ws' => $ws,
-                '[method]' => 'GET'));
+                '[method]' => 'GET'),
+        array('ws' => $ws));
+
+    Router::connect('/:ws/coupon/*',
+        array(  'controller' => 'coupons',
+                'action' => 'add',
+                '[method]' => 'POST'),
+        array('ws' => $ws));
+
 /**
  * Load the CakePHP default routes. Remove this if you do not want to use
  * the built-in default routes.

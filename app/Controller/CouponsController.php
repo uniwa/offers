@@ -112,7 +112,7 @@ class CouponsController extends AppController {
         $coupon = $this->Coupon->find('first', array('conditions' => $cond));
 
         if (! $coupon)
-            throw new BadRequestException();
+            throw new NotFoundException();
 
         if ($coupon['Coupon']['student_id'] !==
             $this->Session->read('Auth.Student.id'))
@@ -141,15 +141,12 @@ class CouponsController extends AppController {
     }
 
     private function api_prepare_view($data, $is_xml = true) {
-        $coupon = array();
-        // format return data
-        $coupon['offer'] = $data['Offer'];
-        unset($coupon['offer']['Company']);
+        $is_index = !array_key_exists('Coupon', $data);
 
-        $coupon['coupon'] = $data['Coupon'];
+        if (! $is_index) {
+            $data = array(0 => $data);
+        }
 
-        $coupon['student'] = $data['Student'];
-        $coupon['company'] = $data['Offer']['Company'];
         // fields we don't want in results
         $unset_r = array(
             'offer' => array('created', 'modified'),
@@ -173,19 +170,47 @@ class CouponsController extends AppController {
             )
         );
 
-        foreach ($coupon as $key => $val) {
-            foreach ($val as $skey => $sval) {
-                if (in_array($skey, $unset_r[$key])) {
-                    unset($coupon[$key][$skey]);
+        $api_data = array();
+        foreach ($data as $d) {
+            $coupon_data = array();
+            // format return data
+            $coupon_data['offer'] = $d['Offer'];
+
+            if (isset($coupon_data['offer']['Company'])) {
+                unset($coupon_data['offer']['Company']);
+            }
+
+            $coupon_data['coupon'] = $d['Coupon'];
+
+            if (isset($d['Student'])) {
+                $coupon_data['student'] = $d['Student'];
+            }
+
+            if (isset($d['Company'])) {
+                $coupon_data['company'] = $d['Offer']['Company'];
+            }
+
+            foreach ($coupon_data as $key => $val) {
+                foreach ($val as $skey => $sval) {
+                    if (in_array($skey, $unset_r[$key])) {
+                        unset($coupon_data[$key][$skey]);
+                    }
                 }
             }
+
+            if ($is_xml) {
+                $this->xml_alter_view($coupon_data);
+            }
+            $api_data[] = $coupon_data;
         }
 
-        if ($is_xml) {
-            $this->xml_alter_view($coupon);
+        if (! $is_index) {
+            $api_data = $api_data[0];
+        } else {
+            $api_data = array('coupons' => $api_data);
         }
 
-        return $coupon;
+        return $api_data;
     }
 
     private function xml_alter_view(&$data, $date_format='Y-m-d\TH:i:s') {
@@ -202,30 +227,77 @@ class CouponsController extends AppController {
 
         // it is assumed that all entities possess an `id' attribute and,
         // potentially, dates; if not, a different approach is due
-        foreach ($data as $type => $entities) {
+        foreach ($data as $key => $val) {
+            // $key -> 'offer'
+            // $val -> array contents of 'offer' key
+            if (empty($val)) continue;
 
-            if (empty($entities)) continue;
+            // make offer id appear as attribute
+            if (isset($val['id'])) {
+                $val['@id'] = $val['id'];
+                unset($val['id']);
+            }
 
-            foreach ($entities as $index => $entity) {
-
-                // make offer id appear as attribute
-                $entity['@id'] = $entity['id'];
-                unset($entity['id']);
-
-                // format dates for this entity's date fields
-                foreach ($date_fields[$type] as $field) {
-
-                    // get entity's date from field $field
-                    $date = $entity[$field];
-                    if (!empty($date)) {
+            // if array data key, has dates
+            if (array_key_exists($key, $date_fields)) {
+                // iterate over possible date fields for key
+                foreach ($date_fields[$key] as $field) {
+                    // get val's date from field $field
+                    if (array_key_exists($field, $val)) {
                         // format date
-                        $entity[$field] = date($date_format, strtotime($date));
+                        $val[$field] = date($date_format, strtotime($val[$field]));
                     }
                 }
-
-                // insert updated offer back to the results
-                $data[$type][$index] = $entity;
             }
+
+            // insert updated offer back to the results
+            $data[$key] = $val;
+        }
+    }
+
+    public function index() {
+        $student_id = $this->Session->read('Auth.Student.id');
+        if (! $student_id) throw new ForbiddenException();
+
+        $cond = array('Coupon.student_id' => $student_id);
+        $order = array('Coupon.created DESC');
+        // fetch specific fields
+        $fields = array(
+            'Coupon.id',
+            'Coupon.serial_number',
+            'Coupon.created',
+            'Offer.title',
+            'Offer.description',
+            'Offer.coupon_terms',
+            'Offer.offer_category_id',
+            'Offer.offer_type_id',
+            'Offer.vote_count',
+            'Offer.vote_sum',
+            'Offer.company_id',
+        );
+        $this->Coupon->recursive = 0;
+
+        $coupons = $this->Coupon->find('all', array(
+            'conditions' => $cond,
+            'fields' => $fields,
+            'order' => $order)
+        );
+
+        if ($this->is_webservice) {
+            switch ($this->webservice_type) {
+                case 'js':
+                case 'json':
+                    $coupons = $this->api_prepare_view($coupons, false);
+                    break;
+
+                case 'xml':
+                    $coupons = $this->api_prepare_view($coupons);
+                    break;
+            }
+
+            $this->api_compile_response(200, $coupons);
+        } else {
+            throw new NotFoundException();
         }
     }
 
@@ -273,7 +345,7 @@ class CouponsController extends AppController {
 
     public function is_authorized($user) {
         if ($user['is_banned'] == 0) {
-            if (in_array($this->action, array('add', 'view'))) {
+            if (in_array($this->action, array('add', 'view', 'index'))) {
                 // only students can get coupons
                 if ($user['role'] !== ROLE_STUDENT) {
                     return false;
@@ -332,5 +404,4 @@ class CouponsController extends AppController {
             //do what with it?
         }
     }
-
 }

@@ -81,12 +81,16 @@
                     $username = $this->Session->read( 'Auth.User.username' );
                     $role = $this->Session->read( 'Auth.User.role' );
 
+                    $category_admin = null;
                     if ($role == ROLE_STUDENT) {
                         $controller = 'students';
                     } else if ($role == ROLE_COMPANY) {
                         $controller = 'companies';
                     } else if ($role == ROLE_ADMIN) {
                         $controller = 'admins';
+                        $category_admin = $this->Html->link(
+                                'Επεξεργασία κατηγοριών',
+                                array('controller' => 'offercategories'));
                     }
 
                     $profile = $this->Html->link('Το προφίλ μου', array(
@@ -95,7 +99,7 @@
 
                     $logout = $this->Html->link( __('Αποσύνδεση '), array( 'controller' => 'users', 'action' => 'logout') );
 
-                    echo "<p class=\"navbar-text pull-right\">$profile&nbsp&nbsp&nbsp$logout( $username )</p>";
+                    echo "<p class=\"navbar-text pull-right\">$category_admin $profile&nbsp&nbsp&nbsp$logout( $username )</p>";
                 } else {
                     if (!isset($hide_dropdown) || !$hide_dropdown) {
             ?>

@@ -1,6 +1,7 @@
 <?php
     echo $this->Html->css('leaflet');
     echo $this->Html->script('leaflet');
+    $role = $this->Session->read('Auth.User.role');
 ?>
 <div class="well">
     <h4>Στοιχεία χρήστη</h4>
@@ -49,7 +50,10 @@
                 <th>Εταιρία</th>
                 <th>Κωδικός κουπονιού</th>
                 <th>Ημ/νία δέσμευσης</th>
-                <th>Διαγραφή</th>
+                <?php
+                    if ($role === ROLE_STUDENT)
+                        echo "<th>Διαγραφή</th>\n";
+                ?>
             </tr>
         </thead>
         <tbody>
@@ -92,16 +96,18 @@
                         array()
                     );
 
-                    $delete_link = $this->Html->link(
-                        "delete",
-                        array(
-                            'controller' => 'coupons',
-                            'action' => 'delete',
-                            $c['Coupon']['id']
-                        ),
-                        array(),
-                        "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί"
-                    );
+                    if ($role === ROLE_STUDENT) {
+                        $delete_link = $this->Html->link(
+                            "delete",
+                            array(
+                                'controller' => 'coupons',
+                                'action' => 'delete',
+                                $c['Coupon']['id']
+                            ),
+                            array(),
+                            "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί"
+                        );
+                    }
 
                     echo "<tr>";
 
@@ -120,7 +126,7 @@
 
                     // coupon link - don't allow coupon view if spam
                     echo "<td>";
-                    if ($c['Offer']['is_spam']) {
+                    if (($c['Offer']['is_spam']) || ($role !== ROLE_STUDENT)) {
                         echo $serial_number;
                     }
                     else {
@@ -131,13 +137,15 @@
                     echo "<td>{$this->Time->format('d-m-Y',$date)}</td>";
 
                     // show delete link only for finished offers
-                    if ($c['Offer']['ended'] == true) {
-                        echo "<td>{$delete_link}</td>";
-                    } else {
-                        $delete = "<td title=\"μόνο κουπόνια από μη ενεργές";
-                        $delete .=" προσφορές μπορούν να διαγραφούν\"";
-                        $delete .= "class=\"help-text\">διαγραφή</td>";
-                        echo $delete;
+                    if ($role === ROLE_STUDENT) {
+                        if ($c['Offer']['ended'] == true) {
+                            echo "<td>{$delete_link}</td>";
+                        } else {
+                            $delete = "<td title='μόνο κουπόνια από μη ενεργές";
+                            $delete .= "προσφορές μπορούν να διαγραφούν'";
+                            $delete .= "class='help-text'>διαγραφή</td>";
+                            echo $delete;
+                        }
                     }
                     // to add trash icon use: <i class=\"icon-trash\"></i>
                     echo "</tr>";

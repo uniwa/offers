@@ -121,7 +121,7 @@ class Offer extends AppModel {
                 $condition[] = array('Offer.tags LIKE' => "%{$word}%");
             }
             $conditions['OR'] = $condition;
-
+            $query['conditions'] = $conditions;
             $this->process_find($query);
             return $query;
         }

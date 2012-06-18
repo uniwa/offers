@@ -227,6 +227,44 @@ class OffersController extends AppController {
         }
     }
 
+    public function flag($id = null) {
+        if (empty($id)) throw new BadRequestException();
+        $this->_flag($id);
+    }
+
+    public function unflag($id = null) {
+        if (empty($id)) throw new BadRequestException();
+        $this->_flag($id, false);
+    }
+
+    // @param $id corresponds to the offer that is to be flagged/unflagged
+    // @param $value boolean; the value of the flag
+    public function _flag($id, $value = true) {
+
+        $offer = $this->Offer->findById($id, array('id', 'is_spam'));
+
+        if ($offer == false) throw new NotFoundException();
+
+
+        if ($offer['Offer']['is_spam'] == $value) {
+
+            $this->Session->setFlash('Η προσφορά διαθέτει ήδη αυτή τη σήμανση',
+                                     'default',
+                                     array('class' => Flash::Warning));
+        } else {
+
+            $this->Offer->id = $id;
+            $this->Offer->saveField('is_spam', $value);
+
+            $not = $value ? '' : 'μη ';
+
+            $this->Session->setFlash("Η προσφορά έχει σημανθεί ως {$not}κακόβουλη",
+                                     'default',
+                                     array('class' => Flash::Success));
+        }
+
+        $this->redirect($this->request->referer());
+    }
 
     public function view($id = null) {
         $options['conditions'] = array('Offer.id' => $id);

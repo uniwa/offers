@@ -248,7 +248,7 @@ class OffersController extends AppController {
 
         if ($offer['Offer']['is_spam'] == $value) {
 
-            $this->Session->setFlash('Η προσφορά διαθέτει ήδη αυτή τη σήμανση',
+            $this->Session->setFlash('Η προσφορά διαθέτει ήδη αυτήν τη σήμανση',
                                      'default',
                                      array('class' => Flash::Warning));
         } else {

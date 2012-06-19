@@ -336,7 +336,13 @@ class OffersController extends AppController {
 
         } else {
 
-            if ($offer['Offer']['is_spam']) {
+            // alert of spam offer
+            $is_spam = $offer['Offer']['is_spam'];
+            // but do NOT impose this alert (in case another flash is already
+            // set)
+            $should_show = $this->Session->read('Message.flash') == null;
+
+            if ($is_spam && $should_show) {
                 $this->Session->setFlash('Η προσφορά έχει σημανθεί ως SPAM από'.
                                              ' διαχειριστή της υπηρεσίας.',
                                          'default',

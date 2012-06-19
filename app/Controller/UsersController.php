@@ -249,6 +249,17 @@ class UsersController extends AppController {
 
             // generate new token
             $token = $this->Token->generate($email);
+            $this->User->id = $user['User']['id'];
+            if (! $this->User->saveField('token', $token, false)) {
+                $this->Session->setFlash(
+                    __('Παρουσιάστηκε ένα σφάλμα. Επικοινωνήστε με τον διαχειριστή.'),
+                    'default',
+                    array('class'=>Flash::Error));
+                $this->redirect(array(
+                    'controller' => 'users', 'action' => 'request_passwd'
+                ));
+            } else {
+            }
         }
     }
 

@@ -82,7 +82,7 @@ if (isset($is_flaggable)) {
                                          'action' => 'flag',
                                           $offer['Offer']['id']),
                                    array('escape' => false,
-                                         'class' => 'btn'),
+                                         'class' => 'btn btn-mini'),
                                    'Η ενέργεια δεν δύναται να αναιρεθεί. Είστε βέβαιοι;'
                                    );
 

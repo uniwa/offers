@@ -284,11 +284,13 @@ class OffersController extends AppController {
     public function view($id = null) {
         $options['conditions'] = array('Offer.id' => $id);
 
+        $this_user_role = $this->Auth->User('role');
+        $this_user_id = $this->Auth->User('id');
         // if role is admin, the offer is displayed no matter what
-        if ($this->Auth->User('role') != ROLE_ADMIN) {
+        if ($this_user_role != ROLE_ADMIN) {
             $options['conditions']['OR'] = array(
                 // this allows owner of offer to always view it
-                'Company.user_id' => $this->Auth->User('id'),
+                'Company.user_id' => $this_user_id,
 
                 // these must apply for the rest of the members
                 array(
@@ -309,8 +311,8 @@ class OffersController extends AppController {
 
         $this->set('offer', $offer);
 
-        if ($this->Auth->User('role') === ROLE_STUDENT) {
-            $st_opts['conditions'] = array('Student.id' => $this->Auth->User('id'));
+        if ($this_user_role === ROLE_STUDENT) {
+            $st_opts['conditions'] = array('Student.id' => $this_user_id);
             $st_opts['recursive'] = -1;
             $student = $this->Student->find('first', $st_opts);
             $this->set('student', $student);
@@ -318,7 +320,7 @@ class OffersController extends AppController {
 
         //get coupons for offer if user is owner and coupon is of type 'COUPONS'
         if ($offer['Offer']['offer_type_id'] == TYPE_COUPONS) {
-            if ($this->Offer->is_owned_by($id, $this->Auth->User('id'))) {
+            if ($this->Offer->is_owned_by($id, $this_user_id)) {
                 // build query
                 $fields = array('Coupon.id', 'Coupon.serial_number', 'Coupon.created');
                 $order = array('Coupon.created DESC');
@@ -377,9 +379,8 @@ class OffersController extends AppController {
 
             // variables out of which we create the (un)flag link
             // note that drafts must be excluded
-
             $is_flaggable = $offer['Offer']['offer_state_id'] != STATE_DRAFT;
-            if ($this->Auth->user('role') == ROLE_ADMIN && $is_flaggable) {
+            if ($this_user_role == ROLE_ADMIN && $is_flaggable) {
                 if ($offer['Offer']['is_spam']) {
 
                     $flag_text = 'Άρση σήμανσης SPAM';

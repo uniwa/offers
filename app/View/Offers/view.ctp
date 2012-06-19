@@ -71,6 +71,23 @@ switch($offer['Offer']['offer_type_id']){
 }
 
 $html .= "<p><span class='label {$label_class}'>{$label_text}</span></p>";
+
+// administrator's (un)flagging
+if (isset($flag_text)) {
+
+    $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
+
+    $flag_link = $this->Html->link($flag_icon . ' ' . $flag_text,
+                                   array('controller' => 'offers',
+                                         'action' => $flag_action,
+                                          $offer['Offer']['id']),
+                                   array('escape' => false,
+                                         'class' => 'btn')
+                                   );
+
+    $html .= $flag_link;
+}
+
 $html .= "<h4>Προσφορά {$offer['Offer']['id']}</h4>";
 if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
     $html .= $this->Html->link('Εταιρία: '.$offer['Company']['name'], array(

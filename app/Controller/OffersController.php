@@ -345,6 +345,19 @@ class OffersController extends AppController {
             $options['recursive'] = -1;
             $vote = $this->Vote->find('first', $options);
             $this->set('student_vote', $vote['Vote']['vote']);
+
+            if ($this->Auth->user('role') == ROLE_ADMIN) {
+                if ($offer['Offer']['is_spam']) {
+
+                    $flag_text = 'Άρση σήμανσης SPAM';
+                    $flag_action = 'unflag';
+                } else {
+                    $flag_text = 'Σήμανση ως SPAM';
+                    $flag_action = 'flag';
+                }
+                $this->set('flag_text', $flag_text);
+                $this->set('flag_action', $flag_action);
+            }
         }
     }
 

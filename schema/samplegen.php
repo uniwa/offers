@@ -904,17 +904,16 @@ for ($i = 1; $i <= NUM_COMPANIES; $i++) {
             $max_per_student = 0;
         }
         $is_spam = 0;
-        $vote_count = rand(0,100);
-        $vote_sum = rand(-$vote_count,$vote_count);
-        if (($vote_count - abs($vote_sum))%2 > 0)
-            $vote_count++;
+        $vote_plus = rand(0,100);
+        $vote_minus = rand(0,100);
+        $vote_count = $vote_plus + $vote_minus;
 
 	    $insert_offer = "('{$offer_id}','{$title}','{$desc}','{$started}','{$ended}',";
 	    $insert_offer .= "'{$autostart}','{$autoend}','{$coupon_terms}','{$total_quantity}',";
 	    $insert_offer .= "'{$coupon_count}','{$max_per_student}','{$tags}','{$offer_category_id}',";
 	    $insert_offer .= "'{$offer_type_id}','{$uid}','{$oimage_count}','{$work_hour_count}',";
 	    $insert_offer .= "'{$offer_state_id}','{$is_spam}','{$vote_count}',";
-	    $insert_offer .= "'{$vote_sum}','{$created}','{$modified}')";
+	    $insert_offer .= "'{$vote_plus}','{$vote_minus}','{$created}','{$modified}')";
 
         if (($i === NUM_COMPANIES) && ($j === $num_offers)) {
             $insert_offer .= ";";

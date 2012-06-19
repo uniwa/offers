@@ -213,6 +213,11 @@ class UsersController extends AppController {
     }
 
     public function request_passwd () {
+        // no point to request new password when logged in
+        if ($this->Auth->User('id') != null) {
+            throw new ForbiddenException();
+        }
+
         if ($this->request->data) {
             $email = $this->request->data['User']['email'];
             // find user with given email

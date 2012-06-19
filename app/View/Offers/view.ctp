@@ -73,7 +73,7 @@ switch($offer['Offer']['offer_type_id']){
 $html .= "<p><span class='label {$label_class}'>{$label_text}</span></p>";
 
 // administrator's flagging
-if (isset($is_flaggable)) {
+if ($is_flaggable) {
 
     $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
 

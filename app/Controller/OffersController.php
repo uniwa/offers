@@ -355,12 +355,13 @@ class OffersController extends AppController {
             $vote = $this->Vote->find('first', $options);
             $this->set('student_vote', $vote['Vote']['vote']);
 
-            // variables out of which we create the (un)flag link
+            // whether to create the flag (as spam) link
             // note that drafts must be excluded
-            $is_flaggable = $offer['Offer']['offer_state_id'] != STATE_DRAFT;
-            if ($this_user_role == ROLE_ADMIN && $is_flaggable) {
-                $this->set('is_flaggable', true);
-            }
+            $can_user_flag = $this_user_role == ROLE_ADMIN;
+            $is_in_state = $offer['Offer']['offer_state_id'] != STATE_DRAFT;
+            $is_not_flagged = ! $offer['Offer']['is_spam'];
+            $is_flaggable = $can_user_flag && $is_in_state && $is_not_flagged;
+            $this->set('is_flaggable', $is_flaggable);
         }
     }
 

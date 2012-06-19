@@ -247,7 +247,10 @@ class OffersController extends AppController {
         } else {
 
             $this->Offer->id = $id;
-            if ($this->Offer->saveField('is_spam', true)) {
+            $data = array('is_spam' => true,
+                          'offer_state_id' => STATE_INACTIVE);
+
+            if ($this->Offer->save($data, false)) {
 
                 $msg = 'Η προσφορά σημάνθηκε ως SPAM';
                 $class = Flash::Success;

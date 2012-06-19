@@ -223,7 +223,7 @@ if (empty($company['Offer']['Inactive'])) {
         $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
         $votes .= "({$vote_count}) ";
 
-        if ($inactive['is_spam'] == true) {
+        if ($inactive['is_spam']) {
             echo $spam_tag;
         }
 

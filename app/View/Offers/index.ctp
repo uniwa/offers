@@ -52,8 +52,17 @@ if (empty($offers)) {
 //        $description = "<p>{$offers[$key]['Offer']['description']}</p>";
         $vote_sum = $offers[$key]['Offer']['vote_sum'];
         $vote_count = $offers[$key]['Offer']['vote_count'];
-        $vote_class = ($vote_sum >= 0)?'green':'red';
-        $votes = "<span class='votes {$vote_class}'>{$vote_sum}</span> ";
+        if ($vote_sum >= 0) {
+            $vote_minus = ($vote_count-$vote_sum)/2;
+            $vote_plus = $vote_sum + $vote_minus;
+        } else {
+            $vote_plus = ($vote_count+$vote_sum)/2;
+            $vote_minus = abs($vote_sum - $vote_plus);
+        }
+//        $vote_class = ($vote_sum >= 0)?'green':'red';
+//        $votes = "<span class='votes {$vote_class}'>{$vote_sum}</span> ";
+        $votes = "<span class='votes green'>+{$vote_plus}</span> ";
+        $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
         $postfix = ($vote_count == 1)?'ς':'ι';
         $votes .= "({$vote_count} ψήφο{$postfix})";
         $html .= "<p>";

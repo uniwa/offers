@@ -335,6 +335,14 @@ class OffersController extends AppController {
                 'company' => $offer_info['company']));
 
         } else {
+
+            if ($offer['Offer']['is_spam']) {
+                $this->Session->setFlash('Η προσφορά έχει σημανθεί ως SPAM από'.
+                                             ' διαχειριστή της υπηρεσίας.',
+                                         'default',
+                                         array('class' => Flash::Error));
+            }
+
             // Prepare information for view
             $offer_info = $this->prepare_view($offer);
             $this->set('offer_info', $offer_info);
@@ -346,6 +354,7 @@ class OffersController extends AppController {
             $vote = $this->Vote->find('first', $options);
             $this->set('student_vote', $vote['Vote']['vote']);
 
+            // variables out of which we create the (un)flag link
             if ($this->Auth->user('role') == ROLE_ADMIN) {
                 if ($offer['Offer']['is_spam']) {
 

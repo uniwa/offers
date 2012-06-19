@@ -94,10 +94,6 @@ if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
         'controller' => 'companies', 'action' => 'view', $offer['Company']['id']));
 }
 
-if ($is_spam) {
-    echo 'Η προσφορά έχει χαρακτηρισθεί ως SPAM.<br/><br/>';
-}
-
 if (!is_null($student_vote)) {
     $vote_class = ($student_vote)?'green':'red';
     $my_vote = ($student_vote)?'+1':'-1';

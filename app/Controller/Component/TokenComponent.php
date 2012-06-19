@@ -1,6 +1,10 @@
 <?php
 class TokenComponent extends Object {
     function generate($entropy = "") {
+        list($usec, $sec) = explode(' ', microtime());
+        mt_srand($usec + $sec);
+        $r = (string) mt_rand();
+        $entropy .= $r;
         /* return a 40 chars unique id */
         return sha1(uniqid($entropy, true));
     }

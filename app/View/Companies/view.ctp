@@ -6,6 +6,10 @@ $is_user_the_owner = $this->Session->read('Auth.User.id') == $comp['user_id'];
 $is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
 
 if ($is_user_admin) {
+    $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
+}
+
+if ($is_user_admin) {
         if ($comp['is_enabled']) {
             $enabled_title = "[Απενεργοποίηση]";
             $enabled_action = 'disable';
@@ -131,12 +135,6 @@ if (isset($comp['latitude']) && isset($comp['longitude'])) {
 
 echo '<br/>';
 
-$spam_tag_options = array('class' => 'label label-important',
-                          'title' => 'Η προσφορά έχει σημανθεί ως '.
-                                     'SPAM από διαχειριστή του συστήματος');
-
-$spam_tag = $this->Html->tag('span', 'SPAM', $spam_tag_options);
-
 // display Active offers
 if (empty($company['Offer']['Active'])) {
     echo 'Δεν υπάρχουν ενεργές προσφορές.<br/>';
@@ -149,10 +147,6 @@ if (empty($company['Offer']['Active'])) {
         $votes = "<span class='votes green'>+{$vote_plus}</span> ";
         $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
         $votes .= "({$vote_count}) ";
-
-        if ($active['is_spam'] == TRUE) {
-            echo $spam_tag;
-        }
 
         echo $votes;
         echo $this->Html->link($active['title'],
@@ -168,8 +162,20 @@ if (empty($company['Offer']['Active'])) {
                   'action' => 'terminate',
                   $active['id']),
               null,
-              'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
-      }
+              'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. '.
+              'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+
+        } else if ($is_user_admin) {
+            echo $this->Html->link(
+                    $flag_icon . ' Σήμανση ως SPAM',
+                    array('controller' => 'offers',
+                          'action' => 'flag',
+                           $active['id']),
+                    array('escape' => false,
+                          'class' => 'btn btn-mini'),
+                          'Η ενέργεια δεν δύναται να αναιρεθεί. Είστε βέβαιοι;'
+            );
+        }
 
       echo '<br/>';
     }
@@ -210,6 +216,13 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
     }
 }
 
+// tag that creates the spam notification
+$spam_tag_options = array('class' => 'label label-important',
+                          'title' => 'Η προσφορά έχει σημανθεί ως '.
+                                     'SPAM από διαχειριστή του συστήματος');
+
+$spam_tag = $this->Html->tag('span', 'SPAM', $spam_tag_options);
+
 // display Inactive offers
 if (empty($company['Offer']['Inactive'])) {
     echo 'Δεν υπάρχουν παλαιότερες προσφορές.<br/>';
@@ -224,7 +237,18 @@ if (empty($company['Offer']['Inactive'])) {
         $votes .= "({$vote_count}) ";
 
         if ($inactive['is_spam']) {
+
             echo $spam_tag;
+        } else if ($is_user_admin) {
+            $spamify = $this->Html->link(
+                    $flag_icon . ' Σήμανση ως SPAM',
+                    array('controller' => 'offers',
+                          'action' => 'flag',
+                           $inactive['id']),
+                    array('escape' => false,
+                          'class' => 'btn btn-mini'),
+                          'Η ενέργεια δεν δύναται να αναιρεθεί. Είστε βέβαιοι;'
+                );
         }
 
         echo $votes;
@@ -232,6 +256,11 @@ if (empty($company['Offer']['Inactive'])) {
                                array('controller' => 'offers',
                                      'action' => 'view', $inactive['id'])
                               );
+
+        if (isset($spamify)) {
+            echo $spamify;
+            unset($spamify);
+        }
         echo '<br/>';
     }
 }

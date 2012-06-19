@@ -259,6 +259,20 @@ class UsersController extends AppController {
                     'controller' => 'users', 'action' => 'request_passwd'
                 ));
             } else {
+                $email = new CakeEmail('default');
+                $email = $email
+                    ->to($email)
+
+                    ->subject("Αίτημα αλλαγής κωδικού")
+                    ->template('request_passwd', 'default')
+                    ->emailFormat('both')
+                    ->viewVars(array(
+                        'url' => APP_URL . '/users/reset_passwd?token='. $token));
+                try {
+                    $email->send();
+                } catch (Exception $e) {
+                    // pass
+                }
             }
         }
     }

@@ -906,6 +906,8 @@ for ($i = 1; $i <= NUM_COMPANIES; $i++) {
         $is_spam = 0;
         $vote_count = rand(0,100);
         $vote_sum = rand(-$vote_count,$vote_count);
+        if (($vote_count - abs($vote_sum))%2 > 0)
+            $vote_count++;
 
 	    $insert_offer = "('{$offer_id}','{$title}','{$desc}','{$started}','{$ended}',";
 	    $insert_offer .= "'{$autostart}','{$autoend}','{$coupon_terms}','{$total_quantity}',";

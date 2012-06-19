@@ -235,6 +235,18 @@ class UsersController extends AppController {
                 ));
             }
 
+            // all users that request password change must have a verified
+            // email address
+            if ($user['User']['email_verified'] == false) {
+                $this->Session->setFlash(
+                    __('Πρέπει να επικύρωσετε την ηλεκτρονική σας δ/ση πριν αιτηθείτε νέο κωδικό.'),
+                    'default',
+                    array('class'=>Flash::Warning));
+                $this->redirect(array(
+                    'controller' => 'users', 'action' => 'request_passwd'
+                ));
+            }
+
             // generate new token
             $token = $this->Token->generate($email);
         }

@@ -12,6 +12,8 @@ class Offer extends AppModel {
         'search' => true,
         'tag' => true
     );
+    public $virtualFields = array(
+        'vote_sum' => 'Offer.vote_plus - Offer.vote_minus');
 
     // Find methods core processing
     private function process_find(&$query) {

@@ -49,28 +49,18 @@ if (empty($offers)) {
         $tag_name = offer_type($offer_type_id);
         $title = $offers[$key]['Offer']['title'];
         $label = "<span class='label label-{$tag_class}'>{$tag_name}</span>";
-//        $description = "<p>{$offers[$key]['Offer']['description']}</p>";
-        $vote_sum = $offers[$key]['Offer']['vote_sum'];
         $vote_count = $offers[$key]['Offer']['vote_count'];
-        if ($vote_sum >= 0) {
-            $vote_minus = ($vote_count-$vote_sum)/2;
-            $vote_plus = $vote_sum + $vote_minus;
-        } else {
-            $vote_plus = ($vote_count+$vote_sum)/2;
-            $vote_minus = abs($vote_sum - $vote_plus);
-        }
-//        $vote_class = ($vote_sum >= 0)?'green':'red';
-//        $votes = "<span class='votes {$vote_class}'>{$vote_sum}</span> ";
-        $votes = "<span class='votes green'>+{$vote_plus}</span> ";
-        $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
+        $vote_plus = $offers[$key]['Offer']['vote_plus'];
+        $vote_minus = $offers[$key]['Offer']['vote_minus'];
+        $votes_html = "<span class='votes green'>+{$vote_plus}</span> ";
+        $votes_html .= "<span class='votes red'>-{$vote_minus}</span> ";
         $postfix = ($vote_count == 1)?'ς':'ι';
-        $votes .= "({$vote_count} ψήφο{$postfix})";
+        $votes_html .= "({$vote_count} ψήφο{$postfix})";
         $html .= "<p>";
         $html .=  $this->Html->link($title,
             array('action' => 'view', $offers[$key]['Offer']['id']));
-        $html .= " {$label} {$votes}";
+        $html .= " {$label} {$votes_html}";
         $html .= "<br /><i>{$offer['Offer']['modified']}</i>";
-//        $html .= $description;
 
         // Twitter settings
         // TODO: move to configuration?

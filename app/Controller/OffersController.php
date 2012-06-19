@@ -245,24 +245,30 @@ class OffersController extends AppController {
 
         if ($offer == false) throw new NotFoundException();
 
-
         if ($offer['Offer']['is_spam'] == $value) {
 
-            $this->Session->setFlash('Η προσφορά διαθέτει ήδη αυτήν τη σήμανση',
-                                     'default',
-                                     array('class' => Flash::Warning));
+            $msg = $value ? 'Η προσφορά έχει ήδη σημανθεί ως SPAM'
+                          : 'Η σήμανση SPAM έχει ήδη αφαιρεθεί';
+
+            $class = Flash::Warning;
+
         } else {
 
             $this->Offer->id = $id;
-            $this->Offer->saveField('is_spam', $value);
+            if ($this->Offer->saveField('is_spam', $value)) {
 
-            $not = $value ? '' : 'μη ';
+                $msg = $value ? 'Η προσφορά σημάνθηκε ως SPAM'
+                              : 'Η σήμανση SPAM αφαιρέθηκε';
+                $class = Flash::Success;
 
-            $this->Session->setFlash("Η προσφορά έχει σημανθεί ως {$not}κακόβουλη",
-                                     'default',
-                                     array('class' => Flash::Success));
+            } else {
+                $msg = 'Προέκυψε κάποιο σφάλμα. ' .
+                       'Δεν έχουν πραγματοποιηθεί αλλαγές';
+                $class = Flash::Error;
+            }
         }
 
+        $this->Session->setFlash($msg, 'default', array('class' => $class));
         $this->redirect($this->request->referer());
     }
 

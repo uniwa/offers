@@ -71,19 +71,30 @@ class VotesController extends AppController {
         if ($vote) {
             $cur_vote = (int)$vote['Vote']['vote'];
             if ($value === VOTE_CANCEL) {
-                $vote_diff = ($cur_vote === VOTE_DOWN)?1:-1;
+                if ($cur_vote === VOTE_DOWN)
+                    $vote_minus--;
+                else
+                    $vote_plus--;
                 $vote_add = -1;
                 // Delete vote
                 $this->Vote->delete($vote['Vote']['id']);
             } else {
-                $vote_diff = ($cur_vote <> $value)?($value - $cur_vote) * 2:0;
+                if ($cur_vote <> $value)
+                    if ($value === VOTE_UP) {
+                        $offer['Offer']['vote_plus']++;
+                        $offer['Offer']['vote_minus']--;
+                    } else {
+                        $offer['Offer']['vote_plus']--;
+                        $offer['Offer']['vote_minus']++;
+                    }
             }
         } else {
-            if ($value === VOTE_CANCEL) {
-                $vote_diff = 0;
-            } else {
-                $cur_vote = VOTE_CANCEL;
-                $vote_diff = ($value === VOTE_UP)?1:-1;
+            if ($value !== VOTE_CANCEL) {
+                if ($value === VOTE_UP) {
+                    $offer['Offer']['vote_plus']++;
+                } else {
+                    $offer['Offer']['vote_minus']++;
+                }
                 $vote_add = 1;
                 // Set other fields
                 $vote['Vote']['offer_id'] = $offer_id;
@@ -98,11 +109,9 @@ class VotesController extends AppController {
         }
 
         // Get vote count
-        $cur_sum = (int)$offer['Offer']['vote_sum'];
         $cur_count = (int)$offer['Offer']['vote_count'];
 
         // Update vote count and save offer without validation
-        $offer['Offer']['vote_sum'] = $cur_sum + $vote_diff;
         $offer['Offer']['vote_count'] = $cur_count + $vote_add;
         $result = $this->Offer->save($offer, false);
 

@@ -819,6 +819,9 @@ $phone = '2101234567';
 $fax = '2107654321';
 $service_type = 'Υπηρεσίες';
 $afm = '000000012';
+$verified = 1;
+$is_banned = 0;
+$terms = 1;
 $is_enabled = 1;
 $cimage_count = 0;
 $work_hour_count = 0;
@@ -838,10 +841,10 @@ $offer_id = 0;
 
 echo count($company_names);
 $users1 = "INSERT INTO `users` VALUES\n";
-$users1 .= "(1,'user1','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',0,'student',0,NULL),\n";
-$users1 .= "(2,'user2','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',0,'student',0,NULL),\n";
-$users1 .= "(3,'user3','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',0,'student',0,NULL),\n";
-$users1 .= "(4,'admin','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',0,'admin',0,'2012-04-18 06:22:48'),\n";
+$users1 .= "(1,'user1','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',NULL,1,0,'student',0,NULL),\n";
+$users1 .= "(2,'user2','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',NULL,1,0,'student',0,NULL),\n";
+$users1 .= "(3,'user3','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',NULL,1,0,'student',0,NULL),\n";
+$users1 .= "(4,'admin','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',NULL,1,0,'admin',0,'2012-04-18 06:22:48'),\n";
 writeFile($fu, $users1);
 
 $company1 = "INSERT INTO `companies` VALUES\n";
@@ -859,7 +862,8 @@ for ($i = 1; $i <= NUM_COMPANIES; $i++) {
     $mu_id = rand(1,300);
     $uid = $i + 100;
 
-	$insert_user = "('{$uid}','{$username}','{$passwd}','{$email}',0,'company',0,NULL)";
+	$insert_user = "('{$uid}','{$username}','{$passwd}','{$email}',NULL,";
+	$insert_user .= "'{$verified}','{$is_banned}','company','{$terms}',NULL)";
 
 	$insert_company = "('{$uid}','{$name}','{$address}','{$postalcode}','{$phone}',";
 	$insert_company .= "'{$fax}','{$service_type}','{$afm}','{$latitude}',";

@@ -361,7 +361,7 @@ class OffersController extends AppController {
 
             if ($is_spam && $should_show) {
                 $this->Session->setFlash('Η προσφορά έχει σημανθεί ως SPAM από'.
-                                             ' διαχειριστή της υπηρεσίας.',
+                                             ' διαχειριστή τους συστήματος',
                                          'default',
                                          array('class' => Flash::Error));
             }

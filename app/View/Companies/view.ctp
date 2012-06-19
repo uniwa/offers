@@ -131,6 +131,12 @@ if (isset($comp['latitude']) && isset($comp['longitude'])) {
 
 echo '<br/>';
 
+$spam_tag_options = array('class' => 'label label-important',
+                          'title' => 'Η προσφορά έχει σημανθεί ως '.
+                                     'SPAM από διαχειριστή του συστήματος');
+
+$spam_tag = $this->Html->tag('span', 'SPAM', $spam_tag_options);
+
 // display Active offers
 if (empty($company['Offer']['Active'])) {
     echo 'Δεν υπάρχουν ενεργές προσφορές.<br/>';
@@ -143,14 +149,16 @@ if (empty($company['Offer']['Active'])) {
         $votes = "<span class='votes green'>+{$vote_plus}</span> ";
         $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
         $votes .= "({$vote_count}) ";
+
+        if ($active['is_spam'] == TRUE) {
+            echo $spam_tag;
+        }
+
         echo $votes;
         echo $this->Html->link($active['title'],
                                array('controller' => 'offers',
                                      'action' => 'view', $active['id'])
                               );
-        if ($active['is_spam'] == TRUE) {
-            echo ' [SPAM]';
-        }
 
         if ($is_user_the_owner) {
           echo ' ' . $this->Html->link(
@@ -186,9 +194,6 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
                                    array('controller' => 'offers',
                                          'action' => 'view', $draft['id'])
                                   );
-            if ($draft['is_spam'] == TRUE) {
-                echo ' [SPAM]';
-            }
 
             if ($is_user_the_owner) {
               echo ' ' . $this->Html->link(
@@ -217,14 +222,16 @@ if (empty($company['Offer']['Inactive'])) {
         $votes = "<span class='votes green'>+{$vote_plus}</span> ";
         $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
         $votes .= "({$vote_count}) ";
+
+        if ($inactive['is_spam'] == true) {
+            echo $spam_tag;
+        }
+
         echo $votes;
         echo $this->Html->link($inactive['title'],
                                array('controller' => 'offers',
                                      'action' => 'view', $inactive['id'])
                               );
-        if ($inactive['is_spam'] == true) {
-            echo ' [SPAM]';
-        }
         echo '<br/>';
     }
 }

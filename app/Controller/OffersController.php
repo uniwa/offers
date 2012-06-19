@@ -241,30 +241,39 @@ class OffersController extends AppController {
     // @param $value boolean; the value of the flag
     public function _flag($id, $value = true) {
 
-        $offer = $this->Offer->findById($id, array('id', 'is_spam'));
+        $offer = $this->Offer->findById($id, array('id',
+                                                   'is_spam',
+                                                   'offer_state_id'));
 
         if ($offer == false) throw new NotFoundException();
 
-        if ($offer['Offer']['is_spam'] == $value) {
+        if ($offer['Offer']['offer_state_id'] == STATE_DRAFT) {
 
-            $msg = $value ? 'Η προσφορά έχει ήδη σημανθεί ως SPAM'
-                          : 'Η σήμανση SPAM έχει ήδη αφαιρεθεί';
-
-            $class = Flash::Warning;
-
+            $msg = 'Οι μη ενεργοποιημένες προσφορές δεν μπορούν να σημανθούν';
+            $class = Flash::Error;
         } else {
 
-            $this->Offer->id = $id;
-            if ($this->Offer->saveField('is_spam', $value)) {
+            if ($offer['Offer']['is_spam'] == $value) {
 
-                $msg = $value ? 'Η προσφορά σημάνθηκε ως SPAM'
-                              : 'Η σήμανση SPAM αφαιρέθηκε';
-                $class = Flash::Success;
+                $msg = $value ? 'Η προσφορά έχει ήδη σημανθεί ως SPAM'
+                              : 'Η σήμανση SPAM έχει ήδη αφαιρεθεί';
+
+                $class = Flash::Warning;
 
             } else {
-                $msg = 'Προέκυψε κάποιο σφάλμα. ' .
-                       'Δεν έχουν πραγματοποιηθεί αλλαγές';
-                $class = Flash::Error;
+
+                $this->Offer->id = $id;
+                if ($this->Offer->saveField('is_spam', $value)) {
+
+                    $msg = $value ? 'Η προσφορά σημάνθηκε ως SPAM'
+                                  : 'Η σήμανση SPAM αφαιρέθηκε';
+                    $class = Flash::Success;
+
+                } else {
+                    $msg = 'Προέκυψε κάποιο σφάλμα - ' .
+                           'οι αλλαγές δεν πραγματοποιήθηκαν';
+                    $class = Flash::Error;
+                }
             }
         }
 
@@ -367,7 +376,10 @@ class OffersController extends AppController {
             $this->set('student_vote', $vote['Vote']['vote']);
 
             // variables out of which we create the (un)flag link
-            if ($this->Auth->user('role') == ROLE_ADMIN) {
+            // note that drafts must be excluded
+
+            $is_flaggable = $offer['Offer']['offer_state_id'] != STATE_DRAFT;
+            if ($this->Auth->user('role') == ROLE_ADMIN && $is_flaggable) {
                 if ($offer['Offer']['is_spam']) {
 
                     $flag_text = 'Άρση σήμανσης SPAM';

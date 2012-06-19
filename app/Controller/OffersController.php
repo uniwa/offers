@@ -240,6 +240,10 @@ class OffersController extends AppController {
 
             $msg = 'Οι μη ενεργοποιημένες προσφορές δεν μπορούν να σημανθούν';
             $class = Flash::Error;
+        } else if ($offer['Offer']['is_spam']) {
+
+            $msg = 'Η προσφορά έχει ήδη σημανθεί ως SPAM';
+            $class = Flash::Warning;
         } else {
 
             $this->Offer->id = $id;

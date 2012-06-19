@@ -72,17 +72,18 @@ switch($offer['Offer']['offer_type_id']){
 
 $html .= "<p><span class='label {$label_class}'>{$label_text}</span></p>";
 
-// administrator's (un)flagging
-if (isset($flag_text)) {
+// administrator's flagging
+if (isset($is_flaggable)) {
 
     $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
 
-    $flag_link = $this->Html->link($flag_icon . ' ' . $flag_text,
+    $flag_link = $this->Html->link($flag_icon . ' Σήμανση ως SPAM',
                                    array('controller' => 'offers',
-                                         'action' => $flag_action,
+                                         'action' => 'flag',
                                           $offer['Offer']['id']),
                                    array('escape' => false,
-                                         'class' => 'btn')
+                                         'class' => 'btn'),
+                                   'Η ενέργεια δεν δύναται να αναιρεθεί. Είστε βέβαιοι;'
                                    );
 
     $html .= $flag_link;

@@ -229,17 +229,6 @@ class OffersController extends AppController {
 
     public function flag($id = null) {
         if (empty($id)) throw new BadRequestException();
-        $this->_flag($id);
-    }
-
-    public function unflag($id = null) {
-        if (empty($id)) throw new BadRequestException();
-        $this->_flag($id, false);
-    }
-
-    // @param $id corresponds to the offer that is to be flagged/unflagged
-    // @param $value boolean; the value of the flag
-    public function _flag($id, $value = true) {
 
         $offer = $this->Offer->findById($id, array('id',
                                                    'is_spam',
@@ -253,27 +242,16 @@ class OffersController extends AppController {
             $class = Flash::Error;
         } else {
 
-            if ($offer['Offer']['is_spam'] == $value) {
+            $this->Offer->id = $id;
+            if ($this->Offer->saveField('is_spam', true)) {
 
-                $msg = $value ? 'Η προσφορά έχει ήδη σημανθεί ως SPAM'
-                              : 'Η σήμανση SPAM έχει ήδη αφαιρεθεί';
-
-                $class = Flash::Warning;
+                $msg = 'Η προσφορά σημάνθηκε ως SPAM';
+                $class = Flash::Success;
 
             } else {
-
-                $this->Offer->id = $id;
-                if ($this->Offer->saveField('is_spam', $value)) {
-
-                    $msg = $value ? 'Η προσφορά σημάνθηκε ως SPAM'
-                                  : 'Η σήμανση SPAM αφαιρέθηκε';
-                    $class = Flash::Success;
-
-                } else {
-                    $msg = 'Προέκυψε κάποιο σφάλμα - ' .
-                           'οι αλλαγές δεν πραγματοποιήθηκαν';
-                    $class = Flash::Error;
-                }
+                $msg = 'Προέκυψε κάποιο σφάλμα - ' .
+                       'οι αλλαγές δεν πραγματοποιήθηκαν';
+                $class = Flash::Error;
             }
         }
 
@@ -381,16 +359,7 @@ class OffersController extends AppController {
             // note that drafts must be excluded
             $is_flaggable = $offer['Offer']['offer_state_id'] != STATE_DRAFT;
             if ($this_user_role == ROLE_ADMIN && $is_flaggable) {
-                if ($offer['Offer']['is_spam']) {
-
-                    $flag_text = 'Άρση σήμανσης SPAM';
-                    $flag_action = 'unflag';
-                } else {
-                    $flag_text = 'Σήμανση ως SPAM';
-                    $flag_action = 'flag';
-                }
-                $this->set('flag_text', $flag_text);
-                $this->set('flag_action', $flag_action);
+                $this->set('is_flaggable', true);
             }
         }
     }

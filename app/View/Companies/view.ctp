@@ -239,23 +239,40 @@ if (empty($company['Offer']['Inactive'])) {
         if ($inactive['is_spam']) {
 
             echo $spam_tag;
-        } else if ($is_user_admin) {
-            $spamify = $this->Html->link(
-                    $flag_icon . ' Σήμανση ως SPAM',
-                    array('controller' => 'offers',
-                          'action' => 'flag',
-                           $inactive['id']),
-                    array('escape' => false,
-                          'class' => 'btn btn-mini'),
-                          'Η ενέργεια δεν δύναται να αναιρεθεί. Είστε βέβαιοι;'
+
+            // in case of a flagged (as spam) offer, link its title to its view
+            // iff authed user is either the owner or an admin
+            $should_link_title = $is_user_the_owner || $is_user_admin;
+
+        } else {
+
+            $should_link_title = true;
+            if ($is_user_admin) {
+
+                // offer a link to flag the offer as spam
+                $spamify = $this->Html->link(
+                        $flag_icon . ' Σήμανση ως SPAM',
+                        array('controller' => 'offers',
+                              'action' => 'flag',
+                               $inactive['id']),
+                        array('escape' => false,
+                              'class' => 'btn btn-mini'),
+                              'Η ενέργεια δεν δύναται να αναιρεθεί. '.
+                              'Είστε βέβαιοι;'
                 );
+            }
         }
 
         echo $votes;
-        echo $this->Html->link($inactive['title'],
-                               array('controller' => 'offers',
-                                     'action' => 'view', $inactive['id'])
-                              );
+
+        if ($should_link_title) {
+            echo $this->Html->link($inactive['title'],
+                                   array('controller' => 'offers',
+                                         'action' => 'view', $inactive['id'])
+            );
+        } else {
+            echo $inactive['title'];
+        }
 
         if (isset($spamify)) {
             echo $spamify;

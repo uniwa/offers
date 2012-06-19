@@ -137,8 +137,12 @@ if (empty($company['Offer']['Active'])) {
 } else {
     echo 'Ενεργές προσφορές:<br/>';
     foreach ($company['Offer']['Active'] as $active) {
-        $vote_class = ($active['vote_count'] >= 0)?'green':'red';
-        $votes = "<span class='votes {$vote_class}'>{$active['vote_count']} </span>";
+        $vote_plus = $active['vote_plus'];
+        $vote_minus = $active['vote_minus'];
+        $vote_count = $active['vote_count'];
+        $votes = "<span class='votes green'>+{$vote_plus}</span> ";
+        $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
+        $votes .= "({$vote_count}) ";
         echo $votes;
         echo $this->Html->link($active['title'],
                                array('controller' => 'offers',
@@ -171,8 +175,12 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
     } else {
         echo 'Μη ενεργοποιημένες προσφορές:<br/>';
         foreach ($company['Offer']['Draft'] as $draft) {
-            $vote_class = ($draft['vote_count'] >= 0)?'green':'red';
-            $votes = "<span class='votes {$vote_class}'>{$draft['vote_count']} </span>";
+            $vote_plus = $draft['vote_plus'];
+            $vote_minus = $draft['vote_minus'];
+            $vote_count = $draft['vote_count'];
+            $votes = "<span class='votes green'>+{$vote_plus}</span> ";
+            $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
+            $votes .= "({$vote_count}) ";
             echo $votes;
             echo $this->Html->link($draft['title'],
                                    array('controller' => 'offers',
@@ -203,8 +211,12 @@ if (empty($company['Offer']['Inactive'])) {
 } else {
     echo 'Παλαιότερες προσφορές:<br/>';
     foreach ($company['Offer']['Inactive'] as $inactive) {
-        $vote_class = ($inactive['vote_count'] >= 0)?'green':'red';
-        $votes = "<span class='votes {$vote_class}'>{$inactive['vote_count']} </span>";
+        $vote_plus = $inactive['vote_plus'];
+        $vote_minus = $inactive['vote_minus'];
+        $vote_count = $inactive['vote_count'];
+        $votes = "<span class='votes green'>+{$vote_plus}</span> ";
+        $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
+        $votes .= "({$vote_count}) ";
         echo $votes;
         echo $this->Html->link($inactive['title'],
                                array('controller' => 'offers',

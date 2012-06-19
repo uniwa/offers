@@ -239,7 +239,7 @@ class UsersController extends AppController {
             // email address
             if ($user['User']['email_verified'] == false) {
                 $this->Session->setFlash(
-                    __('Πρέπει να επικύρωσετε την ηλεκτρονική σας δ/ση πριν αιτηθείτε νέο κωδικό.'),
+                    __('Πρέπει να επικυρώσετε την ηλεκτρονική σας δ/ση πριν αιτηθείτε νέο κωδικό.'),
                     'default',
                     array('class'=>Flash::Warning));
                 $this->redirect(array(

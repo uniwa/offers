@@ -5,7 +5,7 @@ class UsersController extends AppController {
     public $uses = array('User', 'Image', 'Day', 'Distance',
                          'WorkHour', 'Municipality', 'Company', 'Student');
 
-    public $components = array('RequestHandler', 'Token');
+    public $components = array('RequestHandler', 'Token', 'Email');
 
     function beforeFilter() {
         parent::beforeFilter();

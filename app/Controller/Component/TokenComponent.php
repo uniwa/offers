@@ -1,5 +1,5 @@
 <?php
-class TokenComponent extends Object {
+class TokenComponent extends Component {
     function generate($entropy = "") {
         list($usec, $sec) = explode(' ', microtime());
         mt_srand($usec + $sec);

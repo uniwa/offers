@@ -5,7 +5,7 @@ class UsersController extends AppController {
     public $uses = array('User', 'Image', 'Day', 'Distance',
                          'WorkHour', 'Municipality', 'Company', 'Student');
 
-    public $components = array('RequestHandler');
+    public $components = array('RequestHandler', 'Token');
 
     function beforeFilter() {
         parent::beforeFilter();
@@ -212,4 +212,29 @@ class UsersController extends AppController {
     public function faq() {
     }
 
+    public function request_passwd () {
+        if ($this->request->data) {
+            $email = $this->request->data['User']['email'];
+            // find user with given email
+            $user = $this->User->find('first', array(
+                'conditions' => array('User.email' => $email)));
+
+            // return to self if address not found
+            if (empty($user)) {
+                $this->Session->setFlash(
+                    __('Λάνθασμέμη διεύθυνση email.'),
+                    'default',
+                    array('class'=>Flash::Error));
+                $this->redirect(array(
+                    'controller' => 'users', 'action' => 'request_passwd'
+                ));
+            }
+
+            // generate new token
+            $token = $this->Token->generate($email);
+        }
+    }
+
+    public function reset_passwd ($token = null) {
+    }
 }

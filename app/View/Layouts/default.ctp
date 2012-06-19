@@ -83,13 +83,13 @@
 
                     $category_admin = null;
                     if ($role !== ROLE_ADMIN) {
-                        $title = array(__('Το προφίλ μου'));
-                        $action = array('view');
+                        $title = __('Το προφίλ μου');
+                        $action = 'view';
 
                         if ($role == ROLE_STUDENT) {
-                            $controller = array('students');
+                            $controller = 'students';
                         } else if ($role == ROLE_COMPANY) {
-                            $controller = array('companies');
+                            $controller = 'companies';
                         }
                         $profile = $this->Html->link($title, array(
                                                         'controller' => $controller,

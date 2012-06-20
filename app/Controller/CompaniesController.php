@@ -301,7 +301,7 @@ class CompaniesController extends AppController {
         }
     }
 
-    private function send_email_confirmation($email = null) {
+    public function send_email_confirmation($token = null, $email = null) {
         $email = urlencode($email);
         $subject = __("Αίτημα αλλαγής κωδικού");
         $url = APP_URL."/users/email_confirm/{$token}/{$email}";
@@ -317,7 +317,7 @@ class CompaniesController extends AppController {
         } catch (Exception $e) {
             // pass
         }
-        $msg = __('Στάλθηκε email με το σύνδεσμο επιβεβαίωσης email.');
+        $msg = __('Η εγγραφή ολοκληρώθηκε και στάλθηκε email με το σύνδεσμο επιβεβαίωσης email.');
         $success = array('class' => Flash::Success);
         $this->Session->setFlash($msg, 'default', $success);
         $this->redirect(array('controller' => 'users', 'action' => 'login'));
@@ -346,7 +346,7 @@ class CompaniesController extends AppController {
     }
 
     public function is_authorized($user) {
-        $public = array('view', 'email_confirm');
+        $public = array('view', 'email_confirm', 'send_email_confirmation');
         $own = array('edit', 'imageedit');
         $admin_actions = array('enable','disable');
 

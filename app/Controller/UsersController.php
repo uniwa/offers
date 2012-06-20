@@ -273,6 +273,13 @@ class UsersController extends AppController {
                 } catch (Exception $e) {
                     // pass
                 }
+                $this->Session->setFlash(
+                    __('Στάλθηκε email με το link αλλαγής κωδικού στο email σας.'),
+                    'default',
+                    array('class'=>Flash::Success));
+                $this->redirect(array(
+                    'controller' => 'users', 'action' => 'login'
+                ));
             }
         }
     }

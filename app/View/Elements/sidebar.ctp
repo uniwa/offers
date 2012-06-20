@@ -1,4 +1,6 @@
 <?php
+$is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
+
 $happyhour = $this->Html->link(
     'HappyHour',
     array('controller' => 'offers', 'action' => 'happyhour'),
@@ -35,6 +37,13 @@ $limited_rss = $this->Html->link(
     array('class' => 'rss-limited', 'title' => 'RSS feed for limited offers')
 );
 
+if ($is_user_admin) {
+    $show_spam = $this->Html->link(
+        'Εμφάνιση των SPAM',
+        array('controller' => 'offers', 'action' => 'spam')
+    );
+}
+
 $html = '';
 foreach($offer_categories as $id => $name) {
     $html .= "<li>";
@@ -61,12 +70,14 @@ $searchbox .= $this->Form->input('search', array(
     'value' => $search_string,
     'class' => 'input-medium'));
 $searchbox .= $this->Form->end();
+
 ?>
     <div class="span3">
           <div class="well sidebar-nav">
             <ul class="nav nav-list">
               <li class="nav-header">Αναζητηση</li>
               <li><?php echo $searchbox ?></li>
+              <li><?php if ($is_user_admin) echo $show_spam ?></li>
               <li class="nav-header">Ειδη Προσφορων</li>
               <li><?php echo $happyhour, $happyhour_rss ?></li>
               <li><?php echo $coupons, $coupons_rss?></li>

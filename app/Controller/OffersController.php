@@ -155,6 +155,12 @@ class OffersController extends AppController {
         $this->display($params);
     }
 
+    public function spam() {
+        $params = array('all', 'conditions' => array('Offer.is_spam' => true));
+        $this->ordering($params);
+        $this->display($params);
+    }
+
     // Add ordering into params
     private function ordering(&$params) {
         $order_options = array_keys($this->order);

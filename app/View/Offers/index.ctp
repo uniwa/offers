@@ -50,6 +50,7 @@ if (empty($offers)) {
         $title = $offers[$key]['Offer']['title'];
         $label = "<span class='label label-{$tag_class}'>{$tag_name}</span>";
         $vote_count = $offers[$key]['Offer']['vote_count'];
+#<<<<<<< HEAD
         $vote_plus = $offers[$key]['Offer']['vote_plus'];
         $vote_minus = $offers[$key]['Offer']['vote_minus'];
         $votes_html = "<span class='votes green'>+{$vote_plus}</span> ";
@@ -60,6 +61,22 @@ if (empty($offers)) {
         $html .=  $this->Html->link($title,
             array('action' => 'view', $offers[$key]['Offer']['id']));
         $html .= " {$label} {$votes_html}";
+
+        $is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
+        if ($is_user_admin && !isset($shows_spam)) {
+            $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
+
+            $html .= $this->Html->link(
+                    $flag_icon . ' Σήμανση ως SPAM',
+                    array('controller' => 'offers',
+                          'action' => 'flag',
+                           $offer['Offer']['id']),
+                    array('escape' => false,
+                          'class' => 'btn btn-mini'),
+                    'Η ενέργεια δεν δύναται να αναιρεθεί. Είστε βέβαιοι;'
+            );
+        }
+
         $html .= "<br /><i>{$offer['Offer']['modified']}</i>";
 
         // Twitter settings

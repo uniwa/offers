@@ -6,6 +6,10 @@ $is_user_the_owner = $this->Session->read('Auth.User.id') == $comp['user_id'];
 $is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
 
 if ($is_user_admin) {
+    $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
+}
+
+if ($is_user_admin) {
         if ($comp['is_enabled']) {
             $enabled_title = "[Απενεργοποίηση]";
             $enabled_action = 'disable';
@@ -143,14 +147,12 @@ if (empty($company['Offer']['Active'])) {
         $votes = "<span class='votes green'>+{$vote_plus}</span> ";
         $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
         $votes .= "({$vote_count}) ";
+
         echo $votes;
         echo $this->Html->link($active['title'],
                                array('controller' => 'offers',
                                      'action' => 'view', $active['id'])
                               );
-        if ($active['is_spam'] == TRUE) {
-            echo ' [SPAM]';
-        }
 
         if ($is_user_the_owner) {
           echo ' ' . $this->Html->link(
@@ -160,8 +162,20 @@ if (empty($company['Offer']['Active'])) {
                   'action' => 'terminate',
                   $active['id']),
               null,
-              'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
-      }
+              'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. '.
+              'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+
+        } else if ($is_user_admin) {
+            echo $this->Html->link(
+                    $flag_icon . ' Σήμανση ως SPAM',
+                    array('controller' => 'offers',
+                          'action' => 'flag',
+                           $active['id']),
+                    array('escape' => false,
+                          'class' => 'btn btn-mini'),
+                          'Η ενέργεια δεν δύναται να αναιρεθεί. Είστε βέβαιοι;'
+            );
+        }
 
       echo '<br/>';
     }
@@ -186,9 +200,6 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
                                    array('controller' => 'offers',
                                          'action' => 'view', $draft['id'])
                                   );
-            if ($draft['is_spam'] == TRUE) {
-                echo ' [SPAM]';
-            }
 
             if ($is_user_the_owner) {
               echo ' ' . $this->Html->link(
@@ -205,6 +216,13 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
     }
 }
 
+// tag that creates the spam notification
+$spam_tag_options = array('class' => 'label label-important',
+                          'title' => 'Η προσφορά έχει σημανθεί ως '.
+                                     'SPAM από διαχειριστή του συστήματος');
+
+$spam_tag = $this->Html->tag('span', 'SPAM', $spam_tag_options);
+
 // display Inactive offers
 if (empty($company['Offer']['Inactive'])) {
     echo 'Δεν υπάρχουν παλαιότερες προσφορές.<br/>';
@@ -217,13 +235,48 @@ if (empty($company['Offer']['Inactive'])) {
         $votes = "<span class='votes green'>+{$vote_plus}</span> ";
         $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
         $votes .= "({$vote_count}) ";
+
+        if ($inactive['is_spam']) {
+
+            echo $spam_tag;
+
+            // in case of a flagged (as spam) offer, link its title to its view
+            // iff authed user is either the owner or an admin
+            $should_link_title = $is_user_the_owner || $is_user_admin;
+
+        } else {
+
+            $should_link_title = true;
+            if ($is_user_admin) {
+
+                // offer a link to flag the offer as spam
+                $spamify = $this->Html->link(
+                        $flag_icon . ' Σήμανση ως SPAM',
+                        array('controller' => 'offers',
+                              'action' => 'flag',
+                               $inactive['id']),
+                        array('escape' => false,
+                              'class' => 'btn btn-mini'),
+                              'Η ενέργεια δεν δύναται να αναιρεθεί. '.
+                              'Είστε βέβαιοι;'
+                );
+            }
+        }
+
         echo $votes;
-        echo $this->Html->link($inactive['title'],
-                               array('controller' => 'offers',
-                                     'action' => 'view', $inactive['id'])
-                              );
-        if ($inactive['is_spam'] == true) {
-            echo ' [SPAM]';
+
+        if ($should_link_title) {
+            echo $this->Html->link($inactive['title'],
+                                   array('controller' => 'offers',
+                                         'action' => 'view', $inactive['id'])
+            );
+        } else {
+            echo $inactive['title'];
+        }
+
+        if (isset($spamify)) {
+            echo $spamify;
+            unset($spamify);
         }
         echo '<br/>';
     }

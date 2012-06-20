@@ -71,14 +71,28 @@ switch($offer['Offer']['offer_type_id']){
 }
 
 $html .= "<p><span class='label {$label_class}'>{$label_text}</span></p>";
+
+// administrator's flagging
+if ($is_flaggable) {
+
+    $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
+
+    $flag_link = $this->Html->link($flag_icon . ' Σήμανση ως SPAM',
+                                   array('controller' => 'offers',
+                                         'action' => 'flag',
+                                          $offer['Offer']['id']),
+                                   array('escape' => false,
+                                         'class' => 'btn btn-mini'),
+                                   'Η ενέργεια δεν δύναται να αναιρεθεί. Είστε βέβαιοι;'
+                                   );
+
+    $html .= $flag_link;
+}
+
 $html .= "<h4>Προσφορά {$offer['Offer']['id']}</h4>";
 if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
     $html .= $this->Html->link('Εταιρία: '.$offer['Company']['name'], array(
         'controller' => 'companies', 'action' => 'view', $offer['Company']['id']));
-}
-
-if ($is_spam) {
-    echo 'Η προσφορά έχει χαρακτηρισθεί ως SPAM.<br/><br/>';
 }
 
 if (!is_null($student_vote)) {

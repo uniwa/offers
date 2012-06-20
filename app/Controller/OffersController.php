@@ -155,6 +155,14 @@ class OffersController extends AppController {
         $this->display($params);
     }
 
+    public function spam() {
+        // make it easy to identify that spam is shown (so as to hide flag link)
+        $this->set('shows_spam', true);
+        $params = array('all', 'conditions' => array('Offer.is_spam' => true));
+        $this->ordering($params);
+        $this->display($params);
+    }
+
     // Add ordering into params
     private function ordering(&$params) {
         $order_options = array_keys($this->order);
@@ -227,15 +235,55 @@ class OffersController extends AppController {
         }
     }
 
+    public function flag($id = null) {
+        if (empty($id)) throw new BadRequestException();
+
+        $offer = $this->Offer->findById($id, array('id',
+                                                   'is_spam',
+                                                   'offer_state_id'));
+
+        if ($offer == false) throw new NotFoundException();
+
+        if ($offer['Offer']['offer_state_id'] == STATE_DRAFT) {
+
+            $msg = 'Οι μη ενεργοποιημένες προσφορές δεν μπορούν να σημανθούν';
+            $class = Flash::Error;
+        } else if ($offer['Offer']['is_spam']) {
+
+            $msg = 'Η προσφορά έχει ήδη σημανθεί ως SPAM';
+            $class = Flash::Warning;
+        } else {
+
+            $this->Offer->id = $id;
+            $data = array('is_spam' => true,
+                          'offer_state_id' => STATE_INACTIVE);
+
+            if ($this->Offer->save($data, false)) {
+
+                $msg = 'Η προσφορά σημάνθηκε ως SPAM';
+                $class = Flash::Success;
+
+            } else {
+                $msg = 'Προέκυψε κάποιο σφάλμα - ' .
+                       'οι αλλαγές δεν πραγματοποιήθηκαν';
+                $class = Flash::Error;
+            }
+        }
+
+        $this->Session->setFlash($msg, 'default', array('class' => $class));
+        $this->redirect($this->request->referer());
+    }
 
     public function view($id = null) {
         $options['conditions'] = array('Offer.id' => $id);
 
+        $this_user_role = $this->Auth->User('role');
+        $this_user_id = $this->Auth->User('id');
         // if role is admin, the offer is displayed no matter what
-        if ($this->Auth->User('role') != ROLE_ADMIN) {
+        if ($this_user_role != ROLE_ADMIN) {
             $options['conditions']['OR'] = array(
                 // this allows owner of offer to always view it
-                'Company.user_id' => $this->Auth->User('id'),
+                'Company.user_id' => $this_user_id,
 
                 // these must apply for the rest of the members
                 array(
@@ -256,8 +304,8 @@ class OffersController extends AppController {
 
         $this->set('offer', $offer);
 
-        if ($this->Auth->User('role') === ROLE_STUDENT) {
-            $st_opts['conditions'] = array('Student.id' => $this->Auth->User('id'));
+        if ($this_user_role === ROLE_STUDENT) {
+            $st_opts['conditions'] = array('Student.id' => $this_user_id);
             $st_opts['recursive'] = -1;
             $student = $this->Student->find('first', $st_opts);
             $this->set('student', $student);
@@ -265,7 +313,7 @@ class OffersController extends AppController {
 
         //get coupons for offer if user is owner and coupon is of type 'COUPONS'
         if ($offer['Offer']['offer_type_id'] == TYPE_COUPONS) {
-            if ($this->Offer->is_owned_by($id, $this->Auth->User('id'))) {
+            if ($this->Offer->is_owned_by($id, $this_user_id)) {
                 // build query
                 $fields = array('Coupon.id', 'Coupon.serial_number', 'Coupon.created');
                 $order = array('Coupon.created DESC');
@@ -297,6 +345,20 @@ class OffersController extends AppController {
                 'company' => $offer_info['company']));
 
         } else {
+
+            // alert of spam offer
+            $is_spam = $offer['Offer']['is_spam'];
+            // but do NOT impose this alert (in case another flash is already
+            // set)
+            $should_show = $this->Session->read('Message.flash') == null;
+
+            if ($is_spam && $should_show) {
+                $this->Session->setFlash('Η προσφορά έχει σημανθεί ως SPAM από'.
+                                             ' διαχειριστή τους συστήματος',
+                                         'default',
+                                         array('class' => Flash::Error));
+            }
+
             // Prepare information for view
             $offer_info = $this->prepare_view($offer);
             $this->set('offer_info', $offer_info);
@@ -307,6 +369,14 @@ class OffersController extends AppController {
             $options['recursive'] = -1;
             $vote = $this->Vote->find('first', $options);
             $this->set('student_vote', $vote['Vote']['vote']);
+
+            // whether to create the flag (as spam) link
+            // note that drafts must be excluded
+            $can_user_flag = $this_user_role == ROLE_ADMIN;
+            $is_in_state = $offer['Offer']['offer_state_id'] != STATE_DRAFT;
+            $is_not_flagged = ! $offer['Offer']['is_spam'];
+            $is_flaggable = $can_user_flag && $is_in_state && $is_not_flagged;
+            $this->set('is_flaggable', $is_flaggable);
         }
     }
 

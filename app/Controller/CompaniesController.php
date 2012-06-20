@@ -7,7 +7,7 @@ class CompaniesController extends AppController {
     public $uses = array('Company', 'Offer', 'Municipality',
                          'User', 'Day', 'WorkHour', 'Image');
 
-    public $components = array('Common');
+    public $components = array('Common', 'Email');
 
     public function beforeFilter() {
         // this call should precede all actions that return data
@@ -299,6 +299,28 @@ class CompaniesController extends AppController {
                     'controller' => 'companies', 'action' => 'imageedit'));
             }
         }
+    }
+
+    private function send_email_confirmation($email = null) {
+        $email = urlencode($email);
+        $subject = __("Αίτημα αλλαγής κωδικού");
+        $url = APP_URL."/users/email_confirm/{$token}/{$email}";
+        $cake_email = new CakeEmail('default');
+        $cake_email = $cake_email
+            ->to($email)
+            ->subject($subject)
+            ->template('confirm_email', 'default')
+            ->emailFormat('both')
+            ->viewVars(array('url' => $url));
+        try {
+            $cake_email->send();
+        } catch (Exception $e) {
+            // pass
+        }
+        $msg = __('Στάλθηκε email με το σύνδεσμο επιβεβαίωσης email.');
+        $success = array('class' => Flash::Success);
+        $this->Session->setFlash($msg, 'default', $success);
+        $this->redirect(array('controller' => 'users', 'action' => 'login'));
     }
 
     public function email_confirm($token = null, $email = null) {

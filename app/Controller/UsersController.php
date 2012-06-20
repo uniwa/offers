@@ -267,7 +267,7 @@ class UsersController extends AppController {
                     ->template('request_passwd', 'default')
                     ->emailFormat('both')
                     ->viewVars(array(
-                        'url' => APP_URL . '/users/reset_passwd?token='. $token));
+                        'url' => APP_URL . '/users/reset_passwd/'. $token));
                 try {
                     $email->send();
                 } catch (Exception $e) {

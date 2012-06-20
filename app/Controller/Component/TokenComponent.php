@@ -11,7 +11,7 @@ class TokenComponent extends Component {
 
     function to_id($token) {
         /* return user_id associated with given token */
-        $user =& ClassRegistry::init('User');
+        $user = ClassRegistry::init('User');
         $id = $user->find('first', array(
             'fields' => array('id'),
             'conditions' => array('token' => $token)

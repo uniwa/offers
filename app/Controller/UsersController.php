@@ -114,17 +114,21 @@ class UsersController extends AppController {
     function register() {
         if ($this->Auth->user()) $this->redirect('/');
 
-        if( !empty( $this->request->data ) ) {
+        if (!empty( $this->request->data)) {
             //is_enabled and is_banned is by default false
             //set registered User's role
             $this->request->data['User']['role'] =  ROLE_COMPANY;
+            $email = $this->request->data['User']['email'];
+            $token = $this->Token->generate($email);
 
-            if($this->User->saveAssociated($this->request->data)) {
-                $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε'),
-                                         'default',
-                                         array('class' => Flash::Success));
+            if ($this->User->saveAssociated($this->request->data)) {
+//                $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε'),
+//                                         'default',
+//                                         array('class' => Flash::Success));
                 $this->redirect(array(
-                    'controller'=>'Offers', 'action' => 'index'
+                    'controller'=>'Companies',
+                    'action' => 'send_email_confirmation',
+                    array($token, $email)
                 ));
             } else
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'),
@@ -238,8 +242,8 @@ class UsersController extends AppController {
             // inform LDAP users that they cannot change their password from here
             if ($user['User']['role'] === ROLE_STUDENT) {
                 $this->Session->setFlash(
-                    __('Η εφαρμογή δεν επιτρέπει την αλλαγή συνθηματικού σε 
-χρήστες οι οποίοι συνδέονται μέσω LDAP. Για αλλαγή του κωδικού πρόσβασης στις 
+                    __('Η εφαρμογή δεν επιτρέπει την αλλαγή συνθηματικού σε
+χρήστες οι οποίοι συνδέονται μέσω LDAP. Για αλλαγή του κωδικού πρόσβασης στις
 υπηρεσίες του ΤΕΙ Αθήνας επισκεφθείτε την δ/ση: <a href="https://my.teiath.gr/">
 https://my.teiath.gr</a>'),
                     'default',

@@ -62,7 +62,8 @@ if (empty($offers)) {
             array('action' => 'view', $offers[$key]['Offer']['id']));
         $html .= " {$label} {$votes_html}";
 
-        if ($this->Session->read('Auth.User.role') == ROLE_ADMIN) {
+        $is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
+        if ($is_user_admin && !isset($shows_spam)) {
             $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
 
             $html .= $this->Html->link(

@@ -156,6 +156,8 @@ class OffersController extends AppController {
     }
 
     public function spam() {
+        // make it easy to identify that spam is shown (so as to hide flag link)
+        $this->set('shows_spam', true);
         $params = array('all', 'conditions' => array('Offer.is_spam' => true));
         $this->ordering($params);
         $this->display($params);

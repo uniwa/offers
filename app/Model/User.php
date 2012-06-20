@@ -150,4 +150,23 @@ class User extends AppModel {
         return (! $ldap->exists($this->data['User']['username']));
     }
 
+    public function email_confirm($token = null, $email = null) {
+        $conditions = array('User.token' => $token);
+        $id = $this->field('id', $conditions);
+        $user_email = $this->field('email', $conditions);
+        $result = false;
+        if ($user_email)
+            if ($user_email === $email) {
+                $email_verified = $this->field('email_verified', $conditions);
+                if (!$email_verified) {
+                    $this->read(null, $id);
+                    $this->set('email_verified', true);
+                    $saved = $this->save(null, false);
+                    $result = true;
+                }
+            }
+
+        return $result;
+    }
+
 }

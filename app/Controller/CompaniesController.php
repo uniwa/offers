@@ -307,11 +307,11 @@ class CompaniesController extends AppController {
         if ($length === $token_len) {
             $result = $this->User->email_confirm($token, $email);
             if ($result) {
-                $msg = 'Η διεύθυνση ηλεκτρονικής αλληλογραφίας επικυρώθυκε.';
+                $msg = __('Η διεύθυνση ηλεκτρονικής αλληλογραφίας επικυρώθυκε.');
                 $class = array('class' => Flash::Success);
                 $http = 200;
             } else {
-                $msg = 'Δεν ήταν δυνατή η επικύρωση της διεύθυνσης ηλεκτρονικής αλληλογραφίας.';
+                $msg = __('Δεν ήταν δυνατή η επικύρωση της διεύθυνσης ηλεκτρονικής αλληλογραφίας.');
                 $class = array('class' => Flash::Error);
                 $http = 400;
             }

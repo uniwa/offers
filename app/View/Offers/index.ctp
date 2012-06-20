@@ -1,6 +1,21 @@
 <?php
+$sidebar_params = array();
+$show_flag_link = false;
+
+// in this context, if `shows_spam' has been set (regardless of its value), then
+// only spam offers are currently being rendered and logged-in user is admin.
+// In case it has not been set, it is not guaranteed that the logged-in user in
+// NOT an admin
+if ($this->Session->read('Auth.User.role') == ROLE_ADMIN) {
+
+    // whether to display flag-as-spam link after each offer
+    $shows_spam = isset($shows_spam);
+    $show_flag_link = ! $shows_spam;
+    $sidebar_params['shows_spam'] = $shows_spam;
+}
+
 $html = '';
-$html .= $this->element('sidebar');
+$html .= $this->element('sidebar', $sidebar_params);
 $html .= "<div class='span9'>";
 
 if (empty($offers)) {
@@ -50,7 +65,6 @@ if (empty($offers)) {
         $title = $offers[$key]['Offer']['title'];
         $label = "<span class='label label-{$tag_class}'>{$tag_name}</span>";
         $vote_count = $offers[$key]['Offer']['vote_count'];
-#<<<<<<< HEAD
         $vote_plus = $offers[$key]['Offer']['vote_plus'];
         $vote_minus = $offers[$key]['Offer']['vote_minus'];
         $votes_html = "<span class='votes green'>+{$vote_plus}</span> ";
@@ -62,8 +76,7 @@ if (empty($offers)) {
             array('action' => 'view', $offers[$key]['Offer']['id']));
         $html .= " {$label} {$votes_html}";
 
-        $is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
-        if ($is_user_admin && !isset($shows_spam)) {
+        if ($show_flag_link) {
             $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
 
             $html .= $this->Html->link(

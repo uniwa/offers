@@ -1,6 +1,4 @@
 <?php
-$is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
-
 $happyhour = $this->Html->link(
     'HappyHour',
     array('controller' => 'offers', 'action' => 'happyhour'),
@@ -37,11 +35,18 @@ $limited_rss = $this->Html->link(
     array('class' => 'rss-limited', 'title' => 'RSS feed for limited offers')
 );
 
-if ($is_user_admin) {
-    $show_spam = $this->Html->link(
-        'Εμφάνιση των SPAM',
-        array('controller' => 'offers', 'action' => 'spam')
-    );
+if (isset($shows_spam)) {
+    // if `shows_spam' has been set to true, then only spam offers are currently
+    // being rendered, in which case a link to display non-spam offers should be
+    // provided; if it has not been set at all then it is implied that the user
+    // is not admin and no link should be provided at all
+    $spam_link = $shows_spam
+            ? $this->Html->link('Απόκρυψη των SPAM',
+                                array('controller' => 'offers',
+                                      'action' => 'index'))
+            : $this->Html->link('Εμφάνιση των SPAM',
+                                array('controller' => 'offers',
+                                      'action' => 'spam'));
 }
 
 $html = '';
@@ -77,7 +82,7 @@ $searchbox .= $this->Form->end();
             <ul class="nav nav-list">
               <li class="nav-header">Αναζητηση</li>
               <li><?php echo $searchbox ?></li>
-              <li><?php if ($is_user_admin) echo $show_spam ?></li>
+              <?php if (isset($spam_link)) echo $spam_link ?>
               <li class="nav-header">Ειδη Προσφορων</li>
               <li><?php echo $happyhour, $happyhour_rss ?></li>
               <li><?php echo $coupons, $coupons_rss?></li>

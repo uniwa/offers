@@ -31,7 +31,7 @@ class Security {
  *
  * @var string
  */
-	public static $hashType = null;
+	public static $hashType = 'sha256';
 
 /**
  * Get allowed minutes of inactivity based on security level.

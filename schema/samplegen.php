@@ -825,7 +825,7 @@ $terms = 1;
 $is_enabled = 1;
 $cimage_count = 0;
 $work_hour_count = 0;
-$passwd = 'd2519fa8217b0e44450caa12d8dab5eb773e5d6b';
+$passwd = '6e02fd9492447a66cde1a08c8cda8795188edce7943a28c430c5e70e5f19eaa4';
 $email = 'tlatsas@edu.teiath.gr';
 
 $desc_pre = "Περιγραφή προσφοράς ";

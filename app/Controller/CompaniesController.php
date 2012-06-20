@@ -10,6 +10,10 @@ class CompaniesController extends AppController {
     public $components = array('Common');
 
     public function beforeFilter() {
+        // this call should precede all actions that return data
+        // (exceptions included)
+        $this->api_initialize();
+
         if (! $this->is_authorized($this->Auth->user()))
             throw new ForbiddenException();
 
@@ -294,6 +298,28 @@ class CompaniesController extends AppController {
                 $this->redirect(array(
                     'controller' => 'companies', 'action' => 'imageedit'));
             }
+        }
+    }
+
+    public function email_confirm($token = null, $email = null) {
+        $token_len = 40;
+        $length = strlen($token);
+        if ($length === $token_len) {
+            $result = $this->User->email_confirm($token, $email);
+            if ($result) {
+                $msg = 'Η διεύθυνση ηλεκτρονικής αλληλογραφίας επικυρώθυκε.';
+                $class = array('class' => Flash::Success);
+                $http = 200;
+            } else {
+                $msg = 'Δεν ήταν δυνατή η επικύρωση της διεύθυνσης ηλεκτρονικής αλληλογραφίας.';
+                $class = array('class' => Flash::Error);
+                $http = 400;
+            }
+            $controller = 'offers';
+            $action = 'index';
+            $redirect = array('controller' => $controller, 'action' => $action);
+            $redirect = array($redirect);
+            $this->notify(array($msg, 'default', $class), $redirect, $http);
         }
     }
 

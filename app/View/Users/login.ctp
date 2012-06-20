@@ -10,4 +10,8 @@
     </fieldset>
 <?php echo $this->Form->end( array( 'class' => 'btn btn-primary' , 'label'=>'Είσοδος'));?>
 </div>
+<?php
+echo $this->Html->link('Ξέχασα τον κωδικό μου', array(
+    'controller' => 'users',
+    'action' => 'request_passwd'));
 

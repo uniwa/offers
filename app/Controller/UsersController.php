@@ -5,7 +5,7 @@ class UsersController extends AppController {
     public $uses = array('User', 'Image', 'Day', 'Distance',
                          'WorkHour', 'Municipality', 'Company', 'Student');
 
-    public $components = array('RequestHandler');
+    public $components = array('RequestHandler', 'Token', 'Email');
 
     function beforeFilter() {
         parent::beforeFilter();
@@ -212,4 +212,129 @@ class UsersController extends AppController {
     public function faq() {
     }
 
+    public function request_passwd () {
+        // no point to request new password when logged in
+        if ($this->Auth->User('id') != null) {
+            throw new ForbiddenException();
+        }
+
+        if ($this->request->data) {
+            $email = $this->request->data['User']['email'];
+            // find user with given email
+            $user = $this->User->find('first', array(
+                'conditions' => array('User.email' => $email)));
+
+            // return to self if address not found
+            if (empty($user)) {
+                $this->Session->setFlash(
+                    __('Λάνθασμέμη διεύθυνση email.'),
+                    'default',
+                    array('class'=>Flash::Error));
+                $this->redirect(array(
+                    'controller' => 'users', 'action' => 'request_passwd'
+                ));
+            }
+
+            // all users that request password change must have a verified
+            // email address
+            if ($user['User']['email_verified'] == false) {
+                $this->Session->setFlash(
+                    __('Πρέπει να επικυρώσετε την ηλεκτρονική σας δ/ση πριν αιτηθείτε νέο κωδικό.'),
+                    'default',
+                    array('class'=>Flash::Warning));
+                $this->redirect(array(
+                    'controller' => 'users', 'action' => 'request_passwd'
+                ));
+            }
+
+            // generate new token
+            $token = $this->Token->generate($email);
+            $this->User->id = $user['User']['id'];
+            if (! $this->User->saveField('token', $token, false)) {
+                $this->Session->setFlash(
+                    __('Παρουσιάστηκε ένα σφάλμα. Επικοινωνήστε με τον διαχειριστή.'),
+                    'default',
+                    array('class'=>Flash::Error));
+                $this->redirect(array(
+                    'controller' => 'users', 'action' => 'request_passwd'
+                ));
+            } else {
+                $email = new CakeEmail('default');
+                $email = $email
+                    ->to($email)
+
+                    ->subject("Αίτημα αλλαγής κωδικού")
+                    ->template('request_passwd', 'default')
+                    ->emailFormat('both')
+                    ->viewVars(array(
+                        'url' => APP_URL . '/users/reset_passwd/'. $token));
+                try {
+                    $email->send();
+                } catch (Exception $e) {
+                    // pass
+                }
+                $this->Session->setFlash(
+                    __('Στάλθηκε email με το link αλλαγής κωδικού στο email σας.'),
+                    'default',
+                    array('class'=>Flash::Success));
+                $this->redirect(array(
+                    'controller' => 'users', 'action' => 'login'
+                ));
+            }
+        }
+    }
+
+    public function reset_passwd ($token = null) {
+        if ($this->Auth->User('id') != null) {
+            throw new ForbiddenException();
+        }
+
+        if ($token == null) {
+            throw new BadRequestException();
+        }
+
+        // pass token in view, we use it to build the form url
+        $this->set('token', $token);
+
+        if ($this->request->data) {
+            // check if token exists
+            $user_id = $this->Token->to_id($token);
+            if ($user_id == null) {
+                $this->Session->setFlash(
+                    __('Λανθασμένο αναγνωριστικό (token), αιτηθείτε νέα αλλαγή password.'),
+                    'default',
+                    array('class'=>Flash::Error));
+                $this->redirect(array(
+                    'controller' => 'users', 'action' => 'request_passwd'
+                ));
+            }
+
+            // update password
+            $this->User->id = $user_id;
+            if (! $this->User->save($this->request->data,
+                true, array('password', 'password_repeat'))){
+                $this->Session->setFlash(
+                    __('Παρουσιάστηκε ένα σφάλμα. Επικοινωνήστε με τον διαχειριστή.'),
+                    'default',
+                    array('class'=>Flash::Error));
+                $this->redirect(array(
+                    'controller' => 'users', 'action' => 'login'
+                ));
+            }
+
+            // remove token, we don't need it anymore
+            // also ignore any errors
+            // TODO: log this if we enable logging later
+            $this->User->saveField('token', null, false);
+
+            // inform users
+            $this->Session->setFlash(
+                __('Ο κωδικός άλλαξε με επιτυχία, παρακαλώ συνδεθείτε.'),
+                'default',
+                array('class'=>Flash::Success));
+            $this->redirect(array(
+                'controller' => 'users', 'action' => 'login'
+            ));
+        }
+    }
 }

@@ -298,15 +298,17 @@ class CompaniesController extends AppController {
     }
 
     public function is_authorized($user) {
+        $public = array('view', 'email_confirm');
+        $own = array('edit', 'imageedit');
         $admin_actions = array('enable','disable');
 
         if ($user['is_banned'] == 0) {
             // all users can view company views that are not banned
-            if ($this->action === 'view') {
+            if (in_array($this->action, $public)) {
                 return true;
             }
 
-            if (in_array($this->action, array('edit', 'imageedit'))) {
+            if (in_array($this->action, $own)) {
                 if (isset($user['role']) && $user['role'] === ROLE_COMPANY) {
                     $company_id = $this->Session->read('Auth.Company.id');
                     if ($this->Company->is_owned_by($company_id, $user['id'])) {

@@ -235,6 +235,20 @@ class UsersController extends AppController {
                 ));
             }
 
+            // inform LDAP users that they cannot change their password from here
+            if ($user['User']['role'] === ROLE_STUDENT) {
+                $this->Session->setFlash(
+                    __('Η εφαρμογή δεν επιτρέπει την αλλαγή συνθηματικού σε 
+χρήστες οι οποίοι συνδέονται μέσω LDAP. Για αλλαγή του κωδικού πρόσβασης στις 
+υπηρεσίες του ΤΕΙ Αθήνας επισκεφθείτε την δ/ση: <a href="https://my.teiath.gr/">
+https://my.teiath.gr</a>'),
+                    'default',
+                    array('class'=>Flash::Warning));
+                $this->redirect(array(
+                    'controller' => 'users', 'action' => 'login'
+                ));
+            }
+
             // all users that request password change must have a verified
             // email address
             if ($user['User']['email_verified'] == false) {

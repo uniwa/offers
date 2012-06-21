@@ -117,18 +117,14 @@ class UsersController extends AppController {
         if (!empty( $this->request->data)) {
             //is_enabled and is_banned is by default false
             //set registered User's role
-            $this->request->data['User']['role'] =  ROLE_COMPANY;
+            $this->request->data['User']['role'] = ROLE_COMPANY;
             $email = $this->request->data['User']['email'];
             $token = $this->Token->generate($email);
+            $this->request->data['User']['token'] = $token;
 
-            if ($this->User->saveAssociated($this->request->data)) {
+            if ($this->User->saveAssociated($this->request->data))
                 $this->send_email_confirmation($token, $email);
-/*                $this->redirect(array(
-                    'controller'=>'Companies',
-                    'action' => 'send_email_confirmation',
-                    array($token, $email)
-                ));
-*/            } else
+            else
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'),
                                          'default',
                                          array('class' => Flash::Error));
@@ -138,7 +134,7 @@ class UsersController extends AppController {
     private function send_email_confirmation($token = null, $email = null) {
         $uenc_email = urlencode($email);
         $subject = __("Επιβεβαίωση διεύθυνσης ηλεκτρονικής αλληλογραφίας");
-        $url = APP_URL."/users/email_confirm/{$token}/{$uenc_email}";
+        $url = APP_URL."/companies/email_confirm/{$token}/{$uenc_email}";
         $cake_email = new CakeEmail('default');
         $cake_email = $cake_email
             ->to($email)

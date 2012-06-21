@@ -301,28 +301,6 @@ class CompaniesController extends AppController {
         }
     }
 
-    public function send_email_confirmation($token = null, $email = null) {
-        $email = urlencode($email);
-        $subject = __("Αίτημα αλλαγής κωδικού");
-        $url = APP_URL."/users/email_confirm/{$token}/{$email}";
-        $cake_email = new CakeEmail('default');
-        $cake_email = $cake_email
-            ->to($email)
-            ->subject($subject)
-            ->template('confirm_email', 'default')
-            ->emailFormat('both')
-            ->viewVars(array('url' => $url));
-        try {
-            $cake_email->send();
-        } catch (Exception $e) {
-            // pass
-        }
-        $msg = __('Η εγγραφή ολοκληρώθηκε και στάλθηκε email με το σύνδεσμο επιβεβαίωσης email.');
-        $success = array('class' => Flash::Success);
-        $this->Session->setFlash($msg, 'default', $success);
-        $this->redirect(array('controller' => 'users', 'action' => 'login'));
-    }
-
     public function email_confirm($token = null, $email = null) {
         $token_len = 40;
         $length = strlen($token);

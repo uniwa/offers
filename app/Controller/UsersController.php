@@ -122,19 +122,39 @@ class UsersController extends AppController {
             $token = $this->Token->generate($email);
 
             if ($this->User->saveAssociated($this->request->data)) {
-//                $this->Session->setFlash(__('Η εγγραφή ολοκληρώθηκε'),
-//                                         'default',
-//                                         array('class' => Flash::Success));
-                $this->redirect(array(
+                $this->send_email_confirmation($token, $email);
+/*                $this->redirect(array(
                     'controller'=>'Companies',
                     'action' => 'send_email_confirmation',
                     array($token, $email)
                 ));
-            } else
+*/            } else
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'),
                                          'default',
                                          array('class' => Flash::Error));
         }
+    }
+
+    private function send_email_confirmation($token = null, $email = null) {
+        $email = urlencode($email);
+        $subject = __("Αίτημα αλλαγής κωδικού");
+        $url = APP_URL."/users/email_confirm/{$token}/{$email}";
+        $cake_email = new CakeEmail('default');
+        $cake_email = $cake_email
+            ->to($email)
+            ->subject($subject)
+            ->template('confirm_email', 'default')
+            ->emailFormat('both')
+            ->viewVars(array('url' => $url));
+        try {
+            $cake_email->send();
+        } catch (Exception $e) {
+            // pass
+        }
+        $msg = __('Η εγγραφή ολοκληρώθηκε και στάλθηκε email με το σύνδεσμο επιβεβαίωσης email.');
+        $success = array('class' => Flash::Success);
+        $this->Session->setFlash($msg, 'default', $success);
+        $this->redirect(array('controller' => 'users', 'action' => 'login'));
     }
 
     // Update user coordinates in session

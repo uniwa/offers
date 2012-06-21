@@ -136,9 +136,9 @@ class UsersController extends AppController {
     }
 
     private function send_email_confirmation($token = null, $email = null) {
-        $email = urlencode($email);
-        $subject = __("Αίτημα αλλαγής κωδικού");
-        $url = APP_URL."/users/email_confirm/{$token}/{$email}";
+        $uenc_email = urlencode($email);
+        $subject = __("Επιβεβαίωση διεύθυνσης ηλεκτρονικής αλληλογραφίας");
+        $url = APP_URL."/users/email_confirm/{$token}/{$uenc_email}";
         $cake_email = new CakeEmail('default');
         $cake_email = $cake_email
             ->to($email)
@@ -146,14 +146,15 @@ class UsersController extends AppController {
             ->template('confirm_email', 'default')
             ->emailFormat('both')
             ->viewVars(array('url' => $url));
+        $msg = __('Η εγγραφή ολοκληρώθηκε και στάλθηκε email με το σύνδεσμο επιβεβαίωσης email.');
+        $flash = array('class' => Flash::Success);
         try {
             $cake_email->send();
         } catch (Exception $e) {
-            // pass
+            $msg = __('Δεν ήταν δυνατή η αποστολή email.');
+            $flash = array('class' => Flash::Error);
         }
-        $msg = __('Η εγγραφή ολοκληρώθηκε και στάλθηκε email με το σύνδεσμο επιβεβαίωσης email.');
-        $success = array('class' => Flash::Success);
-        $this->Session->setFlash($msg, 'default', $success);
+        $this->Session->setFlash($msg, 'default', $flash);
         $this->redirect(array('controller' => 'users', 'action' => 'login'));
     }
 

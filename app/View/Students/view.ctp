@@ -2,12 +2,28 @@
     echo $this->Html->css('leaflet');
     echo $this->Html->script('leaflet');
     $role = $this->Session->read('Auth.User.role');
+
+    if ($user['receive_email']) {
+        $message = 'Δεν επιθυμώ να λαμβάνω e-mail με τις νέες προσφορές';
+        $action = 'unsubscribe';
+    } else {
+        $message = 'Επιθυμώ να λαμβάνω e-mail με τις νέες προσφορές';
+        $action = 'subscribe';
+    }
+
+    $offer_mailing = $this->Html->link($message,
+                                     array('controller' => 'students',
+                                           'action' => $action),
+                                     array('class' => 'btn btn-mini'));
+
 ?>
 <div class="well">
     <h4>Στοιχεία χρήστη</h4>
     <p><?php echo "{$user['firstname']} {$user['lastname']}";?></p>
     <p><i class="icon-user"></i> <?php echo $user['username'];?></p>
     <p><i class="icon-envelope"></i> <?php echo $user['email'];?></p>
+    <p> <?php echo $offer_mailing;?></p>
+
 <?php
     $geolocation = $this->Session->read('Auth.User.geolocation');
 

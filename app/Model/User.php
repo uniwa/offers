@@ -162,7 +162,7 @@ class User extends AppModel {
                     $this->read(null, $id);
                     $this->set('email_verified', true);
                     $saved = $this->save(null, false);
-                    $result = true;
+                    $result = $id;
                 }
             }
 

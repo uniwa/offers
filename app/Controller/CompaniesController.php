@@ -310,6 +310,7 @@ class CompaniesController extends AppController {
                 $msg = __('Η διεύθυνση ηλεκτρονικής αλληλογραφίας επικυρώθυκε.');
                 $class = array('class' => Flash::Success);
                 $http = 200;
+                $this->new_company_notification($result);
             } else {
                 $msg = __('Δεν ήταν δυνατή η επικύρωση της διεύθυνσης ηλεκτρονικής αλληλογραφίας.');
                 $class = array('class' => Flash::Error);
@@ -321,6 +322,25 @@ class CompaniesController extends AppController {
             $redirect = array($redirect);
             $this->notify(array($msg, 'default', $class), $redirect, $http);
         }
+    }
+
+    private function new_company_notification ($id = null) {
+        $email = ADMIN_EMAIL;
+        $subject = __("Ειδοποίηση νέας εγγραφής επιχείρησης");
+        $url = APP_URL."/companies/view/{$id}";
+        $cake_email = new CakeEmail('default');
+        $cake_email = $cake_email
+            ->to($email)
+            ->subject($subject)
+            ->template('company_notify', 'default')
+            ->emailFormat('both')
+            ->viewVars(array('url' => $url));
+        try {
+            $cake_email->send();
+        } catch (Exception $e) {
+            return false;
+        }
+        return true;
     }
 
     public function is_authorized($user) {

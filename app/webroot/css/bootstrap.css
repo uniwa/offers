@@ -1127,6 +1127,11 @@ table .span12 {
 [class^="icon-"]:last-child {
   *margin-left: 0;
 }
+
+.icon-white {
+  background-image: url("../img/glyphicons-halflings-white.png");
+}
+
 .icon-glass {
   background-position: 0      0;
 }

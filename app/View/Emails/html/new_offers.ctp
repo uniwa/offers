@@ -1,6 +1,10 @@
 <?php
 
-echo '<ul style="list-style-type: none; padding: 0;">';
+$style_listing = $this->Html->style(array('list-style-type' => 'none',
+                                          'padding' => 0));
+$style_heading = $this->Html->style(array('margin-bottom' => 0));
+
+echo "<ul style=\"$style_listing\">";
 foreach ($offers as $offer) {
 
     $offer_url = $app_url . $this->Html->url(array('controller' => 'offers',
@@ -10,17 +14,20 @@ foreach ($offers as $offer) {
     $offer_url = $this->Html->link($offer['Offer']['title'],
                                    $offer_url);
 
-#echo FULL_BASE_URL.$this->Html->url(array('controller' => 'offers',
-#                                        'action' => 'view',
-#                                        $offer['Offer']['id']));
+    $offer_date = date('d/m/Y H:i', strtotime($offer['Offer']['started']));
+    $offer_decription = $offer['Offer']['description'];
+    $offer_type = $offer_types[$offer['Offer']['offer_type_id']];
+    $offer_category = $offer['OfferCategory']['name'];
+
     echo <<<EOT
 
     <li>
-        <div>
-            <h3>{$offer_url}</h3>
-            <p>Κατηγορία: {$offer['OfferCategory']['name']}</p>
-            <p>Δημοσίευση: {$offer['Offer']['started']}</p>
-        </div>
+        <h3 style="{$style_heading}">{$offer_url}</h3>
+        <ul style="{$style_listing}">
+            <li>{$offer_date}</li>
+            <li>{$offer_type} κατηγορίας &laquo;{$offer_category}&raquo;</li>
+            <li>{$offer_decription}</li>
+        </ul>
     </li>
 EOT;
 

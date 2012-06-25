@@ -59,6 +59,7 @@ class NewsShell extends AppShell {
                         'Offer.title',
                         'Offer.offer_type_id',
                         'Offer.started',
+                        'Offer.description',
                         'OfferCategory.name',
                         'Company.name');
 
@@ -71,6 +72,11 @@ class NewsShell extends AppShell {
     }
 
     private function email_news($users, $offers) {
+        // available offer types
+        $offer_types = array(
+            TYPE_HAPPYHOUR => 'Περιοδική προσφορά',
+            TYPE_COUPONS => 'Προσφορά κουπονιών',
+            TYPE_LIMITED => 'Απλή προσφορά');
 
         $email = new CakeEmail('default');
         $email = $email
@@ -79,9 +85,9 @@ class NewsShell extends AppShell {
             ->emailFormat('html')
             ->viewVars(array(
                 // we need to know the *actual* base url
-                // this shell was issued)
                 'app_url' => Configure::read('Constants.APP_URL'),
                 'offers' => $offers,
+                'offer_types' => $offer_types,
             ));
 
         foreach ($users as $user) {

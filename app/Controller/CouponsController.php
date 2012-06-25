@@ -140,6 +140,81 @@ class CouponsController extends AppController {
         }
     }
 
+    public function pdf($id = null) {
+        if ($id === null)
+            throw new BadRequestException();
+
+        $cond = array('Coupon.id' => $id);
+
+        $this->Coupon->Behaviors->attach('Containable');
+        $this->Coupon->contain(array('Offer.Company', 'Student'));
+        $coupon = $this->Coupon->find('first', array('conditions' => $cond));
+
+        if (! $coupon)
+            throw new NotFoundException();
+
+        if ($coupon['Coupon']['student_id'] !==
+            $this->Session->read('Auth.Student.id'))
+            throw new ForbiddenException();
+
+        if ($coupon['Offer']['is_spam']) {
+            $msg = __("Η προσφορά για την οποία έχει δεσμευθεί το κουπόνι σας "
+                ."έχει χαρακτηριστεί σαν SPAM.");
+            throw new ForbiddenException($msg);
+        }
+
+        function loader($class) {
+          $filename = mb_strtolower($class) . ".cls.php";
+          require_once("../Vendor/dompdf/include/$filename");
+        }
+        spl_autoload_register('loader');
+
+        App::import('Vendor', 'DomPdf', array('file' => 'dompdf' . DS . 'dompdf_config.inc.php'));
+
+        $html = "<html><head><meta http-equiv='Content-Type' ";
+        $html .= "content='text/html; charset=UTF-8' ></head><body>";
+        $html .= "<style>body{font-family:'DejaVu',sans-serif;'}";
+        $html .= ".unstyled{list-style:none;} .label-info{color:#fff;";
+        $html .= "background-color:#3a87ad;}</style>";
+        $html .= "<h4>Κουπόνι</h4><ul class='unstyled'>";
+        $html .= "<li>Τίτλος προσφοράς: {$coupon['Offer']['title']}</li>";
+        $html .= "<li>Κωδικός κουπονιού: <span class='label-info'>";
+        $html .= "{$coupon['Coupon']['serial_number']}</span></li>";
+        $html .= "<li>Ημ/νία δέσμευσης: {$coupon['Coupon']['created']}";
+        $html .= "</li><li>Στοιχεία σπουδαστή: ";
+        $html .= "{$coupon['Student']['firstname']} {$coupon['Student']['lastname']}";
+        $html .= "</li></ul></div><div><h4>Στοιχεία επιχείρησης</h4>";
+        $html .= "<ul class='unstyled'>";
+        $html .= "<li>Όνομα: {$coupon['Offer']['Company']['name']}</li>";
+        $html .= "<li>Διεύθυνση: {$coupon['Offer']['Company']['address']}";
+        $html .= ", {$coupon['Offer']['Company']['postalcode']}</li>";
+        $html .= "<li>Στοιχεία επικοινωνίας<ul class='unstyled'>";
+        $html .= "<li>Τηλ: {$coupon['Offer']['Company']['phone']}</li>";
+        $html .= "<li>Fax: {$coupon['Offer']['Company']['fax']}</li>";
+        $html .= "</ul></li></ul><br />";
+        if (isset($coupon['Offer']['Company']['latitude'])
+            && isset($coupon['Offer']['Company']['longitude'])) {
+
+            $lat = $coupon['Offer']['Company']['latitude'];
+            $lng = $coupon['Offer']['Company']['longitude'];
+            $api_key = "6e88be5b35b842dca178fb0beb724a32";
+            $images_path = "{$this->webroot}img/";
+            $map_width = 600;
+            $map_height = 400;
+            $html .= "<img src='http://staticmap.openstreetmap.de/staticmap.php?";
+            $html .= "center={$lat},{$lng}&zoom=15&size={$map_width}x{$map_height}&";
+            $html .= "markers={$lat},{$lng},ol-marker-gold' /><br/>";
+        }
+        $html .= "</body></html>";
+
+        $filename = "coupon-{$coupon['Coupon']['serial_number']}.pdf";
+        $dompdf = new DOMPDF();
+        $dompdf->load_html($html);
+        $dompdf->set_paper('a4');
+        $dompdf->render();
+        $dompdf->stream($filename);
+    }
+
     private function api_prepare_view($data, $is_xml = true) {
         $is_index = !array_key_exists('Coupon', $data);
 
@@ -315,7 +390,7 @@ class CouponsController extends AppController {
         }
 
         $this->Coupon->id = $id;
-        $result = $this->Coupon->saveField('student_id', 
+        $result = $this->Coupon->saveField('student_id',
             null, $validate = false);
 
         if ($result == false) {
@@ -345,7 +420,7 @@ class CouponsController extends AppController {
 
     public function is_authorized($user) {
         if ($user['is_banned'] == 0) {
-            if (in_array($this->action, array('add', 'view', 'index'))) {
+            if (in_array($this->action, array('add', 'view', 'index', 'pdf'))) {
                 // only students can get coupons
                 if ($user['role'] !== ROLE_STUDENT) {
                     return false;

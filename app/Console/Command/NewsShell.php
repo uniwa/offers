@@ -70,8 +70,30 @@ class NewsShell extends AppShell {
 
     }
 
-    private function email_news($students, $offers) {
+    private function email_news($users, $offers) {
 
+        $email = new CakeEmail('default');
+        $email = $email
+            ->subject('Νέες προσφορές')
+            ->template('new_offers', 'default')
+            ->emailFormat('html')
+            ->viewVars(array(
+                // we need to know the *actual* base url
+                // this shell was issued)
+                'app_url' => Configure::read('Constants.APP_URL'),
+                'offers' => $offers,
+            ));
+
+        foreach ($users as $user) {
+
+            $email = $email->to($user['User']['email']);
+
+            try {
+                $email->send();
+            } catch (Exception $e) {
+                //do what with it?
+            }
+        }
     }
 
 }

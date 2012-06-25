@@ -17,6 +17,21 @@
     </ul>
 </div>
 
+<p>
+    <?php
+    $pdf_link = $this->Html->link(
+        "<i class='icon-download icon-white'></i> Αρχείο PDF",
+        array(
+            'controller' => 'coupons',
+            'action' => 'pdf',
+            $coupon['Coupon']['id']
+        ),
+        array('class' => 'btn btn-success', 'escape' => false)
+    );
+    echo $pdf_link;
+    ?>
+</p>
+
 <div class="company-info">
     <h4>Στοιχεία επιχείρησης</h4>
     <ul class="unstyled">

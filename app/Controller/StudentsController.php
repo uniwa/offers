@@ -40,7 +40,8 @@ class StudentsController extends AppController {
         $this->set('user', array('firstname' => $user['Student']['firstname'],
                                  'lastname' => $user['Student']['lastname'],
                                  'username' => $user['User']['username'],
-                                 'email' => $user['User']['email']));
+                                 'email' => $user['User']['email'],
+                                 'receive_email' => $user['Student']['receive_email']));
 
         // get all student coupons
         $cond = array(
@@ -58,6 +59,32 @@ class StudentsController extends AppController {
             'order' => $order)
         );
         $this->set('coupons', $coupons);
+    }
+
+    public function subscribe() {
+        $this->offer_mailing($this->Session->read('Auth.Student.id'), true);
+    }
+    public function unsubscribe() {
+        $this->offer_mailing($this->Session->read('Auth.Student.id'), false);
+    }
+
+    private function offer_mailing($id, $subscribe = true) {
+        $this->Student->id = $id;
+        if ($this->Student->saveField('receive_email', $subscribe, false)) {
+
+            if ($subscribe) {
+                $message = 'Θα σας αποστέλλεται μήνυμα μία φορά την ημέρα με '.
+                           'τις νέες προσφορές';
+            } else {
+                $message = 'Δεν θα λαμβάνετε πλέον μήνυμα με νέες προσφορές';
+            }
+            $class = Flash::Info;
+        } else {
+            $message = 'Προέκυψε κάποιο σφάλμα';
+            $class = Flash::Error;
+        }
+        $this->Session->setFlash($message, 'default', array('class' => $class));
+        $this->redirect($this->request->referer());
     }
 
     public function is_authorized($user) {

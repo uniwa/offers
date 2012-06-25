@@ -424,4 +424,28 @@ class Offer extends AppModel {
         return $company_id === $offer_company_id && $company_id !== false;
     }
 
+    // Iterates through the supplied array, reducing the length of each Offer's
+    // description to  $limit.
+    //
+    // @param &$array An array of Offer records
+    // @param $limit The maximum number of characters that each description will
+    //      carry
+    public function minify_desc(&$array, $limit) {
+        foreach($array as &$rec) {
+            // the text to cut at a word-boundary for a maximum of $limit chars
+            $desc = $rec['Offer']['description'];
+
+            if (mb_strlen($desc) < $limit) continue;
+
+            //find closest space near $limit
+            $pos = mb_strpos($desc, ' ', $limit);
+            if ($pos === false) {
+                $pos = $limit;
+            }
+            // keep string from start till the space nearest to $limit
+            $rec['Offer']['description'] =
+                mb_substr($desc, 0, $pos, 'UTF-8') . '…';
+        }
+    }
+
 }

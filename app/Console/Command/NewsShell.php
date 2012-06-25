@@ -32,6 +32,7 @@ class NewsShell extends AppShell {
         if (! empty($students)) {
 
             $offers = $this->get_offers($since, $until);
+            $this->Offer->minify_desc($offers, 160);
 
             if (! empty($offers)) {
                 $this->email_news($students, $offers);

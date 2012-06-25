@@ -1,6 +1,10 @@
 <?php
+
+App::uses('CakeEmail', 'Network/Email');
+
 class NewsShell extends AppShell {
     public $uses = array('Student', 'Offer', 'Company');
+    public $helpers = array('Html');
 
     public function main() {
 
@@ -15,6 +19,8 @@ class NewsShell extends AppShell {
     // Send a news email for offers with an activation date between $since
     // (inclusive) and $until (exclusive).
     //
+    // This is the default behaviour of this Shell.
+    //
     // @param $since date
     // @param $until date
     public function within($since, $until) {
@@ -28,7 +34,7 @@ class NewsShell extends AppShell {
             $offers = $this->get_offers($since, $until);
 
             if (! empty($offers)) {
-                $this->emal_news($students, $offers);
+                $this->email_news($students, $offers);
             }
 
         }
@@ -46,17 +52,19 @@ class NewsShell extends AppShell {
                                                            'Image')));
 
         $conditions = array('Offer.started >=' => $since,
-                           'Offer.started <' => $until,
-                           'Offer.offer_state_id' => STATE_ACTIVE);
+                            'Offer.started <' => $until,
+                            'Offer.offer_state_id' => STATE_ACTIVE);
 
         $fields = array('Offer.id',
                         'Offer.title',
                         'Offer.offer_type_id',
+                        'Offer.started',
                         'OfferCategory.name',
                         'Company.name');
 
         $options = array('conditions' => $conditions,
-                         'fields' => $fields);
+                         'fields' => $fields,
+                         'order' => 'Offer.started');
 
         return $offers = $this->Offer->find('all', $options);
 

@@ -67,8 +67,10 @@
                 <th>Κωδικός κουπονιού</th>
                 <th>Ημ/νία δέσμευσης</th>
                 <?php
-                    if ($role === ROLE_STUDENT)
+                    if ($role === ROLE_STUDENT) {
                         echo "<th>Διαγραφή</th>\n";
+                        echo "<th>Download</th>\n";
+                    }
                 ?>
             </tr>
         </thead>
@@ -162,6 +164,15 @@
                             $delete .= "class='help-text'>διαγραφή</td>";
                             echo $delete;
                         }
+                        $pdf_link = $this->Html->link(
+                            "pdf",
+                            array(
+                                'controller' => 'coupons',
+                                'action' => 'pdf',
+                                $c['Coupon']['id']
+                            )
+                        );
+                        echo "<td>{$pdf_link}</td>";
                     }
                     // to add trash icon use: <i class=\"icon-trash\"></i>
                     echo "</tr>";

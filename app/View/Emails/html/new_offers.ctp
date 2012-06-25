@@ -14,7 +14,9 @@ foreach ($offers as $offer) {
     $offer_url = $this->Html->link($offer['Offer']['title'],
                                    $offer_url);
 
-    $offer_date = date('d/m/Y H:i', strtotime($offer['Offer']['started']));
+    $offer_date = date($published_format,
+                       strtotime($offer['Offer']['started']));
+
     $offer_decription = $offer['Offer']['description'];
     $offer_type = $offer_types[$offer['Offer']['offer_type_id']];
     $offer_category = $offer['OfferCategory']['name'];

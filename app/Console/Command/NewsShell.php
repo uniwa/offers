@@ -6,6 +6,8 @@ class NewsShell extends AppShell {
     public $uses = array('Student', 'Offer', 'Company');
     public $helpers = array('Html');
 
+    private $default_published = 'Δημοσιεύθηκε στις d/m/Y, H:i';
+
     public function main() {
 
         // default behaviour is to send emails for offers activated the previous
@@ -13,7 +15,7 @@ class NewsShell extends AppShell {
         $since = date('Y-m-d', strtotime('-1 day'));
         $until = date('Y-m-d');
 
-        $this->within($since, $until);
+        $this->within($since, $until, 'Ώρα δημοσίευσης H:i');
     }
 
     // Send a news email for offers with an activation date between $since
@@ -23,7 +25,9 @@ class NewsShell extends AppShell {
     //
     // @param $since date
     // @param $until date
-    public function within($since, $until) {
+    // @published_format A string to be passed into strtotime() for the
+    //      activation date of each offer.
+    public function within($since, $until, $published_format = null) {
 
         $this->Student->recursive = 0;
         $students = $this->Student->findAllByReceiveEmail('true',
@@ -42,7 +46,8 @@ class NewsShell extends AppShell {
                 $this->email_news(
                         $students,
                         $offers,
-                        "Νέες προσφορές ($formatted)");
+                        "Νέες προσφορές ($formatted)",
+                        $published_format);
             }
 
         }
@@ -82,7 +87,12 @@ class NewsShell extends AppShell {
 
     }
 
-    private function email_news($users, $offers, $subject = 'Νέες προσφορές') {
+    private function email_news($users, $offers, $subject = 'Νέες προσφορές',
+            $published_format = null) {
+
+        if (empty($published_format))
+            $published_format = $this->default_published;
+
         // available offer types
         $offer_types = array(
             TYPE_HAPPYHOUR => 'Περιοδική προσφορά',
@@ -99,6 +109,8 @@ class NewsShell extends AppShell {
                 'app_url' => Configure::read('Constants.APP_URL'),
                 'offers' => $offers,
                 'offer_types' => $offer_types,
+                // format for the activation date of each offer
+                'published_format' => $published_format,
             ));
 
         foreach ($users as $user) {

@@ -35,12 +35,22 @@ class NewsShell extends AppShell {
             $this->Offer->minify_desc($offers, 160);
 
             if (! empty($offers)) {
-                $this->email_news($students, $offers);
+                // one second is subtracted because the exact value of $until is
+                // excluded
+                $formatted = date('d/m/Y', strtotime($until) - 1);
+
+                $this->email_news(
+                        $students,
+                        $offers,
+                        "Νέες προσφορές ($formatted)");
             }
 
         }
     }
 
+    // @param $since Offers activated after this date will be included
+    // @param $until Offers activated before but NOT on this date will be
+    //      included
     private function get_offers($since, $until) {
         // find offers that were published just yesterday
         $this->Offer->recursive = 2;
@@ -72,7 +82,7 @@ class NewsShell extends AppShell {
 
     }
 
-    private function email_news($users, $offers) {
+    private function email_news($users, $offers, $subject = 'Νέες προσφορές') {
         // available offer types
         $offer_types = array(
             TYPE_HAPPYHOUR => 'Περιοδική προσφορά',
@@ -81,7 +91,7 @@ class NewsShell extends AppShell {
 
         $email = new CakeEmail('default');
         $email = $email
-            ->subject('Νέες προσφορές')
+            ->subject($subject)
             ->template('new_offers', 'default')
             ->emailFormat('html')
             ->viewVars(array(

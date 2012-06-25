@@ -103,7 +103,7 @@ class NewsShell extends AppShell {
         $email = $email
             ->subject($subject)
             ->template('new_offers', 'default')
-            ->emailFormat('html')
+            ->emailFormat('both')
             ->viewVars(array(
                 // we need to know the *actual* base url
                 'app_url' => Configure::read('Constants.APP_URL'),

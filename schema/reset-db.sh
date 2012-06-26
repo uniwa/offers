@@ -27,18 +27,24 @@ read dbpass
 stty echo
 echo -e "\n"
 
-echo -n ">> Inserting database schema..."
-mysql -u${dbuser} -p${dbpass} < ${dbfile}
+echo ":: Descending into db"
+pushd db > /dev/null
+echo -n "   -> Inserting database schema..."
+mysql -u${dbuser} -p${dbpass} < "$dbfile"
 echo "DONE"
 
-echo -n ">> Inserting database data..."
+echo -n "   -> Inserting database data..."
 for i in ${data[@]}; do
-    mysql -u${dbuser} -p${dbpass} ${dbname} < "${i}"
+    mysql -u${dbuser} -p${dbpass} ${dbname} < "$i"
 done
 echo "DONE"
-
-echo -n ">> Inserting sample data..."
+popd > /dev/null
+echo
+echo ":: Descending into seeds"
+pushd seeds > /dev/null
+echo -n "   -> Inserting sample data..."
 for i in ${samples[@]}; do
-    mysql -u${dbuser} -p${dbpass} ${dbname} < "${i}"
+    mysql -u${dbuser} -p${dbpass} ${dbname} < "$i"
 done
 echo "DONE"
+popd > /dev/null

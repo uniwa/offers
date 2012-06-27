@@ -1,5 +1,5 @@
 <?php
-$sidebar_params = array();
+$sidebar_params = array('count_by_category' => $count_by_category);
 $show_flag_link = false;
 
 // in this context, if `shows_spam' has been set (regardless of its value), then

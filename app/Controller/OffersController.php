@@ -212,6 +212,8 @@ class OffersController extends AppController {
                             'companies' => $data['companies']));
 
         } else {
+            $this->set('count_by_category',
+                       $this->OfferCategory->find('countOffers'));
             $this->set('offers', $offers);
             $this->render('index');
         }

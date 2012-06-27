@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://www.coupons.teiath.gr/schemas"
+    targetNamespace="http://www.coupons.teiath.gr/schemas">
+
+    <!-- Email type -->
+    <xs:simpleType name="email_type">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- AFM -->
+    <xs:simpleType name="afm_type">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{10}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Postal Code -->
+    <xs:simpleType name="postal_code_type">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d{5}"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Photo -->
+    <xs:simpleType name="photo_type">
+        <xs:restriction base="xs:base64Binary"/>
+    </xs:simpleType>
+
+    <!-- An envelop for photos -->
+    <xs:complexType name="array_of_photos_type">
+        <xs:sequence>
+            <xs:element name="photo" type="tns:photo_type" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Coordinations -->
+    <xs:complexType name="coordinations_type">
+        <xs:sequence>
+            <xs:element name="latitude" type="xs:double"/>
+            <xs:element name="longtitude" type="xs:double"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Address -->
+    <xs:complexType name="address_type">
+        <xs:sequence>
+            <xs:element name="road" type="xs:string"/>
+            <xs:element name="postal_code" type="tns:postal_code_type"/>
+            <xs:element name="city" type="xs:string"/>
+            <xs:element name="coordinations" type="tns:coordinations_type" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Day enumeration -->
+    <xs:simpleType name="day_type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Δευτέρα"/>
+            <xs:enumeration value="Τρίτη"/>
+            <xs:enumeration value="Τετάρτη"/>
+            <xs:enumeration value="Πέμπτη"/>
+            <xs:enumeration value="Παρασκευή"/>
+            <xs:enumeration value="Σάββατο"/>
+            <xs:enumeration value="Κυριακή"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Datetime range -->
+    <xs:complexType name="datetime_range_type">
+        <xs:sequence>
+            <xs:element name="day" type="tns:day_type"/>
+            <xs:element name="from" type="xs:time"/>
+            <xs:element name="to" type="xs:time"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Datetime range -->
+    <xs:complexType name="array_of_datetime_ranges_type">
+        <xs:sequence>
+            <xs:element name="range" type="tns:datetime_range_type" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Core person data -->
+    <xs:complexType name="person_type">
+        <xs:sequence>
+            <xs:element name="first_name" type="xs:string"/>
+            <xs:element name="last_name" type="xs:string"/>
+            <xs:element name="email" type="tns:email_type"/>
+            <xs:element name="is_admin" type="xs:boolean"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID" use="optional"/>
+    </xs:complexType>
+
+    <!-- Business -->
+    <xs:complexType name="business_type">
+        <xs:sequence>
+            <xs:element name="username" type="xs:string"/>
+            <xs:element name="password" type="xs:string"/>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="afm" type="tns:afm_type"/>
+            <xs:element name="email" type="tns:email_type"/>
+            <xs:element name="phone" type="xs:string"/>
+            <xs:element name="address" type="tns:address_type"/>
+            <xs:element name="photos" type="tns:array_of_photos_type" minOccurs="0"/>
+            <xs:element name="opening_hours" type="tns:array_of_datetime_ranges_type"/>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID" use="optional"/>
+    </xs:complexType>
+
+    <!-- An enevelope of multiple users -->
+    <xs:complexType name="array_of_users_type">
+        <xs:sequence>
+            <xs:element name="user" type="tns:person_type" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- An enevelope of multiple businesses -->
+    <xs:complexType name="array_of_businesses_type">
+        <xs:sequence>
+            <xs:element name="business" type="tns:business_type" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- A single up/down vote -->
+    <xs:complexType name="vote_type">
+        <xs:sequence>
+            <xs:element name="user_id" type="xs:IDREF"/>
+            <xs:element name="is_upvote" type="xs:boolean"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- An envelope for multiple votes -->
+    <xs:complexType name="array_of_votes_type">
+        <xs:sequence>
+            <xs:element name="vote" type="tns:vote_type" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Simple offer -->
+    <xs:complexType name="offer_type">
+        <xs:sequence>
+            <xs:element name="title" type="xs:string"/>
+            <xs:element name="description" type="xs:string"/>
+            <xs:element name="date_begin" type="xs:dateTime"/>
+            <xs:element name="date_end" type="xs:dateTime"/>
+            <xs:element name="is_published" type="xs:boolean"/>
+            <xs:element name="photos" type="tns:array_of_photos_type" minOccurs="0"/>
+            <xs:element name="votes" type="tns:array_of_votes_type">
+                <xs:unique name="one_vote_per_person">
+                    <xs:selector xpath="*/vote"></xs:selector>
+                    <xs:field xpath="user_id"></xs:field>
+                </xs:unique>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:ID" use="optional"/>
+    </xs:complexType>
+
+    <!-- Repeat offer -->
+    <xs:complexType name="repeat_offer_type">
+        <xs:complexContent>
+            <xs:extension base="tns:offer_type">
+                <xs:sequence>
+                    <xs:element name="offer_range" type="tns:array_of_datetime_ranges_type"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <!-- Reservation info for a single coupon -->
+    <xs:complexType name="coupon_reservation_type">
+        <xs:sequence>
+            <xs:element name="user_id" type="xs:IDREF"/>
+            <xs:element name="expiration_date" type="xs:dateTime" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- An envelope for multiple coupon reservations -->
+    <xs:complexType name="array_of_coupon_reservations_type">
+        <xs:sequence>
+            <xs:element name="reservation" type="tns:coupon_reservation_type" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!-- Limited offer -->
+    <xs:complexType name="limited_offer_type">
+        <xs:complexContent>
+            <xs:extension base="tns:offer_type">
+                <xs:sequence>
+                    <xs:element name="max_coupons" type="xs:integer"/>
+                    <xs:element name="coupon_expiration_minutes" type="xs:integer" minOccurs="0"/>
+                    <xs:element name="coupon_reservations" type="tns:array_of_coupon_reservations_type"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

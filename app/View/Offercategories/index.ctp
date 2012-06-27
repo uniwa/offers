@@ -27,7 +27,7 @@ echo '<br/><br/>';
                                                 'action' => 'category', $id));
 
                 $link_edit = $this->Html->link(
-                    '<i class="icon-edit"></i>',
+                    '<i class="icon-pencil"></i>',
                     array('controller' => 'offercategories',
                           'action' => 'edit',
                            $id),

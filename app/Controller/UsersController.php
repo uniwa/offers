@@ -94,7 +94,7 @@ class UsersController extends AppController {
                     array(  __("Δώστε έγκυρο όνομα και κωδικό χρήστη"),
                             'default',
                             array('class' => Flash::Error)),
-                    null, 403);
+                    array(array('controller' => 'users', 'action' => 'login')), 403);
             }
         } else {
             $this->set('hide_dropdown', true);

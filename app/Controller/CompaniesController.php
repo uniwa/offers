@@ -435,7 +435,7 @@ class CompaniesController extends AppController {
     public function is_authorized($user) {
         $public = array('view', 'email_confirm', 'send_email_confirmation', 'gsis_get');
         $own = array('edit', 'imageedit');
-        $admin_actions = array('enable','disable');
+        $admin_actions = array('enable','disable', 'ban', 'unban');
 
         if ($user['is_banned'] == 0) {
             // all users can view company views that are not banned

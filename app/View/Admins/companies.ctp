@@ -72,6 +72,10 @@
             $enabled_action = 'disable';
             $disabled_title = "[ενεργοποίηση]";
             $disabled_action = 'enable';
+            $ban_title = "[κλείδωμα]";
+            $ban_action = 'ban';
+            $unban_title = "[ξεκλείδωμα]";
+            $unban_action = 'unban';
 
             // incremental id; start counting from current's page 1st result
             $counter = (int) $this->Paginator->counter('{:start}');
@@ -90,6 +94,14 @@
                     'controller' => 'companies',
                     'action' => $disabled_action,
                     $r['Company']['id']));
+                $link_ban = $this->Html->link($ban_title, array(
+                    'controller' => 'companies',
+                    'action' => $ban_action,
+                    $r['Company']['id']));
+                $link_unban = $this->Html->link($unban_title, array(
+                    'controller' => 'companies',
+                    'action' => $unban_action,
+                    $r['Company']['id']));
 
                 $comp_state = $r['Company']['is_enabled']
                                     ? '<i class="icon-ok"></i> '.$link_disable
@@ -99,8 +111,8 @@
                 $user_email = $r['User']['email'];
 
                 $user_state = $r['User']['is_banned']
-                                    ? '<i class="icon-ok"></i>'
-                                    : '<i class="icon-remove"></i>';
+                                    ? '<i class="icon-ok"></i> '.$link_unban
+                                    : '<i class="icon-remove"></i> '.$link_ban;
 
                 echo '<tr>';
                 echo "<td>$counter</td>";

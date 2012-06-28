@@ -41,9 +41,7 @@ class OfferCategory extends AppModel {
             $query['fields'] = array('OfferCategory.id',
                                      'COUNT(*) as offer_count');
             $query['joins'] = $joins;
-            $query['conditions'] = array('Offer.offer_state_id' => STATE_ACTIVE,
-                                         'Offer.is_spam' => 0,
-                                         'Company.is_enabled' => 1);
+            $query['conditions'] = $this->Offer->conditionsValid;
             $query['group'] = 'OfferCategory.id';
 
             return $query;

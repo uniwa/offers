@@ -347,7 +347,7 @@ https://my.teiath.gr</a>'),
             // update password
             $this->User->id = $user_id;
             if (! $this->User->save($this->request->data,
-                true, array('password', 'password_repeat'))){
+                true, array('password', 'repeat_password'))){
                 $this->Session->setFlash(
                     __('Παρουσιάστηκε ένα σφάλμα. Επικοινωνήστε με τον διαχειριστή.'),
                     'default',

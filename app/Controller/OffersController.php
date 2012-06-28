@@ -93,6 +93,7 @@ class OffersController extends AppController {
 
     public function index() {
         $params = array('valid');
+        $this->Offer->recursive = 0;
         $this->ordering($params);
         $this->display($params);
     }

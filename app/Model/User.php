@@ -159,9 +159,9 @@ class User extends AppModel {
             if ($user_email === $email) {
                 $email_verified = $this->field('email_verified', $conditions);
                 if (!$email_verified) {
-                    $this->read(null, $id);
-                    $this->set('email_verified', true);
-                    $saved = $this->save(null, false);
+                    $this->id = $id;
+                    $saved = $this->saveField('email_verified', true, false);
+
                     $result = $id;
                 }
             }

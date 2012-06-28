@@ -1,6 +1,7 @@
 <?php
 $config = array(
     'Constants' => array(
+        // NO trailing slash here
         'APP_URL' => 'http://localhost',
         'ADMIN_EMAIL' => '',
         'ROLE_ADMIN' => 'admin',

@@ -185,6 +185,46 @@ class CompaniesController extends AppController {
         $this->alter($id, $view, false);
     }
 
+    public function ban($id = null) {
+        $this->change_company_state($id, true);
+    }
+
+    public function unban($id = null) {
+        $this->change_company_state($id, false);
+    }
+
+    private function change_company_state($company_id, $ban = true) {
+        //
+        // change user field `is_banned`
+        //
+        $referer = $this->referer();
+        if ($company_id == null) throw new BadRequestException();
+
+        // we need user id and company id
+        // so we search in Company table with user_id
+        $options['conditions'] = array('Company.id' => $company_id);
+        $options['recursive'] = -1;
+        $company = $this->Company->find('first', $options);
+        if (empty($company))
+            throw new NotFoundException('Η συγκεκριμένη επιχείρηση δε βρέθηκε.');
+
+        $this->User->id = $company['Company']['user_id'];
+        $saved = $this->User->saveField('is_banned', $ban, false);
+        if (!$saved) {
+            $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
+                'default', array('class' => Flash::Error));
+        } else {
+            $company_name = $company['Company']['name'];
+            $success_message = ($enable)
+                ?"Η επιχείρηση '{$company_name}' κλειδώθηκε επιτυχώς."
+                :"Η επιχείρηση '{$company_name}' ξεκλειδώθηκε επιτυχώς.";
+            $this->Session->setFlash($success_message,
+                'default', array('class' => Flash::Success));
+        }
+
+        $this->redirect($referer);
+    }
+
     public function alter($id = null, $view = null, $enable = true) {
         $referer = $this->referer();
         if ($id == null) throw new BadRequestException();
@@ -395,7 +435,7 @@ class CompaniesController extends AppController {
     public function is_authorized($user) {
         $public = array('view', 'email_confirm', 'send_email_confirmation', 'gsis_get');
         $own = array('edit', 'imageedit');
-        $admin_actions = array('enable','disable');
+        $admin_actions = array('enable','disable', 'ban', 'unban');
 
         if ($user['is_banned'] == 0) {
             // all users can view company views that are not banned

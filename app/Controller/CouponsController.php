@@ -80,6 +80,11 @@ class CouponsController extends AppController {
             $extra = array('id' => $coupon_id,
                            'serial_number' => $coupon_uuid);
 
+            $coupon_count = $offer['Offer']['coupon_count'] + 1;
+            $coupon_total = $offer['Offer']['total_quantity'];
+            if ($coupon_count >= $coupon_total) {
+                $this->Offer->terminate($id);
+            }
         }
         else {
             // error getting coupon

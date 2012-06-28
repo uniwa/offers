@@ -348,6 +348,23 @@ https://my.teiath.gr</a>'),
             $this->User->id = $user_id;
             if (! $this->User->save($this->request->data,
                 true, array('password', 'repeat_password'))){
+                // check validation  errors
+                $validation_errors = $this->User->invalidFields();
+                if (isset($validation_errors['repeat_password'])) {
+                    // redirect and show flash with errors
+                    //
+                    // two possible scenarios:
+                    //   1. short password length
+                    //   2. different passwords
+                    //
+                    $this->Session->setFlash(
+                        __($validation_errors['repeat_password'][0]),
+                        'default',
+                        array('class'=>Flash::Error));
+                    $this->redirect(array(
+                        'controller' => 'users', 'action' => 'reset_passwd', $token
+                    ));
+                }
                 $this->Session->setFlash(
                     __('Παρουσιάστηκε ένα σφάλμα. Επικοινωνήστε με τον διαχειριστή.'),
                     'default',

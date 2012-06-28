@@ -382,52 +382,52 @@ class CompaniesController extends AppController {
     }
 
     public function gsis_get($afm = null) {
-	    $url_gsis = "https://www1.gsis.gr/wsgsis/RgWsBasStoixN/RgWsBasStoixNSoapHttpPort?wsdl";
-	    $url_manual = "https://www1.gsis.gr/wsgsis/RgWsBasStoixN/RgWsBasStoixNSoapHttpPort";
+        $url_gsis = "https://www1.gsis.gr/wsgsis/RgWsBasStoixN/RgWsBasStoixNSoapHttpPort?wsdl";
+        $url_manual = "https://www1.gsis.gr/wsgsis/RgWsBasStoixN/RgWsBasStoixNSoapHttpPort";
 
-	    // set trace = 1 for debugging
-	    $client = new SoapClient($url_gsis, array('trace' => 0));
-	    // we set the location manually, since the one in the WSDL is wrong
-	    $client->__setLocation($url_manual);
+        // set trace = 1 for debugging
+        $client = new SoapClient($url_gsis, array('trace' => 0));
+        // we set the location manually, since the one in the WSDL is wrong
+        $client->__setLocation($url_manual);
 
-	    $pBasStoixNRec_out = array('actLongDescr' => '',
-								    'postalZipCode' => '',
-								    'facActivity' => 0,
-								    'registDate' => '2011-01-01',
-								    'stopDate' => '2011-01-01',
-								    'doyDescr' => '',
-								    'parDescription' => '',
-								    'deactivationFlag' => 1,
-								    'postalAddressNo' => '',
-								    'postalAddress' => '',
-								    'doy' => '',
-								    'firmPhone' => '',
-								    'onomasia' => '',
-								    'firmFax' => '',
-								    'afm' => '',
-								    'commerTitle' => '');
+        $pBasStoixNRec_out = array('actLongDescr' => '',
+            'postalZipCode' => '',
+            'facActivity' => 0,
+            'registDate' => '2011-01-01',
+            'stopDate' => '2011-01-01',
+            'doyDescr' => '',
+            'parDescription' => '',
+            'deactivationFlag' => 1,
+            'postalAddressNo' => '',
+            'postalAddress' => '',
+            'doy' => '',
+            'firmPhone' => '',
+            'onomasia' => '',
+            'firmFax' => '',
+            'afm' => '',
+            'commerTitle' => '');
 
-	    $pCallSeqId_out = 0;
-	    $pErrorRec_out = array('errorDescr' => '', 'errorCode' => '');
+        $pCallSeqId_out = 0;
+        $pErrorRec_out = array('errorDescr' => '', 'errorCode' => '');
 
-	    try {
-		    $result = $client->rgWsBasStoixN(
-		        $afm, $pBasStoixNRec_out, $pCallSeqId_out, $pErrorRec_out);
+        try {
+            $result = $client->rgWsBasStoixN(
+                $afm, $pBasStoixNRec_out, $pCallSeqId_out, $pErrorRec_out);
 
-		    if (!$result['pErrorRec_out']->errorCode)
-		    {
+            if (!$result['pErrorRec_out']->errorCode)
+            {
                 $this->autoLayout = false;
                 $this->autoRender = false;
-		        $data = json_encode($result['pBasStoixNRec_out']);
+                $data = json_encode($result['pBasStoixNRec_out']);
 
-		        return $data;
-		    } else {
-		        return false;
-		    }
+                return $data;
+            } else {
+                return false;
+            }
 
-	    } catch(SoapFault $fault) {
-	        return false;
-	    }
+        } catch(SoapFault $fault) {
+            return false;
+        }
     }
 
     public function is_authorized($user) {

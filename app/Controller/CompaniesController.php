@@ -69,8 +69,6 @@ class CompaniesController extends AppController {
         $shows_spam = $company['Company']['user_id'] == $this->Auth->user('id')
             || $this->Auth->user('role') === ROLE_ADMIN;
 
-        // update the state of the offers of current company
-        $this->Offer->update_state($company_id);
         // append offers of this company
         $company['Offer'] = $this->Offer->find_all($company_id, $shows_spam);
 

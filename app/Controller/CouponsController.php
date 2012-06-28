@@ -25,10 +25,13 @@ class CouponsController extends AppController {
 
         $redirect = array($this->referer());
 
-        // check if offer exists and is valid
-        $conditions = array('Offer.id' => $id);
-        $offer = $this->Offer->find('valid',
-                                    array('conditions' => $conditions));
+        $conditions = $this->Offer->conditionsValid;
+        $conditions['Offer.offer_type_id'] = TYPE_COUPONS;
+
+        $this->Offer->recursive = -1;
+        $offer = $this->Offer->findById($conditions,
+                                        array('Offer.id'));
+
         if (! $offer)
             throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
 
@@ -59,15 +62,13 @@ class CouponsController extends AppController {
 
             $coupon_id = $this->Coupon->id;
 
-            // this could have been done above to avoid a second query, but is
-            // containable worth it?
+            // avoid unnecessary left joins, just the required ones
             $this->Offer->Behaviors->attach('Containable');
             $this->Offer->contain(array('Company.Municipality.County'));
-            $res = $this->Offer->findById($id);
+            $offer = $this->Offer->findById($id);
 
             // send email
-            $this->mail_success($res, $coupon_id, $coupon_uuid);
-
+            $this->mail_success($offer, $coupon_id, $coupon_uuid);
 
             // success getting coupon
             // differentiate responses based on Accept header parameter

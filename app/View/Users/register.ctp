@@ -1,4 +1,6 @@
-<h2>Εγγραφή νέου χρήστη</h2>
+<?php
+    echo $this->Html->script('gsis_lookup');
+?>
 <div class="register form">
 <?php
     echo $this->Session->flash();
@@ -44,6 +46,28 @@
     ));
 
     echo $this->Tb->input(array(
+        'field' => 'Company.afm',
+        'input' => $this->Form->text(
+                        'Company.afm', array('class' => 'span4')
+                    ),
+        'label' => 'Α.Φ.Μ. επιχείρησης'
+    ));
+
+    echo "<div id='lookup' class='btn btn-small btn-info'>Αναζήτηση με ΑΦΜ</div>";
+    echo "<div id='ajax-status' style='display:inline;margin-left:12px;'></div>";
+
+    // we need the application URL for the ajax call
+    $app_url = trim(APP_URL, '/');
+
+    echo "<br /><script type='text/javascript'>";
+    echo "$(document).ready(function() {";
+    echo "$('#lookup').live('click', function() {";
+    echo "var afm = $('#CompanyAfm').val();";
+    echo "var url='{$app_url}'+'/companies/gsis_get/' + afm;";
+    echo "gsis_lookup(url);});";
+    echo "});</script><br />";
+
+    echo $this->Tb->input(array(
         'field' => 'Company.name',
         'input' => $this->Form->text(
                         'Company.name', array('class' => 'span4')
@@ -60,20 +84,17 @@
     ));
 
     echo $this->Tb->input(array(
-        'field' => 'Company.afm',
-        'input' => $this->Form->text(
-                        'Company.afm', array('class' => 'span4')
-                    ),
-        'label' => 'Α.Φ.Μ. επιχείρησης'
-    ));
-
-    echo $this->Tb->input(array(
         'field' => 'User.terms_accepted',
         'input' => $this->Form->checkbox(
                         'User.terms_accepted', array('value' => '0')
                     ),
         'label' => 'Όροι χρήσης'
     ));
+
+    echo $this->Form->hidden('CompanyFax', array('name' => 'data[Company][fax]'));
+    echo $this->Form->hidden('CompanyAddress', array('name' => 'data[Company][address]'));
+    echo $this->Form->hidden('CompanyPostalcode', array('name' => 'data[Company][postalcode]'));
+    echo $this->Form->hidden('CompanyServiceType', array('name' => 'data[Company][service_type]'));
 ?>
 
 <div class="control-group text">
@@ -86,17 +107,13 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque neque nunc, veh
     </div>
 </div>
 
-
-
-
-
     </fieldset>
 <?php
     echo $this->Tb->button(
             __('Υποβολή'),
             array(
-                'style' => 'primary',
-                'size' => 'small'
+                'style' => 'success',
+                'size' => 'large'
             )
         );
 ?>

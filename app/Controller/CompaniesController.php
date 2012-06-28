@@ -185,6 +185,14 @@ class CompaniesController extends AppController {
         $this->alter($id, $view, false);
     }
 
+    public function ban($id = null) {
+        $this->change_company_state($id, true);
+    }
+
+    public function unban($id = null) {
+        $this->change_company_state($id, false);
+    }
+
     private function change_company_state($company_id, $ban = true) {
         //
         // change user field `is_banned`

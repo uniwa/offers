@@ -70,14 +70,20 @@ class AppController extends Controller{
         // inform in missing geolocation information
         if ($this->Auth->user('role') === ROLE_COMPANY) {
             $conditions = array('Company.id' => $this->Session->read('Auth.Company.id'));
-            $fields = array('Company.longitude', 'Company.latitude');
-            $geo_info = $this->Company->find('first', array(
+            $fields = array('Company.longitude', 'Company.latitude', 'User.is_banned');
+            $company = $this->Company->find('first', array(
                 'conditions' => $conditions,
                 'fields' => $fields,
-                'recursive' => -1,
+                'recursive' => 0,
             ));
-            if ($geo_info['Company']['longitude'] === null or
-                $geo_info['Company']['latitude'] === null) {
+            if ($company['User']['is_banned'] == true) {
+                $msg = "Ο λογαριασμός σας έχει κλειδωθεί από τον διαχειριστή του συστήματος. ";
+                $msg .= "Επικοινωνήστε με τον διαχειριστή στο email: ";
+                $msg .= '<a href="'.ADMIN_EMAIL.'">'.ADMIN_EMAIL.'</a>';
+                $this->Session->setFlash($msg, 'default', array('class' => Flash::Warning));
+            }
+            if ($company['Company']['longitude'] === null or
+                $company['Company']['latitude'] === null) {
                     $msg = "Δεν έχετε συμπληρώσει γεωχωρικές πληροφορίες για την επιχείρηση σας. ";
                     $msg .= "Προσφορές που αναρτάτε πιθανόν να μην είναι διαθέσιμες μέσω της εφαρμογής κινητού. ";
                     $msg .= "Πατήστε <a href=\"#\">εδώ</a> για να καταχωρήσετε το στίγμα της επιχείρησης σας.";

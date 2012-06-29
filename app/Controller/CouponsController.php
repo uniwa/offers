@@ -221,6 +221,10 @@ class CouponsController extends AppController {
         $dompdf->stream($filename);
     }
 
+    // @param $id coupon id
+    public function redeem($id) {
+    }
+
     private function api_prepare_view($data, $is_xml = true) {
         $is_index = !array_key_exists('Coupon', $data);
 
@@ -444,6 +448,15 @@ class CouponsController extends AppController {
                     return true;
                 }
                 return false;
+            }
+            if ($this->action === 'redeem') {
+                if (isset($user['role']) && $user['role'] === ROLE_COMPANY) {
+                    $company_id = $this->Session->read('Auth.Company.id');
+                    $coupon_id = $this->request->params['pass'][0];
+                    if ($this->Coupon->is_offered_by($coupon_id, $company_id)) {
+                        return true;
+                    }
+                }
             }
         }
 

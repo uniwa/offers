@@ -203,16 +203,6 @@ if (isset($is_owner) and $is_owner == true) {
                         $date = $c['Coupon']['created'];
                         $serial_number = $c['Coupon']['serial_number'];
 
-                        $coupon_link = $this->Html->link(
-                            $serial_number,
-                            array(
-                                'controller' => 'coupons',
-                                'action' => 'view',
-                                $c['Coupon']['id']
-                            ),
-                            array()
-                        );
-
                         echo "<tr>";
                         echo "<td>{$counter}</td>";
                         echo "<td>{$serial_number}</td>";

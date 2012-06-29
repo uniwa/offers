@@ -60,11 +60,31 @@ class OffersController extends AppController {
             'copy');
         $companies = array('add_happyhour', 'add_coupons', 'add_limited',
             'webservice_add');
+        $ban = array_merge($companies, array('activate', 'copy'));
         $students = array('vote_up', 'vote_down');
 
         // All registered users can view offers
         if (in_array($this->action, $allow)) {
             return true;
+        }
+
+        // first check if company that owns the offer is banned
+        if (in_array($this->action, $ban)) {
+            if ($role == ROLE_COMPANY) {
+                if ($this->Company->is_banned($this->Session->read('Auth.Company.id'))) {
+                    // we don't want to return false here because the page
+                    // will blow up in user's face with a 403
+                    // just show a flash and redirect
+                    $this->notify(
+                        array(
+                            'Έχετε κλειδωθεί από τον διαχειριστή σου συστήματος.
+                            Αυτή η λειτουργία δεν επιτρέπεται.',
+                            'default',
+                            array('class' => Flash::Warning)),
+                        array($this->referer()),
+                        403);
+                }
+            }
         }
 
         // The owner of an offer can edit and delete it, as well as activate and

@@ -96,7 +96,7 @@
                                                         'action' => $action));
                     } else {
                         $category_admin = $this->Html->link(
-                                'Επεξεργασία κατηγοριών',
+                                'Κατηγορίες',
                                 array('controller' => 'offercategories'));
                         $controller = 'admins';
                         $title = __('Σπουδαστές');

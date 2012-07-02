@@ -35,4 +35,15 @@ class Coupon extends AppModel {
         $coupon_student = $this->field('student_id', $conditions);
         return $coupon_student === $student_id;
     }
+
+    public function is_offered_by($coupon_id, $company_id) {
+        $this->Behaviors->attach('Containable');
+        $this->contain(array('Offer.company_id'));
+
+        $options['conditions'] = array('Offer.company_id' => $company_id,
+                                       'Coupon.id' => $coupon_id);
+
+        $result = $this->find('first', $options);
+        return $result['Offer']['company_id'] === $company_id;
+    }
 }

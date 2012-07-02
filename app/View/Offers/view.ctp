@@ -178,6 +178,11 @@ if (!empty($offer['Image'])) {
 
 echo $html;
 
+// title of link to redeem/re_enable a coupon
+$click_to_change = 'Κάντε κλικ για να αλλάξετε την κατάσταση';
+// currently, there is only need for this attribute
+$redeem_title = array('title' => $click_to_change);
+
 // show coupons for offer
 // only if visitor == owner and offer type = coupons
 if (isset($is_owner) and $is_owner == true) {
@@ -192,6 +197,7 @@ if (isset($is_owner) and $is_owner == true) {
                     <th>Α/Α</th>
                     <th>Κωδικός κουπονιού</th>
                     <th>Ημ/νία δέσμευσης</th>
+                    <th>έχει εξαργυρωθεί;</th>
                 </tr>
             </thead>
             <tbody>
@@ -203,20 +209,27 @@ if (isset($is_owner) and $is_owner == true) {
                         $date = $c['Coupon']['created'];
                         $serial_number = $c['Coupon']['serial_number'];
 
-                        $coupon_link = $this->Html->link(
-                            $serial_number,
-                            array(
-                                'controller' => 'coupons',
-                                'action' => 'view',
-                                $c['Coupon']['id']
-                            ),
-                            array()
-                        );
+                        if ($c['Coupon']['is_used']) {
+                            $td = '<td style="text-decoration:line-through">';
+                            $link_redeem = $this->Html->link(
+                                    'ναι', array('controller' => 'coupons',
+                                                 'action' => 're_enable',
+                                                 $c['Coupon']['id']),
+                                    $redeem_title);
+                        } else {
+                            $td = '<td>';
+                            $link_redeem = $this->Html->link(
+                                    'όχι', array('controller' => 'coupons',
+                                                 'action' => 'redeem',
+                                                  $c['Coupon']['id']),
+                                    $redeem_title);
+                        }
 
                         echo "<tr>";
                         echo "<td>{$counter}</td>";
-                        echo "<td>{$serial_number}</td>";
+                        echo "{$td}{$serial_number}</td>";
                         echo "<td>{$this->Time->format('d-m-Y',$date)}</td>";
+                        echo "<td>{$link_redeem}</td>";
                         echo "</tr>";
                     }
                 ?>

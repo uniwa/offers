@@ -221,6 +221,36 @@ class CouponsController extends AppController {
         $dompdf->stream($filename);
     }
 
+    // @param $id coupon id
+    public function redeem($id) {
+        if (empty($id)) throw new NotFoundException();
+        $this->redeem_one($id, true);
+    }
+    public function re_enable($id) {
+        if (empty($id)) throw new NotFoundException();
+        $this->redeem_one($id, false);
+    }
+
+    // @param $id Coupon id to which the is_used attribute will be set
+    // @param $is_used boolean; The value to write
+    private function redeem_one($id, $is_used = true) {
+        $this->Coupon->id = $id;
+
+        $msg = $is_used ? 'Το κουπόνι σημάνθηκε ως εξαργυρωμένο' :
+                          'Το κουπόνι σημάνθηκε ως ενεργό';
+
+        if ($this->Coupon->saveField('is_used', $is_used)) {
+            $this->Session->setFlash($msg,
+                                     'default',
+                                     array('class' => Flash::Success));
+        } else {
+            $this->Session->setFlash('Προέκυψε κάποιο σφάλμα',
+                                     'default',
+                                     array('class' => Flash::Error));
+        }
+        $this->redirect($this->request->referer());
+    }
+
     private function api_prepare_view($data, $is_xml = true) {
         $is_index = !array_key_exists('Coupon', $data);
 
@@ -444,6 +474,15 @@ class CouponsController extends AppController {
                     return true;
                 }
                 return false;
+            }
+            if ($this->action === 'redeem' || $this->action === 're_enable') {
+                if (isset($user['role']) && $user['role'] === ROLE_COMPANY) {
+                    $company_id = $this->Session->read('Auth.Company.id');
+                    $coupon_id = $this->request->params['pass'][0];
+                    if ($this->Coupon->is_offered_by($coupon_id, $company_id)) {
+                        return true;
+                    }
+                }
             }
         }
 

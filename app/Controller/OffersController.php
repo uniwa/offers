@@ -320,7 +320,7 @@ class OffersController extends AppController {
         if ($offer['Offer']['offer_type_id'] == TYPE_COUPONS) {
             if ($this->Offer->is_owned_by($id, $this_user_id)) {
                 // build query
-                $fields = array('Coupon.id', 'Coupon.serial_number', 'Coupon.created');
+                $fields = array('Coupon.id', 'Coupon.serial_number', 'Coupon.created', 'Coupon.is_used');
                 $order = array('Coupon.created DESC');
                 $conditions = array('Offer.id' => $id);
 

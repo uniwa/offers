@@ -160,7 +160,7 @@
 
     <div class="container-fluid">
     <!--renders notification message-->
-        <?php echo $this->Session->flash(); ?>
+        <?php echo $this->Tb->flashes(array('closable' => true, 'auth' => true)); ?>
         <div class="row-fluid">
             <?php echo $content_for_layout;?>
             <!--modal snipet-->

@@ -81,7 +81,8 @@ class OffercategoriesController extends  AppController {
                 $this->Session->setFlash(
                     "Η κατηγορία &laquo;{$cat_name}&raquo; υφίσταται ήδη",
                     'default',
-                    array('class' => Flash::Error));
+                    array(),
+                    'error');
             } else {
 
                 // avoid implicit id manipulation
@@ -93,13 +94,15 @@ class OffercategoriesController extends  AppController {
                     $this->Session->setFlash(
                                         'Οι αλλαγές αποθηκεύτηκαν επιτυχώς.',
                                         'default',
-                                        array('class' => Flash::Success));
+                                        array(),
+                                        'success');
                     $this->redirect(array('controller' => 'offercategories',
                                           'action' => 'index'));
                 } else {
                     $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
                                              'default',
-                                             array('class' => Flash::Error));
+                                             array(),
+                                             'error');
                 }
             }
         }
@@ -121,16 +124,19 @@ class OffercategoriesController extends  AppController {
             $this->Session->setFlash(
                    'Η κατηγορία διαθέτει προσφορές και δεν μπορεί να διαγραφεί',
                    'default',
-                    array('class' => Flash::Error));
+                   array(),
+                   'error');
         } else {
             if ($this->OfferCategory->delete($id)) {
                 $this->Session->setFlash('Η διαγραφή ήταν επιτυχής.',
                                          'default',
-                                         array('class' => Flash::Success));
+                                         array(),
+                                         'success');
             } else {
                 $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
                                          'default',
-                                         array('class' => Flash::Error));
+                                         array(),
+                                         'error');
             }
         }
         $this->redirect(array('controller' => 'offercategories',

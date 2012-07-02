@@ -80,7 +80,8 @@ class OffersController extends AppController {
                             'Έχετε κλειδωθεί από τον διαχειριστή σου συστήματος.
                             Αυτή η λειτουργία δεν επιτρέπεται.',
                             'default',
-                            array('class' => Flash::Warning)),
+                            array(),
+                            'warning'),
                         array($this->referer()),
                         403);
                 }
@@ -252,11 +253,11 @@ class OffersController extends AppController {
         if ($offer['Offer']['offer_state_id'] == STATE_DRAFT) {
 
             $msg = 'Οι μη ενεργοποιημένες προσφορές δεν μπορούν να σημανθούν';
-            $class = Flash::Error;
+            $flash_type = 'error';
         } else if ($offer['Offer']['is_spam']) {
 
             $msg = 'Η προσφορά έχει ήδη σημανθεί ως SPAM';
-            $class = Flash::Warning;
+            $flash_type = 'warning';
         } else {
 
             $this->Offer->id = $id;
@@ -266,16 +267,16 @@ class OffersController extends AppController {
             if ($this->Offer->save($data, false)) {
 
                 $msg = 'Η προσφορά σημάνθηκε ως SPAM';
-                $class = Flash::Success;
+                $flash_type = 'success';
 
             } else {
                 $msg = 'Προέκυψε κάποιο σφάλμα - ' .
                        'οι αλλαγές δεν πραγματοποιήθηκαν';
-                $class = Flash::Error;
+                $flash_type = 'error';
             }
         }
 
-        $this->Session->setFlash($msg, 'default', array('class' => $class));
+        $this->Session->setFlash($msg, 'default', array(), $flash_type);
         $this->redirect($this->request->referer());
     }
 
@@ -361,7 +362,8 @@ class OffersController extends AppController {
                 $this->Session->setFlash('Η προσφορά έχει σημανθεί ως SPAM από'.
                                              ' διαχειριστή τους συστήματος',
                                          'default',
-                                         array('class' => Flash::Error));
+                                         array(),
+                                         'error');
             }
 
             // Prepare information for view
@@ -569,7 +571,8 @@ class OffersController extends AppController {
                 $this->notify(
                     array(  'Παρουσιάστηκε κάποιο σφάλμα',
                             'default',
-                            array('class' => Flash::Error)),
+                            array(),
+                            "error"),
                     null, 400, $this->Offer->validationErrors);
             } else {
 
@@ -577,7 +580,8 @@ class OffersController extends AppController {
                     // the message to appear (parameters of `setFlash')
                     array(  'Η προσφορά αποθηκεύτηκε',
                             'default',
-                            array('class' => Flash::Success)),
+                            array(),
+                            'success'),
                     // parameters of `redirect' (in case of html response)
                     array(  array(  'controller' => 'companies',
                                     'action' => 'view',
@@ -899,7 +903,8 @@ class OffersController extends AppController {
             $this->Session->setFlash(
                 'Έχετε φτάσει τον μέγιστο επιτρεπτό αρθμό εικόνων',
                 'default',
-                array('class' => Flash::Warning));
+                array(),
+                'warning');
                 return;
         }
 
@@ -945,11 +950,11 @@ class OffersController extends AppController {
             if ($error) {
                 $transaction->rollback();
                 $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
-                    'default', array('class' => Flash::Error));
+                    'default', array(), 'error');
             } else {
                 $transaction->commit();
                 $this->Session->setFlash('Η εικόνα προστέθηκε',
-                    'default', array('class' => Flash::Success));
+                    'default', array(), 'success');
                 $this->redirect(array(
                     'controller' => 'offers', 'action' => 'imageedit', $id));
             }
@@ -972,7 +977,7 @@ class OffersController extends AppController {
         }
 
         $this->Session->setFlash($error_msg,
-            'default', array('class' => Flash::Error));
+            'default', array(), 'error');
         $this->redirect(array(
             'controller' => 'offers', 'action' => 'imageedit', $id));
     }
@@ -1028,18 +1033,18 @@ class OffersController extends AppController {
         if ($this->Offer->{$method}($id)) {
             $msg = "Η προσφορά $success_verb";
             $status = 200;
-            $class = Flash::Success;
+            $flash_type = "success";
         } else {
             // this is unlinkely to occur
             $msg = 'Προέκυψε κάποιο σφάλμα';
             $status = 400;
-            $class = Flash::Error;
+            $flash_type = "error";
         }
 
         $redirect = $this->is_webservice
                         ? null : array($this->request->referer());
 
-        $this->notify(array($msg, 'default', array('class' => $class)),
+        $this->notify(array($msg, 'default', array(), $flash_type),
                       $redirect,
                       $status);
     }
@@ -1084,7 +1089,8 @@ class OffersController extends AppController {
                     // `setFlash' params
                     array(  'Παρουσιάστηκε κάποιο σφάλμα',
                              'default',
-                             array('class' => Flash::Error)),
+                             array(),
+                            "error"),
                     // `redirect' params
                     array(  array(  'controller' => 'offers',
                                     'action' => 'view',
@@ -1099,7 +1105,8 @@ class OffersController extends AppController {
                 return $this->notify(
                     array(  'Η προσφορά διαγράφηκε επιτυχώς',
                              'default',
-                             array('class' => Flash::Success)),
+                             array(),
+                            "success"),
                     array(  array(  'controller' => 'companies',
                                     'action' => 'view',
                                     $offer['Company']['id'])),
@@ -1111,7 +1118,8 @@ class OffersController extends AppController {
             return $this->notify(
                 array(  'Η προσφορά δεν μπορεί να διαγραφεί',
                          'default',
-                         array('class' => Flash::Info)),
+                         array(),
+                        "info"),
                 array(  array(  'controller' => 'offers',
                                 'action' => 'view',
                                 $offer['Offer']['id'])),

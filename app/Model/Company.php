@@ -133,4 +133,9 @@ class Company extends AppModel {
         return $this->field('id',
             array('id' => $company_id, 'user_id' => $user_id)) === $company_id;
     }
+
+    public function is_banned($company_id) {
+        $user_id = $this->field('user_id', array('id' => $company_id));
+        return $this->User->field('is_banned', array('id' => $user_id));
+    }
 }

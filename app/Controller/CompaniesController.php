@@ -160,12 +160,14 @@ class CompaniesController extends AppController {
                 $transaction->rollback();
                 $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
                                          'default',
-                                         array('class' => Flash::Error));
+                                         array(),
+                                         "error");
             } else {
                 $transaction->commit();
                 $this->Session->setFlash('Οι αλλαγές αποθηκεύτηκαν.',
                                          'default',
-                                         array('class' => Flash::Success));
+                                         array(),
+                                        "success");
                 $this->redirect(array(
                         'controller' => 'companies',
                         'action' => 'view',
@@ -210,14 +212,14 @@ class CompaniesController extends AppController {
         $saved = $this->User->saveField('is_banned', $ban, false);
         if (!$saved) {
             $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
-                'default', array('class' => Flash::Error));
+                'default', array(), 'error');
         } else {
             $company_name = $company['Company']['name'];
             $success_message = ($enable)
                 ?"Η επιχείρηση '{$company_name}' κλειδώθηκε επιτυχώς."
                 :"Η επιχείρηση '{$company_name}' ξεκλειδώθηκε επιτυχώς.";
             $this->Session->setFlash($success_message,
-                'default', array('class' => Flash::Success));
+                'default', array(), 'success');
         }
 
         $this->redirect($referer);
@@ -245,15 +247,14 @@ class CompaniesController extends AppController {
         if ($error) {
             $transaction->rollback();
             $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
-                'default', array('class' => Flash::Error));
+                'default', array(), "error");
         } else {
             $transaction->commit();
             $company_name = $company['Company']['name'];
             $success_message = ($enable)
                 ?"Η επιχείρηση '{$company_name}' ενεργοποιήθηκε."
                 :"Η επιχείρηση '{$company_name}' απενεργοποιήθηκε.";
-            $this->Session->setFlash($success_message,
-                'default', array('class' => Flash::Success));
+            $this->Session->setFlash($success_message, 'default', array(), "success");
         }
 
         $this->redirect($referer);
@@ -281,7 +282,8 @@ class CompaniesController extends AppController {
             $this->Session->setFlash(
                 'Έχετε φτάσει τον μέγιστο επιτρεπτό αρθμό εικόνων',
                 'default',
-                array('class' => Flash::Warning));
+                array(),
+                "warning");
                 return;
         }
 
@@ -328,11 +330,11 @@ class CompaniesController extends AppController {
             if ($error) {
                 $transaction->rollback();
                 $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα',
-                    'default', array('class' => Flash::Error));
+                    'default', array(), 'error');
             } else {
                 $transaction->commit();
                 $this->Session->setFlash('Η εικόνα προστέθηκε',
-                    'default', array('class' => Flash::Success));
+                    'default', array(), 'success');
                 $this->redirect(array(
                     'controller' => 'companies', 'action' => 'imageedit'));
             }
@@ -346,19 +348,19 @@ class CompaniesController extends AppController {
             $result = $this->User->email_confirm($token, $email);
             if ($result) {
                 $msg = __('Η διεύθυνση ηλεκτρονικής αλληλογραφίας επικυρώθηκε.');
-                $class = array('class' => Flash::Success);
+                $flash_type = "success";
                 $http = 200;
                 $this->new_company_notification($result);
             } else {
                 $msg = __('Δεν ήταν δυνατή η επικύρωση της διεύθυνσης ηλεκτρονικής αλληλογραφίας.');
-                $class = array('class' => Flash::Error);
+                $flash_type = "error";
                 $http = 400;
             }
             $controller = 'offers';
             $action = 'index';
             $redirect = array('controller' => $controller, 'action' => $action);
             $redirect = array($redirect);
-            $this->notify(array($msg, 'default', $class), $redirect, $http);
+            $this->notify(array($msg, 'default', array(), $flash_type), $redirect, $http);
         }
     }
 

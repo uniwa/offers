@@ -80,14 +80,14 @@ class AppController extends Controller{
                 $msg = "Ο λογαριασμός σας έχει κλειδωθεί από τον διαχειριστή του συστήματος. ";
                 $msg .= "Επικοινωνήστε με τον διαχειριστή στο email: ";
                 $msg .= '<a href="'.ADMIN_EMAIL.'">'.ADMIN_EMAIL.'</a>';
-                $this->Session->setFlash($msg, 'default', array('class' => Flash::Warning));
+                $this->Session->setFlash($msg, 'default', array(), "warning");
             }
             if ($company['Company']['longitude'] === null or
                 $company['Company']['latitude'] === null) {
                     $msg = "Δεν έχετε συμπληρώσει γεωχωρικές πληροφορίες για την επιχείρηση σας. ";
                     $msg .= "Προσφορές που αναρτάτε πιθανόν να μην είναι διαθέσιμες μέσω της εφαρμογής κινητού. ";
                     $msg .= "Πατήστε <a href=\"#\">εδώ</a> για να καταχωρήσετε το στίγμα της επιχείρησης σας.";
-                    $this->Session->setFlash($msg, 'default', array('class' => Flash::Warning));
+                    $this->Session->setFlash($msg, 'default', array(), "info");
             }
         }
     }

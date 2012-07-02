@@ -45,7 +45,8 @@ class CouponsController extends AppController {
             $flash = array('Έχετε δεσμεύσει τον μέγιστο αριθμό κουπονιών για '
                            .'αυτήν την προσφορά.',
                            'default',
-                           array('class' => Flash::Error));
+                           array(),
+                           "error");
 
             return $this->notify($flash, $redirect, 400);
         }
@@ -73,8 +74,7 @@ class CouponsController extends AppController {
             // success getting coupon
             // differentiate responses based on Accept header parameter
             $flash = array('Το κουπόνι δεσμεύτηκε επιτυχώς',
-                           'default',
-                           array('class' => Flash::Success));
+                           'default', array(), 'success');
 
             $status = 200;
             $extra = array('id' => $coupon_id,
@@ -91,7 +91,8 @@ class CouponsController extends AppController {
             // differentiate responses based on Accept header parameter
             $flash = array('Παρουσιάστηκε κάποιο σφάλμα',
                            'default',
-                           array('class' => Flash::Error));
+                           array(),
+                           "error");
             $status = 400;
 
             $extra = array();
@@ -432,12 +433,14 @@ class CouponsController extends AppController {
         if ($result == false) {
             $flash = array('Παρουσιάστηκε ένα σφάλμα κατα την διαγραφή του κουπονιού.',
                 'default',
-                array('class' => Flash::Error));
+                array(),
+                "error");
             $status = 500;
         } else {
             $flash = array('Το κουπόνι διεγράφη με επιτυχία.',
                 'default',
-                array('class' => Flash::Success));
+                array(),
+                "success");
             $status = 200;
         }
         $redirect = array($this->referer());

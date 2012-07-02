@@ -78,12 +78,12 @@ class StudentsController extends AppController {
             } else {
                 $message = 'Δεν θα λαμβάνετε πλέον μήνυμα με νέες προσφορές';
             }
-            $class = Flash::Info;
+            $flash_type = "info";
         } else {
             $message = 'Προέκυψε κάποιο σφάλμα';
-            $class = Flash::Error;
+            $flash_type = "error";
         }
-        $this->Session->setFlash($message, 'default', array('class' => $class));
+        $this->Session->setFlash($message, 'default', array(), $flash_type);
         $this->redirect($this->request->referer());
     }
 

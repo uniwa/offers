@@ -54,11 +54,13 @@ class ImagesController extends AppController {
         if ($this->Image->delete($image['Image']['id'], false))
             $this->Session->setFlash('Η εικόνα διαγράφηκε επιτυχώς.',
                                      'default',
-                                     array('class' => Flash::Success));
+                                     array(),
+                                    'success');
         else
             $this->Session->setFlash('Παρουσιάστηκε σφάλμα κατά τη διαγραφή της εικόνας.',
                                      'default',
-                                     array('class' => Flash::Error));
+                                     array(),
+                                     'error');
 
         $this->redirect($this->referer());
     }

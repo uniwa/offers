@@ -36,7 +36,8 @@ class UsersController extends AppController {
                             array(
                                 __("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"),
                                 'default',
-                                array('class' => Flash::Error)),
+                                array(),
+                                "error"),
                             null, 403);
                         return;
                     }
@@ -93,7 +94,8 @@ class UsersController extends AppController {
                 $this->notify(
                     array(  __("Δώστε έγκυρο όνομα και κωδικό χρήστη"),
                             'default',
-                            array('class' => Flash::Error)),
+                            array(),
+                            "error"),
                     array(array('controller' => 'users', 'action' => 'login')), 403);
             }
         } else {
@@ -126,8 +128,7 @@ class UsersController extends AppController {
                 $this->send_email_confirmation($token, $email);
             else
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'),
-                                         'default',
-                                         array('class' => Flash::Error));
+                                         'default', array(), 'error');
         }
     }
 
@@ -143,14 +144,14 @@ class UsersController extends AppController {
             ->emailFormat('both')
             ->viewVars(array('url' => $url));
         $msg = __('Η εγγραφή ολοκληρώθηκε και στάλθηκε email με το σύνδεσμο επιβεβαίωσης email.');
-        $flash = array('class' => Flash::Success);
+        $flash_type = 'success';
         try {
             $cake_email->send();
         } catch (Exception $e) {
             $msg = __('Δεν ήταν δυνατή η αποστολή email.');
-            $flash = array('class' => Flash::Error);
+            $flash_type = 'error';
         }
-        $this->Session->setFlash($msg, 'default', $flash);
+        $this->Session->setFlash($msg, 'default', array(), $flash_type);
         $this->redirect(array('controller' => 'users', 'action' => 'login'));
     }
 
@@ -165,7 +166,7 @@ class UsersController extends AppController {
 
         $named = $this->params['named'];
         $message = 'Παρουσιάστηκε σφάλμα κατά την αποθήκευση των συντεταγμένων';
-        $flash = array($message, 'default', array('class' => Flash::Error));
+        $flash = array($message, 'default', array(), 'error');
         $status = 400;
 
         if (isset($named['lat']) && isset($named['lng'])) {
@@ -184,8 +185,7 @@ class UsersController extends AppController {
                 $this->User->query($query);
 
                 $message = 'Οι συντεταγμένες αποθηκεύτηκαν ('.$lat.','.$lng.')';
-                $flash = array($message, 'default',
-                    array('class' => Flash::Success));
+                $flash = array($message, 'default', array(), "success");
                 $status = 200;
             }
         }
@@ -210,15 +210,13 @@ class UsersController extends AppController {
                     $this->User->read(null, $this->Auth->user('id')));
                 $this->Session->setFlash(
                     __('Έχετε αποδεχτεί τους όρους χρήσης'),
-                    'default',
-                    array( 'class'=>Flash::Success));
+                    'default', array(), 'success');
                 $this->redirect(array(
                     'controller' => 'offers', 'action' => 'index'));
             } else {
                 $this->Session->setFlash(
                     __('Δεν έχετε αποδεχτεί τους όρους χρήσης'),
-                    'default',
-                    array('class'=>Flash::Error));
+                    'default', array(), 'error');
                 $this->Auth->logout();
                 $this->redirect(array(
                     'controller' => 'offers', 'action' => 'index'
@@ -249,8 +247,7 @@ class UsersController extends AppController {
             if (empty($user)) {
                 $this->Session->setFlash(
                     __('Λάνθασμέμη διεύθυνση email.'),
-                    'default',
-                    array('class'=>Flash::Error));
+                    'default', array(), 'error');
                 $this->redirect(array(
                     'controller' => 'users', 'action' => 'request_passwd'
                 ));
@@ -263,8 +260,7 @@ class UsersController extends AppController {
 χρήστες οι οποίοι συνδέονται μέσω LDAP. Για αλλαγή του κωδικού πρόσβασης στις
 υπηρεσίες του ΤΕΙ Αθήνας επισκεφθείτε την δ/ση: <a href="https://my.teiath.gr/">
 https://my.teiath.gr</a>'),
-                    'default',
-                    array('class'=>Flash::Warning));
+                    'default', array(), 'warning');
                 $this->redirect(array(
                     'controller' => 'users', 'action' => 'login'
                 ));
@@ -275,8 +271,7 @@ https://my.teiath.gr</a>'),
             if ($user['User']['email_verified'] == false) {
                 $this->Session->setFlash(
                     __('Πρέπει να επικυρώσετε την ηλεκτρονική σας δ/ση πριν αιτηθείτε νέο κωδικό.'),
-                    'default',
-                    array('class'=>Flash::Warning));
+                    'default', array(), 'warning');
                 $this->redirect(array(
                     'controller' => 'users', 'action' => 'request_passwd'
                 ));
@@ -288,8 +283,7 @@ https://my.teiath.gr</a>'),
             if (! $this->User->saveField('token', $token, false)) {
                 $this->Session->setFlash(
                     __('Παρουσιάστηκε ένα σφάλμα. Επικοινωνήστε με τον διαχειριστή.'),
-                    'default',
-                    array('class'=>Flash::Error));
+                    'default', array(), 'error');
                 $this->redirect(array(
                     'controller' => 'users', 'action' => 'request_passwd'
                 ));
@@ -310,8 +304,7 @@ https://my.teiath.gr</a>'),
                 }
                 $this->Session->setFlash(
                     __('Στάλθηκε email με το link αλλαγής κωδικού στο email σας.'),
-                    'default',
-                    array('class'=>Flash::Success));
+                    'default', array(), 'success');
                 $this->redirect(array(
                     'controller' => 'users', 'action' => 'login'
                 ));
@@ -337,8 +330,7 @@ https://my.teiath.gr</a>'),
             if ($user_id == null) {
                 $this->Session->setFlash(
                     __('Λανθασμένο αναγνωριστικό (token), αιτηθείτε νέα αλλαγή password.'),
-                    'default',
-                    array('class'=>Flash::Error));
+                    'default', array(). 'error');
                 $this->redirect(array(
                     'controller' => 'users', 'action' => 'request_passwd'
                 ));
@@ -359,16 +351,14 @@ https://my.teiath.gr</a>'),
                     //
                     $this->Session->setFlash(
                         __($validation_errors['repeat_password'][0]),
-                        'default',
-                        array('class'=>Flash::Error));
+                        'default', array(), 'error');
                     $this->redirect(array(
                         'controller' => 'users', 'action' => 'reset_passwd', $token
                     ));
                 }
                 $this->Session->setFlash(
                     __('Παρουσιάστηκε ένα σφάλμα. Επικοινωνήστε με τον διαχειριστή.'),
-                    'default',
-                    array('class'=>Flash::Error));
+                    'default', array(), 'error');
                 $this->redirect(array(
                     'controller' => 'users', 'action' => 'login'
                 ));
@@ -382,8 +372,7 @@ https://my.teiath.gr</a>'),
             // inform users
             $this->Session->setFlash(
                 __('Ο κωδικός άλλαξε με επιτυχία, παρακαλώ συνδεθείτε.'),
-                'default',
-                array('class'=>Flash::Success));
+                'default', array(), 'success');
             $this->redirect(array(
                 'controller' => 'users', 'action' => 'login'
             ));

@@ -27,6 +27,7 @@
     echo $this->Html->script('global');
     echo $this->Html->script('modal');
     echo $this->Html->script('transition');
+    echo $this->Html->script('bootstrap-alert');
 ?>
 </head>
 <body>

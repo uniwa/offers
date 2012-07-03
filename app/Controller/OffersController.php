@@ -114,7 +114,11 @@ class OffersController extends AppController {
 
     public function index() {
         $params = array('valid');
-        $this->Offer->recursive = 0;
+
+        $this->Offer->Behaviors->attach('Containable');
+        // WorkHour is required for the webservice api
+        $this->Offer->contain(array('WorkHour', 'Company', 'OfferCategory'));
+
         $this->ordering($params);
         $this->display($params);
     }

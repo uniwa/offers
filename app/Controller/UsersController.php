@@ -157,7 +157,7 @@ class UsersController extends AppController {
 
     // Update user coordinates in session
     // Coordinates are passed as named arguments
-    // e.g. http:/coupons.teiath.gr/users/coords/lat:38.003/lng:23.668/
+    // e.g. http://coupons.teiath.gr/users/coords/lat:38.003/lng:23.668/
     // Upon successful validation, the session variable Auth.User.geolocation
     // is updated with the new values.
     public function coords() {

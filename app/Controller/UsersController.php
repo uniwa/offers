@@ -196,6 +196,38 @@ class UsersController extends AppController {
             $status);
     }
 
+    public function radius ($radius = null) {
+        if (! $this->Auth->user())
+            throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
+
+        $message = 'Παρουσιάστηκε σφάλμα κατά την αποθήκευση της ακτίνας αναζήτησης';
+        $flash_type = 'error';
+        $status = 400;
+
+        if ($radius != null) {
+            $valid_radius = array(RADIUS_S, RADIUS_M, RADIUS_L);
+
+            // save radius in session
+            if (in_array($radius, $valid_radius)) {
+                $this->Session->write('Auth.User.radius', (int)$radius);
+                $message = 'Η ακτίνα αναζήτησης αποθηκεύτηκε με επιτυχία.';
+                $flash_type = 'success';
+                $status = 200;
+            } else {
+                $this->Session->write('Auth.User.radius', RADIUS_L);
+                $message = 'Λανθασμένη επιλογή ακτίνας αναζήτησης. 
+                    Η ακτίνα ορίστικε στην μέγιστη επιτρεπτή.';
+                $flash_type = 'info';
+                $status = 200;
+            }
+        }
+
+        $this->notify(
+            array($message, 'default', array(), $flash_type),
+            array(array('controller' => 'offers', 'action' => 'index')),
+            $status);
+    }
+
     //Terms of use action
     public function terms() {
         $data = $this->request->data;

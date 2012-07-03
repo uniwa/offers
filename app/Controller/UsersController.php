@@ -177,9 +177,9 @@ class UsersController extends AppController {
                 $geolocation = array('lat' => $lat, 'lng' => $lng);
                 $this->Session->write('Auth.User.geolocation', $geolocation);
                 $uid = $this->Session->read('Auth.User.id');
-                // Define maximum radius
-                $r = RADIUS_L;
-                $this->Session->write('Auth.User.radius', $r);
+                // use radius from session, if not available use max (large) radius
+                $radius = $this->Session->read('Auth.User.radius');
+                $r = ($radius != NULL) ? $radius : RADIUS_L;
                 // Update distances
                 $query = "CALL updatedistances($uid,$lat,$lng,$r)";
                 $this->User->query($query);

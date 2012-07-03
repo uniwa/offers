@@ -215,8 +215,8 @@ class UsersController extends AppController {
                 $status = 200;
             } else {
                 $this->Session->write('Auth.User.radius', RADIUS_L);
-                $message = 'Λανθασμένη επιλογή ακτίνας αναζήτησης. 
-                    Η ακτίνα ορίστικε στην μέγιστη επιτρεπτή.';
+                $message = 'Λανθασμένη επιλογή ακτίνας αναζήτησης. '
+                    . 'Η ακτίνα ορίστικε στην μέγιστη επιτρεπτή τιμή.';
                 $flash_type = 'info';
                 $status = 200;
             }

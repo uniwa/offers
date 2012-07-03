@@ -87,6 +87,18 @@
                 '[method]' => 'POST'),
         array('ws' => $ws));
 
+    Router::connect('/:ws/users/coordinates/*',
+        array(  'controller' => 'users',
+                'action' => 'coords',
+                '[method]' => 'GET'),
+        array('ws' => $ws));
+
+    Router::connect('/:ws/users/radius/*',
+        array(  'controller' => 'users',
+                'action' => 'radius',
+                '[method]' => 'GET'),
+        array('ws' => $ws));
+
     Router::connect('/:ws/coupons',
         array(  'controller' => 'coupons',
                 'action' => 'index',

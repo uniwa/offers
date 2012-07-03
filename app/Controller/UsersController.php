@@ -157,7 +157,7 @@ class UsersController extends AppController {
 
     // Update user coordinates in session
     // Coordinates are passed as named arguments
-    // e.g. http:/coupons.teiath.gr/users/coords/lat:38.003/lng:23.668/
+    // e.g. http://coupons.teiath.gr/users/coords/lat:38.003/lng:23.668/
     // Upon successful validation, the session variable Auth.User.geolocation
     // is updated with the new values.
     public function coords() {
@@ -177,9 +177,9 @@ class UsersController extends AppController {
                 $geolocation = array('lat' => $lat, 'lng' => $lng);
                 $this->Session->write('Auth.User.geolocation', $geolocation);
                 $uid = $this->Session->read('Auth.User.id');
-                // Define maximum radius
-                $r = RADIUS_L;
-                $this->Session->write('Auth.User.radius', $r);
+                // use radius from session, if not available use max (large) radius
+                $radius = $this->Session->read('Auth.User.radius');
+                $r = ($radius != NULL) ? $radius : RADIUS_L;
                 // Update distances
                 $query = "CALL updatedistances($uid,$lat,$lng,$r)";
                 $this->User->query($query);
@@ -192,6 +192,38 @@ class UsersController extends AppController {
 
         $this->notify(
             $flash,
+            array(array('controller' => 'offers', 'action' => 'index')),
+            $status);
+    }
+
+    public function radius ($radius = null) {
+        if (! $this->Auth->user())
+            throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
+
+        $message = 'Παρουσιάστηκε σφάλμα κατά την αποθήκευση της ακτίνας αναζήτησης';
+        $flash_type = 'error';
+        $status = 400;
+
+        if ($radius != null) {
+            $valid_radius = array(RADIUS_S, RADIUS_M, RADIUS_L);
+
+            // save radius in session
+            if (in_array($radius, $valid_radius)) {
+                $this->Session->write('Auth.User.radius', (int)$radius);
+                $message = 'Η ακτίνα αναζήτησης αποθηκεύτηκε με επιτυχία.';
+                $flash_type = 'success';
+                $status = 200;
+            } else {
+                $this->Session->write('Auth.User.radius', RADIUS_L);
+                $message = 'Λανθασμένη επιλογή ακτίνας αναζήτησης. '
+                    . 'Η ακτίνα ορίστικε στην μέγιστη επιτρεπτή τιμή.';
+                $flash_type = 'info';
+                $status = 200;
+            }
+        }
+
+        $this->notify(
+            array($message, 'default', array(), $flash_type),
             array(array('controller' => 'offers', 'action' => 'index')),
             $status);
     }

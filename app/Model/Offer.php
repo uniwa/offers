@@ -47,6 +47,14 @@ class Offer extends AppModel {
         }
     }
 
+    protected function _findCount($state, $query, $results = array()) {
+        if ($state === 'before') {
+            $this->process_find($query);
+        }
+
+        return parent::_findCount($state, $query, $results);
+    }
+
     // 'valid' custom find type
     // returns active offers from enabled companies, not spam
     protected function _findValid($state, $query, $results = array()) {

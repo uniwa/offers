@@ -130,7 +130,11 @@ class OffersController extends AppController {
             $search = $request['Offer']['search'];
         }
 
-        $alphanum = Mb_Eregi_Replace("/[^a-zA-Zα-ωΑ-Ω0-9 ]/", " ", $search);
+        $alphanum = trim($search);
+        // ensure that no consecutive whitespaces exist after the replacement
+        // because that would cause empty-strings to be passed as query params
+        // which, in turn, would produce subqueries as LIKE '%%'
+        $alphanum = Mb_Eregi_Replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s+', ' ', $alphanum);
 
         if (!empty($request)) {
             $this->redirect(array(
@@ -141,7 +145,7 @@ class OffersController extends AppController {
 
         $this->set('search_string', $alphanum);
         $words = explode(' ', $alphanum);
-        $params = array('search', 'words' => $words);
+        $params = array('search', 'words' => array_unique($words));
         $this->ordering($params);
         $this->display($params);
     }

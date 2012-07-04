@@ -190,6 +190,12 @@
                 array('class' => 'footer-rss', 'title' => 'rss προσφορών')
             );?>
             </li>
+            <li>
+                <a href="http://umbra.edu.teiath.gr/coupons-docs/api.html">API</a>
+            </li>
+            <li>
+                <a href="http://umbra.edu.teiath.gr/coupons-docs/schema.html#xsd">XSD</a>
+            </li>
         </ul>
         </footer>
 <!--will allow all scripts generated in layout elements to be output in one place-->

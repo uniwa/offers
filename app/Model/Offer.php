@@ -22,10 +22,18 @@ class Offer extends AppModel {
 
     // Find methods core processing
     private function process_find(&$query) {
-        $query['conditions'] = array_merge($query['conditions'], array(
-            'Offer.offer_state_id' => STATE_ACTIVE,
-            'Offer.is_spam' => 0,
-            'Company.is_enabled' => 1));
+        if (isset($query['show_spam'])) {
+
+            unset($query['show_spam']);
+            $query['conditions'] = array_merge($query['conditions'],
+                                               array('Offer.is_spam' => true));
+        } else {
+
+            $query['conditions'] = array_merge($query['conditions'], array(
+                'Offer.offer_state_id' => STATE_ACTIVE,
+                'Offer.is_spam' => 0,
+                'Company.is_enabled' => 1));
+        }
 
         if (isset($query['order'])) {
             // Handle distance ordering

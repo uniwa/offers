@@ -181,14 +181,16 @@
         <hr id = "footer">
 
         <footer>
-            <p>&copy; Τ.Ε.Ι Αθήνας <?php echo date('Y'); ?></p>
-            <p>
+        <ul>
+            <li>&copy; Τ.Ε.Ι Αθήνας <?php echo date('Y'); ?></li>
+            <li>
             <?php echo $this->Html->link(
                 '',
                 array('controller' => 'offers', 'action' => 'index.rss'),
                 array('class' => 'footer-rss', 'title' => 'rss προσφορών')
             );?>
-            </p>
+            </li>
+        </ul>
         </footer>
 <!--will allow all scripts generated in layout elements to be output in one place-->
 <?php echo $this->Js->writeBuffer(); ?>

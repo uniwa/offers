@@ -178,7 +178,7 @@
     </div><!--/.fluid-container-->
 
 
-        <hr id = "footer">
+        <!-- <hr id = "footer"> -->
 
         <footer>
         <ul>

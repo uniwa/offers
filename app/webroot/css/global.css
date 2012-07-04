@@ -62,3 +62,20 @@
 #issue_form ul {
     list-style-type: none;
 }
+
+footer {
+    margin-top: 1em;
+    padding-top: 1em;
+    height: 80px;
+    background-color: #282828;
+    color: #fff;
+    position: absolute;
+    width: 100%;
+}
+
+footer ul li {
+    list-style : none;
+    clear: both;
+    display: inline;
+    padding-left: 2em;
+}

@@ -72,6 +72,13 @@
                         array('controller' => 'users', 'action' => 'faq'));
                 ?>
             </li>
+            <li>
+                <?php
+                    echo $this->Html->link(
+                        __('Αναφορά προβλήματος'),
+                        array('controller' => 'users', 'action' => 'help'));
+                ?>
+            </li>
             </ul>
 
             <!--Block dropdown form when user is inside login action-->

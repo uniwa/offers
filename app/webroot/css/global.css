@@ -58,3 +58,7 @@
     height: 32px;
     width: 32px;
 }
+
+#issue_form ul {
+    list-style-type: none;
+}

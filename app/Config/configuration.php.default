@@ -3,6 +3,8 @@ $config = array(
     'Constants' => array(
         // NO trailing slash here
         'APP_URL' => 'http://localhost',
+        'ISSUE_URL' => 'http://redmine.edu.teiath.gr/issues.xml',
+        'ISSUE_TOKEN' => '7806cada9458077b3251b341ff3ffc072987e5bc:password',
         'ADMIN_EMAIL' => '',
         'ROLE_ADMIN' => 'admin',
         'ROLE_STUDENT' => 'student',

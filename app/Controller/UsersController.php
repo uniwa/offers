@@ -157,7 +157,7 @@ class UsersController extends AppController {
 
     // Update user coordinates in session
     // Coordinates are passed as named arguments
-    // e.g. http:/coupons.teiath.gr/users/coords/lat:38.003/lng:23.668/
+    // e.g. http://coupons.teiath.gr/users/coords/lat:38.003/lng:23.668/
     // Upon successful validation, the session variable Auth.User.geolocation
     // is updated with the new values.
     public function coords() {
@@ -177,9 +177,9 @@ class UsersController extends AppController {
                 $geolocation = array('lat' => $lat, 'lng' => $lng);
                 $this->Session->write('Auth.User.geolocation', $geolocation);
                 $uid = $this->Session->read('Auth.User.id');
-                // Define maximum radius
-                $r = RADIUS_L;
-                $this->Session->write('Auth.User.radius', $r);
+                // use radius from session, if not available use max (large) radius
+                $radius = $this->Session->read('Auth.User.radius');
+                $r = ($radius != NULL) ? $radius : RADIUS_L;
                 // Update distances
                 $query = "CALL updatedistances($uid,$lat,$lng,$r)";
                 $this->User->query($query);
@@ -192,6 +192,38 @@ class UsersController extends AppController {
 
         $this->notify(
             $flash,
+            array(array('controller' => 'offers', 'action' => 'index')),
+            $status);
+    }
+
+    public function radius ($radius = null) {
+        if (! $this->Auth->user())
+            throw new ForbiddenException('Δεν επιτρέπεται η πρόσβαση');
+
+        $message = 'Παρουσιάστηκε σφάλμα κατά την αποθήκευση της ακτίνας αναζήτησης';
+        $flash_type = 'error';
+        $status = 400;
+
+        if ($radius != null) {
+            $valid_radius = array(RADIUS_S, RADIUS_M, RADIUS_L);
+
+            // save radius in session
+            if (in_array($radius, $valid_radius)) {
+                $this->Session->write('Auth.User.radius', (int)$radius);
+                $message = 'Η ακτίνα αναζήτησης αποθηκεύτηκε με επιτυχία.';
+                $flash_type = 'success';
+                $status = 200;
+            } else {
+                $this->Session->write('Auth.User.radius', RADIUS_L);
+                $message = 'Λανθασμένη επιλογή ακτίνας αναζήτησης. '
+                    . 'Η ακτίνα ορίστικε στην μέγιστη επιτρεπτή τιμή.';
+                $flash_type = 'info';
+                $status = 200;
+            }
+        }
+
+        $this->notify(
+            array($message, 'default', array(), $flash_type),
             array(array('controller' => 'offers', 'action' => 'index')),
             $status);
     }
@@ -378,4 +410,77 @@ https://my.teiath.gr</a>'),
             ));
         }
     }
+
+	function help(){
+        // this variable is used to display properly
+        // the selected element on header
+        $this->set('selected_action', 'help');
+        $this->set('title_for_layout', 'Αναφορά προβλήματος');
+        $issues_categories = array('τεχνικό', 'μέριμνα');
+        $this->set('issues_categories', $issues_categories);
+
+        if ($this->request->data) {
+            $userid = $this->Auth->user('id');
+            $username = $this->Auth->user('username');
+
+            $form_data = array();
+            $form_data['subject'] = $this->request->data['subject'];
+            $form_data['category'] = $issues_categories[$this->request->data['category']];
+            $form_data['userid'] = $userid;
+            $form_data['username'] = $username;
+            $form_data['description'] = $this->request->data['description'];
+            $result = $this->create_issue($form_data);
+            if ($result) {
+                $message = __('Η αναφορά καταχωρήθηκε με επιτυχία');
+                $flash = array($message, 'default', array(), 'success');
+                $this->notify($flash, array('/'));
+            } else {
+                $message = __('Η αναφορά δεν ήταν δυνατό να καταχωρηθεί');
+                $flash = array($message, 'default', array(), 'fail');
+                $this->notify($flash, array('/'));
+            }
+        }
+	}
+
+    private function create_issue($data) {
+        if (isset($data)) {
+            $req_data['subject'] = $data['subject'];
+            $req_data['description'] = "{$data['userid']} {$data['username']}\n";
+            $req_data['description'] .= "{$data['category']}\n";
+            $req_data['description'] .= $data['description'];
+            $req_xml = $this->create_xml_request($req_data);
+
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, ISSUE_URL);
+            curl_setopt($ch, CURLOPT_POST, false);
+            curl_setopt($ch, CURLOPT_USERPWD, ISSUE_TOKEN);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: text/xml'));
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $req_xml);
+            curl_setopt($ch, CURLOPT_FRESH_CONNECT, true);
+            curl_setopt($ch, CURLOPT_FAILONERROR,1);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+            $result = curl_exec($ch);
+            curl_close($ch);
+
+            return $result;
+        } else {
+            return false;
+        }
+    }
+
+    // Creates XML request to Redmine for reporting an issue
+    private function create_xml_request($data){
+        // Set project id
+        $projectID = 8;
+        $req = "<?xml version=\"1.0\"?>";
+        $req .= "<issue>";
+        $req .= "<subject>{$data['subject']}</subject>";
+        $req .= "<description>{$data['description']}</description>";
+        $req .= "<project_id>{$projectID}</project_id>";
+        $req .= "</issue>";
+
+        return $req;
+    }
+
+
 }

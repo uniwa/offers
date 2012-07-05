@@ -130,6 +130,7 @@ class Offer extends AppModel {
 
     // find offers based on keywords
     // searches in title, description, tags fields in offers table
+    // and name in companies table
     protected function _findSearch($state, $query, $results = array()) {
         if ($state === 'before') {
             $conditions = array();
@@ -137,6 +138,7 @@ class Offer extends AppModel {
                 $condition[] = array('Offer.title LIKE' => "%{$word}%");
                 $condition[] = array('Offer.description LIKE' => "%{$word}%");
                 $condition[] = array('Offer.tags LIKE' => "%{$word}%");
+                $condition[] = array('Company.name LIKE' => "%{$word}%");
             }
             $conditions['OR'] = $condition;
             $query['conditions'] = $conditions;

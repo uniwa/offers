@@ -82,7 +82,6 @@ $searchbox .= $this->Form->input('contains', array(
 $searchbox .= $this->Form->label('Offer.municipality',
                                  'Η επιχείριση βρίσκεται στο δήμο:');
 $searchbox .= $this->Form->select('municipality', $municipalities, array(
-    'showParents' => true,
     'label' => 'sdf',
     'value' => $municipality_id,
     'title' => 'Περιορισμός αποτελεσμάτων σε επιχειρήσεις αυτού του δήμου'));

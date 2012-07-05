@@ -79,3 +79,13 @@ footer ul li {
     display: inline;
     padding-left: 2em;
 }
+
+.profile-votes ul {
+    margin: 0 !important;
+}
+
+.profile-votes ul li {
+    list-style: none;
+    display: inline;
+    padding-right: 8px;
+}

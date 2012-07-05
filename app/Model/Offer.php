@@ -142,14 +142,19 @@ class Offer extends AppModel {
     protected function _findSearch($state, $query, $results = array()) {
         if ($state === 'before') {
             $conditions = array();
-            foreach ($query['words'] as $word) {
-                $condition[] = array('Offer.title LIKE' => "%{$word}%");
-                $condition[] = array('Offer.description LIKE' => "%{$word}%");
-                $condition[] = array('Offer.tags LIKE' => "%{$word}%");
-                $condition[] = array('Company.name LIKE' => "%{$word}%");
+
+            if (isset($query['words'])) {
+                foreach ($query['words'] as $word) {
+                    $condition[] = array('Offer.title LIKE' => "%{$word}%");
+                    $condition[] = array('Offer.description LIKE' => "%{$word}%");
+                    $condition[] = array('Offer.tags LIKE' => "%{$word}%");
+                    $condition[] = array('Company.name LIKE' => "%{$word}%");
+                }
+                $conditions['OR'] = $condition;
             }
-            $conditions['OR'] = $condition;
-            $query['conditions'] = $conditions;
+
+            $query['conditions'] = array_merge($query['conditions'], $conditions);
+
             $this->process_find($query);
             return $query;
         }

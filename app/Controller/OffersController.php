@@ -171,8 +171,14 @@ class OffersController extends AppController {
 
         $this->set('search_string', $alphanum);
         $this->set('municipality_id', $munic_id);
-        $words = explode(' ', $alphanum);
-        $params = array('search', 'words' => array_unique($words));
+
+        $params = array('search');
+        if ($alphanum != null)
+            $params['words'] = array_unique(explode(' ', $alphanum));
+
+        if ($munic_id != null)
+            $params['conditions'] = array('Company.municipality_id' => $munic_id);
+
         $this->ordering($params);
         $this->display($params);
     }

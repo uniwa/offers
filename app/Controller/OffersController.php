@@ -150,8 +150,9 @@ class OffersController extends AppController {
         // ensure that no consecutive whitespaces exist after the replacement
         // because that would cause empty-strings to be passed as query params
         // which, in turn, would produce subqueries as LIKE '%%'
-        $alphanum = trim($contains);
-        $alphanum = mb_eregi_replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s\s+', ' ', $alphanum);
+
+        $alphanum = mb_eregi_replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s\s+', ' ', $contains);
+        $alphanum = trim($alphanum);
 
         if ($alphanum != null) $params['contains'] = $alphanum;
         if ($munic_id != null) $params['municipality'] = intval($munic_id);

@@ -22,10 +22,18 @@ class Offer extends AppModel {
 
     // Find methods core processing
     private function process_find(&$query) {
-        $query['conditions'] = array_merge($query['conditions'], array(
-            'Offer.offer_state_id' => STATE_ACTIVE,
-            'Offer.is_spam' => 0,
-            'Company.is_enabled' => 1));
+        if (isset($query['show_spam'])) {
+
+            unset($query['show_spam']);
+            $query['conditions'] = array_merge($query['conditions'],
+                                               array('Offer.is_spam' => true));
+        } else {
+
+            $query['conditions'] = array_merge($query['conditions'], array(
+                'Offer.offer_state_id' => STATE_ACTIVE,
+                'Offer.is_spam' => 0,
+                'Company.is_enabled' => 1));
+        }
 
         if (isset($query['order'])) {
             // Handle distance ordering
@@ -134,14 +142,19 @@ class Offer extends AppModel {
     protected function _findSearch($state, $query, $results = array()) {
         if ($state === 'before') {
             $conditions = array();
-            foreach ($query['words'] as $word) {
-                $condition[] = array('Offer.title LIKE' => "%{$word}%");
-                $condition[] = array('Offer.description LIKE' => "%{$word}%");
-                $condition[] = array('Offer.tags LIKE' => "%{$word}%");
-                $condition[] = array('Company.name LIKE' => "%{$word}%");
+
+            if (isset($query['words'])) {
+                foreach ($query['words'] as $word) {
+                    $condition[] = array('Offer.title LIKE' => "%{$word}%");
+                    $condition[] = array('Offer.description LIKE' => "%{$word}%");
+                    $condition[] = array('Offer.tags LIKE' => "%{$word}%");
+                    $condition[] = array('Company.name LIKE' => "%{$word}%");
+                }
+                $conditions['OR'] = $condition;
             }
-            $conditions['OR'] = $condition;
-            $query['conditions'] = $conditions;
+
+            $query['conditions'] = array_merge($query['conditions'], $conditions);
+
             $this->process_find($query);
             return $query;
         }

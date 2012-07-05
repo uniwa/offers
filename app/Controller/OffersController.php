@@ -4,7 +4,7 @@ class OffersController extends AppController {
 
     public $name = 'Offers';
     public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day',
-        'Coupon', 'Student', 'Vote', 'Sanitize', 'Distance');
+        'Coupon', 'Student', 'Vote', 'Sanitize', 'Distance', 'Municipality');
     public $paginate = array(
 //        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
@@ -124,24 +124,62 @@ class OffersController extends AppController {
     }
 
     public function search($search = null) {
-        $request = $this->request->data;
+        $params = null;
+        $contains = null;
+        $munic_id = null;
 
-        if (!empty($request)) {
-            $search = $request['Offer']['search'];
+        $is_post = $this->request->is('post');
+        if ($is_post) {
+            // get POST data
+            $contains = $this->request->data('Offer.contains');
+            $munic_id = $this->request->data('Offer.municipality');
+
+        } else {
+            // get named parameters
+            $named = $this->request->params['named'];
+            if (! empty($named)) {
+
+                if (isset($named['contains']))
+                    $contains = $named['contains'];
+
+                if (isset($named['municipality']))
+                    $munic_id = $named['municipality'];
+            }
         }
 
-        $alphanum = Mb_Eregi_Replace("/[^a-zA-Zα-ωΑ-Ω0-9 ]/", " ", $search);
+        // ensure that no consecutive whitespaces exist after the replacement
+        // because that would cause empty-strings to be passed as query params
+        // which, in turn, would produce subqueries as LIKE '%%'
 
-        if (!empty($request)) {
-            $this->redirect(array(
-                'controller' => 'offers',
-                'action' => 'search',
-                $alphanum));
+        $alphanum = mb_eregi_replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s\s+', ' ', $contains);
+        $alphanum = trim($alphanum);
+
+        if ($alphanum != null) $params['contains'] = $alphanum;
+        if ($munic_id != null) $params['municipality'] = intval($munic_id);
+
+        // if no actual data were passed, redirect to index
+        if (empty($params)) {
+            $this->redirect(array('controller' => 'offers',
+                                  'action' => 'index'));
+        }
+
+        // if the request was made through POST, force agent to repeat it as GET
+        if ($is_post) {
+            $this->redirect(array_merge(array('controller' => 'offers',
+                                              'action' => 'search'),
+                                        $params));
         }
 
         $this->set('search_string', $alphanum);
-        $words = explode(' ', $alphanum);
-        $params = array('search', 'words' => $words);
+        $this->set('municipality_id', $munic_id);
+
+        $params = array('search');
+        if ($alphanum != null)
+            $params['words'] = array_unique(explode(' ', $alphanum));
+
+        if ($munic_id != null)
+            $params['conditions'] = array('Company.municipality_id' => $munic_id);
+
         $this->ordering($params);
         $this->display($params);
     }
@@ -184,7 +222,13 @@ class OffersController extends AppController {
     public function spam() {
         // make it easy to identify that spam is shown (so as to hide flag link)
         $this->set('shows_spam', true);
-        $params = array('all', 'conditions' => array('Offer.is_spam' => true));
+
+        $this->Offer->recursive = 0;
+        $params = array('all',
+                        // this goes through to the intrinsic _findAll()
+                        'conditions' => array('Offer.is_spam' => true),
+                        // this persists the options in custom process_find()
+                        'show_spam' => true);
         $this->ordering($params);
         $this->display($params);
     }
@@ -238,6 +282,7 @@ class OffersController extends AppController {
                             'companies' => $data['companies']));
 
         } else {
+            $this->set('municipalities', $this->Municipality->getHierarchy());
             $this->set('count_by_category',
                        $this->OfferCategory->find('countOffers'));
             $this->set('offers', $offers);

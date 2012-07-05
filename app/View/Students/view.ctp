@@ -202,18 +202,20 @@
 
                 // default votes order
                 $order = 'down';
+                $icon = '<i class="icon-chevron-down"></i>';
                 // set order for url based on previous selection
                 if (isset($this->params['named']['order'])) {
                     if ($this->params['named']['order'] == 'down') {
                         $order = 'up';
+                        $icon = '<i class="icon-chevron-up"></i>';
                     }
                 }
                 // sort url for votes
-                echo $this->Html->link('Η ψήφος μου', array(
+                echo $this->Html->link('Η ψήφος μου '.$icon, array(
                     'controller' => 'students',
                     'action' => 'view',
                     'order' => $order),
-                    array()
+                    array('escape' => false)
                 );
                 ?>
                 </th>

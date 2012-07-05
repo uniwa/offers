@@ -122,7 +122,7 @@ class VotesController extends AppController {
         $this->Offer->updateAll($update_fields, $update_conditions);
 
         // TODO handle web service and different origin
-        $this->redirect(array('controller' => 'offers', 'action' => 'view', $offer_id));
+        $this->redirect($this->referer());
     }
 
 }

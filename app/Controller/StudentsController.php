@@ -4,7 +4,7 @@ class StudentsController extends AppController {
 
     public $name = 'Students';
     public $helpers = array('Html', 'Time');
-    public $uses = array('User', 'Student', 'Coupon');
+    public $uses = array('User', 'Student', 'Coupon', 'Vote');
 
     public function beforeFilter() {
         if (! $this->is_authorized($this->Auth->user()))
@@ -59,6 +59,35 @@ class StudentsController extends AppController {
             'order' => $order)
         );
         $this->set('coupons', $coupons);
+
+
+        // set default order
+        $order = array('Vote.vote DESC');
+
+        // overwite with passed parameters
+        $params = $this->params['named'];
+        if (isset($params['order'])) {
+            if ($params['order'] == 'down') {
+                $order = array('Vote.vote ASC');
+            }
+        }
+
+        // grab voted offers with specific fields
+        $cond = array(
+            'Vote.student_id' => $this->Session->read('Auth.Student.id')
+        );
+
+        $fields = array(
+            'Vote.vote', 'Offer.id', 'Offer.title', 'Offer.vote_count',
+            'Offer.vote_plus', 'Offer.vote_minus'
+        );
+
+        $voted_offers = $this->Vote->find('all', array(
+            'conditions' => $cond,
+            'fields' => $fields,
+            'order' => $order)
+        );
+        $this->set('voted_offers', $voted_offers);
     }
 
     public function subscribe() {

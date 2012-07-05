@@ -74,16 +74,19 @@ $searchbox = $this->Form->create(null, array(
     'controller' => 'offers',
     'action' => 'search'));
 $searchbox .= $this->Form->input('contains', array(
-    'label' => '',
+    'label' => 'Περιέχει:',
     'type' => 'text',
     'value' => $search_string,
     'class' => 'input-medium',
     'title' => 'Κείμενο που περιέχεται σε προσφορά ή επιχείρηση'));
+$searchbox .= $this->Form->label('Offer.municipality',
+                                 'Η επιχείριση βρίσκεται στο δήμο:');
 $searchbox .= $this->Form->select('municipality', $municipalities, array(
     'showParents' => true,
+    'label' => 'sdf',
     'value' => $municipality_id,
     'title' => 'Περιορισμός αποτελεσμάτων σε επιχειρήσεις αυτού του δήμου'));
-$searchbox .= $this->Form->submit();
+$searchbox .= $this->Form->submit('Αναζήτηση');
 $searchbox .= $this->Form->end();
 
 ?>

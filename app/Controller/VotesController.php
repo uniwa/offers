@@ -72,9 +72,9 @@ class VotesController extends AppController {
             $cur_vote = (int)$vote['Vote']['vote'];
             if ($value === VOTE_CANCEL) {
                 if ($cur_vote === VOTE_DOWN)
-                    $vote_minus--;
+                    $offer['Offer']['vote_minus']--;
                 else
-                    $vote_plus--;
+                    $offer['Offer']['vote_plus']--;
                 $vote_add = -1;
                 // Delete vote
                 $this->Vote->delete($vote['Vote']['id']);
@@ -113,7 +113,13 @@ class VotesController extends AppController {
 
         // Update vote count and save offer without validation
         $offer['Offer']['vote_count'] = $cur_count + $vote_add;
-        $result = $this->Offer->save($offer, false);
+
+        $update_fields = array(
+            'Offer.vote_plus' => $offer['Offer']['vote_plus'],
+            'Offer.vote_minus' => $offer['Offer']['vote_minus'],
+            'Offer.vote_count' => $offer['Offer']['vote_count']);
+        $update_conditions = array('Offer.id' => $offer['Offer']['id']);
+        $this->Offer->updateAll($update_fields, $update_conditions);
 
         // TODO handle web service and different origin
         $this->redirect(array('controller' => 'offers', 'action' => 'view', $offer_id));

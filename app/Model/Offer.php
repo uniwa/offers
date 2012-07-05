@@ -49,7 +49,10 @@ class Offer extends AppModel {
 
     protected function _findCount($state, $query, $results = array()) {
         if ($state === 'before') {
-            $this->process_find($query);
+            // prevent count at save from crashing
+            if ($query['recursive'] > -1) {
+                $this->process_find($query);
+            }
         }
 
         return parent::_findCount($state, $query, $results);

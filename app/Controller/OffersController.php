@@ -4,7 +4,7 @@ class OffersController extends AppController {
 
     public $name = 'Offers';
     public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day',
-        'Coupon', 'Student', 'Vote', 'Sanitize', 'Distance');
+        'Coupon', 'Student', 'Vote', 'Sanitize', 'Distance', 'Municipality');
     public $paginate = array(
 //        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
@@ -248,6 +248,7 @@ class OffersController extends AppController {
                             'companies' => $data['companies']));
 
         } else {
+            $this->set('municipalities', $this->Municipality->getHierarchy());
             $this->set('count_by_category',
                        $this->OfferCategory->find('countOffers'));
             $this->set('offers', $offers);

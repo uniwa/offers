@@ -124,26 +124,53 @@ class OffersController extends AppController {
     }
 
     public function search($search = null) {
-        $request = $this->request->data;
+        $params = null;
+        $contains = null;
+        $munic_id = null;
 
-        if (!empty($request)) {
-            $search = $request['Offer']['search'];
+        $is_post = $this->request->is('post');
+        if ($is_post) {
+            // get POST data
+            $contains = $this->request->data('Offer.contains');
+            $munic_id = $this->request->data('Offer.municipality');
+
+        } else {
+            // get named parameters
+            $named = $this->request->params['named'];
+            if (! empty($named)) {
+
+                if (isset($named['contains']))
+                    $contains = $named['contains'];
+
+                if (isset($named['municipality']))
+                    $munic_id = $named['municipality'];
+            }
         }
 
-        $alphanum = trim($search);
         // ensure that no consecutive whitespaces exist after the replacement
         // because that would cause empty-strings to be passed as query params
         // which, in turn, would produce subqueries as LIKE '%%'
-        $alphanum = Mb_Eregi_Replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s+', ' ', $alphanum);
+        $alphanum = trim($contains);
+        $alphanum = mb_eregi_replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s\s+', ' ', $alphanum);
 
-        if (!empty($request)) {
-            $this->redirect(array(
-                'controller' => 'offers',
-                'action' => 'search',
-                $alphanum));
+        if ($alphanum != null) $params['contains'] = $alphanum;
+        if ($munic_id != null) $params['municipality'] = intval($munic_id);
+
+        // if no actual data were passed, redirect to index
+        if (empty($params)) {
+            $this->redirect(array('controller' => 'offers',
+                                  'action' => 'index'));
+        }
+
+        // if the request was made through POST, force agent to repeat it as GET
+        if ($is_post) {
+            $this->redirect(array_merge(array('controller' => 'offers',
+                                              'action' => 'search'),
+                                        $params));
         }
 
         $this->set('search_string', $alphanum);
+        $this->set('municipality_id', $munic_id);
         $words = explode(' ', $alphanum);
         $params = array('search', 'words' => array_unique($words));
         $this->ordering($params);

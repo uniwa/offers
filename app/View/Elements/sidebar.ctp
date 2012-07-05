@@ -67,7 +67,9 @@ foreach($offer_categories as $id => $name) {
 if (!isset($search_string)) {
     $search_string = '';
 }
-var_dump($search_string);
+if (!isset($municipality_id)) {
+    $municipality_id = null;
+}
 $searchbox = $this->Form->create(null, array(
     'controller' => 'offers',
     'action' => 'search'));
@@ -79,6 +81,7 @@ $searchbox .= $this->Form->input('contains', array(
     'title' => 'Κείμενο που περιέχεται σε προσφορά ή επιχείρηση'));
 $searchbox .= $this->Form->select('municipality', $municipalities, array(
     'showParents' => true,
+    'value' => $municipality_id,
     'title' => 'Περιορισμός αποτελεσμάτων σε επιχειρήσεις αυτού του δήμου'));
 $searchbox .= $this->Form->submit();
 $searchbox .= $this->Form->end();

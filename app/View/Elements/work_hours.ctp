@@ -1,24 +1,3 @@
-<style>
-    .workhour{
-        clear: both;
-        margin: 6px 0 0 0;
-    }
-    .day{
-        float: left;
-        margin: 6px 9px 0 0;
-        width: 80px;
-        text-align: right;
-    }
-    .hour select{
-        float: left;
-        width: 65px;
-/*        text-align: center;*/
-    }
-    .between{
-        float: left;
-        margin: 3px 6px;
-    }
-</style>
 <?php
     $html = "<div>Ωράρια προσφοράς<br />";
 

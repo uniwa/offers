@@ -89,3 +89,23 @@ footer ul li {
     display: inline;
     padding-right: 8px;
 }
+
+/* css for work_hours element */
+.workhour{
+    clear: both;
+    margin: 6px 0 0 0;
+}
+.day{
+    float: left;
+    margin: 6px 9px 0 0;
+    width: 80px;
+    text-align: right;
+}
+.hour select{
+    float: left;
+    width: 65px;
+}
+.between{
+    float: left;
+    margin: 3px 6px;
+}

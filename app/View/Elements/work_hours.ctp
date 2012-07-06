@@ -1,13 +1,11 @@
 <?php
-    $html = "<div>Ωράρια προσφοράς<br />";
-
     $name = 'workcount';
     $options = array(
         'type' => 'hidden',
         'class' => 'workcount',
         'value' => $work_hour_count,
     );
-    $html .= $this->Form->input($name, $options);
+    $html = $this->Form->input($name, $options);
 
     // manually print potential errors on work hours
     if ($this->Form->isFieldError('WorkHour.error')) {

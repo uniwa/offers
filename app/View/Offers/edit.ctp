@@ -20,8 +20,10 @@ foreach ($input_elements as $elem) {
     $elem_html .= $this->Form->input($elem['title'], $elem['options']);
 }
 
-if (isset($work_hours))
+if (isset($work_hours)) {
+    $elem_html .= "<div>Ωράρια προσφοράς<br />";
     $elem_html .= $this->element('work_hours', $work_hours);
+}
 
 $elem_html .= $this->Form->end('Αποθήκευση');
 echo $elem_html;

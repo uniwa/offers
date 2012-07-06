@@ -71,6 +71,7 @@ echo $this->Form->input('Company.latitude', array(
                         'type'  => 'hidden'
                        ));
 
+echo "<div>Ωράρια επιχείρησης<br />";
 echo $this->element( "work_hours", array(
     "work_hour_count" => $company['Company']['work_hour_count'],
     "timeFormat" => 24,

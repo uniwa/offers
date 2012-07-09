@@ -277,8 +277,10 @@ class OffersController extends AppController {
                     $data = $this->api_prepare_view($offers);
                     break;
             }
+            $pagination_info = $this->params['paging']['Offer'];
             $this->api_compile_response(
-                200, array( 'offers' => $data['offers'],
+                200, array( 'pagination' => $pagination_info,
+                            'offers' => $data['offers'],
                             'companies' => $data['companies']));
 
         } else {

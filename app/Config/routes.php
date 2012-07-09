@@ -81,6 +81,12 @@
                 '[method]' => 'GET'),
         array('ws' => $ws));
 
+    Router::connect('/:ws/offers/category/*',
+        array(  'controller' => 'offers',
+                'action' => 'category',
+                '[method]' => 'GET'),
+        array('ws' => $ws));
+
     Router::connect('/:ws/offers',
         array(  'controller' => 'offers',
                 'action' => 'index',

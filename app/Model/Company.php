@@ -27,6 +27,11 @@ class Company extends AppModel {
         ),
 
         'service_type' => array(
+            'not_empty' => array(
+                'rule' => 'notEmpty',
+                'message' => 'Παρακαλώ εισάγετε τον τύπο προσφερόμενης υπηρεσίας.',
+                'required' => true
+            ),
             'maxsize' => array(
                 'rule' => array('maxLength', 100),
                 'allowEmpty' => false,

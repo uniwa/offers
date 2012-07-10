@@ -15,9 +15,9 @@ class Company extends AppModel {
                 'required' => true
             ),
             'maxsize' => array(
-                'rule' => array('maxLength', 100),
+                'rule' => array('maxLength', 300),
                 'allowEmpty' => true,
-                'message' => 'Η επωνυμία μπορεί να περιέχει μέχρι 100 χαρακτήρες.'
+                'message' => 'Η επωνυμία μπορεί να περιέχει μέχρι 300 χαρακτήρες.'
             ),
             'valid' => array(
                 'rule' => '/^[\w\dαβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΆάΈέΎΉήύΊίΌόΏώϊϋΐΰς,. &]+$/',

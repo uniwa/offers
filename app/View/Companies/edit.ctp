@@ -3,6 +3,72 @@ echo $this->Html->css('leaflet');
 echo $this->Html->script('leaflet');
 echo $this->Html->script('reverse_address_lookup');
 
+$comp = $company['Company'];
+
+if (isset($comp['latitude']) && isset($comp['longitude'])) {
+    $lat = $comp['latitude'];
+    $lng = $comp['longitude'];
+} else {
+    $lat = '37.97';
+    $lng = '23.73';
+}
+$api_key = "6e88be5b35b842dca178fb0beb724a32";
+$images_path = "{$this->webroot}img/";
+$map_width = 400;
+$map_height = 280;
+
+// we need the application URL for the ajax call
+$app_url = trim(APP_URL, '/');
+
+echo <<< __EOF__
+<br /><div id='map'></div>
+<script type="text/javascript">
+    // automatic map lookup from address field
+    // we need document ready because address_lookup use map and form elemets
+    $(document).ready(function() {
+         $("#lookup").live('click', function() {
+            var url="{$app_url}"+"/requests/coordinates";
+            var address=$("#address-field").val();
+            address_lookup(url, address);
+         });
+     });
+   // map callback functions
+    function onMarkerClick(e) {
+        map.openPopup(popup);
+    };
+
+    function onMarkerDragEnd(e) {
+        popup.setLatLng(marker.getLatLng());
+        $('#comp-longitude').val(marker.getLatLng()['lng']);
+        $('#comp-latitude').val(marker.getLatLng()['lat']);
+    }
+
+    // show map
+    var map = new L.Map('map');$('#map').css('width',{$map_width}).css('height',{$map_height});
+    var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/{$api_key}/997/256/{z}/{x}/{y}.png';
+    var cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18});
+    var company = new L.LatLng({$lat},{$lng});
+    map.setView(company, 15).addLayer(cloudmade);
+
+    // show marker
+    var MyIcon = L.Icon.extend({iconUrl:'{$images_path}marker.png',
+        shadowUrl:'{$images_path}marker-shadow.png',iconSize:new L.Point(25,41),
+        shadowSize:new L.Point(41,41),iconAnchor: new L.Point(13,21),
+        popupAnchor:new L.Point(-3,-41)});
+    var icon = new MyIcon();
+    var marker = new L.Marker(company, {icon: icon, draggable: true});
+    map.addLayer(marker);
+
+    // show popup
+    var popup = new L.Popup({maxWidth: 400, offset: new L.Point(0, -20)});
+    popup.setLatLng(new L.LatLng({$lat}, ${lng}));
+    popup.setContent("Σύρετε τον δείκτη για να καταδείξετε την επιχείρησή σας.");
+    map.openPopup(popup);
+    marker.on('click', onMarkerClick);
+    marker.on('dragend', onMarkerDragEnd);
+</script>
+__EOF__;
+
 echo $this->Form->create(false, array(
                                     'url' => array(
                                         'controller' => 'companies',
@@ -93,70 +159,3 @@ echo $this->Html->link('Επιστροφή', array(
                        'controller' => 'companies',
                        'action' => 'view',
                        $company['Company']['id']));
-
-
-$comp = $company['Company'];
-
-if (isset($comp['latitude']) && isset($comp['longitude'])) {
-    $lat = $comp['latitude'];
-    $lng = $comp['longitude'];
-} else {
-    $lat = '37.97';
-    $lng = '23.73';
-}
-$api_key = "6e88be5b35b842dca178fb0beb724a32";
-$images_path = "{$this->webroot}img/";
-$map_width = 400;
-$map_height = 280;
-
-// we need the application URL for the ajax call
-$app_url = trim(APP_URL, '/');
-
-echo <<< __EOF__
-<br /><div id='map'></div>
-<script type="text/javascript">
-    // automatic map lookup from address field
-    // we need document ready because address_lookup use map and form elemets
-    $(document).ready(function() {
-         $("#lookup").live('click', function() {
-            var url="{$app_url}"+"/requests/coordinates";
-            var address=$("#address-field").val();
-            address_lookup(url, address);
-         });
-     });
-   // map callback functions
-    function onMarkerClick(e) {
-        map.openPopup(popup);
-    };
-
-    function onMarkerDragEnd(e) {
-        popup.setLatLng(marker.getLatLng());
-        $('#comp-longitude').val(marker.getLatLng()['lng']);
-        $('#comp-latitude').val(marker.getLatLng()['lat']);
-    }
-
-    // show map
-    var map = new L.Map('map');$('#map').css('width',{$map_width}).css('height',{$map_height});
-    var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/{$api_key}/997/256/{z}/{x}/{y}.png';
-    var cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18});
-    var company = new L.LatLng({$lat},{$lng});
-    map.setView(company, 15).addLayer(cloudmade);
-
-    // show marker
-    var MyIcon = L.Icon.extend({iconUrl:'{$images_path}marker.png',
-        shadowUrl:'{$images_path}marker-shadow.png',iconSize:new L.Point(25,41),
-        shadowSize:new L.Point(41,41),iconAnchor: new L.Point(13,21),
-        popupAnchor:new L.Point(-3,-41)});
-    var icon = new MyIcon();
-    var marker = new L.Marker(company, {icon: icon, draggable: true});
-    map.addLayer(marker);
-
-    // show popup
-    var popup = new L.Popup({maxWidth: 400, offset: new L.Point(0, -20)});
-    popup.setLatLng(new L.LatLng({$lat}, ${lng}));
-    popup.setContent("Σύρετε τον δείκτη για να καταδείξετε την επιχείρησή σας.");
-    map.openPopup(popup);
-    marker.on('click', onMarkerClick);
-    marker.on('dragend', onMarkerDragEnd);
-</script>
-__EOF__;

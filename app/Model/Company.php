@@ -27,10 +27,15 @@ class Company extends AppModel {
         ),
 
         'service_type' => array(
+            'not_empty' => array(
+                'rule' => 'notEmpty',
+                'message' => 'Παρακαλώ εισάγετε τον τύπο προσφερόμενης υπηρεσίας.',
+                'required' => true
+            ),
             'maxsize' => array(
                 'rule' => array('maxLength', 100),
                 'allowEmpty' => false,
-                'message' => 'Μπορείτε να εισάγετε μέχρι 100 χαρακτήρες.'
+                'message' => 'Ο τύπος προσφερόμενης υπηρεσίας μπορεί να περιέχει μέχρι 100 χαρακτήρες.'
             ),
             'valid' => array(
                 'rule' => '/^[\w\dαβγδεζηθικλμνξοπρστυφχψωΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΆάΈέΎΉήύΊίΌόΏώϊϋΐΰς,. &]+$/',

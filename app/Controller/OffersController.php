@@ -871,6 +871,7 @@ class OffersController extends AppController {
             $new_elem['options']['timeFormat'] = '24';
             $new_elem['options']['interval'] = '15';
             $new_elem['options']['empty'] = true;
+            $new_elem['options']['class'] = 'span2';
             $input_elements[] = $new_elem;
         }
 

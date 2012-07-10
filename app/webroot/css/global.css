@@ -114,6 +114,22 @@ footer ul li {
     color: #B94A48;
 }
 
+#big_image {
+    float: right;
+    width: 360px;
+    height: 100px;
+}
+
+#images{
+    margin: 12px 0 0 0;
+}
+
+.image_frame{
+    display: inline;
+    margin: 6px;
+    cursor: pointer;
+}
+
 #with_map {
     height: 200px;
 }

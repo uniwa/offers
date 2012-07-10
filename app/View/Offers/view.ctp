@@ -1,5 +1,6 @@
 <?php
 $html = '';
+$html .= "<div id='big_image'></div>";
 
 // TODO: move to controller
 $offer_state_id = $offer['Offer']['offer_state_id'];
@@ -169,11 +170,16 @@ if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
 }
 
 if (!empty($offer['Image'])) {
+    // Request geolocation iformation for logged user if not already set
+    $html .= "<script>var baseUrl = '".APP_URL."/images/view/';</script>";
+
+    $html .= "<div id='images'>";
     foreach ($offer['Image'] as $image) {
-        $html .= "<div class='image_frame'>";
+        $html .= "<div id='img{$image['id']}' class='image_frame'>";
         $html .= $this->Html->image('/images/thumb/'.$image['id']);
         $html .= "</div>";
     }
+    $html .= "</div>";
 }
 
 echo $html;

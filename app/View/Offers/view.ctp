@@ -155,9 +155,10 @@ if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
     $offer['Offer']['offer_type_id'] !== TYPE_HAPPYHOUR) {
     $html .= "<br/><br/>";
     if ($offer_type_id == TYPE_COUPONS) {
-        // Check both coupon count and state, just in case
+        // Check both coupon count and state and student coupons, just in case
         if (($offer['Offer']['coupon_count'] < $offer['Offer']['total_quantity'])
-            && ($offer['Offer']['offer_state_id'] == STATE_ACTIVE))
+            && ($offer['Offer']['offer_state_id'] == STATE_ACTIVE)
+            && ($coupons['enabled']))
         {
             $html .= $this->Form->create(false, array('type' => 'post',
                 'url' => array('controller' => 'coupons',

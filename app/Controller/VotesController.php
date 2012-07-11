@@ -10,6 +10,10 @@ class VotesController extends AppController {
         if (! $this->is_authorized($this->Auth->user()))
             throw new ForbiddenException();
 
+        // this call should precede all actions that return data (exceptions
+        // included)
+        $this->api_initialize();
+
         parent::beforeFilter();
     }
 
@@ -121,8 +125,15 @@ class VotesController extends AppController {
         $update_conditions = array('Offer.id' => $offer['Offer']['id']);
         $this->Offer->updateAll($update_fields, $update_conditions);
 
-        // TODO handle web service and different origin
-        $this->redirect($this->request->referer());
+        if ($this->is_webservice) {
+            $vote_result = array(
+                'offer_id' => $offer_id,
+                'vote_type' => $value);
+            $this->api_compile_response(
+                200, array('vote' => $vote_result));
+        } else {
+            $this->redirect($this->request->referer());
+        }
     }
 
 }

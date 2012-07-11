@@ -126,9 +126,10 @@ class VotesController extends AppController {
         $this->Offer->updateAll($update_fields, $update_conditions);
 
         if ($this->is_webservice) {
+            $vote_type = ($value === VOTE_CANCEL)?null:$value;
             $vote_result = array(
                 'offer_id' => $offer_id,
-                'vote_type' => $value);
+                'vote_type' => $vote_type);
             $this->api_compile_response(
                 200, array('vote' => $vote_result));
         } else {

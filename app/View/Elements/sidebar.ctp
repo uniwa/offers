@@ -50,11 +50,12 @@ if (isset($shows_spam)) {
 }
 
 $html = '';
-foreach($offer_categories as $id => $name) {
+foreach($offer_categories as $cat) {
+    $id = $cat['id'];
     $html .= "<li>";
-    $html .= $this->Html->link($name, array(
+    $html .= $this->Html->link($cat['name'], array(
         'controller' => 'offers', 'action' => 'category', $id));
-    $html .= " ({$count_by_category[$id][0]})";
+    $html .= " ({$cat['offer_count']})";
     $html .= $this->Html->link(
         '',
         array('controller' => 'offers', 'action' => 'category', "{$id}.rss"),

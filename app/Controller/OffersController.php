@@ -285,7 +285,7 @@ class OffersController extends AppController {
 
         } else {
             $this->set('municipalities', $this->Municipality->getHierarchy());
-            $this->set('count_by_category',
+            $this->set('offer_categories',
                        $this->OfferCategory->find('countOffers'));
             $this->set('offers', $offers);
             $this->render('index');

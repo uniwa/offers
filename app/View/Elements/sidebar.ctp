@@ -35,6 +35,17 @@ $limited_rss = $this->Html->link(
     array('class' => 'rss-limited', 'title' => 'RSS feed for limited offers')
 );
 
+// get the number of offers per type
+// any better ideas on how to implement this?
+foreach ($type_stats as $stats) {
+    switch ($stats['id']) {
+        case TYPE_HAPPYHOUR: $happyhour_count = $stats['offer_count']; break;
+        case TYPE_COUPONS: $coupons_count = $stats['offer_count']; break;
+        case TYPE_LIMITED: $limited_count = $stats['offer_count']; break;
+    }
+}
+
+
 if (isset($shows_spam)) {
     // if `shows_spam' has been set to true, then only spam offers are currently
     // being rendered, in which case a link to display non-spam offers should be
@@ -50,11 +61,12 @@ if (isset($shows_spam)) {
 }
 
 $html = '';
-foreach($offer_categories as $id => $name) {
+foreach($offer_categories as $cat) {
+    $id = $cat['id'];
     $html .= "<li>";
-    $html .= $this->Html->link($name, array(
+    $html .= $this->Html->link($cat['name'], array(
         'controller' => 'offers', 'action' => 'category', $id));
-    $html .= " ({$count_by_category[$id][0]})";
+    $html .= " ({$cat['offer_count']})";
     $html .= $this->Html->link(
         '',
         array('controller' => 'offers', 'action' => 'category', "{$id}.rss"),
@@ -96,9 +108,9 @@ $searchbox .= $this->Form->end();
               <li><?php echo $searchbox ?></li>
               <?php if (isset($spam_link)) echo $spam_link ?>
               <li class="nav-header">Ειδη Προσφορων</li>
-              <li><?php echo $happyhour, $happyhour_rss ?></li>
-              <li><?php echo $coupons, $coupons_rss?></li>
-              <li><?php echo $limited, $limited_rss ?></li>
+              <li><?php echo $happyhour, " ($happyhour_count)", $happyhour_rss ?></li>
+              <li><?php echo $coupons, " ($coupons_count)", $coupons_rss?></li>
+              <li><?php echo $limited, " ($limited_count)", $limited_rss ?></li>
               <li class="nav-header">Κατηγοριες Προσφορων</li>
               <?php echo $html; ?>
             </ul>

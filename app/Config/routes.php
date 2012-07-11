@@ -75,6 +75,7 @@
                 '[method]' => 'GET'),
         array('ws' => $ws));
 
+
     Router::connect('/:ws/offer/*',
         array(  'controller' => 'offers',
                 'action' => 'view',
@@ -102,6 +103,12 @@
     Router::connect('/:ws/offers/category/*',
         array(  'controller' => 'offers',
                 'action' => 'category',
+                '[method]' => 'GET'),
+        array('ws' => $ws));
+
+    Router::connect('/:ws/offers/statistics/*',
+        array(  'controller' => 'offers',
+                'action' => 'statistics',
                 '[method]' => 'GET'),
         array('ws' => $ws));
 

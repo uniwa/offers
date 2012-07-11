@@ -147,20 +147,22 @@ class AppController extends Controller{
 
         if ($this->is_webservice) {
 
-            // get message from setFlash parameters
-            if (is_array($flash)) {
-                $flash = reset($flash);
-            }
+            if (! empty($flash)) {
+                // get message from setFlash parameters
+                if (is_array($flash)) {
+                    $flash = reset($flash);
+                }
 
-            // the message is given a tag
-            $msg_param = array('message' => $flash);
+                // the message is given a tag
+                $msg_param = array('message' => $flash);
 
-            // the message parameter is placed within `extra' in the beggining
-            // of the response
-            if (empty($extra)) {
-                $extra = $msg_param;
-            } else {
-                $extra = array_merge($msg_param, $extra);
+                // the message parameter is placed within `extra' in the
+                // beggining of the response
+                if (empty($extra)) {
+                    $extra = $msg_param;
+                } else {
+                    $extra = array_merge($msg_param, $extra);
+                }
             }
 
             $this->api_compile_response($status, $extra);

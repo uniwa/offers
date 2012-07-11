@@ -1,6 +1,7 @@
 <?php
-$sidebar_params = array('count_by_category' => $count_by_category);
-$sidebar_params[] = array('municipalities' => $municipalities);
+$sidebar_params = array('offer_categories' => $offer_categories,
+                        'municipalities' => $municipalities,
+                        'type_stats' => $type_stats);
 
 $show_flag_link = false;
 

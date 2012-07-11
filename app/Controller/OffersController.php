@@ -455,12 +455,19 @@ class OffersController extends AppController {
             $this->set('offer_info', $offer_info);
 
             // don't query if we already have student's vote
-            $student_id = $this->Session->read('Auth.Student.id');
-            $options['conditions'] = array(
-                'Vote.offer_id' => $id,
-                'Vote.student_id' => $student_id);
-            $options['recursive'] = -1;
-            $vote = $this->Vote->find('first', $options);
+            if (isset($student_id)) {
+                if ($student_id === VOTE_CANCEL) {
+                    $student_id = null;
+                }
+            } else {
+                $student_id = $this->Session->read('Auth.Student.id');
+                $options['conditions'] = array(
+                    'Vote.offer_id' => $id,
+                    'Vote.student_id' => $student_id);
+                $options['recursive'] = -1;
+                $vote = $this->Vote->find('first', $options);
+                $student_id = $vote['Vote']['vote'];
+            }
             $this->set('student_vote', $vote['Vote']['vote']);
 
             // whether to create the flag (as spam) link

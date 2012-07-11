@@ -45,6 +45,24 @@
 
     Router::parseExtensions('rss', 'xml', 'json');
 
+    Router::connect('/:ws/vote/vote_up/*',
+        array(  'controller' => 'votes',
+                'action' => 'vote_up',
+                '[method]' => 'GET'),
+        array('ws' => $ws));
+
+    Router::connect('/:ws/vote/vote_down/*',
+        array(  'controller' => 'votes',
+                'action' => 'vote_down',
+                '[method]' => 'GET'),
+        array('ws' => $ws));
+
+    Router::connect('/:ws/vote/vote_cancel/*',
+        array(  'controller' => 'votes',
+                'action' => 'vote_cancel',
+                '[method]' => 'GET'),
+        array('ws' => $ws));
+
     Router::connect('/:ws/offer/activate/*',
         array(  'controller' => 'offers',
                 'action' => 'activate',

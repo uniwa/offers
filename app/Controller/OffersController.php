@@ -287,6 +287,8 @@ class OffersController extends AppController {
             $this->set('municipalities', $this->Municipality->getHierarchy());
             $this->set('offer_categories',
                        $this->OfferCategory->find('countOffers'));
+            $this->set('type_stats',
+                       $this->Offer->find('typeStats'));
             $this->set('offers', $offers);
             $this->render('index');
         }

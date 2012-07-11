@@ -386,6 +386,32 @@ class OffersController extends AppController {
             }
         }
 
+        // if user is logged in get vote status for this offer
+        if ($this->Auth->User('id') != null) {
+            if ($this_user_role === ROLE_STUDENT) {
+                $conditions = array(
+                    'Vote.student_id' => $this->Session->read('Auth.Student.id'),
+                    'Vote.offer_id' => $id
+                );
+
+                $student_vote = $this->Vote->find('first', array(
+                    'conditions' => $conditions,
+                    'fields' => array('Vote.vote'),
+                    'recursive' => -1)
+                );
+
+                if (is_null($student_vote['Vote']['vote'])) {
+                    // Set this shit to -1 because php is retarded and
+                    // cannot differentiate between null and set/not-set
+                    // variables. So PHP, fuck you.
+                    $student_vote = VOTE_CANCEL;
+                } else {
+                    $student_vote = $student_vote['Vote']['vote'];
+                }
+            }
+        }
+
+
         if ($this->is_webservice) {
             switch ($this->webservice_type) {
                 case 'js':
@@ -397,6 +423,13 @@ class OffersController extends AppController {
                     $offer_info = $this->api_prepare_view($offer);
                     break;
             }
+            // set the student's vote type
+            if (isset($student_vote)) {
+                // use === to avoid typecast of -1 to true
+                if ($student_vote === VOTE_CANCEL) $student_vote = null;
+                $offer_info['offer']['student_vote']['vote_type'] = $student_vote;
+            }
+
             $this->api_compile_response(200, array(
                 'offer' => $offer_info['offer'],
                 'company' => $offer_info['company']));
@@ -420,6 +453,8 @@ class OffersController extends AppController {
             // Prepare information for view
             $offer_info = $this->prepare_view($offer);
             $this->set('offer_info', $offer_info);
+
+            // don't query if we already have student's vote
             $student_id = $this->Session->read('Auth.Student.id');
             $options['conditions'] = array(
                 'Vote.offer_id' => $id,

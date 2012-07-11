@@ -360,16 +360,30 @@ class OffersController extends AppController {
         }
 
         $this->set('offer', $offer);
+        $offer_type_id = $offer['Offer']['offer_type_id'];
 
         if ($this_user_role === ROLE_STUDENT) {
             $st_opts['conditions'] = array('Student.id' => $this_user_id);
             $st_opts['recursive'] = -1;
             $student = $this->Student->find('first', $st_opts);
             $this->set('student', $student);
+
+            if ($offer_type_id == TYPE_COUPONS) {
+                // build query
+                $conditions = array(
+                    'Offer.id' => $id,
+                    'Coupon.student_id' => $student['Student']['id']);
+
+                $coupons['count'] = $this->Offer->Coupon->find('count', array(
+                    'conditions' => $conditions));
+                $coupons['enabled'] = $coupons['count'] < $offer['Offer']['max_per_student'];
+
+                $this->set('coupons', $coupons);
+            }
         }
 
         //get coupons for offer if user is owner and coupon is of type 'COUPONS'
-        if ($offer['Offer']['offer_type_id'] == TYPE_COUPONS) {
+        if ($offer_type_id == TYPE_COUPONS) {
             if ($this->Offer->is_owned_by($id, $this_user_id)) {
                 // build query
                 $fields = array('Coupon.id', 'Coupon.serial_number', 'Coupon.created', 'Coupon.is_used');

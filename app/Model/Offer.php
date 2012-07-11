@@ -188,7 +188,7 @@ class Offer extends AppModel {
 
         $res = array();
         foreach ($result as $record) {
-            $type_id = $record['Offer']['id'];
+            $type_id = $record['Offer']['offer_type_id'];
             $offer_count = $record[0]['offer_count'];
 
             $types[$type_id]['offer_count'] = $offer_count;

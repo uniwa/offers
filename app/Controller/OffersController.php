@@ -420,8 +420,12 @@ class OffersController extends AppController {
                     // set the student's vote type
                     if (isset($student_vote)) {
                         // use === to avoid typecast of -1 to true
-                        if ($student_vote === VOTE_CANCEL) $student_vote = null;
-                        $offer_info['offer']['student_vote']['vote_type'] = $student_vote;
+                        if ($student_vote === VOTE_CANCEL) {
+                            $offer_info['offer']['student_vote']['vote_type'] = null;
+                        } else {
+                            // be consistent with XML, true => 1 / false => 0
+                            $offer_info['offer']['student_vote']['vote_type'] = $student_vote ? 1 : 0;
+                        }
                     }
                     break;
 

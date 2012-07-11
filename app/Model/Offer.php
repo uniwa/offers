@@ -176,25 +176,26 @@ class Offer extends AppModel {
         // sure that all 'count' fields are initialized to 0 just in case there
         // are no offers of a particular type
         $types = array(
-            TYPE_HAPPYHOUR => array('offer_type_id' => TYPE_HAPPYHOUR,
-                                    'offer_type_name' => offer_type(TYPE_HAPPYHOUR),
+            TYPE_HAPPYHOUR => array('id' => TYPE_HAPPYHOUR,
+                                    'name' => offer_type(TYPE_HAPPYHOUR),
                                     'offer_count' => 0),
-            TYPE_COUPONS => array('offer_type_id' => TYPE_COUPONS,
-                                  'offer_type_name' => offer_type(TYPE_COUPONS),
+            TYPE_COUPONS => array('id' => TYPE_COUPONS,
+                                  'name' => offer_type(TYPE_COUPONS),
                                   'offer_count' => 0),
-            TYPE_LIMITED => array('offer_type_id' => TYPE_LIMITED,
-                                  'offer_type_name' => offer_type(TYPE_LIMITED),
+            TYPE_LIMITED => array('id' => TYPE_LIMITED,
+                                  'name' => offer_type(TYPE_LIMITED),
                                   'offer_count' => 0));
 
+        $res = array();
         foreach ($result as $record) {
-            $type_id = $record['Offer']['offer_type_id'];
+            $type_id = $record['Offer']['id'];
             $offer_count = $record[0]['offer_count'];
 
             $types[$type_id]['offer_count'] = $offer_count;
-
+            $res[] = $types[$type_id];
         }
 
-        return $types;
+        return $res;
     }
 
     // @param $company_id limits find to offers that belong to the specified

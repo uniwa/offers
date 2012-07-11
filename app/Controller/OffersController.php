@@ -55,7 +55,7 @@ class OffersController extends AppController {
     public function is_authorized($user) {
         $role = $this->Auth->user('role');
         $allow = array('index', 'category', 'view', 'happyhour', 'coupons',
-            'limited', 'tag', 'search');
+            'limited', 'tag', 'search', 'statistics');
         $owner = array('edit', 'delete', 'imageedit', 'activate', 'terminate',
             'copy');
         $companies = array('add_happyhour', 'add_coupons', 'add_limited',
@@ -503,6 +503,21 @@ class OffersController extends AppController {
             $is_flaggable = $can_user_flag && $is_in_state && $is_not_flagged;
             $this->set('is_flaggable', $is_flaggable);
         }
+    }
+
+    public function statistics() {
+
+        if (! $this->is_webservice) throw new NotFoundException();
+
+        $type_stats = $this->Offer->find('typeStats');
+        $cat_stats = $this->OfferCategory->find('countOffers');
+
+        // conditions array is only set to avoid careless merge in process_find
+        $total = $this->Offer->find('count', array('conditions' => array()));
+
+        $this->notify(null, null, 200, array('total_offers' => $total,
+                                             'types' => $type_stats,
+                                             'categories' => $cat_stats));
     }
 
     private function prepare_view($offer) {

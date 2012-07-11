@@ -417,17 +417,22 @@ class OffersController extends AppController {
                 case 'js':
                 case 'json':
                     $offer_info = $this->api_prepare_view($offer, false);
+                    // set the student's vote type
+                    if (isset($student_vote)) {
+                        // use === to avoid typecast of -1 to true
+                        if ($student_vote === VOTE_CANCEL) $student_vote = null;
+                        $offer_info['offer']['student_vote']['vote_type'] = $student_vote;
+                    }
                     break;
 
                 case 'xml':
                     $offer_info = $this->api_prepare_view($offer);
+                    if (isset($student_vote)) {
+                        // use === to avoid typecast of -1 to true
+                        if ($student_vote === VOTE_CANCEL) $student_vote = null;
+                        $offer_info['offer'][0]['student_vote']['vote_type'] = $student_vote;
+                    }
                     break;
-            }
-            // set the student's vote type
-            if (isset($student_vote)) {
-                // use === to avoid typecast of -1 to true
-                if ($student_vote === VOTE_CANCEL) $student_vote = null;
-                $offer_info['offer']['student_vote']['vote_type'] = $student_vote;
             }
 
             $this->api_compile_response(200, array(

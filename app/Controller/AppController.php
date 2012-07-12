@@ -39,6 +39,7 @@ class AppController extends Controller{
     // possible values: xml, json, js
     protected $webservice_type;
 
+    protected $pattern_simple = '[^a-zA-Zα-ωΑ-Ω0-9άέήίόύώϊϋΐΰΫΪ ]|\s\s+';
 
     function beforeFilter() {
         // allow everything

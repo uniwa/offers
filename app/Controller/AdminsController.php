@@ -63,7 +63,7 @@ class AdminsController extends AppController {
         if (isset($request['contains'])) {
 
             $search = $request['contains'];
-            $search = mb_eregi_replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s\s+', ' ', $search);
+            $search = mb_eregi_replace($this->pattern_simple, ' ', $search);
             $search = trim($search);
             $request['contains'] = $search;
 
@@ -121,7 +121,7 @@ class AdminsController extends AppController {
         if (! empty($this->request->data)) {
 
             $search = $this->request->data('contains');
-            $search = mb_eregi_replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s\s+', ' ', $search);
+            $search = mb_eregi_replace($this->pattern_simple, ' ', $search);
             $search = trim($search);
 
             $this->request->data('contains', $search);
@@ -154,7 +154,7 @@ class AdminsController extends AppController {
         if (isset($request['contains'])) {
 
             $search = $request['contains'];
-            $search = mb_eregi_replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s\s+', ' ', $search);
+            $search = mb_eregi_replace('[^\w ]|\s\s+', ' ', $search);
             $search = trim($search);
             $request['contains'] = $search;
 

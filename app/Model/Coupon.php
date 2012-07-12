@@ -27,6 +27,18 @@ class Coupon extends AppModel {
         return $student_coupons >= $offer_coupons;
     }
 
+    public function student_coupons($offer_id, $student_id) {
+        // get coupons booked by specific student
+        $conditions = array('student_id' => $student_id,
+                            'offer_id' => $offer_id);
+
+        $student_coupons = $this->find('all', array(
+            'conditions' => $conditions,
+            'recursive' => -1));
+
+        return $student_coupons;
+    }
+
     public function is_owned_by($coupon_id, $student_id) {
         $conditions = array('Coupon.id' => $coupon_id);
         // notice:

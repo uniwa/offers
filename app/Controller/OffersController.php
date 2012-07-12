@@ -431,6 +431,16 @@ class OffersController extends AppController {
                             // be consistent with XML, true => 1 / false => 0
                             $offer_info['offer']['student_vote']['vote_type'] = $student_vote ? 1 : 0;
                         }
+
+                        // designate if student can grap a coupon for this offer
+                        //
+                        //  "student_coupon": {
+                        //      "enabled": 1
+                        //  }
+                        //  valid values: `0` and `1`
+                        if (isset($coupons)) {
+                            $offer_info['offer']['student_coupon']['enabled'] = $coupons['enabled'] ? 1 : 0;
+                        }
                     }
                     break;
 
@@ -440,6 +450,17 @@ class OffersController extends AppController {
                         // use === to avoid typecast of -1 to true
                         if ($student_vote === VOTE_CANCEL) $student_vote = null;
                         $offer_info['offer'][0]['student_vote']['vote_type'] = $student_vote;
+
+                        // designate if student can grap a coupon for this offer
+                        //
+                        //  "student_coupon": {
+                        //      "enabled": 1
+                        //  }
+                        //  valid values: `0` and `1`
+                        if (isset($coupons)) {
+                            $offer_info['offer'][0]['student_coupon'] = $coupons;
+                        }
+
                     }
                     break;
             }

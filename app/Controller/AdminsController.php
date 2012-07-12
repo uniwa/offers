@@ -119,6 +119,13 @@ class AdminsController extends AppController {
 
         // == force a redirect so as to display pretty options ==
         if (! empty($this->request->data)) {
+
+            $search = $this->request->data('contains');
+            $search = mb_eregi_replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s\s+', ' ', $search);
+            $search = trim($search);
+
+            $this->request->data('contains', $search);
+
             // basis of the redirection params
             $redirect = array('controller' => 'admins',
                               'action' => 'companies');
@@ -128,7 +135,7 @@ class AdminsController extends AppController {
                                     $this->request->named,
                                     $this->request->data);
 
-            // do NOT preserve page (because results may be differect)
+            // do NOT preserve page (because results may differ)
             if (isset($redirect['page'])) unset($redirect['page']);
 
             // remove empty filters from uri
@@ -144,11 +151,15 @@ class AdminsController extends AppController {
         // will be used to contain filtering options
         $options = array();
 
-        if (isset($request['search'])) {
+        if (isset($request['contains'])) {
 
-            $search = $request['search'];
+            $search = $request['contains'];
+            $search = mb_eregi_replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s\s+', ' ', $search);
+            $search = trim($search);
+            $request['contains'] = $search;
+
             if (! empty($search)) {
-                $search_keyword = "%{$request['search']}%";
+                $search_keyword = "%{$search}%";
                 $or_clause = array();
                 $or_clause[] = array('Company.name LIKE' => $search_keyword);
                 $or_clause[] = array('User.username LIKE' => $search_keyword);

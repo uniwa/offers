@@ -10,6 +10,7 @@ $is_spam = $offer['Offer']['is_spam'];
 $is_user_the_owner = $this->Session->read('Auth.User.id') == $offer['Company']['user_id'];
 $is_offer_draft = $offer_state_id == STATE_DRAFT;
 $is_offer_active = $offer_state_id == STATE_ACTIVE;
+$role = $is_user_the_owner = $this->Session->read('Auth.User.role');
 
 // Offer actions (copy,images, etc.)
 if ($is_user_the_owner) {
@@ -102,7 +103,7 @@ if (!is_null($student_vote)) {
     $html .= "<div class='{$vote_class}'>{$my_vote}</div>";
 }
 
-if ($this->Session->read('Auth.User.role') === ROLE_STUDENT) {
+if ($role === ROLE_STUDENT) {
     $icon_thumbs_up = "<i class='icon-thumbs-up'></i>";
     $icon_thumbs_down = "<i class='icon-thumbs-down'></i>";
     $icon_cancel = "<i class='icon-remove'></i>";
@@ -151,7 +152,7 @@ foreach($offer_info as $elem) {
 
 
 
-if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
+if ($role === ROLE_STUDENT &&
     $offer['Offer']['offer_type_id'] !== TYPE_HAPPYHOUR) {
     $html .= "<br/><br/>";
     if ($offer_type_id == TYPE_COUPONS) {
@@ -167,6 +168,12 @@ if ($this->Session->read('Auth.User.role') === ROLE_STUDENT &&
                          )));
             $html .= $this->Form->end('Get Coupon');
         }
+
+        // display coupons booked by current user
+        $coupons_html = $this->element('coupons', array(
+            'role' => $role,
+            'coupons' => $coupons['coupons'],
+            'view' => 'offer'));
     }
 }
 
@@ -244,4 +251,8 @@ if (isset($is_owner) and $is_owner == true) {
         </table>
     </div>
 <?php
+}
+
+if (isset($coupons_html)) {
+    echo $coupons_html;
 }

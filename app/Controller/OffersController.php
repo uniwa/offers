@@ -366,9 +366,11 @@ class OffersController extends AppController {
 
         if ($this_user_role === ROLE_STUDENT) {
             if ($offer_type_id == TYPE_COUPONS) {
+                $student_id = $this->Session->read('Auth.Student.id');
                 // negate result as this returns if max number of coupons is reached
                 $coupons['enabled'] =
-                    ! $this->Coupon->max_coupons_reached($id, $this->Session->read('Auth.Student.id'));
+                    ! $this->Coupon->max_coupons_reached($id, $student_id);
+                $coupons['coupons'] = $this->Coupon->student_coupons($id, $student_id);
                 $this->set('coupons', $coupons);
             }
         }

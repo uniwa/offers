@@ -1,6 +1,6 @@
 <?php
 $happyhour = $this->Html->link(
-    'HappyHour',
+    ucwords(offer_type(TYPE_HAPPYHOUR)),
     array('controller' => 'offers', 'action' => 'happyhour'),
     array('class' => '')
 );
@@ -12,7 +12,7 @@ $happyhour_rss = $this->Html->link(
 );
 
 $coupons = $this->Html->link(
-    'Coupons',
+    ucwords(offer_type(TYPE_COUPONS)),
     array('controller' => 'offers', 'action' => 'coupons'),
     array('class' => '')
 );
@@ -24,7 +24,7 @@ $coupons_rss = $this->Html->link(
 );
 
 $limited = $this->Html->link(
-    'Limited',
+    ucwords(offer_type(TYPE_LIMITED)),
     array('controller' => 'offers', 'action' => 'limited'),
     array('class' => '')
 );

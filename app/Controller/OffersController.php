@@ -365,21 +365,10 @@ class OffersController extends AppController {
         $offer_type_id = $offer['Offer']['offer_type_id'];
 
         if ($this_user_role === ROLE_STUDENT) {
-            $st_opts['conditions'] = array('Student.id' => $this_user_id);
-            $st_opts['recursive'] = -1;
-            $student = $this->Student->find('first', $st_opts);
-            $this->set('student', $student);
-
             if ($offer_type_id == TYPE_COUPONS) {
-                // build query
-                $conditions = array(
-                    'Offer.id' => $id,
-                    'Coupon.student_id' => $student['Student']['id']);
-
-                $coupons['count'] = $this->Offer->Coupon->find('count', array(
-                    'conditions' => $conditions));
-                $coupons['enabled'] = $coupons['count'] < $offer['Offer']['max_per_student'];
-
+                // negate result as this returns if max number of coupons is reached
+                $coupons['enabled'] =
+                    ! $this->Coupon->max_coupons_reached($id, $this->Session->read('Auth.Student.id'));
                 $this->set('coupons', $coupons);
             }
         }

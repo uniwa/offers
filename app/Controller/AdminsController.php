@@ -28,6 +28,13 @@ class AdminsController extends AppController {
 
         // == force a redirect so as to display pretty options ==
         if (! empty($this->request->data)) {
+
+            $search = $this->request->data('search');
+            $search = mb_eregi_replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s\s+', ' ', $search);
+            $search = trim($search);
+
+            $this->request->data('search', $search);
+
             // basis of the redirection params
             $redirect = array('controller' => 'admins',
                               'action' => 'students');
@@ -56,8 +63,12 @@ class AdminsController extends AppController {
         if (isset($request['search'])) {
 
             $search = $request['search'];
+            $search = mb_eregi_replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s\s+', ' ', $search);
+            $search = trim($search);
+            $request['search'] = $search;
+
             if (! empty($search)) {
-                $search_keyword = "%{$request['search']}%";
+                $search_keyword = "%{$search}%";
                 $or_clause = array();
                 $or_clause[] = array('Student.name LIKE' => $search_keyword);
                 $or_clause[] = array('User.username LIKE' => $search_keyword);

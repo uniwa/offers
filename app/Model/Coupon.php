@@ -34,7 +34,7 @@ class Coupon extends AppModel {
 
         $student_coupons = $this->find('all', array(
             'conditions' => $conditions,
-            'recursive' => -1));
+            'recursive' => 0));
 
         return $student_coupons;
     }

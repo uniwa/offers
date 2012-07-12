@@ -186,16 +186,14 @@ class Offer extends AppModel {
                                   'name' => offer_type(TYPE_LIMITED),
                                   'offer_count' => 0));
 
-        $res = array();
         foreach ($result as $record) {
             $type_id = $record['Offer']['offer_type_id'];
             $offer_count = $record[0]['offer_count'];
 
             $types[$type_id]['offer_count'] = $offer_count;
-            $res[] = $types[$type_id];
         }
 
-        return $res;
+        return array_values($types);
     }
 
     // @param $company_id limits find to offers that belong to the specified

@@ -151,7 +151,7 @@ class OffersController extends AppController {
         // because that would cause empty-strings to be passed as query params
         // which, in turn, would produce subqueries as LIKE '%%'
 
-        $alphanum = mb_eregi_replace('[^a-zA-Zα-ωΑ-Ω0-9 ]|\s\s+', ' ', $contains);
+        $alphanum = mb_eregi_replace($this->pattern_simple, ' ', $contains);
         $alphanum = trim($alphanum);
 
         if ($alphanum != null) $params['contains'] = $alphanum;

@@ -132,14 +132,15 @@ if (! empty($company['WorkHour'])) {
         echo "<span class=\"bold\">{$wh['name']}:</span> {$wh['time']}";
     }
 }
-
 echo '<br/>';
+$html_clock = "<i class='icon-time'></i>";
 
 // display Active offers
 if (empty($company['Offer']['Active'])) {
     echo 'Δεν υπάρχουν ενεργές προσφορές.<br/>';
 } else {
     echo 'Ενεργές προσφορές:<br/>';
+    $time_now = new DateTime();
     foreach ($company['Offer']['Active'] as $active) {
         $vote_plus = $active['vote_plus'];
         $vote_minus = $active['vote_minus'];
@@ -147,24 +148,29 @@ if (empty($company['Offer']['Active'])) {
         $votes = "<span class='votes green'>+{$vote_plus}</span> ";
         $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
         $votes .= "({$vote_count}) ";
-
         echo $votes;
+
         echo $this->Html->link($active['title'],
                                array('controller' => 'offers',
                                      'action' => 'view', $active['id'])
                               );
 
         if ($is_user_the_owner) {
-          echo ' ' . $this->Html->link(
-              '[Τερματισμός]',
-              array(
-                  'controller' => 'offers',
-                  'action' => 'terminate',
-                  $active['id']),
-              null,
-              'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. '.
-              'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+            // display a clock next to offer if autoend time is set
+            $time_end = new DateTime($active['autoend']);
+            if ($time_end > $time_now) {
+                echo $html_clock;
+            }
 
+            echo ' ' . $this->Html->link(
+            '[Τερματισμός]',
+            array(
+                'controller' => 'offers',
+                'action' => 'terminate',
+                $active['id']),
+            null,
+            'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. '.
+            'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
         } else if ($is_user_admin) {
             echo $this->Html->link(
                     $flag_icon . ' Σήμανση ως SPAM',
@@ -196,20 +202,27 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
             $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
             $votes .= "({$vote_count}) ";
             echo $votes;
+
             echo $this->Html->link($draft['title'],
                                    array('controller' => 'offers',
                                          'action' => 'view', $draft['id'])
                                   );
 
             if ($is_user_the_owner) {
-              echo ' ' . $this->Html->link(
-                  '[Ενεργοποίηση]',
-                  array(
-                      'controller' => 'offers',
-                      'action' => 'activate',
-                      $draft['id']),
-                  null,
-                  'Οι ενεργοποιημένες προσφορές δε δύναται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+                // display a clock next to offer if autostart time is set
+                $time_start = new DateTime($draft['autostart']);
+                if ($time_start > $time_now) {
+                    echo $html_clock;
+                }
+
+                echo ' ' . $this->Html->link(
+                '[Ενεργοποίηση]',
+                array(
+                    'controller' => 'offers',
+                    'action' => 'activate',
+                    $draft['id']),
+                null,
+                'Οι ενεργοποιημένες προσφορές δε δύναται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
             }
             echo '<br/>';
         }

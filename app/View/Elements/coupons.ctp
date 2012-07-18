@@ -1,7 +1,7 @@
 <?php
     $html = '';
     $html .= "<div class='well'>";
-    $html .= "<h4>Κουπόνια</h4><br />";
+    $html .= "<h4>Τα κουπόνια μου</h4><br />";
     $html .= "<table class='table table-condensed table-striped'>";
     $html .= "<thead><tr>";
     if ($view === 'profile') {

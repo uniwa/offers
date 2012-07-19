@@ -3,8 +3,8 @@ $html = '';
 $html .= "<div id='big_image'></div>";
 
 // TODO: move to controller
-$offer_state_id = $offer['Offer']['offer_state_id'];
-$offer_type_id = $offer['Offer']['offer_type_id'];
+$offer_state_id = (int)$offer['Offer']['offer_state_id'];
+$offer_type_id = (int)$offer['Offer']['offer_type_id'];
 $label_text = offer_type($offer_type_id);
 $is_spam = $offer['Offer']['is_spam'];
 $is_user_the_owner = $this->Session->read('Auth.User.id') == $offer['Company']['user_id'];
@@ -151,22 +151,22 @@ foreach($offer_info as $elem) {
 }
 
 
-
 if ($role === ROLE_STUDENT &&
-    $offer['Offer']['offer_type_id'] !== TYPE_HAPPYHOUR) {
+    $offer_type_id !== TYPE_HAPPYHOUR) {
     $html .= "<br/><br/>";
-    if ($offer_type_id == TYPE_COUPONS) {
+    if ($offer_type_id === TYPE_COUPONS) {
         // Check both coupon count and state and student coupons, just in case
         if (($offer['Offer']['coupon_count'] < $offer['Offer']['total_quantity'])
             && ($offer['Offer']['offer_state_id'] == STATE_ACTIVE)
             && ($coupons['enabled']))
         {
+            $label = _('Δέσμευση κουπονιού');
             $html .= $this->Form->create(false, array('type' => 'post',
                 'url' => array('controller' => 'coupons',
                                'action' => 'add',
                                $offer['Offer']['id']
                          )));
-            $html .= $this->Form->end('Get Coupon');
+            $html .= $this->Form->end($label);
         }
 
         // display coupons booked by current user
@@ -200,6 +200,7 @@ $redeem_title = array('title' => $click_to_change);
 // show coupons for offer
 // only if visitor == owner and offer type = coupons
 if (isset($is_owner) and $is_owner == true) {
+    //TODO replace with coupons element
 ?>
     <br />
     <div class="well">
@@ -222,6 +223,13 @@ if (isset($is_owner) and $is_owner == true) {
 
                         $date = $c['Coupon']['created'];
                         $serial_number = $c['Coupon']['serial_number'];
+                        if ($c['Coupon']['reinserted']) {
+                            $reinserted['pre'] = "<span class='strikethrough'>";
+                            $reinserted['post'] = "</span>";
+                        } else {
+                            $reinserted['pre'] = '';
+                            $reinserted['post'] = '';
+                        }
 
                         if ($c['Coupon']['is_used']) {
                             $td = '<td style="text-decoration:line-through">';
@@ -241,7 +249,8 @@ if (isset($is_owner) and $is_owner == true) {
 
                         echo "<tr>";
                         echo "<td>{$counter}</td>";
-                        echo "{$td}{$serial_number}</td>";
+                        echo "{$td}{$reinserted['pre']}{$serial_number}";
+                        echo "{$reinserted['post']}</td>";
                         echo "<td>{$this->Time->format('d-m-Y',$date)}</td>";
                         echo "<td>{$link_redeem}</td>";
                         echo "</tr>";

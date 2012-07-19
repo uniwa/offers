@@ -375,17 +375,17 @@ class OffersController extends AppController {
             }
         }
 
-        //get coupons for offer if user is owner and coupon is of type 'COUPONS'
+        // get coupons for offer if user is owner or admin
+        // and coupon is of type 'COUPONS'
         if ($offer_type_id == TYPE_COUPONS) {
-            if ($this->Offer->is_owned_by($id, $this_user_id)) {
+            if ($this->Offer->is_owned_by($id, $this_user_id)
+                || $this_user_role === ROLE_ADMIN) {
                 // build query
-                $fields = array('Coupon.id', 'Coupon.serial_number', 'Coupon.created', 'Coupon.is_used');
                 $order = array('Coupon.created DESC');
-                $conditions = array('Offer.id' => $id);
+                $conditions = array('Coupon.offer_id' => $id);
 
-                $coupons = $this->Offer->Coupon->find('all', array(
+                $coupons = $this->Coupon->find('all', array(
                     'conditions' => $conditions,
-                    'fields' => $fields,
                     'order' => $order));
 
                 $this->set('is_owner', true);

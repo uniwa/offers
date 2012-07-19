@@ -150,7 +150,6 @@ foreach($offer_info as $elem) {
     $html .= "<strong>{$elem['label']}:</strong> {$elem['value']}<br />";
 }
 
-
 if ($role === ROLE_STUDENT &&
     $offer_type_id !== TYPE_HAPPYHOUR) {
     $html .= "<br/><br/>";

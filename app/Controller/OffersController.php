@@ -580,10 +580,22 @@ class OffersController extends AppController {
             $offer_info[] = $new_elem;
         }
         foreach($offer['WorkHour'] as $wh) {
+            $new_elem = array();
             $new_elem['label'] = day($wh['day_id']);
-            $wh['starting'] = $this->trim_time($wh['starting']);
-            $wh['ending'] = $this->trim_time($wh['ending']);
-            $new_elem['value'] = "{$wh['starting']} - {$wh['ending']}";
+            $wh['starting1'] = $this->trim_time($wh['starting1']);
+            $wh['ending1'] = $this->trim_time($wh['ending1']);
+            $new_elem['value1'] = "{$wh['starting1']} - {$wh['ending1']}";
+
+            if ($wh['starting2'] == $wh['ending2']) {
+                $offer_info[] = $new_elem;
+                continue;
+            }
+
+            // second date part
+            $wh['starting2'] = $this->trim_time($wh['starting2']);
+            $wh['ending2'] = $this->trim_time($wh['ending2']);
+            $new_elem['value2'] = "{$wh['starting2']} - {$wh['ending2']}";
+
             $offer_info[] = $new_elem;
         }
         return $offer_info;
@@ -834,6 +846,33 @@ class OffersController extends AppController {
             !empty($this->request->data['WorkHour'])) {
             $input_hours = $this->request->data['WorkHour'];
             for ($i = 1; $i <= count($input_hours); $i++) {
+
+                if (empty($input_hours[$i]['starting1']) and
+                    empty($input_hours[$i]['ending1'])) {
+                        continue;
+                }
+
+                // 2nd part not emmpty: store both 1st and 2nd
+                if (! empty($input_hours[$i]['starting2']) and
+                    ! empty($input_hours[$i]['ending2'])) {
+
+                    $work_hours[] = array(
+                        'day_id' => $i,
+                        'starting1' => $input_hours[$i]['starting1'],
+                        'ending1' => $input_hours[$i]['ending1'],
+                        'starting2' => $input_hours[$i]['starting2'],
+                        'ending2' => $input_hours[$i]['ending2']
+                    );
+                } else {
+                    // 2nd part empty - store only 1st part
+                    $work_hours[] = array(
+                        'day_id' => $i,
+                        'starting1' => $input_hours[$i]['starting1'],
+                        'ending1' => $input_hours[$i]['ending1']
+                    );
+                }
+
+/*
                 if (!empty($input_hours[$i]['starting']) &&
                     !empty($input_hours[$i]['ending'])) {
                     $h0 = $this->get_time($input_hours[$i]['starting']);
@@ -843,7 +882,7 @@ class OffersController extends AppController {
                         'day_id' => ''.$i,
                         'starting' => $h0,
                         'ending' => $h1);
-                }
+                    }*/
             }
         }
 

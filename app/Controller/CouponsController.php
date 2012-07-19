@@ -54,8 +54,8 @@ class CouponsController extends AppController {
         // create a unique id
         $coupon_uuid = $this->generate_uuid();
         $coupon['Coupon']['serial_number'] = $coupon_uuid;
-
         $coupon['Coupon']['is_used'] = 0;
+        $coupon['Coupon']['reinserted'] = 0;
         $coupon['Coupon']['student_id'] = $student_id;
         $coupon['Coupon']['offer_id'] = $id;
 
@@ -97,6 +97,55 @@ class CouponsController extends AppController {
 
             $extra = array();
         }
+
+        $this->notify($flash, $redirect, $status, $extra);
+    }
+
+    public function reinsert ($id = null) {
+
+        if ($id === null)
+            throw new BadRequestException();
+
+        $redirect = array($this->referer());
+
+        // don't read from session all the time
+        $student_id = $this->Session->read('Auth.Student.id');
+        $cond = array('Coupon.id' => $id);
+        $coupon = $this->Coupon->find('first', array('conditions' => $cond));
+
+        if (!$coupon) {
+            throw new NotFoundException('Το κουπόνι δε βρέθηκε.');
+        }
+
+        if ($coupon['Coupon']['student_id'] !==
+            $this->Session->read('Auth.Student.id'))
+            throw new ForbiddenException();
+
+        if ($coupon['Offer']['is_spam'])
+            throw new ForbiddenException('Η προσφορά για την οποία έχει'
+                .' δεσμευθεί το κουπόνι σας έχει χαρακτηριστεί σαν SPAM.');
+
+        $coupon_uuid = $coupon['Coupon']['serial_number'];
+
+        $update_fields = array('Coupon.reinserted' => true);
+        $update_conditions = array('Coupon.id' => $id);
+        $this->Coupon->updateAll($update_fields, $update_conditions);
+
+        // coupon count minus one
+        $coupon['Offer']['coupon_count']--;
+
+        // update coupon count in offer
+        $update_fields = array(
+            'Offer.coupon_count' => $coupon['Offer']['coupon_count']);
+        $update_conditions = array('Offer.id' => $coupon['Offer']['id']);
+        $this->Offer->updateAll($update_fields, $update_conditions);
+
+        // success reinserting coupon
+        $msg = _("Το κουπόνι {$coupon_uuid} αποδεσμεύτηκε επιτυχώς");
+        $flash = array($msg, 'default', array(), 'success');
+        $status = 200;
+        $extra = array('id' => $id,
+                       'serial_number' => $coupon_uuid);
 
         $this->notify($flash, $redirect, $status, $extra);
     }
@@ -458,8 +507,10 @@ class CouponsController extends AppController {
     }
 
     public function is_authorized($user) {
+        $student_actions = array('add', 'reinsert', 'view', 'index', 'pdf');
+
         if ($user['is_banned'] == 0) {
-            if (in_array($this->action, array('add', 'view', 'index', 'pdf'))) {
+            if (in_array($this->action, $student_actions)) {
                 // only students can get coupons
                 if ($user['role'] !== ROLE_STUDENT) {
                     return false;

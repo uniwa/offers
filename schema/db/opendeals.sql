@@ -250,6 +250,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`coupons` (
   `created` DATETIME NULL DEFAULT NULL ,
   `modified` DATETIME NULL DEFAULT NULL ,
   `is_used` TINYINT(1)  NOT NULL DEFAULT 0 ,
+  `reinserted` TINYINT(1)  NOT NULL DEFAULT 0 ,
   `offer_id` INT NOT NULL ,
   `student_id` INT NULL ,
   PRIMARY KEY (`id`) ,

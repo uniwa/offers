@@ -143,7 +143,7 @@ class CompaniesController extends AppController {
             $work_hours = array();
             if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
                 $input_hours = $this->request->data['WorkHour'];
-                for ($i = 1; $i < count($input_hours); $i++) {
+                for ($i = 1; $i <= count($input_hours); $i++) {
                     // if first part of work hours is empty bail
                     // as we don't care about the second part too
                     if (empty($input_hours[$i]['starting1']) and

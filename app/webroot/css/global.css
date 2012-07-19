@@ -137,3 +137,7 @@ footer ul li {
 #map {
     float: right;
 }
+
+.strikethrough{
+    text-decoration: line-through;
+}

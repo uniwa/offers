@@ -55,10 +55,26 @@ class CompaniesController extends AppController {
         // format working hours
         $wh_tmp = array();
         foreach($company['WorkHour'] as $wh) {
+            // clean array because we might have a 2nd date part
+            // from the previous loop
+            $new_elem = [];
+
+            // use this new element to built the date data for the view
             $new_elem['name'] = day($wh['day_id']);
-            $wh['starting'] = $this->trim_time($wh['starting']);
-            $wh['ending'] = $this->trim_time($wh['ending']);
-            $new_elem['time'] = "{$wh['starting']} - {$wh['ending']}";
+            $wh['starting1'] = $this->trim_time($wh['starting1']);
+            $wh['ending1'] = $this->trim_time($wh['ending1']);
+            $new_elem['time1'] = "{$wh['starting1']} - {$wh['ending1']}";
+
+            // gracefully handle same time range
+            if ($wh['starting2'] == $wh['ending2']) {
+                $wh_tmp[] = $new_elem;
+                continue;
+            }
+
+            // second date part
+            $wh['starting2'] = $this->trim_time($wh['starting2']);
+            $wh['ending2'] = $this->trim_time($wh['ending2']);
+            $new_elem['time2'] = "{$wh['starting2']} - {$wh['ending2']}";
             $wh_tmp[] = $new_elem;
         }
         $company['WorkHour'] = $wh_tmp;
@@ -96,8 +112,15 @@ class CompaniesController extends AppController {
         $work_hours = array();
         foreach ($company['WorkHour'] as $v) {
             $day = $v['day_id'];
-            $work_hours[$day]['starting'] = substr($v['starting'], 0, -3);
-            $work_hours[$day]['ending'] = substr($v['ending'], 0, -3);
+            $work_hours[$day]['starting1'] = substr($v['starting1'], 0, -3);
+            $work_hours[$day]['ending1'] = substr($v['ending1'], 0, -3);
+
+            if ($v['starting2'] == $v['ending2']) {
+                    continue;
+            }
+
+            $work_hours[$day]['starting2'] = substr($v['starting2'], 0, -3);
+            $work_hours[$day]['ending2'] = substr($v['ending2'], 0, -3);
         }
         $company['WorkHour'] = $work_hours;
         $this->set('company', $company);
@@ -121,14 +144,33 @@ class CompaniesController extends AppController {
             if (isset($this->request->data['WorkHour']) && !empty($this->request->data['WorkHour'])) {
                 $input_hours = $this->request->data['WorkHour'];
                 for ($i = 1; $i < count($input_hours); $i++) {
-                    if (! empty($input_hours[$i]['starting']) and
-                        ! empty($input_hours[$i]['ending'])) {
-                            $work_hours[] = array(
-                                'day_id' => $i,
-                                'company_id' => $id,
-                                'starting' => $input_hours[$i]['starting'],
-                                'ending' => $input_hours[$i]['ending']
-                            );
+                    // if first part of work hours is empty bail
+                    // as we don't care about the second part too
+                    if (empty($input_hours[$i]['starting1']) and
+                        empty($input_hours[$i]['ending1'])) {
+                            continue;
+                    }
+
+                    // 2nd part not emmpty: store both 1st and 2nd
+                    if (! empty($input_hours[$i]['starting2']) and
+                        ! empty($input_hours[$i]['ending2'])) {
+
+                        $work_hours[] = array(
+                            'day_id' => $i,
+                            'company_id' => $id,
+                            'starting1' => $input_hours[$i]['starting1'],
+                            'ending1' => $input_hours[$i]['ending1'],
+                            'starting2' => $input_hours[$i]['starting2'],
+                            'ending2' => $input_hours[$i]['ending2']
+                        );
+                    } else {
+                        // 2nd part empty - store only 1st part
+                        $work_hours[] = array(
+                            'day_id' => $i,
+                            'company_id' => $id,
+                            'starting1' => $input_hours[$i]['starting1'],
+                            'ending1' => $input_hours[$i]['ending1']
+                        );
                     }
                 }
             }

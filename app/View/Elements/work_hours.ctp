@@ -18,14 +18,28 @@
         $day_string = day($d).' ';
         $html .= "<div class='workhour'>";
         $html .= "<div class='day'>{$day_string}</div>";
-        $html .= $this->Form->input($name.".starting", array(
+        $html .= $this->Form->input($name.".starting1", array(
             'type' => 'select',
             'label' => '',
             'div' => array('class' => 'hour'),
 //            'default' => '09:00',
             'options' => $wh));
         $html .= "<div class='between'>-</div>";
-        $html .= $this->Form->input($name.".ending", array(
+        $html .= $this->Form->input($name.".ending1", array(
+            'type' => 'select',
+            'label' => '',
+            'div' => array('class' => 'hour'),
+//            'default' => '17:00',
+            'options' => $wh));
+        $html .= "</div><div class='workhour_second_part'>";
+        $html .= $this->Form->input($name.".starting2", array(
+            'type' => 'select',
+            'label' => '',
+            'div' => array('class' => 'hour'),
+//            'default' => '09:00',
+            'options' => $wh));
+        $html .= "<div class='between'>-</div>";
+        $html .= $this->Form->input($name.".ending2", array(
             'type' => 'select',
             'label' => '',
             'div' => array('class' => 'hour'),

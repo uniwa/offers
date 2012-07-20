@@ -146,8 +146,25 @@ $tag_link = array('controller' => 'offers', 'action' => 'tag');
 $tag_options = array('element' => 'span', 'link' => $tag_link, 'label' => '');
 $offer_info['tags']['value'] = $this->Tag->generate($offer_info['tags']['value'], $tag_options);
 
-foreach($offer_info as $elem) {
-    $html .= "<strong>{$elem['label']}:</strong> {$elem['value']}<br />";
+foreach ($offer_info as $elem) {
+    $html .= "<strong>{$elem['label']}:</strong> ";
+    if (is_array($elem['value'])) {
+        // working hour array
+        $html .= "<ul>";
+        foreach ($elem['value'] as $sub_elem) {
+            $html .= "<li>";
+            $html .= "<span class=\"bold\">{$sub_elem['label']}</span> {$sub_elem['value1']}";
+
+            // second date part available
+            if (isset($sub_elem['value2'])) {
+                $html .= "<span class=\"bold\"> και</span> {$sub_elem['value2']}";
+            }
+            $html .= "</li>";
+        }
+        $html .= "</ul>";
+    } else {
+        $html .= "{$elem['value']}<br />";
+    }
 }
 
 if ($role === ROLE_STUDENT &&

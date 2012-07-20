@@ -612,7 +612,8 @@ class OffersController extends AppController {
             $new_elem['value1'] = "{$wh['starting1']} - {$wh['ending1']}";
 
             if ($wh['starting2'] == $wh['ending2']) {
-                $offer_info[] = $new_elem;
+                // separate work hour array from the rest view data
+                $offer_info['work_hour']['value'][] = $new_elem;
                 continue;
             }
 
@@ -621,8 +622,10 @@ class OffersController extends AppController {
             $wh['ending2'] = $this->trim_time($wh['ending2']);
             $new_elem['value2'] = "{$wh['starting2']} - {$wh['ending2']}";
 
-            $offer_info[] = $new_elem;
+            // separate work hour array from the rest view data
+            $offer_info['work_hour']['value'][] = $new_elem;
         }
+        //debug($offer_info);die();
         return $offer_info;
     }
 

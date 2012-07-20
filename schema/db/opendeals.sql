@@ -278,8 +278,10 @@ DROP TABLE IF EXISTS `opendeals`.`work_hours` ;
 CREATE  TABLE IF NOT EXISTS `opendeals`.`work_hours` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `day_id` INT NOT NULL ,
-  `starting` TIME NOT NULL ,
-  `ending` TIME NOT NULL ,
+  `starting1` TIME NOT NULL ,
+  `ending1` TIME NOT NULL ,
+  `starting2` TIME NOT NULL ,
+  `ending2` TIME NOT NULL ,
   `company_id` INT NULL ,
   `offer_id` INT NULL ,
   PRIMARY KEY (`id`) ,

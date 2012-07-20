@@ -579,13 +579,55 @@ class OffersController extends AppController {
                 $offer['Offer']['autoend']);
             $offer_info[] = $new_elem;
         }
-        foreach($offer['WorkHour'] as $wh) {
-            $new_elem['label'] = day($wh['day_id']);
-            $wh['starting'] = $this->trim_time($wh['starting']);
-            $wh['ending'] = $this->trim_time($wh['ending']);
-            $new_elem['value'] = "{$wh['starting']} - {$wh['ending']}";
-            $offer_info[] = $new_elem;
+
+        // use the following $offer_info schema to support 2-part working hours
+        //
+        //  array(
+        //      (int) 0 => array(
+        //          'label' => 'Τίτλος',
+        //          'value' => 'foobar'
+        //      ),
+        //      'work_hour' => array(
+        //            'label' => 'Ώρες προσφοράς',
+        //            'value' => array(
+        //                (int) 0 => array(
+        //                    'label' => 'Δευτέρα',
+        //                    'value1' => '00:30 - 05:30',
+        //                    'value2' => '07:30 - 09:00'
+        //                ),
+        //                (int) 1 => array(
+        //                    'label' => 'Τρίτη',
+        //                    'value1' => '03:00 - 06:30'
+        //                )
+        //            )
+        //        )
+        //  )
+
+        if (! empty($offer['WorkHour'])) {
+            $offer_info['work_hour']['label'] = 'Ώρες προσφοράς';
         }
+        foreach($offer['WorkHour'] as $wh) {
+            $new_elem = array();
+            $new_elem['label'] = day($wh['day_id']);
+            $wh['starting1'] = $this->trim_time($wh['starting1']);
+            $wh['ending1'] = $this->trim_time($wh['ending1']);
+            $new_elem['value1'] = "{$wh['starting1']} - {$wh['ending1']}";
+
+            if ($wh['starting2'] == $wh['ending2']) {
+                // separate work hour array from the rest view data
+                $offer_info['work_hour']['value'][] = $new_elem;
+                continue;
+            }
+
+            // second date part
+            $wh['starting2'] = $this->trim_time($wh['starting2']);
+            $wh['ending2'] = $this->trim_time($wh['ending2']);
+            $new_elem['value2'] = "{$wh['starting2']} - {$wh['ending2']}";
+
+            // separate work hour array from the rest view data
+            $offer_info['work_hour']['value'][] = $new_elem;
+        }
+        //debug($offer_info);die();
         return $offer_info;
     }
 
@@ -782,15 +824,23 @@ class OffersController extends AppController {
                         '/WorkHour/.', $this->WorkHour->find('all', $wh_opts));
 
                     // populate all 7 days of the week for view input
-                    $fill_keys = array('starting','ending','offer_id');
-                    $fill_values = array('','',$offer['Offer']['id']);
+                    $fill_keys = array('starting1','ending1', 'starting2', 'ending2', 'offer_id');
+                    $fill_values = array('', '', '', '', $offer['Offer']['id']);
                     $fill_day = array_combine($fill_keys, $fill_values);
                     $fill_week = array_fill(1, 7, $fill_day);
 
                     // trim ':00' seconds from time and update day
                     foreach ($offer['WorkHour'] as $k => $wh) {
-                        $offer['WorkHour'][$k]['starting'] = $this->trim_time($wh['starting']);
-                        $offer['WorkHour'][$k]['ending'] = $this->trim_time($wh['ending']);
+                        $offer['WorkHour'][$k]['starting1'] = $this->trim_time($wh['starting1']);
+                        $offer['WorkHour'][$k]['ending1'] = $this->trim_time($wh['ending1']);
+
+                        if ($offer['WorkHour'][$k]['starting2'] == $offer['WorkHour'][$k]['ending2']) {
+                            $fill_week[$wh['day_id']] = $offer['WorkHour'][$k];
+                            continue;
+                        }
+
+                        $offer['WorkHour'][$k]['starting2'] = $this->trim_time($wh['starting2']);
+                        $offer['WorkHour'][$k]['ending2'] = $this->trim_time($wh['ending2']);
                         $fill_week[$wh['day_id']] = $offer['WorkHour'][$k];
                     }
                     $offer['WorkHour'] = $fill_week;
@@ -832,6 +882,33 @@ class OffersController extends AppController {
             !empty($this->request->data['WorkHour'])) {
             $input_hours = $this->request->data['WorkHour'];
             for ($i = 1; $i <= count($input_hours); $i++) {
+
+                if (empty($input_hours[$i]['starting1']) and
+                    empty($input_hours[$i]['ending1'])) {
+                        continue;
+                }
+
+                // 2nd part not emmpty: store both 1st and 2nd
+                if (! empty($input_hours[$i]['starting2']) and
+                    ! empty($input_hours[$i]['ending2'])) {
+
+                    $work_hours[] = array(
+                        'day_id' => $i,
+                        'starting1' => $input_hours[$i]['starting1'],
+                        'ending1' => $input_hours[$i]['ending1'],
+                        'starting2' => $input_hours[$i]['starting2'],
+                        'ending2' => $input_hours[$i]['ending2']
+                    );
+                } else {
+                    // 2nd part empty - store only 1st part
+                    $work_hours[] = array(
+                        'day_id' => $i,
+                        'starting1' => $input_hours[$i]['starting1'],
+                        'ending1' => $input_hours[$i]['ending1']
+                    );
+                }
+
+/*
                 if (!empty($input_hours[$i]['starting']) &&
                     !empty($input_hours[$i]['ending'])) {
                     $h0 = $this->get_time($input_hours[$i]['starting']);
@@ -841,7 +918,7 @@ class OffersController extends AppController {
                         'day_id' => ''.$i,
                         'starting' => $h0,
                         'ending' => $h1);
-                }
+                    }*/
             }
         }
 

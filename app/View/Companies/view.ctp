@@ -128,9 +128,16 @@ foreach ($company['Image'] as $image) {
  */
 
 if (! empty($company['WorkHour'])) {
+    echo '<ul>';
     foreach($company['WorkHour'] as $wh) {
-        echo "<span class=\"bold\">{$wh['name']}:</span> {$wh['time']}";
+        echo "<li><span class=\"bold\">{$wh['name']}:</span> {$wh['time1']}";
+        if (! empty($wh['time2'])) {
+            echo "<span class=\"bold\"> και</span> {$wh['time2']}</li>";
+        } else {
+            echo "</li>";
+        }
     }
+    echo '</ul>';
 }
 echo '<br/>';
 $html_clock = "<i class='icon-time'></i>";

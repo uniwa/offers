@@ -121,6 +121,9 @@ class CouponsController extends AppController {
             $this->Session->read('Auth.Student.id'))
             throw new ForbiddenException();
 
+        if ($coupon['Coupon']['reinserted'])
+            throw new ForbiddenException();
+
         if ($coupon['Offer']['is_spam'])
             throw new ForbiddenException('Η προσφορά για την οποία έχει'
                 .' δεσμευθεί το κουπόνι σας έχει χαρακτηριστεί σαν SPAM.');
@@ -129,23 +132,45 @@ class CouponsController extends AppController {
 
         $update_fields = array('Coupon.reinserted' => true);
         $update_conditions = array('Coupon.id' => $id);
-        $this->Coupon->updateAll($update_fields, $update_conditions);
 
-        // coupon count minus one
-        $coupon['Offer']['coupon_count']--;
+        // using nested transaction to flag coupon and update coupon_count
+        $dataSource = $this->Coupon->getDataSource();
+        $dataSource->begin();
+        $update_ok = $this->Coupon->updateAll($update_fields, $update_conditions);
 
-        // update coupon count in offer
-        $update_fields = array(
-            'Offer.coupon_count' => $coupon['Offer']['coupon_count']);
-        $update_conditions = array('Offer.id' => $coupon['Offer']['id']);
-        $this->Offer->updateAll($update_fields, $update_conditions);
+        if ($update_ok) {
+            // coupon count minus one
+            $coupon['Offer']['coupon_count']--;
 
-        // success reinserting coupon
-        $msg = _("Το κουπόνι {$coupon_uuid} αποδεσμεύτηκε επιτυχώς");
-        $flash = array($msg, 'default', array(), 'success');
-        $status = 200;
-        $extra = array('id' => $id,
-                       'serial_number' => $coupon_uuid);
+            // update coupon count in offer
+            $update_fields = array(
+                'Offer.coupon_count' => $coupon['Offer']['coupon_count']);
+            $update_conditions = array('Offer.id' => $coupon['Offer']['id']);
+
+            $update_ok = $this->Offer->updateAll($update_fields, $update_conditions);
+
+            if ($update_ok) {
+                $dataSource->commit();
+
+                // success reinserting coupon
+                $msg = _("Το κουπόνι {$coupon_uuid} αποδεσμεύτηκε επιτυχώς");
+                $flash = array($msg, 'default', array(), 'success');
+                $status = 200;
+                $extra = array('id' => $id,
+                               'serial_number' => $coupon_uuid);
+            } else {
+                $dataSource->rollback();
+            }
+        }
+
+        if (!$update_ok) {
+            // reinserting coupon failed
+            $msg = _("Δεν ήταν δυνατή η αποδέσμευση του κουπονιού {$coupon_uuid}");
+            $flash = array($msg, 'default', array(), 'fail');
+            $status = 500;
+            $extra = array('id' => $id,
+                           'serial_number' => $coupon_uuid);
+        }
 
         $this->notify($flash, $redirect, $status, $extra);
     }

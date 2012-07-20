@@ -579,6 +579,31 @@ class OffersController extends AppController {
                 $offer['Offer']['autoend']);
             $offer_info[] = $new_elem;
         }
+
+        // use the following $offer_info schema to support 2-part working hours
+        //
+        //  array(
+        //      (int) 0 => array(
+        //          'label' => 'Τίτλος',
+        //          'value' => 'foobar'
+        //      ),
+        //      'work_hour' => array(
+        //            'label' => 'Ώρες προσφοράς',
+        //            'value' => array(
+        //                (int) 0 => array(
+        //                    'label' => 'Δευτέρα',
+        //                    'value1' => '00:30 - 05:30',
+        //                    'value2' => '07:30 - 09:00'
+        //                ),
+        //                (int) 1 => array(
+        //                    'label' => 'Τρίτη',
+        //                    'value1' => '03:00 - 06:30'
+        //                )
+        //            )
+        //        )
+        //  )
+
+        $offer_info['work_hour']['label'] = 'Ώρες προσφοράς';
         foreach($offer['WorkHour'] as $wh) {
             $new_elem = array();
             $new_elem['label'] = day($wh['day_id']);

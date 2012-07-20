@@ -122,7 +122,7 @@
 
             // show delete link only for finished offers
             if ($role === ROLE_STUDENT) {
-                if ($c['Offer']['ended'] === true) {
+                if ($c['Offer']['offer_state_id'] == STATE_INACTIVE) {
                     $html .= "<td>{$delete_link}</td>";
                 } else {
                     $delete = "<td title='μόνο κουπόνια από μη ενεργές";

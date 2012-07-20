@@ -603,7 +603,9 @@ class OffersController extends AppController {
         //        )
         //  )
 
-        $offer_info['work_hour']['label'] = 'Ώρες προσφοράς';
+        if (! empty($offer['WorkHour'])) {
+            $offer_info['work_hour']['label'] = 'Ώρες προσφοράς';
+        }
         foreach($offer['WorkHour'] as $wh) {
             $new_elem = array();
             $new_elem['label'] = day($wh['day_id']);

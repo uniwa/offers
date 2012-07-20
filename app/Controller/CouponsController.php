@@ -161,7 +161,7 @@ class CouponsController extends AppController {
         //      'Offer'
         //          `-'Company'
         //      'Student'
-        $cond = array('Coupon.id' => $id);
+        $cond = array('Coupon.id' => $id, 'Coupon.reinserted' => false);
 
         $this->Coupon->Behaviors->attach('Containable');
         $this->Coupon->contain(array('Offer.Company', 'Student'));

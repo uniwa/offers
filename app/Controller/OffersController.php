@@ -823,7 +823,7 @@ class OffersController extends AppController {
 
                     // populate all 7 days of the week for view input
                     $fill_keys = array('starting1','ending1', 'starting2', 'ending2', 'offer_id');
-                    $fill_values = array('','',$offer['Offer']['id']);
+                    $fill_values = array('', '', '', '', $offer['Offer']['id']);
                     $fill_day = array_combine($fill_keys, $fill_values);
                     $fill_week = array_fill(1, 7, $fill_day);
 
@@ -831,6 +831,12 @@ class OffersController extends AppController {
                     foreach ($offer['WorkHour'] as $k => $wh) {
                         $offer['WorkHour'][$k]['starting1'] = $this->trim_time($wh['starting1']);
                         $offer['WorkHour'][$k]['ending1'] = $this->trim_time($wh['ending1']);
+
+                        if ($offer['WorkHour'][$k]['starting2'] == $offer['WorkHour'][$k]['ending2']) {
+                            $fill_week[$wh['day_id']] = $offer['WorkHour'][$k];
+                            continue;
+                        }
+
                         $offer['WorkHour'][$k]['starting2'] = $this->trim_time($wh['starting2']);
                         $offer['WorkHour'][$k]['ending2'] = $this->trim_time($wh['ending2']);
                         $fill_week[$wh['day_id']] = $offer['WorkHour'][$k];

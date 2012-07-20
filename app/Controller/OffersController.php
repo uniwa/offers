@@ -1490,6 +1490,12 @@ class OffersController extends AppController {
                 unset($wh['id']);
                 unset($wh['company_id']);
                 unset($wh['offer_id']);
+
+                // don't show 2nd date part if dates are the same
+                if ($wh['starting2'] == $wh['ending2']) {
+                    unset($wh['starting2']);
+                    unset($wh['ending2']);
+                }
                 $r['offer_hours'][] = $wh;
             }
 

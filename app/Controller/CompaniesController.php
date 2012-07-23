@@ -471,10 +471,33 @@ class CompaniesController extends AppController {
         }
     }
 
+    // Displays a list of emails for all enabled company that belong to unbanned
+    // users. Emails are imploded (glued) using commas (,).
+    public function emails() {
+        $delimiter = ',';
+
+        $conditions = array(
+            'User.is_banned' => false,
+            'Company.is_enabled' => true
+        );
+
+        $this->Company->Behaviors->attach('Containable');
+        $this->Company->contain('User');
+        $result = $this->Company->find('all', array('fields' => array('User.email'),
+                                                    'conditions' => $conditions ));
+
+        $result = Set::classicExtract($result, '{n}.User.email');
+
+        $emails = implode($delimiter, $result);
+        $this->set('emails', $emails);
+
+        $this->layout = false;
+    }
+
     public function is_authorized($user) {
         $public = array('view', 'email_confirm', 'send_email_confirmation', 'gsis_get');
         $own = array('edit', 'imageedit');
-        $admin_actions = array('enable','disable', 'ban', 'unban');
+        $admin_actions = array('enable','disable', 'ban', 'unban', 'emails');
 
         if ($user['is_banned'] == 0) {
             // all users can view company views that are not banned

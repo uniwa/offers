@@ -490,6 +490,8 @@ class CompaniesController extends AppController {
 
         $emails = implode($delimiter, $result);
         $this->set('emails', $emails);
+
+        $this->layout = false;
     }
 
     public function is_authorized($user) {

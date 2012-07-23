@@ -359,6 +359,7 @@ class CouponsController extends AppController {
         $api_data = array();
         foreach ($data as $d) {
             $coupon_data = array();
+
             // format return data
             $coupon_data['offer'] = $d['Offer'];
 
@@ -395,7 +396,6 @@ class CouponsController extends AppController {
         } else {
             $api_data = array('coupons' => $api_data);
         }
-
         return $api_data;
     }
 
@@ -458,7 +458,8 @@ class CouponsController extends AppController {
             'Offer.offer_category_id',
             'Offer.offer_type_id',
             'Offer.vote_count',
-            'Offer.vote_sum',
+            'Offer.vote_plus',
+            'Offer.vote_minus',
             'Offer.company_id',
         );
         $this->Coupon->recursive = 0;
@@ -468,6 +469,15 @@ class CouponsController extends AppController {
             'fields' => $fields,
             'order' => $order)
         );
+
+        // as we cannot use virtual fields in conjunction with $fields
+        // functionality, do the math by hand.
+        $c = 0;
+        foreach($coupons as $coupon) {
+            $coupons[$c]['Offer']['vote_sum'] =
+                $coupon['Offer']['vote_plus'] - $coupon['Offer']['vote_minus'];
+            $c++;
+        }
 
         if ($this->is_webservice) {
             switch ($this->webservice_type) {

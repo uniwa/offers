@@ -57,7 +57,7 @@ class CompaniesController extends AppController {
         foreach($company['WorkHour'] as $wh) {
             // clean array because we might have a 2nd date part
             // from the previous loop
-            $new_elem = [];
+            $new_elem = array();
 
             // use this new element to built the date data for the view
             $new_elem['name'] = day($wh['day_id']);

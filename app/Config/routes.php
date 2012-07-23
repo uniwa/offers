@@ -166,6 +166,12 @@
                 '[method]' => 'POST'),
         array('ws' => $ws));
 
+    Router::connect('/:ws/search/*',
+        array(  'controller' => 'offers',
+                'action' => 'search',
+                '[method]' => 'GET'),
+        array('ws' => $ws));
+
 /**
  * Load the CakePHP default routes. Remove this if you do not want to use
  * the built-in default routes.

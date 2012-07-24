@@ -39,7 +39,7 @@ class OffersController extends AppController {
 
     public $helpers = array('Html', 'Time', 'Text', 'Tag');
 
-    public $components = array('Common', 'RequestHandler');
+    public $components = array('Common', 'Email', 'RequestHandler');
 
     function beforeFilter(){
         // this call should precede all actions that return data (exceptions
@@ -317,6 +317,7 @@ class OffersController extends AppController {
 
         $this->Offer->recursive = -1;
         $offer = $this->Offer->findById($id);
+        $email = $this->Offer->get_company_email($offer['Offer']['id']);
 
         if ($offer == false) throw new NotFoundException();
 
@@ -340,6 +341,7 @@ class OffersController extends AppController {
             $errors = $this->Offer->validationErrors;
             if (!isset($errors['explanation'])){
                 $this->flag($id, $this->request->data['Offer']['explanation']);
+                $this->improper_offer_notification($offer, $email);
                 $this->redirect($target);
             }
         }
@@ -1417,6 +1419,33 @@ class OffersController extends AppController {
         $distance = 2*$radius*asin($root);
 
         return $distance;
+    }
+
+    // Send email notification to company
+    // when one of their offers has been flagged as improper
+    private function improper_offer_notification ($offer = null, $email = null) {
+        if (is_null($offer) || is_null($email)) {
+            throw new BadRequestException();
+        }
+
+        $subject = __("Ειδοποίηση ανάρμοστης προσφοράς");
+        $url = APP_URL."/offers/view/{$offer['Offer']['id']}";
+        $title = $offer['Offer']['title'];
+        $explanation = $offer['Offer']['explanation'];
+
+        $cake_email = new CakeEmail('default');
+        $cake_email = $cake_email
+            ->to($email)
+            ->subject($subject)
+            ->template('spam_notify', 'default')
+            ->emailFormat('both')
+            ->viewVars(array('url' => $url,'title' => $title,'explanation' => $explanation));
+        try {
+            $cake_email->send();
+        } catch (Exception $e) {
+            return false;
+        }
+        return true;
     }
 
     // Transforms an array of offers in CakePHP's intrinsic format into an array

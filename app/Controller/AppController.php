@@ -88,7 +88,16 @@ class AppController extends Controller{
                     $msg = "Δεν έχετε συμπληρώσει γεωχωρικές πληροφορίες για την επιχείρηση σας. ";
                     $msg .= "Προσφορές που αναρτάτε πιθανόν να μην είναι διαθέσιμες μέσω της εφαρμογής κινητού. ";
                     $msg .= "Πατήστε <a href=\"#\">εδώ</a> για να καταχωρήσετε το στίγμα της επιχείρησης σας.";
-                    $this->Session->setFlash($msg, 'default', array(), "info");
+
+                    // make a "smart" decision about missing geo-information urgency
+                    // if user is banned/locked demote missing geo-info to "info" level
+                    // else make it a warning
+                    if ($company['User']['is_banned'] == true) {
+                        $urgency = "info";
+                    } else {
+                        $urgency = "warning";
+                    }
+                    $this->Session->setFlash($msg, 'default', array(), $urgency);
             }
         }
     }

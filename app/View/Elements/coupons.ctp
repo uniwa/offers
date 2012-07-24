@@ -60,7 +60,7 @@
 
             if ($role === ROLE_STUDENT) {
                 $delete_link = $this->Html->link(
-                    "delete",
+                    "διαγραφή",
                     array(
                         'controller' => 'coupons',
                         'action' => 'delete',

@@ -842,10 +842,10 @@ $explanation = 'NULL';
 
 echo count($company_names);
 $users1 = "INSERT INTO `users` VALUES\n";
-$users1 .= "(1,'user1','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',NULL,1,0,'student',0,NULL),\n";
-$users1 .= "(2,'user2','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',NULL,1,0,'student',0,NULL),\n";
-$users1 .= "(3,'user3','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',NULL,1,0,'student',0,NULL),\n";
-$users1 .= "(4,'admin','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','$email',NULL,1,0,'admin',0,'2012-04-18 06:22:48'),\n";
+$users1 .= "(1,'user1',$passwd,'$email',NULL,1,0,'student',0,NULL),\n";
+$users1 .= "(2,'user2',$passwd,'$email',NULL,1,0,'student',0,NULL),\n";
+$users1 .= "(3,'user3',$passwd,'$email',NULL,1,0,'student',0,NULL),\n";
+$users1 .= "(4,'admin',$passwd,'$email',NULL,1,0,'admin',0,'2012-04-18 06:22:48'),\n";
 writeFile($fu, $users1);
 
 $company1 = "INSERT INTO `companies` VALUES\n";

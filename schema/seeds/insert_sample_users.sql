@@ -1,8 +1,8 @@
 INSERT INTO `users` VALUES
-(1,'user1','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','tlatsas@edu.teiath.gr',NULL,1,0,'student',0,NULL),
-(2,'user2','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','tlatsas@edu.teiath.gr',NULL,1,0,'student',0,NULL),
-(3,'user3','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','tlatsas@edu.teiath.gr',NULL,1,0,'student',0,NULL),
-(4,'admin','d2519fa8217b0e44450caa12d8dab5eb773e5d6b','tlatsas@edu.teiath.gr',NULL,1,0,'admin',0,'2012-04-18 06:22:48'),
+(1,'user1','6e02fd9492447a66cde1a08c8cda8795188edce7943a28c430c5e70e5f19eaa4','tlatsas@edu.teiath.gr',NULL,1,0,'student',0,NULL),
+(2,'user2','6e02fd9492447a66cde1a08c8cda8795188edce7943a28c430c5e70e5f19eaa4','tlatsas@edu.teiath.gr',NULL,1,0,'student',0,NULL),
+(3,'user3','6e02fd9492447a66cde1a08c8cda8795188edce7943a28c430c5e70e5f19eaa4','tlatsas@edu.teiath.gr',NULL,1,0,'student',0,NULL),
+(4,'admin','6e02fd9492447a66cde1a08c8cda8795188edce7943a28c430c5e70e5f19eaa4','tlatsas@edu.teiath.gr',NULL,1,0,'admin',0,'2012-04-18 06:22:48'),
 ('101','company1','6e02fd9492447a66cde1a08c8cda8795188edce7943a28c430c5e70e5f19eaa4','tlatsas@edu.teiath.gr',NULL,'1','0','company','1',NULL),
 ('102','company2','6e02fd9492447a66cde1a08c8cda8795188edce7943a28c430c5e70e5f19eaa4','tlatsas@edu.teiath.gr',NULL,'1','0','company','1',NULL),
 ('103','company3','6e02fd9492447a66cde1a08c8cda8795188edce7943a28c430c5e70e5f19eaa4','tlatsas@edu.teiath.gr',NULL,'1','0','company','1',NULL),

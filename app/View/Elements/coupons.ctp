@@ -12,7 +12,7 @@
     $html .= "<th>Ημ/νία δέσμευσης</th>";
 
     if ($role === ROLE_STUDENT) {
-        $html .= "<th>Διαγραφή</th>\n";
+        $html .= "<th>Διαγραφή / Επιστροφή</th>\n";
         $html .= "<th>Download</th>\n";
     }
 
@@ -99,7 +99,7 @@
             );
 
             $reinsert_link = $this->Html->link(
-                "απελευθέρωση",
+                "επιστροφή",
                 array(
                     'controller' => 'coupons',
                     'action' => 'reinsert',

@@ -490,13 +490,9 @@ class OffersController extends AppController {
             // but do NOT impose this alert (in case another flash is already
             // set)
             $should_show = $this->Session->read('Message.flash') == null;
-
+            $msg = _("Η προσφορά έχει σημανθεί ως ανάρμοστη από διαχειριστή τους συστήματος");
             if ($is_spam && $should_show) {
-                $this->Session->setFlash('Η προσφορά έχει σημανθεί ως SPAM από'.
-                                             ' διαχειριστή τους συστήματος',
-                                         'default',
-                                         array(),
-                                         'error');
+                $this->Session->setFlash($msg, 'default', array(), 'error');
             }
 
             // Prepare information for view

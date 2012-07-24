@@ -135,7 +135,7 @@
                     $html .= "<td>{$delete_link}</td>";
                 } else {
                     if ($c['Coupon']['reinserted'] == true) {
-                        $delete = "<td title='μόνο κουπόνια από μη ενεργές";
+                        $delete = "<td title='μόνο κουπόνια από μη ενεργές ";
                         $delete .= "προσφορές μπορούν να διαγραφούν'";
                         $delete .= "class='help-text'>διαγραφή</td>";
                         $html .= $delete;

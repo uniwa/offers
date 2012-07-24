@@ -45,12 +45,17 @@ class CompaniesController extends AppController {
 
         // we need the company's working hours
         $this->Company->Behaviors->attach('Containable');
-        $this->Company->contain(array('WorkHour'));
+        $this->Company->contain(array('WorkHour', 'Municipality'));
 
         $company = $this->Company->find('first', $options);
         if (empty($company))
             throw new NotFoundException('Η συγκεκριμένη επιχείρηση δεν
                                         βρέθηκε.');
+
+        // set municipality string
+        if (! empty($company['Municipality'])) {
+            $company['Company']['municipality'] = $company['Municipality']['name'];
+        }
 
         // format working hours
         $wh_tmp = array();

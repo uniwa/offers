@@ -82,19 +82,19 @@
                 '[method]' => 'GET'),
         array('ws' => $ws));
 
-    Router::connect('/:ws/offers/happyhour',
+    Router::connect('/:ws/offers/happyhour/*',
         array(  'controller' => 'offers',
                 'action' => 'happyhour',
                 '[method]' => 'GET'),
         array('ws' => $ws));
 
-    Router::connect('/:ws/offers/coupons',
+    Router::connect('/:ws/offers/coupons/*',
         array(  'controller' => 'offers',
                 'action' => 'coupons',
                 '[method]' => 'GET'),
         array('ws' => $ws));
 
-    Router::connect('/:ws/offers/limited',
+    Router::connect('/:ws/offers/limited/*',
         array(  'controller' => 'offers',
                 'action' => 'limited',
                 '[method]' => 'GET'),
@@ -112,7 +112,7 @@
                 '[method]' => 'GET'),
         array('ws' => $ws));
 
-    Router::connect('/:ws/offers',
+    Router::connect('/:ws/offers/*',
         array(  'controller' => 'offers',
                 'action' => 'index',
                 '[method]' => 'GET'),

@@ -85,13 +85,12 @@ if (empty($offers)) {
             $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
 
             $html .= $this->Html->link(
-                    $flag_icon . ' Σήμανση ως SPAM',
+                    $flag_icon . ' Ανάρμοστη',
                     array('controller' => 'offers',
-                          'action' => 'flag',
+                          'action' => 'improper',
                            $offer['Offer']['id']),
                     array('escape' => false,
-                          'class' => 'btn btn-mini'),
-                    'Η ενέργεια δεν δύναται να αναιρεθεί. Είστε βέβαιοι;'
+                          'class' => 'btn btn-mini')
             );
         }
 

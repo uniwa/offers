@@ -79,13 +79,12 @@ if ($is_flaggable) {
 
     $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
 
-    $flag_link = $this->Html->link($flag_icon . ' Σήμανση ως SPAM',
+    $flag_link = $this->Html->link($flag_icon . ' Ανάρμοστη',
                                    array('controller' => 'offers',
-                                         'action' => 'flag',
+                                         'action' => 'improper',
                                           $offer['Offer']['id']),
                                    array('escape' => false,
-                                         'class' => 'btn btn-mini'),
-                                   'Η ενέργεια δεν δύναται να αναιρεθεί. Είστε βέβαιοι;'
+                                         'class' => 'btn btn-mini')
                                    );
 
     $html .= $flag_link;

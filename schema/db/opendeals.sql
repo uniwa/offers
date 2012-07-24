@@ -184,6 +184,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`offers` (
   `work_hour_count` INT NOT NULL DEFAULT 0 ,
   `offer_state_id` INT NOT NULL DEFAULT 1 ,
   `is_spam` TINYINT(1) NOT NULL DEFAULT 0 ,
+  `explanation` VARCHAR(140) NULL DEFAULT NULL ,
   `vote_count` INT(11) NOT NULL DEFAULT 0 ,
   `vote_plus` INT(11) NOT NULL DEFAULT 0 ,
   `vote_minus` INT(11) NOT NULL DEFAULT 0 ,

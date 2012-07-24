@@ -141,3 +141,8 @@ footer ul li {
 .strikethrough{
     text-decoration: line-through;
 }
+
+.twobuttons{
+    float: left;
+    margin: 0 12px 0 0;
+}

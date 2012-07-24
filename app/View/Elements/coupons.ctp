@@ -97,6 +97,15 @@
                     $c['Coupon']['id']
                 )
             );
+
+            $reinsert_link = $this->Html->link(
+                "απελευθέρωση",
+                array(
+                    'controller' => 'coupons',
+                    'action' => 'reinsert',
+                    $c['Coupon']['id']
+                )
+            );
             $strikethrough = array();
             $pdf = " - ";
             if ($c['Coupon']['reinserted']) {
@@ -125,10 +134,14 @@
                 if ($c['Offer']['offer_state_id'] == STATE_INACTIVE) {
                     $html .= "<td>{$delete_link}</td>";
                 } else {
-                    $delete = "<td title='μόνο κουπόνια από μη ενεργές";
-                    $delete .= "προσφορές μπορούν να διαγραφούν'";
-                    $delete .= "class='help-text'>διαγραφή</td>";
-                    $html .= $delete;
+                    if ($c['Coupon']['reinserted'] == true) {
+                        $delete = "<td title='μόνο κουπόνια από μη ενεργές";
+                        $delete .= "προσφορές μπορούν να διαγραφούν'";
+                        $delete .= "class='help-text'>διαγραφή</td>";
+                        $html .= $delete;
+                    } else {
+                        $html .= "<td>{$reinsert_link}</td>";
+                    }
                 }
 
                 $html .= "<td>{$pdf}</td>";

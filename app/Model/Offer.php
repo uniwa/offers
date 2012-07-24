@@ -403,6 +403,14 @@ class Offer extends AppModel {
         return $company_id === $offer_company_id && $company_id !== false;
     }
 
+    public function get_company_email($offer_id) {
+        $company_id = $this->field('company_id', array('id' => $offer_id));
+        $user_id = $this->Company->field('user_id', array('id' => $company_id));
+        $email = $this->Company->User->field('email', array('id' => $user_id));
+
+        return $email;
+    }
+
     // Iterates through the supplied array, reducing the length of each Offer's
     // description to  $limit.
     //

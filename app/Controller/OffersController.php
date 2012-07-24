@@ -542,12 +542,19 @@ class OffersController extends AppController {
             $coupon_count = null;
             $vote_count = null;
         }
+        $my_stats = array('coupon_count' => $coupon_count,
+                          'vote_count' => $vote_count);
+
+        // provide simple wrapper elements for xml
+        if ($this->webservice_type == 'xml') {
+            $type_stats = array('type' => $type_stats);
+            $cat_stats = array('category' => $type_stats);
+        }
 
         $this->notify(null, null, 200, array('total_offers' => $total,
                                              'types' => $type_stats,
                                              'categories' => $cat_stats,
-                                             'coupon_count' => $coupon_count,
-                                             'vote_count' => $vote_count));
+                                             'my_stats' => $my_stats));
     }
 
     private function prepare_view($offer) {

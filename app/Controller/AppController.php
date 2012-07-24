@@ -85,9 +85,16 @@ class AppController extends Controller{
             }
             if ($company['Company']['longitude'] === null or
                 $company['Company']['latitude'] === null) {
+                    // build the profile edit url for company
+                    $edit_link = array(
+                        'controller' => 'companies',
+                        'action' => 'edit',
+                        $this->Session->read('Auth.Company.id')
+                    );
                     $msg = "Δεν έχετε συμπληρώσει γεωχωρικές πληροφορίες για την επιχείρηση σας. ";
                     $msg .= "Προσφορές που αναρτάτε πιθανόν να μην είναι διαθέσιμες μέσω της εφαρμογής κινητού. ";
-                    $msg .= "Πατήστε <a href=\"#\">εδώ</a> για να καταχωρήσετε το στίγμα της επιχείρησης σας.";
+                    $msg .= "Πατήστε <a href=\"".Router::url($edit_link, true)."\">εδώ</a>";
+                    $msg .= " για να καταχωρήσετε το στίγμα της επιχείρησης σας.";
 
                     // make a "smart" decision about missing geo-information urgency
                     // if user is banned/locked demote missing geo-info to "info" level

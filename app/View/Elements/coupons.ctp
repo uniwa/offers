@@ -12,7 +12,7 @@
     $html .= "<th>Ημ/νία δέσμευσης</th>";
 
     if ($role === ROLE_STUDENT) {
-        $html .= "<th>Διαγραφή</th>\n";
+        $html .= "<th>Διαγραφή / Επιστροφή</th>\n";
         $html .= "<th>Download</th>\n";
     }
 
@@ -34,7 +34,7 @@
                         'action' => 'view',
                         $c['Offer']['id']
                     ),
-                    array()
+                    array('title' => 'Πληροφορίες προσφοράς')
                 );
 
                 $company_link = $this->Html->link(
@@ -44,7 +44,7 @@
                         'action' => 'view',
                         $c['Offer']['company_id']
                     ),
-                    array()
+                    array('title' => 'Πληροφορίες επιχείρησης')
                 );
             }
 
@@ -55,7 +55,7 @@
                     'action' => 'view',
                     $c['Coupon']['id']
                 ),
-                array()
+                array('title' => 'Αναλυτικές πληροφορίες κουπονιού')
             );
 
             if ($role === ROLE_STUDENT) {
@@ -66,7 +66,7 @@
                         'action' => 'delete',
                         $c['Coupon']['id']
                     ),
-                    array(),
+                    array('title' => 'Διαγράψτε το συγκεκριμένο κουπόνι από το ιστορικό σας'),
                     "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί"
                 );
             }
@@ -95,7 +95,19 @@
                     'controller' => 'coupons',
                     'action' => 'pdf',
                     $c['Coupon']['id']
-                )
+                ),
+                array('title' => 'Κατεβάστε τις λεπτομέρειες του κουπονιού σε μορφή pdf')
+            );
+
+            $reinsert_link = $this->Html->link(
+                "επιστροφή",
+                array(
+                    'controller' => 'coupons',
+                    'action' => 'reinsert',
+                    $c['Coupon']['id']
+                ),
+                array('title' => 'Επιστροφή δεσμευμένου κουπονιού'),
+                'Αποδέσμευση και επιστροφή κουπονιού.\nΠροσοχή: Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.'
             );
             $strikethrough = array();
             $pdf = " - ";
@@ -125,10 +137,14 @@
                 if ($c['Offer']['offer_state_id'] == STATE_INACTIVE) {
                     $html .= "<td>{$delete_link}</td>";
                 } else {
-                    $delete = "<td title='μόνο κουπόνια από μη ενεργές";
-                    $delete .= "προσφορές μπορούν να διαγραφούν'";
-                    $delete .= "class='help-text'>διαγραφή</td>";
-                    $html .= $delete;
+                    if ($c['Coupon']['reinserted'] == true) {
+                        $delete = "<td title='Μόνο κουπόνια από μη ενεργές ";
+                        $delete .= "προσφορές μπορούν να διαγραφούν'";
+                        $delete .= "class='help-text'>διαγραφή</td>";
+                        $html .= $delete;
+                    } else {
+                        $html .= "<td>{$reinsert_link}</td>";
+                    }
                 }
 
                 $html .= "<td>{$pdf}</td>";

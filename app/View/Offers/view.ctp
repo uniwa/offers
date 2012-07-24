@@ -7,10 +7,10 @@ $offer_state_id = (int)$offer['Offer']['offer_state_id'];
 $offer_type_id = (int)$offer['Offer']['offer_type_id'];
 $label_text = offer_type($offer_type_id);
 $is_spam = $offer['Offer']['is_spam'];
-$is_user_the_owner = $this->Session->read('Auth.User.id') == $offer['Company']['user_id'];
+$is_user_the_owner = $this->Session->read('Auth.User.id') === $offer['Company']['user_id'];
 $is_offer_draft = $offer_state_id == STATE_DRAFT;
 $is_offer_active = $offer_state_id == STATE_ACTIVE;
-$role = $is_user_the_owner = $this->Session->read('Auth.User.role');
+$role = $this->Session->read('Auth.User.role');
 
 // Offer actions (copy,images, etc.)
 if ($is_user_the_owner) {

@@ -101,6 +101,9 @@ if (isset($comp['name']))
 if (isset($comp['address']))
     echo 'Διεύθυνση : '.$comp['address'].'<br/>';
 
+if (isset($comp['municipality']))
+    echo 'Δήμος : ' .$comp['municipality'].'<br />';
+
 if (isset($comp['postalcode']))
     echo 'Ταχ. Κώδικας : '.$comp['postalcode'].'<br/>';
 

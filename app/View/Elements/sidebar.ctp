@@ -52,10 +52,10 @@ if (isset($shows_spam)) {
     // provided; if it has not been set at all then it is implied that the user
     // is not admin and no link should be provided at all
     $spam_link = $shows_spam
-            ? $this->Html->link('Απόκρυψη των SPAM',
+            ? $this->Html->link('Απόκρυψη ανάρμοστων',
                                 array('controller' => 'offers',
                                       'action' => 'index'))
-            : $this->Html->link('Εμφάνιση των SPAM',
+            : $this->Html->link('Εμφάνιση ανάρμοστων',
                                 array('controller' => 'offers',
                                       'action' => 'spam'));
 }

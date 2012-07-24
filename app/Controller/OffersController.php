@@ -294,43 +294,55 @@ class OffersController extends AppController {
         }
     }
 
-    public function flag($id = null) {
+    private function flag($id = null, $explanation = null) {
+        $this->Offer->id = $id;
+        $data = array(
+            'is_spam' => true,
+            'explanation' => $explanation,
+            'offer_state_id' => STATE_INACTIVE);
+
+        if ($this->Offer->save($data, false)) {
+            $msg = 'Η προσφορά επισημάνθηκε ως ανάρμοστη';
+            $flash_type = 'success';
+        } else {
+            $msg = 'Προέκυψε κάποιο σφάλμα. Οι αλλαγές δεν πραγματοποιήθηκαν';
+            $flash_type = 'error';
+        }
+
+        $this->Session->setFlash($msg, 'default', array(), $flash_type);
+    }
+
+    public function improper($id = null) {
         if (empty($id)) throw new BadRequestException();
 
-        $offer = $this->Offer->findById($id, array('id',
-                                                   'is_spam',
-                                                   'offer_state_id'));
+        $this->Offer->recursive = -1;
+        $offer = $this->Offer->findById($id);
 
         if ($offer == false) throw new NotFoundException();
 
         if ($offer['Offer']['offer_state_id'] == STATE_DRAFT) {
-
-            $msg = 'Οι μη ενεργοποιημένες προσφορές δεν μπορούν να σημανθούν';
+            $msg = 'Οι μη ενεργοποιημένες προσφορές δεν μπορούν να επισημανθούν ως ανάρμοστες';
             $flash_type = 'error';
         } else if ($offer['Offer']['is_spam']) {
-
-            $msg = 'Η προσφορά έχει ήδη σημανθεί ως SPAM';
+            $msg = 'Η προσφορά έχει ήδη επισημανθεί ως ανάρμοστη';
             $flash_type = 'warning';
-        } else {
-
-            $this->Offer->id = $id;
-            $data = array('is_spam' => true,
-                          'offer_state_id' => STATE_INACTIVE);
-
-            if ($this->Offer->save($data, false)) {
-
-                $msg = 'Η προσφορά σημάνθηκε ως SPAM';
-                $flash_type = 'success';
-
-            } else {
-                $msg = 'Προέκυψε κάποιο σφάλμα - ' .
-                       'οι αλλαγές δεν πραγματοποιήθηκαν';
-                $flash_type = 'error';
-            }
         }
 
-        $this->Session->setFlash($msg, 'default', array(), $flash_type);
-        $this->redirect($this->request->referer());
+        $this->set('offer', $offer);
+
+        if (!empty($this->request->data)) {
+            $target = array('controller' => 'offers', 'action' => 'index');
+            if (isset($this->request->data['cancel'])) {
+                $this->redirect($target);
+            }
+            $this->Offer->set($this->request->data);
+            $this->Offer->validates();
+            $errors = $this->Offer->validationErrors;
+            if (!isset($errors['explanation'])){
+                $this->flag($id, $this->request->data['Offer']['explanation']);
+                $this->redirect($target);
+            }
+        }
     }
 
     public function view($id = null) {

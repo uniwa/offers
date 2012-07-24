@@ -525,11 +525,29 @@ class OffersController extends AppController {
         $cat_stats = $this->OfferCategory->find('countOffers');
 
         // conditions array is only set to avoid careless merge in process_find
+        // when no true conditions exist
         $total = $this->Offer->find('count', array('conditions' => array()));
+
+        if ($this->Auth->user()) {
+            if ($this->Session->read('Auth.User.role') == ROLE_STUDENT) {
+                $student_id = $this->Session->read('Auth.Student.id');
+                $options = array('conditions' => array(
+                        'student_id' => $student_id));
+
+                $coupon_count = $this->Coupon->find('count', $options);
+
+                $vote_count = $this->Vote->find('count', $options);
+            }
+        } else {
+            $coupon_count = null;
+            $vote_count = null;
+        }
 
         $this->notify(null, null, 200, array('total_offers' => $total,
                                              'types' => $type_stats,
-                                             'categories' => $cat_stats));
+                                             'categories' => $cat_stats,
+                                             'coupon_count' => $coupon_count,
+                                             'vote_count' => $vote_count));
     }
 
     private function prepare_view($offer) {

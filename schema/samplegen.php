@@ -838,6 +838,7 @@ $coupon_count = 0;
 $max_options = array(1,2,3,5,10);
 $oimage_count = 0;
 $offer_id = 0;
+$explanation = 'NULL';
 
 echo count($company_names);
 $users1 = "INSERT INTO `users` VALUES\n";
@@ -912,7 +913,7 @@ for ($i = 1; $i <= NUM_COMPANIES; $i++) {
 	    $insert_offer .= "'{$autostart}','{$autoend}','{$coupon_terms}','{$total_quantity}',";
 	    $insert_offer .= "'{$coupon_count}','{$max_per_student}','{$tags}','{$offer_category_id}',";
 	    $insert_offer .= "'{$offer_type_id}','{$uid}','{$oimage_count}','{$work_hour_count}',";
-	    $insert_offer .= "'{$offer_state_id}','{$is_spam}','{$vote_count}',";
+	    $insert_offer .= "'{$offer_state_id}','{$is_spam}','{$explanation}','{$vote_count}',";
 	    $insert_offer .= "'{$vote_plus}','{$vote_minus}','{$created}','{$modified}')";
 
         if (($i === NUM_COMPANIES) && ($j === $num_offers)) {

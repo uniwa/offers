@@ -34,7 +34,7 @@
                         'action' => 'view',
                         $c['Offer']['id']
                     ),
-                    array()
+                    array('title' => 'Πληροφορίες προσφοράς')
                 );
 
                 $company_link = $this->Html->link(
@@ -44,7 +44,7 @@
                         'action' => 'view',
                         $c['Offer']['company_id']
                     ),
-                    array()
+                    array('title' => 'Πληροφορίες επιχείρησης')
                 );
             }
 
@@ -55,7 +55,7 @@
                     'action' => 'view',
                     $c['Coupon']['id']
                 ),
-                array()
+                array('title' => 'Αναλυτικές πληροφορίες κουπονιού')
             );
 
             if ($role === ROLE_STUDENT) {
@@ -66,7 +66,7 @@
                         'action' => 'delete',
                         $c['Coupon']['id']
                     ),
-                    array(),
+                    array('title' => 'Διαγράψτε το συγκεκριμένο κουπόνι από το ιστορικό σας'),
                     "Αυτή η ενέργεια δεν μπορεί να αναιρεθεί"
                 );
             }
@@ -95,7 +95,8 @@
                     'controller' => 'coupons',
                     'action' => 'pdf',
                     $c['Coupon']['id']
-                )
+                ),
+                array('title' => 'Κατεβάστε τις λεπτομέρειες του κουπονιού σε μορφή pdf')
             );
 
             $reinsert_link = $this->Html->link(
@@ -104,7 +105,8 @@
                     'controller' => 'coupons',
                     'action' => 'reinsert',
                     $c['Coupon']['id']
-                )
+                ),
+                array('title' => 'Επιστροφή δεσμευμένου κουπονιού')
             );
             $strikethrough = array();
             $pdf = " - ";
@@ -135,7 +137,7 @@
                     $html .= "<td>{$delete_link}</td>";
                 } else {
                     if ($c['Coupon']['reinserted'] == true) {
-                        $delete = "<td title='μόνο κουπόνια από μη ενεργές ";
+                        $delete = "<td title='Μόνο κουπόνια από μη ενεργές ";
                         $delete .= "προσφορές μπορούν να διαγραφούν'";
                         $delete .= "class='help-text'>διαγραφή</td>";
                         $html .= $delete;

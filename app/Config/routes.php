@@ -154,6 +154,12 @@
                 '[method]' => 'GET'),
         array('ws' => $ws));
 
+    Router::connect('/:ws/coupons/reinsert/*',
+        array(  'controller' => 'coupons',
+                'action' => 'reinsert',
+                '[method]' => 'GET'),
+        array('ws' => $ws));
+
     Router::connect('/:ws/coupon/*',
         array(  'controller' => 'coupons',
                 'action' => 'view',

@@ -112,7 +112,7 @@
             $strikethrough = array();
             $pdf = " - ";
             if ($c['Coupon']['reinserted']) {
-                $strikethrough['pre'] = "<span class='strikethrough'>";
+                $strikethrough['pre'] = "<span class='strikethrough help-text' title='Το κουπόνι αυτό έχει αποδεσμευθεί'>";
                 $strikethrough['post'] = "</span>";
             } else {
                 $strikethrough['pre'] = "";

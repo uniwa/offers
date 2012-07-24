@@ -385,6 +385,9 @@ class CouponsController extends AppController {
                 }
             }
 
+            // replace true/false in json to be consistent with XML
+            $coupon_data['coupon']['reinserted'] = $coupon_data['coupon']['reinserted'] ? 1 : 0;
+
             if ($is_xml) {
                 $this->xml_alter_view($coupon_data);
             }
@@ -452,6 +455,7 @@ class CouponsController extends AppController {
             'Coupon.id',
             'Coupon.serial_number',
             'Coupon.created',
+            'Coupon.reinserted',
             'Offer.title',
             'Offer.description',
             'Offer.coupon_terms',

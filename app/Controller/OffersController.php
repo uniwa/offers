@@ -297,21 +297,8 @@ class OffersController extends AppController {
     }
 
     private function flag($id = null, $explanation = null) {
-        $this->Offer->id = $id;
-        $data = array(
-            'is_spam' => true,
-            'explanation' => $explanation,
-            'offer_state_id' => STATE_INACTIVE);
-
-        if ($this->Offer->save($data, false)) {
-            $msg = 'Η προσφορά επισημάνθηκε ως ανάρμοστη';
-            $flash_type = 'success';
-        } else {
-            $msg = 'Προέκυψε κάποιο σφάλμα. Οι αλλαγές δεν πραγματοποιήθηκαν';
-            $flash_type = 'error';
-        }
-
-        $this->Session->setFlash($msg, 'default', array(), $flash_type);
+        $flash = $this->Offer->flag_improper($id, $explanation);
+        $this->Session->setFlash($flash['msg'], 'default', array(), $flash['type']);
     }
 
     public function improper($id = null) {
@@ -790,7 +777,7 @@ class OffersController extends AppController {
                 $error = $this->save_happy_offer($id, $is_add, $is_copy) === false;
             } else {
                 // limited and coupon do not require special treatment
-                $error = $this->Offer->save($this->request->data) === false;
+                $error = !$this->Offer->save($this->request->data);
             }
 
             if ($error) {

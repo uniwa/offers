@@ -245,6 +245,8 @@ class CompaniesController extends AppController {
 
         if (!empty($this->request->data)) {
             $target = array('controller' => 'admins', 'action' => 'companies');
+            $email = $company['User']['email'];
+
             if (isset($this->request->data['cancel'])) {
                 $this->redirect($target);
             }
@@ -253,10 +255,10 @@ class CompaniesController extends AppController {
             $this->Company->validates();
             $errors = $this->Company->validationErrors;
 
-            if (!isset($errors['explanation'])){
+            if (!isset($errors['explanation'])) {
                 $this->change_company_state($id, true,
                     $this->request->data['Company']['explanation']);
-//                $this->company_ban_notification($company, $email);
+                $this->company_ban_notification($company, $email);
                 $this->redirect($target);
             }
         }
@@ -289,6 +291,20 @@ class CompaniesController extends AppController {
                 'default', array(), 'error');
 
             return false;
+        }
+
+        // we need user id and company id
+        // so we search in Company table with user_id
+        $options['conditions'] = array(
+            'Offer.company_id' => $company_id,
+            'Offer.offer_state_id' => STATE_ACTIVE);
+        $options['recursive'] = -1;
+        $offers = $this->Offer->find('all', $options);
+        if (!empty($offers)) {
+            // mark all as spam
+            foreach ($offers as $offer) {
+                $this->Offer->flag_improper($offer['Offer']['id'], $expl);
+            }
         }
 
         $this->User->id = $company['Company']['user_id'];
@@ -342,6 +358,32 @@ class CompaniesController extends AppController {
         }
 
         $this->redirect($referer);
+    }
+
+    // Send email notification to company when they have been banned
+    private function company_ban_notification ($company = null, $email = null) {
+        if (is_null($company) || is_null($email)) {
+            throw new BadRequestException();
+        }
+
+        $subject = __("Ειδοποίηση κλειδώματος λογαριασμού");
+        $url = APP_URL."/companies/view";
+        $name = $company['Company']['name'];
+        $explanation = $company['Company']['explanation'];
+
+        $cake_email = new CakeEmail('default');
+        $cake_email = $cake_email
+            ->to($email)
+            ->subject($subject)
+            ->template('ban_notify', 'default')
+            ->emailFormat('both')
+            ->viewVars(array('url' => $url,'name' => $name,'explanation' => $explanation));
+        try {
+            $cake_email->send();
+        } catch (Exception $e) {
+            return false;
+        }
+        return true;
     }
 
     public function imageedit() {

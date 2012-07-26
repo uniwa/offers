@@ -115,7 +115,19 @@ class Company extends AppModel {
                 'message' => 'Ο ΑΦΜ δεν είναι έγκυρος',
                 'allowEmpty' => true
             )
-        )
+        ),
+
+        'explanation' => array(
+            'not_empty' => array(
+                'rule' => 'notEmpty',
+                'message' => 'Η αιτιολογία δεν μπορεί να παραμείνει κενή.',
+                'required' => true,
+                // if was left empty or not even included, it's redundant to
+                // check whether the (non-existent) value is valid or not
+                'last' => true,
+                // it should not be required for an update
+            ),
+        ),
     );
 
     // Check if ΑΦΜ is valid (official algorithm)

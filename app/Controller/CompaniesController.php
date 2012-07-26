@@ -230,43 +230,83 @@ class CompaniesController extends AppController {
     }
 
     public function ban($id = null) {
-        $this->change_company_state($id, true);
+        $this->Company->recursive = 0;
+        $company = $this->Company->findById($id);
+
+        if ($company['User']['is_banned']){
+            $flashmsg = _("Η επιχείρηση είναι ήδη κλειδωμένη.");
+            $this->Session->setFlash($flashmsg,
+                'default', array(), 'error');
+
+            $this->redirect($this->referer());
+        }
+
+        $this->set('company', $company);
+
+        if (!empty($this->request->data)) {
+            $target = array('controller' => 'admins', 'action' => 'companies');
+            if (isset($this->request->data['cancel'])) {
+                $this->redirect($target);
+            }
+
+            $this->Company->set($this->request->data);
+            $this->Company->validates();
+            $errors = $this->Company->validationErrors;
+
+            if (!isset($errors['explanation'])){
+                $this->change_company_state($id, true,
+                    $this->request->data['Company']['explanation']);
+//                $this->company_ban_notification($company, $email);
+                $this->redirect($target);
+            }
+        }
     }
 
     public function unban($id = null) {
         $this->change_company_state($id, false);
+        $this->redirect($this->referer());
     }
 
-    private function change_company_state($company_id, $ban = true) {
+    private function change_company_state($company_id, $ban = true, $expl = null) {
         //
         // change user field `is_banned`
         //
-        $referer = $this->referer();
         if ($company_id == null) throw new BadRequestException();
 
         // we need user id and company id
         // so we search in Company table with user_id
         $options['conditions'] = array('Company.id' => $company_id);
-        $options['recursive'] = -1;
+        $options['recursive'] = 0;
         $company = $this->Company->find('first', $options);
         if (empty($company))
             throw new NotFoundException('Η συγκεκριμένη επιχείρηση δε βρέθηκε.');
 
+        if ($company['User']['is_banned'] == $ban){
+            $flashmsg = ($ban)
+                ?_("Η επιχείρηση είναι ήδη κλειδωμένη.")
+                :_("Η επιχείρηση δεν είναι κλειδωμένη.");
+            $this->Session->setFlash($flashmsg,
+                'default', array(), 'error');
+
+            return false;
+        }
+
         $this->User->id = $company['Company']['user_id'];
+        $this->Company->id = $company['Company']['id'];
         $saved = $this->User->saveField('is_banned', $ban, false);
+        $saved = $this->Company->saveField('explanation', $expl, false);
+
         if (!$saved) {
             $this->Session->setFlash('Παρουσιάστηκε κάποιο σφάλμα.',
                 'default', array(), 'error');
         } else {
             $company_name = $company['Company']['name'];
-            $success_message = ($enable)
+            $success_message = ($ban)
                 ?"Η επιχείρηση '{$company_name}' κλειδώθηκε επιτυχώς."
                 :"Η επιχείρηση '{$company_name}' ξεκλειδώθηκε επιτυχώς.";
             $this->Session->setFlash($success_message,
                 'default', array(), 'success');
         }
-
-        $this->redirect($referer);
     }
 
     public function alter($id = null, $view = null, $enable = true) {

@@ -100,6 +100,7 @@ CREATE  TABLE IF NOT EXISTS `opendeals`.`companies` (
   `latitude` DOUBLE NULL DEFAULT NULL ,
   `longitude` DOUBLE NULL DEFAULT NULL ,
   `is_enabled` TINYINT(1) NOT NULL DEFAULT FALSE ,
+  `explanation` VARCHAR(140) NULL DEFAULT NULL ,
   `user_id` INT NOT NULL ,
   `municipality_id` INT NULL DEFAULT NULL ,
   `image_count` INT NOT NULL DEFAULT 0 ,

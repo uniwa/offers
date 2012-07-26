@@ -411,6 +411,33 @@ class Offer extends AppModel {
         return $email;
     }
 
+    // returns the emails on students that hold possession of at least coupon of
+    // the specified offer
+    //
+    // the result is an array of: [User][email]
+    public function get_student_emails($offer_id) {
+        $this->Coupon->recursive = -1;
+
+        $options = array('conditions' => array(
+                             'Coupon.offer_id' => $offer_id),
+                         'joins' => array(
+                             array('table' => 'students',
+                                   'alias' => 'Student',
+                                   'type' => 'LEFT',
+                                   'conditions' => array(
+                                       'Coupon.student_id = Student.id',
+                                   )),
+                             array('table' => 'users',
+                                   'alias' => 'User',
+                                   'type' => 'LEFT',
+                                   'conditions' => array(
+                                       'User.id = Student.id',
+                                   ))),
+                         'fields' => array('DISTINCT User.email'));
+
+        return $this->Coupon->find('all', $options);
+    }
+
     // Iterates through the supplied array, reducing the length of each Offer's
     // description to  $limit.
     //

@@ -344,34 +344,12 @@ class OffersController extends AppController {
             if (!isset($errors['explanation'])){
                 $this->flag($id, $this->request->data['Offer']['explanation']);
                 $this->improper_offer_notification($offer, $email);
-                $this->email_flagged_offer($offer);
                 $this->redirect($target);
             }
         }
     }
 
     private function email_flagged_offer($offer) {
-        $this->Coupon->recursive = -1;
-
-        $options = array('conditions' => array(
-                             'Coupon.offer_id' => $offer['Offer']['id']),
-                         'joins' => array(
-                             array('table' => 'students',
-                                   'alias' => 'Student',
-                                   'type' => 'LEFT',
-                                   'conditions' => array(
-                                       'Coupon.student_id = Student.id',
-                                   )),
-                             array('table' => 'users',
-                                   'alias' => 'User',
-                                   'type' => 'LEFT',
-                                   'conditions' => array(
-                                       'User.id = Student.id',
-                                   ))),
-                         'fields' => array('DISTINCT User.email'));
-
-        $emails = $this->Coupon->find('all', $options);
-
         $cake_email = new CakeEmail('default');
         $cake_email = $cake_email
             ->subject('Ανάρμοστη προσφορά')

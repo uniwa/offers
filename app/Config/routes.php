@@ -45,6 +45,12 @@
 
     Router::parseExtensions('rss', 'xml', 'json');
 
+    Router::connect('/:ws/votes',
+        array(  'controller' => 'votes',
+                'action' => 'index',
+                '[method]' => 'GET'),
+        array('ws' => $ws));
+
     Router::connect('/:ws/vote/vote_up/*',
         array(  'controller' => 'votes',
                 'action' => 'vote_up',

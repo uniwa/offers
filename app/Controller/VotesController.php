@@ -19,7 +19,7 @@ class VotesController extends AppController {
 
     public function is_authorized($user) {
         $role = $this->Auth->user('role');
-        $students = array('vote_up', 'vote_down', 'vote_cancel');
+        $students = array('vote_up', 'vote_down', 'vote_cancel', 'index');
 
         // Only students
         if (in_array($this->action, $students)) {
@@ -30,6 +30,58 @@ class VotesController extends AppController {
 
         // admin can see banned users too
         return parent::is_authorized($user);
+    }
+
+    public function index() {
+        if (! $this->Auth->user('id')) {
+            throw new ForbiddenException();
+        }
+
+        if ($this->Auth->user('role') != ROLE_STUDENT) {
+            throw new ForbiddenException();
+        }
+
+        $conditions = array(
+            'student_id' => $this->Session->read('Auth.Student.id'));
+        $fields = array(
+            'Vote.vote',
+            'Offer.id',
+            'Offer.title',
+            'Offer.vote_count',
+            'Offer.vote_plus',
+            'Offer.vote_minus'
+        );
+        $user_votes = $this->Vote->find('all', array(
+            'conditions' => $conditions,
+            'fields' => $fields,
+            'recursive' => 0)
+        );
+
+        if ($this->is_webservice) {
+            // proper format for API
+            foreach ($user_votes as $key => $vote) {
+                // omg this is handy :P
+                $vote = array_change_key_case($vote, CASE_LOWER);
+                $vote['offer']['vote_sum'] =
+                    $vote['offer']['vote_plus'] - $vote['offer']['vote_minus'];
+                $vote['vote'] = $vote['vote']['vote'] ? 1 : 0;
+                unset($vote['vote']['vote']);
+                $user_votes[$key] = $vote;
+            }
+
+            if ($this->webservice_type == 'xml') {
+                $this->api_compile_response(
+                    200,
+                    array('votes' => array('vote_info' => $user_votes))
+                );
+            } else {
+                $this->api_compile_response(
+                    200, array('votes' => $user_votes));
+            }
+        } else {
+            throw new ForbiddenException();
+        }
+
     }
 
     // wrapper action for positive vote

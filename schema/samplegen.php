@@ -868,7 +868,7 @@ for ($i = 1; $i <= NUM_COMPANIES; $i++) {
 
 	$insert_company = "('{$uid}','{$name}','{$address}','{$postalcode}','{$phone}',";
 	$insert_company .= "'{$fax}','{$service_type}','{$afm}','{$latitude}',";
-	$insert_company .= "'{$longitude}','{$is_enabled}','{$uid}',";
+	$insert_company .= "'{$longitude}','{$is_enabled}','{$explanation}','{$uid}',";
 	$insert_company .= "'{$mu_id}','{$cimage_count}','{$work_hour_count}',";
     $insert_company .= "'{$created}', '{$modified}')";
 

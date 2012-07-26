@@ -319,7 +319,6 @@ class OffersController extends AppController {
 
         $this->Offer->recursive = -1;
         $offer = $this->Offer->findById($id);
-        $email = $this->Offer->get_company_email($offer['Offer']['id']);
 
         if ($offer == false) throw new NotFoundException();
 
@@ -343,28 +342,12 @@ class OffersController extends AppController {
             $errors = $this->Offer->validationErrors;
             if (!isset($errors['explanation'])){
                 $this->flag($id, $this->request->data['Offer']['explanation']);
-                $this->improper_offer_notification($offer, $email);
+
+                $owner = $this->Offer->get_company_email($id);
+                $students = $this->Offer->get_student_emails($id);
+                $this->improper_offer_notification($offer, $owner, $students);
                 $this->redirect($target);
             }
-        }
-    }
-
-    private function email_flagged_offer($offer) {
-        $cake_email = new CakeEmail('default');
-        $cake_email = $cake_email
-            ->subject('Ανάρμοστη προσφορά')
-
-            ->template('student_coupon_flagged')
-            ->emailFormat('both')
-            ->viewVars('offer_title', $offer['Offer']['title']);
-
-
-        foreach ($emails as $recipient) {
-            $cake_email->to($recipient['User']['email']);
-            try {
-
-                $cake_email->send();
-            } catch(Exception $e) {}
         }
     }
 
@@ -1444,7 +1427,7 @@ class OffersController extends AppController {
 
     // Send email notification to company
     // when one of their offers has been flagged as improper
-    private function improper_offer_notification ($offer = null, $email = null) {
+    private function improper_offer_notification ($offer = null, $owner = null, $students = array()) {
         if (is_null($offer) || is_null($email)) {
             throw new BadRequestException();
         }
@@ -1456,7 +1439,7 @@ class OffersController extends AppController {
 
         $cake_email = new CakeEmail('default');
         $cake_email = $cake_email
-            ->to($email)
+            ->to($owner)
             ->subject($subject)
             ->template('spam_notify', 'default')
             ->emailFormat('both')
@@ -1466,6 +1449,16 @@ class OffersController extends AppController {
         } catch (Exception $e) {
             return false;
         }
+        // pass an additional variable to denote that the email should be
+        // formatted for a student
+        $cake_mail->viewVars(array('for_student' => true));
+        foreach ($students as $student) {
+            $cake_email->to($student['User']['email']);
+            try {
+                $cake_email->send();
+            } catch(Exception $e) {}
+        }
+
         return true;
     }
 

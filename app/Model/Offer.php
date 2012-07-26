@@ -392,7 +392,6 @@ class Offer extends AppModel {
                 // check whether the (non-existent) value is valid or not
                 'last' => true,
                 // it should not be required for an update
-//                'on' => 'update'
             ),
         ),
     );

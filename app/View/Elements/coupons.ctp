@@ -80,8 +80,12 @@
                     $spam = _('spam');
                     $html .= "<span class='label label-important'>{$spam}</span> ";
                     $html .= $title;
-                }
-                else {
+
+                // prepend an 'ended' tag to the title but not if the offe is
+                // already flagged as spam
+                } else if ($c['Offer']['offer_state_id'] == STATE_INACTIVE) {
+                    $html .= '<span class="label">εληξε</span>' . $offer_link;
+                } else {
                     $html .= $offer_link;
                 }
                 $html .= "</td>";

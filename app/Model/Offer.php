@@ -384,22 +384,41 @@ class Offer extends AppModel {
         ),
 
         'explanation' => array(
-            'not_empty' => array(
-                'rule' => 'notEmpty',
-                'message' => 'Η αιτιολογία δεν μπορεί να παραμείνει κενή.',
-                'required' => true,
-                // if was left empty or not even included, it's redundant to
-                // check whether the (non-existent) value is valid or not
-                'last' => true,
-                // it should not be required for an update
-            ),
+            'rule' => 'empty_explanation',
+            'message' => 'Η αιτιολογία δεν μπορεί να παραμείνει κενή.',
         ),
     );
+
+    public function empty_explanation($check) {
+        $empty_expl = isset($this->data['Offer']['explanation'])
+            ?!empty($this->data['Offer']['explanation'])
+            :false;
+
+        return $empty_expl;
+    }
 
     public function is_owned_by($offer_id, $user_id) {
         $company_id = $this->Company->field('id', array('user_id' => $user_id));
         $offer_company_id = $this->field('company_id', array('id' => $offer_id));
         return $company_id === $offer_company_id && $company_id !== false;
+    }
+
+    public function flag_improper($id, $explanation) {
+        $this->id = $id;
+        $data = array(
+            'is_spam' => 1,
+            'explanation' => $explanation,
+            'offer_state_id' => STATE_INACTIVE);
+
+        if ($this->save($data, false)) {
+            $flash['msg'] = _('Η προσφορά χαρακτηρίστηκε ως ανάρμοστη');
+            $flash['type'] = 'success';
+        } else {
+            $flash['msg'] = _('Προέκυψε κάποιο σφάλμα. Οι αλλαγές δεν πραγματοποιήθηκαν');
+            $flash['type'] = 'error';
+        }
+
+        return $flash;
     }
 
     public function get_company_email($offer_id) {

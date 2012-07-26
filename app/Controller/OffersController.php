@@ -1,5 +1,7 @@
 <?php
 
+App::uses('CakeEmail', 'Network/Email');
+
 class OffersController extends AppController {
 
     public $name = 'Offers';
@@ -317,7 +319,6 @@ class OffersController extends AppController {
 
         $this->Offer->recursive = -1;
         $offer = $this->Offer->findById($id);
-        $email = $this->Offer->get_company_email($offer['Offer']['id']);
 
         if ($offer == false) throw new NotFoundException();
 
@@ -341,7 +342,10 @@ class OffersController extends AppController {
             $errors = $this->Offer->validationErrors;
             if (!isset($errors['explanation'])){
                 $this->flag($id, $this->request->data['Offer']['explanation']);
-                $this->improper_offer_notification($offer, $email);
+
+                $owner = $this->Offer->get_company_email($id);
+                $students = $this->Offer->get_student_emails($id);
+                $this->improper_offer_notification($offer, $owner, $students);
                 $this->redirect($target);
             }
         }
@@ -1423,8 +1427,8 @@ class OffersController extends AppController {
 
     // Send email notification to company
     // when one of their offers has been flagged as improper
-    private function improper_offer_notification ($offer = null, $email = null) {
-        if (is_null($offer) || is_null($email)) {
+    private function improper_offer_notification ($offer = null, $owner = null, $students = array()) {
+        if (is_null($offer) || is_null($owner)) {
             throw new BadRequestException();
         }
 
@@ -1435,7 +1439,7 @@ class OffersController extends AppController {
 
         $cake_email = new CakeEmail('default');
         $cake_email = $cake_email
-            ->to($email)
+            ->to($owner)
             ->subject($subject)
             ->template('spam_notify', 'default')
             ->emailFormat('both')
@@ -1445,11 +1449,21 @@ class OffersController extends AppController {
         } catch (Exception $e) {
             return false;
         }
+        // pass an additional variable to denote that the email should be
+        // formatted for a student
+        $cake_mail->viewVars(array('for_student' => true));
+        foreach ($students as $student) {
+            $cake_email->to($student['User']['email']);
+            try {
+                $cake_email->send();
+            } catch(Exception $e) {}
+        }
+
         return true;
     }
 
     // Transforms an array of offers in CakePHP's intrinsic format into an array
-    // capable of been converted into either XML or JSON.
+    // capable of being converted into either XML or JSON.
     // Handles individual offer data as well as that of multiple offers.
     //
     // Currently, if `Offer' key is present at root level, then it is presumed

@@ -1428,7 +1428,7 @@ class OffersController extends AppController {
     // Send email notification to company
     // when one of their offers has been flagged as improper
     private function improper_offer_notification ($offer = null, $owner = null, $students = array()) {
-        if (is_null($offer) || is_null($email)) {
+        if (is_null($offer) || is_null($owner)) {
             throw new BadRequestException();
         }
 

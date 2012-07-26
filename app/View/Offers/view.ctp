@@ -7,7 +7,6 @@ $offer_state_id = (int)$offer['Offer']['offer_state_id'];
 $offer_type_id = (int)$offer['Offer']['offer_type_id'];
 $label_text = offer_type($offer_type_id);
 $is_spam = $offer['Offer']['is_spam'];
-$is_user_the_owner = $this->Session->read('Auth.User.id') === $offer['Company']['user_id'];
 $is_offer_draft = $offer_state_id == STATE_DRAFT;
 $is_offer_active = $offer_state_id == STATE_ACTIVE;
 $role = $this->Session->read('Auth.User.role');
@@ -214,7 +213,7 @@ $redeem_title = array('title' => $click_to_change);
 
 // show coupons for offer
 // only if visitor == owner and offer type = coupons
-if (isset($is_owner) and $is_owner == true) {
+if (isset($is_user_the_owner) and $is_user_the_owner == true) {
     //TODO replace with coupons element
 ?>
     <br />

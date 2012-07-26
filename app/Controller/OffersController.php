@@ -393,11 +393,13 @@ class OffersController extends AppController {
             }
         }
 
+        $is_user_the_owner = $this->Offer->is_owned_by($id, $this_user_id);
+        $this->set('is_user_the_owner', $is_user_the_owner);
+
         // get coupons for offer if user is owner or admin
         // and coupon is of type 'COUPONS'
         if ($offer_type_id == TYPE_COUPONS) {
-            if ($this->Offer->is_owned_by($id, $this_user_id)
-                || $this_user_role === ROLE_ADMIN) {
+            if ($is_user_the_owner || $this_user_role === ROLE_ADMIN) {
                 // build query
                 $order = array('Coupon.created DESC');
                 $conditions = array('Coupon.offer_id' => $id);
@@ -406,7 +408,6 @@ class OffersController extends AppController {
                     'conditions' => $conditions,
                     'order' => $order));
 
-                $this->set('is_owner', true);
                 $this->set('coupons', $coupons);
             }
         }

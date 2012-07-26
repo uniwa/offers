@@ -183,13 +183,12 @@ if (empty($company['Offer']['Active'])) {
             'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
         } else if ($is_user_admin) {
             echo $this->Html->link(
-                    $flag_icon . ' Σήμανση ως SPAM',
+                    $flag_icon . ' Ανάρμοστη',
                     array('controller' => 'offers',
-                          'action' => 'flag',
+                          'action' => 'improper',
                            $active['id']),
                     array('escape' => false,
-                          'class' => 'btn btn-mini'),
-                          'Η ενέργεια δεν δύναται να αναιρεθεί. Είστε βέβαιοι;'
+                          'class' => 'btn btn-mini')
             );
         }
 
@@ -232,7 +231,7 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
                     'action' => 'activate',
                     $draft['id']),
                 null,
-                'Οι ενεργοποιημένες προσφορές δε δύναται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+                'Οι ενεργοποιημένες προσφορές δεν είναι δυνατό να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
             }
             echo '<br/>';
         }
@@ -240,11 +239,11 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
 }
 
 // tag that creates the spam notification
+$spam_tag_title = _('Η προσφορά έχει χαρακτηριστεί ανάρμοστη από διαχειριστή του συστήματος');
 $spam_tag_options = array('class' => 'label label-important',
-                          'title' => 'Η προσφορά έχει σημανθεί ως '.
-                                     'SPAM από διαχειριστή του συστήματος');
+                          'title' => $spam_tag_title);
 
-$spam_tag = $this->Html->tag('span', 'SPAM', $spam_tag_options);
+$spam_tag = $this->Html->tag('span', 'ΑΝΑΡΜΟΣΤΗ', $spam_tag_options);
 
 // display Inactive offers
 if (empty($company['Offer']['Inactive'])) {
@@ -274,15 +273,13 @@ if (empty($company['Offer']['Inactive'])) {
 
                 // offer a link to flag the offer as spam
                 $spamify = $this->Html->link(
-                        $flag_icon . ' Σήμανση ως SPAM',
-                        array('controller' => 'offers',
-                              'action' => 'flag',
-                               $inactive['id']),
-                        array('escape' => false,
-                              'class' => 'btn btn-mini'),
-                              'Η ενέργεια δεν δύναται να αναιρεθεί. '.
-                              'Είστε βέβαιοι;'
-                );
+                    $flag_icon . ' Ανάρμοστη',
+                    array('controller' => 'offers',
+                          'action' => 'improper',
+                           $inactive['id']),
+                    array('escape' => false,
+                          'class' => 'btn btn-mini')
+            );
             }
         }
 

@@ -15,8 +15,11 @@ class NotifyImproperShell extends AppShell {
 
     private function getEmailsPerOffer($since) {
 
-        $this->Offer->Behaviors->attach('Containable');
-        $this->Offer->contain(array('User.email'));
+
+        /* rid ourselves of unnecessary joins */
+        $this->Offer->unbindModel(array('hasMany' => array('Coupon',
+                                                           'Image',
+                                                           'WorkHour')));
 
         $options = array('conditions' => array(
                              'Offer.offer_type_id' => TYPE_COUPONS,
@@ -41,9 +44,11 @@ class NotifyImproperShell extends AppShell {
                                    'alias' => 'User',
                                    'type' => 'LEFT',
                                    'conditions' => array(
-                                       'User.id = Student.id',
+                                       'User.id = Student.user_id',
                                    ))),
-                         'fields' => array('DISTINCT User.email, Offer.title'));
+                         'fields' => array('DISTINCT User.email',
+                                           'Offer.title',
+                                           'Offer.explanation'));
 
         $result = $this->Offer->find('all', $options);
 

@@ -1437,16 +1437,6 @@ class OffersController extends AppController {
         } catch (Exception $e) {
             return false;
         }
-        // pass an additional variable to denote that the email should be
-        // formatted for a student
-        $cake_mail->viewVars(array('for_student' => true));
-        foreach ($students as $student) {
-            $cake_email->to($student['User']['email']);
-            try {
-                $cake_email->send();
-            } catch(Exception $e) {}
-        }
-
         return true;
     }
 

@@ -9,8 +9,8 @@ class NotifyImproperShell extends AppShell {
     public function main() {
 
         $epo = $this->getEmailsPerOffer(strtotime('-3 hours'));
-
-        $this->sendEmails($epo);
+print_r($epo);
+        //$this->sendEmails($epo);
     }
 
     private function getEmailsPerOffer($since) {
@@ -48,10 +48,43 @@ class NotifyImproperShell extends AppShell {
                                    ))),
                          'fields' => array('DISTINCT User.email',
                                            'Offer.title',
-                                           'Offer.explanation'));
+                                           'Offer.explanation'),
+                          'order' => array('Offer.id ASC'));
 
         $result = $this->Offer->find('all', $options);
 
         return $result;
+    }
+
+    private function sendEmails($epo) {
+        $offer_id = 0;
+        $app_url = Configure::read('Constants.APP_URL');
+
+
+        $email = new CakeEmail('default');
+        // set parameters that are the same for all emails to be sent
+        $email = $email
+            ->subject(__("Ειδοποίηση ανάρμοστης προσφοράς"))
+            ->template('spam_notify', 'default')
+            ->emailFormat('both')
+            ->viewVars(array('for_student' => true));
+
+        foreach ($epo as $record) {
+            // set params that change with each new offer
+            if ($offer_id != $record['Offer']['id']) {
+                $offer_id = $record['Offer']['id'];
+
+                $email->viewVars(array(
+                    'url' => $app_url.'/offers/view/'.$offer_id,
+                    'title' => $record['Offer']['title'],
+                    'explanation' => $record['Offer']['explanation']));
+            }
+
+            $email->to($record['User']['email']);
+
+            try {
+                $email->send();
+            } catch(Exception $e) {}
+        }
     }
 }

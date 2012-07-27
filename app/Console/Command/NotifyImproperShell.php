@@ -1,5 +1,13 @@
 <?php
 
+// Example, running:
+//
+// ./Console/cake notify_improper since '3 hours'
+//
+// will take into account any coupon offers that have been flagged as improper
+// within the last 3 hour. This is the default behaviour, i.e. if this is run, instead:
+// ./Console/cake notify_improper
+
 App::uses('CakeEmail', 'Network/Email');
 
 class NotifyImproperShell extends AppShell {
@@ -7,14 +15,24 @@ class NotifyImproperShell extends AppShell {
     public $uses = array('Offer', 'Coupon');
 
     public function main() {
-
-        $epo = $this->getEmailsPerOffer(strtotime('-3 hours'));
-print_r($epo);
-        //$this->sendEmails($epo);
+        $this->run(strtotime('-3 hours'));
     }
 
-    private function getEmailsPerOffer($since) {
+    // args[0] : date idenntifier; anythting that can be passed into date() 's
+    // second parameter
+    public function since() {
+        $since = strtotime('-' . $this->args[0]);
+        $this->run($since);
+    }
 
+    // $since : a Unix timestamp
+    private function run($since) {
+        $epo = $this->getEmailsPerOffer(date('Y-m-d H:i:s', $since));
+        $this->sendEmails($epo);
+    }
+
+    // $since : a properly formatted date string
+    private function getEmailsPerOffer($since) {
 
         /* rid ourselves of unnecessary joins */
         $this->Offer->unbindModel(array('hasMany' => array('Coupon',
@@ -24,7 +42,7 @@ print_r($epo);
         $options = array('conditions' => array(
                              'Offer.offer_type_id' => TYPE_COUPONS,
                              'Offer.is_spam' => true,
-/*                             'Offer.modified >=' => $since*/),
+                             'Offer.modified >=' => $since),
                          'joins' => array(
                              array('table' => 'coupons',
                                    'alias' => 'Coupon',
@@ -47,6 +65,7 @@ print_r($epo);
                                        'User.id = Student.user_id',
                                    ))),
                          'fields' => array('DISTINCT User.email',
+                                           'Offer.id',
                                            'Offer.title',
                                            'Offer.explanation'),
                           'order' => array('Offer.id ASC'));

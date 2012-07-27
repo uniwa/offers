@@ -5,8 +5,8 @@ App::uses('CakeEmail', 'Network/Email');
 class OffersController extends AppController {
 
     public $name = 'Offers';
-    public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day',
-        'Coupon', 'Student', 'Vote', 'Sanitize', 'Distance', 'Municipality');
+    public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day', 'Coupon',
+        'Student', 'Vote', 'Sanitize', 'Distance', 'StatsToday', 'Municipality');
     public $paginate = array(
 //        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
@@ -370,6 +370,14 @@ class OffersController extends AppController {
         $offer_type_id = $offer['Offer']['offer_type_id'];
 
         if ($this_user_role === ROLE_STUDENT) {
+            // add visit data to StatsToday (only for logged in students)
+            $data = array(
+                'offer_id' => $offer['Offer']['id'],
+                'company_id' => $offer['Offer']['company_id'],
+                'ip' => $this->request->clientIp(),
+            );
+            $this->StatsToday->add_visit($data);
+
             if ($offer_type_id == TYPE_COUPONS) {
                 $student_id = $this->Session->read('Auth.Student.id');
                 // negate result as this returns if max number of coupons is reached

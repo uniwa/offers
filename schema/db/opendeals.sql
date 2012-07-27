@@ -342,13 +342,48 @@ DEFAULT CHARACTER SET = utf8;
 DROP TABLE IF EXISTS `opendeals`.`distances`;
 
 CREATE TABLE IF NOT EXISTS `opendeals`.`distances` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `company_id` int(11) NOT NULL,
-  `radius` int(11) NOT NULL,
-  `distance` double NOT NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT ,
+  `user_id` int(11) NOT NULL ,
+  `company_id` int(11) NOT NULL ,
+  `radius` int(11) NOT NULL ,
+  `distance` double NOT NULL ,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- --------------------------------------------------------
+-- Table structure for table `stats_today`
+-- --------------------------------------------------------
+
+DROP TABLE IF EXISTS `opendeals`.`stats_today`;
+
+CREATE TABLE IF NOT EXISTS `opendeals`.`stats_today` (
+  `id` int(11) NOT NULL AUTO_INCREMENT ,
+  `ip` text NOT NULL ,
+  `offer_id` int(11) NOT NULL ,
+  `company_id` int(11) NOT NULL ,
+  `created` DATETIME NULL DEFAULT NULL ,
+  PRIMARY KEY (`id`))
+ENGINE=InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+-- --------------------------------------------------------
+-- Table structure for table `stats_total`
+-- --------------------------------------------------------
+
+DROP TABLE IF EXISTS `opendeals`.`stats_total`;
+
+CREATE TABLE IF NOT EXISTS `opendeals`.`stats_total` (
+  `id` int(11) NOT NULL AUTO_INCREMENT ,
+  `offer_id` int(11) NOT NULL ,
+  `company_id` int(11) NOT NULL ,
+  `visit_date` DATE NULL DEFAULT NULL ,
+  `visits_total` int(11) NOT NULL ,
+  `visits_unique` int(11) NOT NULL ,
+  PRIMARY KEY (`id`))
+ENGINE=InnoDB
 DEFAULT CHARACTER SET = utf8;
 
 

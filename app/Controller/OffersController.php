@@ -5,8 +5,9 @@ App::uses('CakeEmail', 'Network/Email');
 class OffersController extends AppController {
 
     public $name = 'Offers';
-    public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day', 'Coupon',
-        'Student', 'Vote', 'Sanitize', 'Distance', 'StatsToday', 'Municipality');
+    public $uses = array('Offer', 'Company', 'Image', 'WorkHour', 'Day',
+        'Coupon', 'Student', 'Vote', 'Sanitize', 'Distance', 'StatsToday',
+        'StatsTotal', 'Municipality');
     public $paginate = array(
 //        'fields' => array('Offer.title', 'Offer.description'),
         'limit' => 6,
@@ -368,6 +369,23 @@ class OffersController extends AppController {
 
         $this->set('offer', $offer);
         $offer_type_id = $offer['Offer']['offer_type_id'];
+        $is_user_the_owner = $this->Offer->is_owned_by($id, $this_user_id);
+
+        if (($this_user_role === ROLE_COMPANY) && $is_user_the_owner) {
+            $today = array(
+                'd' => date("d"),
+                'm' => date("m"),
+                'y' => date("Y"));
+
+            // Get today's and total visits statistics
+            $visits = array();
+            $visits['today'] = $this->StatsToday->get_visits($id, $today);
+            $visits['past'] = $this->StatsTotal->get_visits($id);
+            // add today's visits to totals
+            $visits['past']['total'] += $visits['today']['total'];
+            $visits['past']['unique'] += $visits['today']['unique'];
+            $this->set('visits', $visits);
+        }
 
         if ($this_user_role === ROLE_STUDENT) {
             // add visit data to StatsToday (only for logged in students)
@@ -388,9 +406,7 @@ class OffersController extends AppController {
             }
         }
 
-        $is_user_the_owner = $this->Offer->is_owned_by($id, $this_user_id);
         $this->set('is_user_the_owner', $is_user_the_owner);
-
         // get coupons for offer if user is owner or admin
         // and coupon is of type 'COUPONS'
         if ($offer_type_id == TYPE_COUPONS) {

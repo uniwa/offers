@@ -15,4 +15,26 @@ class StatsToday extends AppModel {
         return $this->save($data, false);
     }
 
+    // Returns total visits and unique visitors (same IP address)
+    // for a given offer and date
+    public function get_visits($offer_id, $date) {
+        $date = "{$date['y']}-{$date['m']}-{$date['d']} ";
+        $date_begin = $date."00:00:00";
+        $date_end = $date."23:59:59";
+
+        $params = array(
+            'recursive' => -1,
+            'conditions' => array(
+                'offer_id' => $offer_id,
+                'created >' => $date_begin,
+                'created <' => $date_end));
+
+        $visits['total'] = $this->find('count', $params);
+
+        $params['fields'] = "DISTINCT ip";
+        $visits['unique'] = $this->find('count', $params);
+
+        return $visits;
+    }
+
 }

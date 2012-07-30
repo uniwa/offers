@@ -362,7 +362,6 @@ class CouponsController extends AppController {
 
             // format return data
             $coupon_data['offer'] = $d['Offer'];
-
             if (isset($coupon_data['offer']['Company'])) {
                 unset($coupon_data['offer']['Company']);
             }
@@ -373,7 +372,7 @@ class CouponsController extends AppController {
                 $coupon_data['student'] = $d['Student'];
             }
 
-            if (isset($d['Company'])) {
+            if (isset($d['Offer']['Company'])) {
                 $coupon_data['company'] = $d['Offer']['Company'];
             }
 

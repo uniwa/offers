@@ -17,4 +17,20 @@ class StatsTotal extends AppModel {
         return $this->save($data, false);
     }
 
+    // Returns total visits and unique visitors (same IP address)
+    // for a given offer
+    public function get_visits($offer_id) {
+        $params = array(
+            'recursive' => -1,
+            'conditions' => array('offer_id' => $offer_id));
+
+        $params['fields'] = "visits_total";
+        $visits['total'] = $this->find('count', $params);
+
+        $params['fields'] = "visits_unique";
+        $visits['unique'] = $this->find('count', $params);
+
+        return $visits;
+    }
+
 }

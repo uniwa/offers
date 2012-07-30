@@ -31,6 +31,22 @@ class StatsTotal extends AppModel {
         return $this->save($data, false);
     }
 
+    // Returns visits and unique visitors (same IP address)
+    // for all offers
+    public function get_all_visits() {
+        $params = array('recursive' => -1);
+
+        $params['fields'] = array('StatsTotal.offer_id', 'StatsTotal.company_id');
+        $offers = $this->find('list', $params);
+
+        $visits = array();
+        foreach($offers as $offer_id => $company_id) {
+            $visits[$offer_id] = $this->get_visits($offer_id);
+        }
+
+        return $visits;
+    }
+
     // Returns total visits and unique visitors (same IP address)
     // for a given offer
     public function get_visits($offer_id) {

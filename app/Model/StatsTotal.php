@@ -38,11 +38,13 @@ class StatsTotal extends AppModel {
             'recursive' => -1,
             'conditions' => array('offer_id' => $offer_id));
 
-        $params['fields'] = "visits_total";
-        $visits['total'] = $this->find('count', $params);
+        $params['fields'] = 'SUM(visits_total) as vsum';
+        $vtotal = $this->find('first', $params);
+        $visits['total'] = $vtotal[0]['vsum'];
 
-        $params['fields'] = "visits_unique";
-        $visits['unique'] = $this->find('count', $params);
+        $params['fields'] = 'SUM(visits_unique) as vsum';
+        $vunique = $this->find('first', $params);
+        $visits['unique'] = $vunique[0]['vsum'];
 
         return $visits;
     }

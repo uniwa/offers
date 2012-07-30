@@ -213,7 +213,13 @@ $redeem_title = array('title' => $click_to_change);
 
 // show coupons for offer
 // only if visitor == owner and offer type = coupons
-if (isset($is_user_the_owner) and $is_user_the_owner == true) {
+if (isset($is_user_the_owner) && $is_user_the_owner) {
+    echo "<br /><strong>Σύνολο επισκέψεων σήμερα:</strong> {$visits['today']['total']}<br />";
+    echo "<strong>Σύνολο μοναδικών επισκεπτών σήμερα (βάσει IP):</strong> {$visits['today']['unique']}<br />";
+    echo "<br /><strong>Σύνολο επισκέψεων:</strong> {$visits['past']['total']}<br />";
+    echo "<strong>Σύνολο μοναδικών επισκεπτών (βάσει IP):</strong> {$visits['past']['unique']}<br />";
+
+    if ($offer_type_id === TYPE_COUPONS) {
     //TODO replace with coupons element
 ?>
     <br />
@@ -274,6 +280,7 @@ if (isset($is_user_the_owner) and $is_user_the_owner == true) {
         </table>
     </div>
 <?php
+    }
 }
 
 if (isset($coupons_html)) {

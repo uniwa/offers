@@ -455,6 +455,7 @@ class CouponsController extends AppController {
             'Coupon.serial_number',
             'Coupon.created',
             'Coupon.reinserted',
+            'Offer.id',
             'Offer.title',
             'Offer.description',
             'Offer.coupon_terms',

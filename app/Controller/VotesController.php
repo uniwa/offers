@@ -49,7 +49,8 @@ class VotesController extends AppController {
             'Offer.title',
             'Offer.vote_count',
             'Offer.vote_plus',
-            'Offer.vote_minus'
+            'Offer.vote_minus',
+            'Offer.offer_type_id'
         );
         $user_votes = $this->Vote->find('all', array(
             'conditions' => $conditions,

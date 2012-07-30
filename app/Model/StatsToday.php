@@ -15,6 +15,29 @@ class StatsToday extends AppModel {
         return $this->save($data, false);
     }
 
+    // Returns visits and unique visitors (same IP address)
+    // for all offers for a given date
+    public function get_all_visits($date) {
+        $date_base = "{$date['y']}-{$date['m']}-{$date['d']} ";
+        $date_begin = $date_base."00:00:00";
+        $date_end = $date_base."23:59:59";
+
+        $params = array(
+            'recursive' => -1,
+            'conditions' => array(
+                'created >' => $date_begin,
+                'created <' => $date_end));
+
+        $params['fields'] = array('StatsToday.offer_id', 'StatsToday.company_id');
+        $offers = $this->find('list', $params);
+
+        foreach($offers as $offer_id => $company_id) {
+            $visits[$offer_id] = $this->get_visits($offer_id, $date);
+        }
+
+        return $visits;
+    }
+
     // Returns total visits and unique visitors (same IP address)
     // for a given offer and date
     public function get_visits($offer_id, $date) {

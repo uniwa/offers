@@ -471,7 +471,7 @@ https://my.teiath.gr</a>'),
     // Creates XML request to Redmine for reporting an issue
     private function create_xml_request($data){
         // Set project id
-        $projectID = 8;
+        $projectID = ISSUE_PROJECT_ID;
         $req = "<?xml version=\"1.0\"?>";
         $req .= "<issue>";
         $req .= "<subject>{$data['subject']}</subject>";

@@ -8,12 +8,26 @@ class StatsTotal extends AppModel {
 
     // Create and add a new record containing statistics for a single day
     // $data should be an array containing the following key/value pairs:
-    // oid: offer_id
-    // cid: company_id
-    // date: date of stats
-    // total: total visits on given date
-    // unique: unique visitors on given date
+    // offer_id: offer id
+    // company_id: company id
+    // visit_date: date of stats
+    // visits_total: total visits on given date
+    // visits_unique: unique visitors on given date
     public function add_daily_stats($data) {
+        $params = array(
+            'recursive' => -1,
+            'conditions' => array(
+                'StatsTotal.visit_date' => $data['visit_date'],
+                'StatsTotal.offer_id' => $data['offer_id']));
+        $offer_found = $this->find('first', $params);
+        if (is_null($offer_found)) {
+            // no record found, create new
+            $this->create();
+        } else {
+            // record already exists for given date and offer, update
+            $data['id'] = $offer_found['StatsTotal']['id'];
+        }
+
         return $this->save($data, false);
     }
 

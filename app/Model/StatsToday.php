@@ -31,8 +31,10 @@ class StatsToday extends AppModel {
         $params['fields'] = array('StatsToday.offer_id', 'StatsToday.company_id');
         $offers = $this->find('list', $params);
 
+        $visits = array();
         foreach($offers as $offer_id => $company_id) {
             $visits[$offer_id] = $this->get_visits($offer_id, $date);
+            $visits[$offer_id]['cid'] = $company_id;
         }
 
         return $visits;

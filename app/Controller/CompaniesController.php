@@ -4,8 +4,8 @@ class CompaniesController extends AppController {
 
     public $name = 'Companies';
     public $helpers = array('Html', 'Form');
-    public $uses = array('Company', 'Offer', 'Municipality',
-                         'User', 'Day', 'WorkHour', 'Image');
+    public $uses = array('Company', 'Offer', 'Municipality', 'StatsToday',
+        'StatsTotal', 'User', 'Day', 'WorkHour', 'Image');
 
     public $components = array('Common', 'Email');
 
@@ -98,6 +98,10 @@ class CompaniesController extends AppController {
         $conditions['recursive'] = -1;
         $company['Image'] = $company_img = $this->Image->find('all', $conditions);
         $this->set('company', $company);
+
+        // get total company stats for all offers
+        $visits = $this->StatsTotal->get_company_visits($company_id);
+        $this->set('visits', $visits);
     }
 
 

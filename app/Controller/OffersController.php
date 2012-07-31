@@ -384,25 +384,14 @@ class OffersController extends AppController {
         }
 
         if (($this_user_role === ROLE_COMPANY) && $is_user_the_owner) {
-            $today = array(
-                'd' => date("d"),
-                'm' => date("m"),
-                'y' => date("Y"));
-
-            // Get today's and total visits statistics
-            $visits = array();
-            $visits['today'] = $this->StatsToday->get_visits($id, $today);
-            $visits['past'] = $this->StatsTotal->get_visits($id);
-            // add today's visits to totals
-            $visits['past']['total'] += $visits['today']['total'];
-            $visits['past']['unique'] += $visits['today']['unique'];
+            $visits = $this->get_offer_visits($id);
             $this->set('visits', $visits);
         }
 
         if ($this_user_role === ROLE_STUDENT) {
             // add visit data to StatsToday (only for logged in students)
             $data = array(
-                'offer_id' => $offer['Offer']['id'],
+                'offer_id' => $id,
                 'company_id' => $offer['Offer']['company_id'],
                 'ip' => $this->request->clientIp(),
             );
@@ -1474,6 +1463,39 @@ class OffersController extends AppController {
             return false;
         }
         return true;
+    }
+
+    private function get_offer_visits($id) {
+        $today = array(
+            'd' => date("d"),
+            'm' => date("m"),
+            'y' => date("Y"));
+
+        // Get today's and total visits statistics
+        $visits = array();
+        $visits['today'] = $this->StatsToday->get_visits($id, $today);
+        $visits['past'] = $this->StatsTotal->get_visits($id);
+
+        $month = (int)date('m');
+        $year = (int)date('Y');
+        foreach (range(1, MONTHS_BACK_STATS) as $i) {
+            $monthly_stats = $this->StatsTotal->get_monthly_visits(
+                $id, $month, $year);
+            $visits['monthly'][$i - 1] = array(
+                'month' => $month,
+                'year' => $year,
+                'stats' => $monthly_stats);
+            $month = ($month === 1)?12:$month - 1;
+            $year = ($month === 1)?$year - 1:$year;
+        }
+
+        // add today's visits to totals
+        $visits['past']['total'] += $visits['today']['total'];
+        $visits['past']['unique'] += $visits['today']['unique'];
+        $visits['monthly'][0]['stats']['total'] += $visits['today']['total'];
+        $visits['monthly'][0]['stats']['unique']+= $visits['today']['unique'];
+
+        return $visits;
     }
 
     // Transforms an array of offers in CakePHP's intrinsic format into an array

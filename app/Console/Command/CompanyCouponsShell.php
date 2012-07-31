@@ -43,7 +43,7 @@ class CompanyCouponsShell extends AppShell {
                              'Offer.offer_type_id' => TYPE_COUPONS,
                              'Offer.is_spam' => false,
                              'Offer.offer_state_id' => Configure::read('Constants.STATE_INACTIVE'),
-/*                             'Offer.modified >=' => $since,*/
+                             'Offer.modified >=' => $since,
                              'Coupon.reinserted' => false),
                          'joins' => array(
                              array('table' => 'coupons',
@@ -84,7 +84,7 @@ class CompanyCouponsShell extends AppShell {
     }
 
     private function sendEmails($records) {
-print_r($records);
+
         $email = new CakeEmail('default');
         // set parameters that are the same for all emails to be sent
         $email = $email

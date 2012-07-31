@@ -32,7 +32,7 @@ class CompanyCouponsShell extends AppShell {
     // $since : a Unix timestamp
     private function run($since) {
         $result = $this->getCoupons(date('Y-m-d H:i:s', $since));
-//        $this->sendEmails($result);
+        $this->sendEmails($result);
     }
 
     // $since : a properly formatted date string
@@ -82,4 +82,26 @@ class CompanyCouponsShell extends AppShell {
 
         return $result;
     }
+
+    private function sendEmails($records) {
+        $email = new CakeEmail('default');
+        // set parameters that are the same for all emails to be sent
+        $email = $email
+            ->template('company_coupons', 'default')
+            ->emailFormat('both');
+
+        foreach ($records as $offer_title => $coupons) {
+            $email
+                ->to(reset($coupons))
+                ->subject(__("Κουπόνια προσφοράς «{$offer_title}»"))
+                ->viewVars(array(
+                    'offer_title' => $offer_title,
+                    'coupons' => $coupons));
+
+            try {
+                $email->send();
+            } catch(Exception $e) {}
+        }
+    }
+
 }

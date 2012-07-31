@@ -65,4 +65,39 @@ class StatsTotal extends AppModel {
         return $visits;
     }
 
+    // Returns total visits and unique visitors (same IP address)
+    // for a given offer and month
+    // $month should be an int 1-12
+    // $year is assumed later than 1970 (epoch)
+    public function get_monthly_visits($offer_id, $month, $year) {
+        if (in_array($month, range(1, 12)) && $year > START_YEAR) {
+            $params = array(
+                'recursive' => -1,
+                'conditions' => array(
+                    'offer_id' => $offer_id,
+                    'MONTH(visit_date)' => $month,
+                    'YEAR(visit_date)' => $year));
+
+            $params['fields'] = 'SUM(visits_total) as vsum';
+            $vtotal = $this->find('first', $params);
+            $visits['total'] = $vtotal[0]['vsum'];
+            // zero if no records are found
+            if (is_null($visits['total'])) {
+                $visits['total'] = 0;
+            }
+
+            $params['fields'] = 'SUM(visits_unique) as vsum';
+            $vunique = $this->find('first', $params);
+            $visits['unique'] = $vunique[0]['vsum'];
+            // zero if no records are found
+            if (is_null($visits['unique'])) {
+                $visits['unique'] = 0;
+            }
+
+            return $visits;
+        } else {
+            return false;
+        }
+    }
+
 }

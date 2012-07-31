@@ -47,6 +47,24 @@ class StatsTotal extends AppModel {
         return $visits;
     }
 
+    // Returns total visits and total unique visitors (same IP address)
+    // for all offers of a given company
+    public function get_company_visits($company_id) {
+        $params = array(
+            'recursive' => -1,
+            'conditions' => array('company_id' => $company_id));
+
+        $params['fields'] = 'SUM(visits_total) as vsum';
+        $vtotal = $this->find('first', $params);
+        $visits['total'] = $vtotal[0]['vsum'];
+
+        $params['fields'] = 'SUM(visits_unique) as vsum';
+        $vunique = $this->find('first', $params);
+        $visits['unique'] = $vunique[0]['vsum'];
+
+        return $visits;
+    }
+
     // Returns total visits and unique visitors (same IP address)
     // for a given offer
     public function get_visits($offer_id) {

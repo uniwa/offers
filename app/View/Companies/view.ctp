@@ -143,6 +143,15 @@ if (! empty($company['WorkHour'])) {
     echo '</ul>';
 }
 echo '<br/>';
+
+// display total stats
+$html_stats = '';
+$html_stats .= "<p><strong>Σύνολο επισκέψεων για όλες τις προσφορές:";
+$html_stats .= "</strong> {$visits['total']}<br />";
+$html_stats .= "<strong>Σύνολο μοναδικών επισκεπτών (βάσει IP) για όλες τις προσφορές:";
+$html_stats .= "</strong> {$visits['unique']}</p><br />";
+echo $html_stats;
+
 $html_clock = "<i class='icon-time'></i>";
 
 // display Active offers

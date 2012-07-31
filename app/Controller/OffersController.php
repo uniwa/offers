@@ -344,6 +344,7 @@ class OffersController extends AppController {
 
         $this_user_role = $this->Auth->User('role');
         $this_user_id = $this->Auth->User('id');
+
         // if role is admin, the offer is displayed no matter what
         if ($this_user_role != ROLE_ADMIN) {
             $options['conditions']['OR'] = array(
@@ -370,6 +371,17 @@ class OffersController extends AppController {
         $this->set('offer', $offer);
         $offer_type_id = $offer['Offer']['offer_type_id'];
         $is_user_the_owner = $this->Offer->is_owned_by($id, $this_user_id);
+
+        // notify visitors to log-in to access more features for 'coupons' offers
+        if ($offer_type_id == TYPE_COUPONS && $this_user_id === NULL) {
+            $login_url = array(
+                'controller' => 'users',
+                'action' => 'login'
+            );
+            $flash_msg = '<a href="'.Router::url($login_url, true).'">Συνδεθείτε εδώ</a> για ';
+            $flash_msg .= 'να μπορέσετε να δεσμεύσετε και να ψηφήσετε προσφορές!';
+            $this->Session->setFlash($flash_msg, 'default', array(), 'info');
+        }
 
         if (($this_user_role === ROLE_COMPANY) && $is_user_the_owner) {
             $today = array(

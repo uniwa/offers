@@ -34,6 +34,8 @@ $config = array(
         'RADIUS_S' => 1,
         'RADIUS_M' => 5,
         'RADIUS_L' => 10,
+        'START_YEAR' => 1970,
+        'MONTHS_BACK_STATS' => 6,
     ),
     'Settings' => array(
         'offer_type' => array(

@@ -6,7 +6,7 @@ echo <<<EOTS
 EOTS;
 
 $length = count($coupons);
-$i = 0;
+$i = 1;
 
 foreach($coupons as $coupon => $dump) {
     printf('%6s   %s', $i, $coupon);

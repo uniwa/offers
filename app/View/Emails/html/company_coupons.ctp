@@ -3,7 +3,7 @@ echo "<p>Η προσφορά κουπονιών «{$offer_title}» συνέλε�
 
 $length = count($coupons);
 
-$i = 0;
+$i = 1;
 $s = 'style="padding: 0.2em;"';
 echo <<<EOTS
 <table>

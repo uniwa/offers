@@ -280,7 +280,7 @@ if (isset($is_user_the_owner) && $is_user_the_owner) {
                                 "<span title=\"$tooltip_reinserted\">" .
                                 $text_reinserted .'</span>';
                         } else if ($c['Coupon']['is_used']) {
-                            $td = '<td style="text-decoration:line-through">';
+                            $td = '<td class="strikethrough">';
                             $link_redeem = $this->Html->link(
                                     'ναι', array('controller' => 'coupons',
                                                  'action' => 're_enable',

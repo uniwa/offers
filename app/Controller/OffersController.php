@@ -410,8 +410,7 @@ class OffersController extends AppController {
         $this->set('is_user_the_owner', $is_user_the_owner);
         // get coupons for offer if user is owner or admin
         // and coupon is of type 'COUPONS'
-        if ($offer_type_id == TYPE_COUPONS) {
-            if ($is_user_the_owner || $this_user_role === ROLE_ADMIN) {
+        if ($is_user_the_owner && $offer_type_id == TYPE_COUPONS) {
                 // build query
                 $order = array('Coupon.created DESC');
                 $conditions = array('Coupon.offer_id' => $id);
@@ -421,7 +420,6 @@ class OffersController extends AppController {
                     'order' => $order));
 
                 $this->set('coupons', $coupons);
-            }
         }
 
         // if user is logged in get vote status for this offer

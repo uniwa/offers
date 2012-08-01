@@ -1,7 +1,6 @@
 #!/bin/bash
 
 dbfile="opendeals.sql"
-dbname="opendeals"
 declare -a data
 declare -a samples
 
@@ -35,7 +34,7 @@ echo "DONE"
 
 echo -n "   -> Inserting database data..."
 for i in ${data[@]}; do
-    mysql -u${dbuser} -p${dbpass} ${dbname} < "$i"
+    mysql -u${dbuser} -p${dbpass} < "$i"
 done
 echo "DONE"
 popd > /dev/null
@@ -44,7 +43,7 @@ echo ":: Descending into seeds"
 pushd seeds > /dev/null
 echo -n "   -> Inserting sample data..."
 for i in ${samples[@]}; do
-    mysql -u${dbuser} -p${dbpass} ${dbname} < "$i"
+    mysql -u${dbuser} -p${dbpass} < "$i"
 done
 echo "DONE"
 popd > /dev/null

@@ -1,4 +1,4 @@
-INSERT INTO `users` VALUES
+INSERT INTO `opendeals`.`users` VALUES
 (1,'user1','6e02fd9492447a66cde1a08c8cda8795188edce7943a28c430c5e70e5f19eaa4','tlatsas@edu.teiath.gr',NULL,1,0,'student',0,NULL),
 (2,'user2','6e02fd9492447a66cde1a08c8cda8795188edce7943a28c430c5e70e5f19eaa4','tlatsas@edu.teiath.gr',NULL,1,0,'student',0,NULL),
 (3,'user3','6e02fd9492447a66cde1a08c8cda8795188edce7943a28c430c5e70e5f19eaa4','tlatsas@edu.teiath.gr',NULL,1,0,'student',0,NULL),

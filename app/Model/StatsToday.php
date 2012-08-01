@@ -62,4 +62,16 @@ class StatsToday extends AppModel {
         return $visits;
     }
 
+    // Deletes old visits stats
+    // removes all records up until 2 days ago
+    // leaves yesterday's and today's records
+    public function delete_old_visits() {
+        $day_before = date('Y-m-d', strtotime('-1 day'));
+
+        $conditions = array('StatsToday.created <' => $day_before);
+        $deleted = $this->deleteAll($conditions, false);
+
+        return $deleted;
+    }
+
 }

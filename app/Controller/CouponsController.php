@@ -315,13 +315,10 @@ class CouponsController extends AppController {
                           'Το κουπόνι σημάνθηκε ως ενεργό';
 
         if ($this->Coupon->saveField('is_used', $is_used)) {
-            $this->Session->setFlash($msg,
-                                     'default',
-                                     array('class' => Flash::Success));
+            $this->Session->setFlash($msg, 'default', array(), 'success');
         } else {
             $this->Session->setFlash('Προέκυψε κάποιο σφάλμα',
-                                     'default',
-                                     array('class' => Flash::Error));
+                                     'default', array(), 'error');
         }
         $this->redirect($this->request->referer());
     }

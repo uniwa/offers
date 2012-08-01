@@ -208,6 +208,10 @@ echo $html;
 
 // title of link to redeem/re_enable a coupon
 $click_to_change = 'Κάντε κλικ για να αλλάξετε την κατάσταση';
+// description of status for a coupon that has been reinserted
+$text_reinserted = 'αποδεσμεύτηκε';
+// title of a span for the above text
+$tooltip_reinserted = 'Ο χρήστης ακύρωσε την κράτησή του';
 // currently, there is only need for this attribute
 $redeem_title = array('title' => $click_to_change);
 
@@ -271,7 +275,11 @@ if (isset($is_user_the_owner) && $is_user_the_owner) {
                             $reinserted['post'] = '';
                         }
 
-                        if ($c['Coupon']['is_used']) {
+                        if ($c['Coupon']['reinserted']) {
+                            $link_redeem =
+                                "<span title=\"$tooltip_reinserted\">" .
+                                $text_reinserted .'</span>';
+                        } else if ($c['Coupon']['is_used']) {
                             $td = '<td style="text-decoration:line-through">';
                             $link_redeem = $this->Html->link(
                                     'ναι', array('controller' => 'coupons',

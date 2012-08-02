@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# full path to schema folder
+base="$( cd "$( dirname "$0" )" && pwd )"
+
 dbfile="opendeals.sql"
 declare -a data
 declare -a samples
@@ -26,12 +29,14 @@ read dbpass
 stty echo
 echo -e "\n"
 
+# insert main database schema
 echo ":: Descending into db"
-pushd db > /dev/null
+pushd "$base/db" > /dev/null
 echo -n "   -> Inserting database schema..."
 mysql -u${dbuser} -p${dbpass} < "$dbfile"
 echo "DONE"
 
+# insert database data
 echo -n "   -> Inserting database data..."
 for i in ${data[@]}; do
     mysql -u${dbuser} -p${dbpass} < "$i"
@@ -39,8 +44,10 @@ done
 echo "DONE"
 popd > /dev/null
 echo
+
+# insert development data
 echo ":: Descending into seeds"
-pushd seeds > /dev/null
+pushd "$base/seeds" > /dev/null
 echo -n "   -> Inserting sample data..."
 for i in ${samples[@]}; do
     mysql -u${dbuser} -p${dbpass} < "$i"

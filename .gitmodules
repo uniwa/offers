@@ -1,3 +1,6 @@
 [submodule "plugins/TwitterBootstrap"]
 	path = plugins/TwitterBootstrap
 	url = git://github.com/loadsys/twitter-bootstrap-helper.git
+[submodule "docs/coupons"]
+	path = docs/coupons
+	url = git://umbra.edu.teiath.gr/coupons-docs.git

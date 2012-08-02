@@ -1296,8 +1296,6 @@ class OffersController extends AppController {
     //      activation/termination are not met
     private function _change_state($id = null, $should_terminate = false) {
 
-        $this->email_coupon_list($id);die;
-
         if ($should_terminate) {
             $method = 'terminate';
             $success_verb = 'τερματίστηκε';
@@ -1310,7 +1308,7 @@ class OffersController extends AppController {
             $msg = "Η προσφορά $success_verb";
             $status = 200;
             $flash_type = "success";
-//            if ($should_terminate)
+            if ($should_terminate) $this->email_coupon_list($id);
         } else {
             // this is unlinkely to occur
             $msg = 'Προέκυψε κάποιο σφάλμα';
@@ -1350,7 +1348,6 @@ class OffersController extends AppController {
 
             if (! empty($coupons)) {
 
-                print_r($coupons);
                 $offer_title = $offer[0]['Offer']['title'];
                 $owner_email = $offer[0]['User']['email'];
 
@@ -1366,7 +1363,7 @@ class OffersController extends AppController {
                         'coupons' => $coupons));
 
                 try {
-//                    $email->send();
+                    $email->send();
                 } catch(Exception $e) {}
             }
         }

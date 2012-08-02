@@ -275,11 +275,7 @@ if (isset($is_user_the_owner) && $is_user_the_owner) {
                             $reinserted['post'] = '';
                         }
 
-                        if ($c['Coupon']['reinserted']) {
-                            $link_redeem =
-                                "<span title=\"$tooltip_reinserted\">" .
-                                $text_reinserted .'</span>';
-                        } else if ($c['Coupon']['is_used']) {
+                        if ($c['Coupon']['is_used']) {
                             $td = '<td class="strikethrough">';
                             $link_redeem = $this->Html->link(
                                     'ναι', array('controller' => 'coupons',
@@ -288,11 +284,17 @@ if (isset($is_user_the_owner) && $is_user_the_owner) {
                                     $redeem_title);
                         } else {
                             $td = '<td>';
-                            $link_redeem = $this->Html->link(
-                                    'όχι', array('controller' => 'coupons',
-                                                 'action' => 'redeem',
-                                                  $c['Coupon']['id']),
-                                    $redeem_title);
+                            if ($c['Coupon']['reinserted']) {
+                                $link_redeem =
+                                    "<span title=\"$tooltip_reinserted\">" .
+                                    $text_reinserted .'</span>';
+                            } else {
+                                $link_redeem = $this->Html->link(
+                                        'όχι', array('controller' => 'coupons',
+                                                     'action' => 'redeem',
+                                                      $c['Coupon']['id']),
+                                        $redeem_title);
+                            }
                         }
 
                         echo "<tr>";

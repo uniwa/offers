@@ -12,6 +12,7 @@ class Offer extends AppModel {
         'search' => true,
         'tag' => true,
         'typeStats' => true,
+        'couponInfo' => true,
     );
     public $virtualFields = array(
         'vote_sum' => 'Offer.vote_plus - Offer.vote_minus');
@@ -194,6 +195,43 @@ class Offer extends AppModel {
         }
 
         return array_values($types);
+    }
+
+    // Capable of returning info regarding Coupon offers that have been
+    // terminated normally (i.e. without being flagged as 'improper').
+    // The supported info can be any field of the following tables: Offer,
+    // Company, User; one need only specify which fields are to be returned by
+    // providing an appropriate 'fields' array, for example:
+    //  'fields' => array('Offer.title',
+    //                    'Offer.offer_category_id',
+    //                    'Company.name',
+    //                    'User.email')
+    // Additional tables can be made available by specifying a 'joins'
+    // parameter. Please do note, though, that the table aliases 'Company' and
+    // 'User' are already defined internally and one should not use them.
+    protected function _findCouponInfo($state, $query = array(), $result = array()) {
+        if ($state === 'before') {
+            $options = array('conditions' => array(
+                                 'Offer.offer_type_id' => TYPE_COUPONS,
+                                 'Offer.is_spam' => false,
+                                 'Offer.offer_state_id' => STATE_INACTIVE),
+                             'joins' => array(
+                                 array('table' => 'companies',
+                                       'alias' => 'Company',
+                                       'type' => 'LEFT',
+                                       'conditions' => array(
+                                           'Offer.company_id = Company.id',
+                                       )),
+                                 array('table' => 'users',
+                                       'alias' => 'User',
+                                       'type' => 'LEFT',
+                                       'conditions' => array(
+                                           'Company.user_id = User.id',
+                                       ))));
+            $query = array_merge_recursive($query, $options);
+            return $query;
+        }
+        return $result;
     }
 
     // @param $company_id limits find to offers that belong to the specified

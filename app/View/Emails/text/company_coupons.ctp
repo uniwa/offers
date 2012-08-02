@@ -8,8 +8,8 @@ EOTS;
 $length = count($coupons);
 $i = 1;
 
-foreach($coupons as $coupon => $dump) {
-    printf('%6s   %s', $i, $coupon);
+foreach($coupons as $c) {
+    printf('%6s   %s', $i, $c['serial_number']);
     ++$i;
 }
 

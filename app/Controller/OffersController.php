@@ -1308,6 +1308,7 @@ class OffersController extends AppController {
             $msg = "Η προσφορά $success_verb";
             $status = 200;
             $flash_type = "success";
+            if ($should_terminate) $this->email_coupon_list($id);
         } else {
             // this is unlinkely to occur
             $msg = 'Προέκυψε κάποιο σφάλμα';
@@ -1321,6 +1322,51 @@ class OffersController extends AppController {
         $this->notify(array($msg, 'default', array(), $flash_type),
                       $redirect,
                       $status);
+    }
+
+    // Sends an e-mail, listing all coupons of the offer that corresponds to the
+    // supplied id to its owner-company.
+    //
+    // $id - offer id
+    private function email_coupon_list($id) {
+
+        // we require the email address to send the coupon listing to, as well
+        // as the title of the offer (to use as email subject)
+        // also, we need to make sure the offer is indeed of type 'coupons'
+        $options = array('conditions' => array('Offer.id' => $id),
+                         'fields' => array('Offer.title',
+                                           'User.email'));
+
+        $this->Offer->recursive = -1;
+        // custom finders run as 'findAll' and not 'findFirst' so to access the
+        // actual data, one must specify an index (in this case: 0)
+        $offer = $this->Offer->find('couponInfo', $options);
+
+        // fetch any available coupons
+        if (! empty($offer)) {
+            $coupons = $this->Coupon->get_offer_coupons($id);
+
+            if (! empty($coupons)) {
+
+                $offer_title = $offer[0]['Offer']['title'];
+                $owner_email = $offer[0]['User']['email'];
+
+                $email = new CakeEmail('default');
+                // set parameters that are the same for all emails to be sent
+                $email = $email
+                    ->to($owner_email)
+                    ->subject(__("Κουπόνια προσφοράς «{$offer_title}»"))
+                    ->template('company_coupons', 'default')
+                    ->emailFormat('both')
+                    ->viewVars(array(
+                        'offer_title' => $offer_title,
+                        'coupons' => $coupons));
+
+                try {
+                    $email->send();
+                } catch(Exception $e) {}
+            }
+        }
     }
 
     private function get_time($time) {

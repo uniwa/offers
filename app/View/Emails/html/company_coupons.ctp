@@ -16,8 +16,8 @@ echo <<<EOTS
     <tbody>
 EOTS;
 
-foreach($coupons as $coupon => $dump) {
-    echo "<tr><td $s>$i</td><td $s><pre>{$coupon}</pre></td></tr>";
+foreach($coupons as $c) {
+    echo "<tr><td $s>$i</td><td $s><pre>{$c['serial_number']}</pre></td></tr>";
     ++$i;
 }
 

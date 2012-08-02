@@ -1,7 +1,6 @@
 # cakephp defaults
 /app/Config/*.php
 /app/Vendor/dompdf/lib/fonts/log.htm
-/lib/Cake/Console/Templates/skel/tmp/
 .DS_Store
 tags
 bootstrap

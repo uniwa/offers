@@ -573,7 +573,7 @@ class OffersController extends AppController {
         // provide simple wrapper elements for xml
         if ($this->webservice_type == 'xml') {
             $type_stats = array('type' => $type_stats);
-            $cat_stats = array('category' => $type_stats);
+            $cat_stats = array('category' => $cat_stats);
         }
 
         $this->notify(null, null, 200, array('total_offers' => $total,

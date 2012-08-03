@@ -54,38 +54,50 @@ if ($is_user_admin) {
 }
 
 if ($is_user_the_owner) {
-    echo "<h6>ΑΝΑΡΤΗΣΗ ΠΡΟΣΦΟΡΑΣ</h6>";
-    echo "<ul class='unstyled inline-list company-btn'>";
-    echo "<li>";
-    echo $this->Html->link(offer_type(1), array(
-        'controller' => 'offers',
-        'action' => 'add_happyhour'),
-        array('class' => 'btn btn-primary'));
-    echo "</li>";
-    echo "<li>";
-    echo $this->Html->link(offer_type(2), array(
-        'controller' => 'offers',
-        'action' => 'add_coupons'),
-        array('class' => 'btn btn-warning'));
-    echo "</li>";
-    echo "<li>";
-    echo $this->Html->link(offer_type(3), array(
-        'controller' => 'offers',
-        'action' => 'add_limited'),
-        array('class' => 'btn btn-success'));
-    echo "</ul>";
+    // offer actions
+    echo "<div>";
+        echo "<h6>ΑΝΑΡΤΗΣΗ ΠΡΟΣΦΟΡΑΣ</h6>";
+        echo "<ul class='unstyled inline-list company-btn'>";
+        echo "<li>";
+        echo $this->Html->link(offer_type(1), array(
+            'controller' => 'offers',
+            'action' => 'add_happyhour'),
+            array('class' => 'btn btn-primary'));
+        echo "</li>";
+        echo "<li>";
+        echo $this->Html->link(offer_type(2), array(
+            'controller' => 'offers',
+            'action' => 'add_coupons'),
+            array('class' => 'btn btn-warning'));
+        echo "</li>";
+        echo "<li>";
+        echo $this->Html->link(offer_type(3), array(
+            'controller' => 'offers',
+            'action' => 'add_limited'),
+            array('class' => 'btn btn-success'));
+        echo "</ul>";
+    echo "</div>";
 
-    echo $this->Html->link('Επεξεργασία στοιχείων επιχείρησης',
-                           array('controller' => 'companies',
-                           'action' => 'edit',
-                           $company['Company']['id']));
-    echo "</h6>";
-    echo "<h6>";
-    echo $this->Html->link('Επεξεργασία φωτογραφιών επιχείρησης',
-                           array('controller' => 'companies',
-                           'action' => 'imageedit',
-                           $company['Company']['id']));
-    echo "</h6><br/>";
+    // edit actions
+    echo "<div>";
+        echo "<h6>ΠΡΟΦΙΛ</h6>";
+        echo "<ul class='unstyled inline-list company-btn'>";
+        echo "<li>";
+        echo $this->Html->link('Επεξεργασία στοιχείων',
+                               array('controller' => 'companies',
+                               'action' => 'edit',
+                               $company['Company']['id']),
+                                array('class' => 'btn btn-inverse'));
+        echo "</li>";
+        echo "<li>";
+        echo $this->Html->link('Επεξεργασία φωτογραφιών',
+                               array('controller' => 'companies',
+                               'action' => 'imageedit',
+                               $company['Company']['id']),
+                                array('class' => 'btn btn-inverse'));
+        echo "</li>";
+        echo "</ul>";
+    echo "</div>";
 }
 
 if (! empty($company['Image']) ) {

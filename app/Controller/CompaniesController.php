@@ -101,6 +101,14 @@ class CompaniesController extends AppController {
 
         // get total company stats for all offers
         $visits = $this->StatsTotal->get_company_visits($company_id);
+
+        // reset counters if null
+        if (is_null($visits['total'])) {
+            $visits['total'] = 0;
+        }
+        if (is_null($visits['unique'])) {
+            $visits['unique'] = 0;
+        }
         $this->set('visits', $visits);
     }
 

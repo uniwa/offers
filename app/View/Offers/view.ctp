@@ -9,6 +9,7 @@ $label_text = offer_type($offer_type_id);
 $is_spam = $offer['Offer']['is_spam'];
 $is_offer_draft = $offer_state_id == STATE_DRAFT;
 $is_offer_active = $offer_state_id == STATE_ACTIVE;
+$is_offer_inactive = $offer_state_id == STATE_INACTIVE;
 $role = $this->Session->read('Auth.User.role');
 
 // Offer actions (copy,images, etc.)
@@ -58,7 +59,10 @@ if ($is_user_the_owner) {
 
 }
 
-// TODO: move to controller
+// set offer title
+$html .= "<h2>{$offer['Offer']['title']}</h1>";
+
+// set state "badges" for offer
 switch($offer['Offer']['offer_type_id']){
     case 1:
         $label_class = 'label-info';
@@ -71,7 +75,11 @@ switch($offer['Offer']['offer_type_id']){
         break;
 }
 
-$html .= "<p><span class='label {$label_class}'>{$label_text}</span></p>";
+$html .= "<p><span class='label {$label_class}'>{$label_text}</span>";
+if ($is_offer_inactive) {
+    $html .= " <span class='label'>ΕΛΗΞΕ</span>";
+}
+$html .= "</p>";
 
 // administrator's flagging
 if ($is_flaggable) {
@@ -89,12 +97,7 @@ if ($is_flaggable) {
     $html .= $flag_link;
 }
 
-$html .= "<h4>Προσφορά {$offer['Offer']['id']}</h4>";
-if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
-    $html .= $this->Html->link('Εταιρία: '.$offer['Company']['name'], array(
-        'controller' => 'companies', 'action' => 'view', $offer['Company']['id']));
-}
-
+// vote controls
 if (!is_null($student_vote)) {
     $vote_class = ($student_vote)?'green':'red';
     $my_vote = ($student_vote)?'+1':'-1';
@@ -144,6 +147,18 @@ $tag_link = array('controller' => 'offers', 'action' => 'tag');
 $tag_options = array('element' => 'span', 'link' => $tag_link, 'label' => '');
 $offer_info['tags']['value'] = $this->Tag->generate($offer_info['tags']['value'], $tag_options);
 
+// show company link if viewer is not the offer owner
+if ($this->Session->read('Auth.User.id') != $offer['Company']['user_id'] ) {
+    $html .= "<p><span class=\"bold\">Εταιρία: </span>"
+        . $this->Html->link(
+            $offer['Company']['name'], array(
+                'controller' => 'companies', 'action' => 'view', $offer['Company']['id']
+                )
+            )
+        ."</p>";
+}
+
+// display the rest fields
 foreach ($offer_info as $elem) {
     $html .= "<strong>{$elem['label']}:</strong> ";
     if (is_array($elem['value'])) {

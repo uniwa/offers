@@ -586,9 +586,11 @@ class OffersController extends AppController {
         $offer_type_id = $offer['Offer']['offer_type_id'];
         $offer_info = array();
         $new_elem = array();
-        $new_elem['label'] = "Τίτλος";
-        $new_elem['value'] = $offer['Offer']['title'];
-        $offer_info[] = $new_elem;
+        // hide title - we don't need it for the loop because we
+        // show it first in the view
+        //$new_elem['label'] = "Τίτλος";
+        //$new_elem['value'] = $offer['Offer']['title'];
+        //$offer_info[] = $new_elem;
         $new_elem['label'] = "Περιγραφή";
         $new_elem['value'] = $offer['Offer']['description'];
         $offer_info[] = $new_elem;
@@ -619,7 +621,8 @@ class OffersController extends AppController {
                 ($max == BIND_UNLIMITED)?'απεριόριστα':$max;
             $offer_info[] = $new_elem;
             $new_elem['label'] = "Όροι εξαργύρωσης κουπονιού";
-            $new_elem['value'] = $offer['Offer']['coupon_terms'];
+            $new_elem['value'] = empty($offer['Offer']['coupon_terms'])? '-' :
+                $offer['Offer']['coupon_terms'];
             $offer_info[] = $new_elem;
         }
         if ($offer_type_id == TYPE_LIMITED) {

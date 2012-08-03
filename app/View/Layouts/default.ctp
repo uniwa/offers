@@ -74,9 +74,11 @@
             </li>
             <li>
                 <?php
-                    echo $this->Html->link(
-                        __('Αναφορά προβλήματος'),
-                        array('controller' => 'users', 'action' => 'help'));
+                    if ($this->Session->check('Auth.User.id')) {
+                        echo $this->Html->link(
+                            __('Αναφορά προβλήματος'),
+                            array('controller' => 'users', 'action' => 'help'));
+                    }
                 ?>
             </li>
             </ul>

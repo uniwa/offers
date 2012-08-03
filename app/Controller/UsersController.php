@@ -411,7 +411,10 @@ https://my.teiath.gr</a>'),
         }
     }
 
-	function help(){
+    function help(){
+        if (! $this->Auth->user('id') ) {
+            throw new ForbiddenException();
+        }
         // this variable is used to display properly
         // the selected element on header
         $this->set('selected_action', 'help');

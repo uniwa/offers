@@ -144,13 +144,16 @@ if (! empty($company['WorkHour'])) {
 }
 echo '<br/>';
 
-// display total stats
-$html_stats = '';
-$html_stats .= "<p><strong>Σύνολο επισκέψεων για όλες τις προσφορές:";
-$html_stats .= "</strong> {$visits['total']}<br />";
-$html_stats .= "<strong>Σύνολο μοναδικών επισκεπτών (βάσει IP) για όλες τις προσφορές:";
-$html_stats .= "</strong> {$visits['unique']}</p><br />";
-echo $html_stats;
+// display total stats for all offers
+// only if visitor = owner and offer type = coupons
+if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
+    $html_stats = '';
+    $html_stats .= "<p><strong>Σύνολο επισκέψεων για όλες τις προσφορές:";
+    $html_stats .= "</strong> {$visits['total']}<br />";
+    $html_stats .= "<strong>Σύνολο μοναδικών επισκεπτών (βάσει IP) για όλες τις προσφορές:";
+    $html_stats .= "</strong> {$visits['unique']}</p><br />";
+    echo $html_stats;
+}
 
 $html_clock = "<i class='icon-time'></i>";
 

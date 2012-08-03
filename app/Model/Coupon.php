@@ -12,7 +12,7 @@ class Coupon extends AppModel {
     public function max_coupons_reached($offer_id, $student_id) {
         // get max allowed coupons per student
         $offer_coupons = (int)$this->Offer->field('max_per_student',
-                                             array('id' => $offer_id));
+                                             array('Offer.id' => $offer_id));
 
         if ($offer_coupons == BIND_UNLIMITED)
             return false;

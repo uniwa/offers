@@ -20,17 +20,24 @@ class CouponsController extends AppController {
     }
 
     public function add ($id = null) {
+        // $id : offer id
         if ($id === null)
             throw new BadRequestException();
 
         $redirect = array($this->referer());
 
+        // setup conditions
         $conditions = $this->Offer->conditionsValid;
         $conditions['Offer.offer_type_id'] = TYPE_COUPONS;
+        $conditions['Offer.id'] = $id;
 
-        $this->Offer->recursive = -1;
-        $offer = $this->Offer->findById($conditions,
-                                        array('Offer.id'));
+        // get county info, used for email
+        $this->Offer->Behaviors->attach('Containable');
+        $this->Offer->contain(array('Company.Municipality.County'));
+        $this->Offer->recursive = 0;
+        $offer = $this->Offer->find('first', array(
+            'conditions' => $conditions)
+        );
 
         if (! $offer)
             throw new NotFoundException('Η προσφορά δεν βρέθηκε.');
@@ -62,11 +69,6 @@ class CouponsController extends AppController {
         if ($this->Coupon->save($coupon)) {
 
             $coupon_id = $this->Coupon->id;
-
-            // avoid unnecessary left joins, just the required ones
-            $this->Offer->Behaviors->attach('Containable');
-            $this->Offer->contain(array('Company.Municipality.County'));
-            $offer = $this->Offer->findById($id);
 
             // send email
             $this->mail_success($offer, $coupon_id, $coupon_uuid);

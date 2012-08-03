@@ -48,9 +48,11 @@
         echo "var marker = new L.Marker(company,{icon: icon});";
         echo "map.addLayer(marker);</script>";
         echo "<noscript>";
+        echo "<div id='map'>";
         echo "<img src='http://staticmap.openstreetmap.de/staticmap.php?";
         echo "center={$lat},{$lng}&zoom=15&size={$map_width}x{$map_height}&";
         echo "markers={$lat},{$lng},ol-marker-gold' /><br/>";
+        echo "</div>";
         echo "</noscript>";
     } else {
         echo "<div class='well'>";

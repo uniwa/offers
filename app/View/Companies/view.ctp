@@ -54,7 +54,7 @@ if ($is_user_admin) {
 }
 
 if ($is_user_the_owner) {
-    echo "<h6>Ανάρτηση Προσφοράς</h6>";
+    echo "<h6>ΑΝΑΡΤΗΣΗ ΠΡΟΣΦΟΡΑΣ</h6>";
     echo "<p>";
     echo $this->Html->link(offer_type(1), array(
         'controller' => 'offers',

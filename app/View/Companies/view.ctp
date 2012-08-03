@@ -55,20 +55,25 @@ if ($is_user_admin) {
 
 if ($is_user_the_owner) {
     echo "<h6>ΑΝΑΡΤΗΣΗ ΠΡΟΣΦΟΡΑΣ</h6>";
-    echo "<p>";
+    echo "<ul class='unstyled inline-list company-btn'>";
+    echo "<li>";
     echo $this->Html->link(offer_type(1), array(
         'controller' => 'offers',
         'action' => 'add_happyhour'),
-        array('class' => 'label label-info'));
+        array('class' => 'btn btn-primary'));
+    echo "</li>";
+    echo "<li>";
     echo $this->Html->link(offer_type(2), array(
         'controller' => 'offers',
         'action' => 'add_coupons'),
-        array('class' => 'label label-warning'));
+        array('class' => 'btn btn-warning'));
+    echo "</li>";
+    echo "<li>";
     echo $this->Html->link(offer_type(3), array(
         'controller' => 'offers',
         'action' => 'add_limited'),
-        array('class' => 'label label-success'));
-    echo "</p><h6>";
+        array('class' => 'btn btn-success'));
+    echo "</ul>";
 
     echo $this->Html->link('Επεξεργασία στοιχείων επιχείρησης',
                            array('controller' => 'companies',

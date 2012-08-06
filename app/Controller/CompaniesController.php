@@ -33,9 +33,17 @@ class CompaniesController extends AppController {
             }
         }
 
-        // filter only enabled companies, but not for admin
+        // filter only enabled/non-banned companies, but not for admin or self
         if ($this->Auth->user('role') !== ROLE_ADMIN) {
-            $options['conditions'] += array('Company.is_enabled' => 1);
+            // a company should be displayed if its owner is not banned, unless
+            // it is the owner the one requesting the view
+            $or = array('User.is_banned' => false,
+                        'Company.user_id' => $this->Auth->user('id'));
+
+            // the above check does not need to be performed here, because a
+            // disabled company cannot login in the first place
+            $options['conditions'] += array('Company.is_enabled' => 1,
+                                            'OR' => $or);
         }
 
         $options['recursive'] = 1;
@@ -45,9 +53,10 @@ class CompaniesController extends AppController {
 
         // we need the company's working hours
         $this->Company->Behaviors->attach('Containable');
-        $this->Company->contain(array('WorkHour', 'Municipality'));
+        $this->Company->contain(array('WorkHour', 'Municipality', 'User.is_banned'));
 
         $company = $this->Company->find('first', $options);
+
         if (empty($company))
             throw new NotFoundException('Η συγκεκριμένη επιχείρηση δεν
                                         βρέθηκε.');
@@ -598,7 +607,8 @@ class CompaniesController extends AppController {
         $own = array('edit', 'imageedit');
         $admin_actions = array('enable','disable', 'ban', 'unban', 'emails');
 
-        if ($user['is_banned'] == 0) {
+#        if ($user['is_banned'] == 0) {
+
             // all users can view company views that are not banned
             if (in_array($this->action, $public)) {
                 return true;
@@ -620,7 +630,7 @@ class CompaniesController extends AppController {
                     return true;
                 }
             }
-        }
+#        }
 
         // admin can see banned users too
         return parent::is_authorized($user);

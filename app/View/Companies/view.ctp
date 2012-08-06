@@ -110,8 +110,6 @@ if (! empty($company['Image']) ) {
     echo $img;
 }
 
-echo "<h4>Επιχείρηση {$comp['id']}</h4>";
-
 if (isset($comp['name']))
     echo 'Όνομα επιχείρησης : '.$comp['name'].'<br/>';
 
@@ -214,7 +212,6 @@ echo '<div class="tab-pane active" id="offers-active">'; // attach this content 
 if (empty($company['Offer']['Active'])) {
     echo 'Δεν υπάρχουν ενεργές προσφορές.<br/>';
 } else {
-    echo 'Ενεργές προσφορές:<br/>';
     foreach ($company['Offer']['Active'] as $active) {
         $vote_plus = $active['vote_plus'];
         $vote_minus = $active['vote_minus'];
@@ -271,7 +268,6 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
     if (empty($company['Offer']['Draft'])) {
         echo 'Δεν υπάρχουν μη ενεργοποιημένες προσφορές.<br/>';
     } else {
-        echo 'Μη ενεργοποιημένες προσφορές:<br/>';
         foreach ($company['Offer']['Draft'] as $draft) {
             $vote_plus = $draft['vote_plus'];
             $vote_minus = $draft['vote_minus'];
@@ -325,7 +321,6 @@ echo '<div class="tab-pane" id="offers-old">';
 if (empty($company['Offer']['Inactive'])) {
     echo 'Δεν υπάρχουν παλαιότερες προσφορές.<br/>';
 } else {
-    echo 'Παλαιότερες προσφορές:<br/>';
     foreach ($company['Offer']['Inactive'] as $inactive) {
         $vote_plus = $inactive['vote_plus'];
         $vote_minus = $inactive['vote_minus'];

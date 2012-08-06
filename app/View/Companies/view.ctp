@@ -5,11 +5,6 @@ $comp = $company['Company'];
 $is_user_the_owner = $this->Session->read('Auth.User.id') == $comp['user_id'];
 $is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
 
-// setup mapping between bootstrap labels and offer types
-$css_happy_hour_label = 'label-info';
-$css_coupons_label = 'label-warning';
-$css_limited_label = 'label-success';
-
 if (isset($comp['latitude']) && isset($comp['longitude'])) {
     $lat = $comp['latitude'];
     $lng = $comp['longitude'];

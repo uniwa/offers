@@ -139,10 +139,8 @@ if (isset($comp['service_type']))
 if (isset($comp['afm']))
     echo '<span class="bold">ΑΦΜ :</span> '.$comp['afm'].'<br/>';
 
-if (isset($comp['working_hours']))
-    echo 'Ωράριο λειτουργίας : '.$comp['working_hours'].'<br/>';
-
 if (! empty($company['WorkHour'])) {
+    echo '<span class="bold">Ωράριο λειτουργίας επιχείρησης</span><br/>';
     echo '<ul>';
     foreach($company['WorkHour'] as $wh) {
         echo "<li><span class=\"bold\">{$wh['name']}:</span> {$wh['time1']}";

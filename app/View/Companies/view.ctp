@@ -5,6 +5,11 @@ $comp = $company['Company'];
 $is_user_the_owner = $this->Session->read('Auth.User.id') == $comp['user_id'];
 $is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
 
+// setup mapping between bootstrap labels and offer types
+$css_happy_hour_label = 'label-info';
+$css_coupons_label = 'label-warning';
+$css_limited_label = 'label-success';
+
 if (isset($comp['latitude']) && isset($comp['longitude'])) {
     $lat = $comp['latitude'];
     $lng = $comp['longitude'];
@@ -209,49 +214,103 @@ echo '<div class="tab-pane active" id="offers-active">'; // attach this content 
 if (empty($company['Offer']['Active'])) {
     echo 'Δεν υπάρχουν ενεργές προσφορές.<br/>';
 } else {
+    // setup table headers
+    ?>
+    <div class='company-table'>
+    <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Ψήφοι</th>
+            <th>Προσφορά</th>
+            <th>Τύπος</th>
+            <?php
+            if (($this->Session->read('Auth.User.id') == $comp['user_id'])
+                || ($this->Session->read('Auth.User.role') === ROLE_ADMIN)) {
+                    echo '<th>Ενέργειες</th>';
+                }
+            ?>
+        </tr>
+    </thead>
+    <tbody>
+    <?php
     foreach ($company['Offer']['Active'] as $active) {
+        echo '<tr>';
         $vote_plus = $active['vote_plus'];
         $vote_minus = $active['vote_minus'];
         $vote_count = $active['vote_count'];
         $votes = "<span class='votes green'>+{$vote_plus}</span> ";
         $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
         $votes .= "({$vote_count}) ";
-        echo $votes;
+        echo "<td>{$votes}</td>";
 
-        echo $this->Html->link($active['title'],
+        $offer_link = $this->Html->link($active['title'],
                                array('controller' => 'offers',
                                      'action' => 'view', $active['id'])
-                              );
+                                 );
 
+        // clear offer actions string here
+        $offer_actions = '';
+
+        // append clock icon to offer
         if ($is_user_the_owner) {
-            // display a clock next to offer if autoend time is set
             $time_end = new DateTime($active['autoend']);
             if ($time_end > $time_now) {
-                echo $html_clock;
+                $offer_link .= $html_clock;
             }
 
-            echo ' ' . $this->Html->link(
-            '[Τερματισμός]',
+
+            // setup offer actions
+            // start/end or flag spam if viewer is admin
+            $offer_actions .= $this->Html->link(
+            'Τερματισμός',
             array(
                 'controller' => 'offers',
                 'action' => 'terminate',
                 $active['id']),
-            null,
+            array('class' => 'btn btn-mini btn-danger'),
             'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. '.
             'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
-        } else if ($is_user_admin) {
-            echo $this->Html->link(
+        }
+
+        // show offer link
+        echo "<td>{$offer_link}</td>";
+
+        // build offer type string with approproate color code
+        $ot = "<td>";
+        $oid = $active['offer_type_id'];
+        switch($oid) {
+            case TYPE_HAPPYHOUR:
+                $ot .= "<span class='label {$css_happy_hour_label}'>";
+                break;
+            case TYPE_COUPONS:
+                $ot .= "<span class='label {$css_coupons_label}'>";
+                break;
+            case TYPE_LIMITED:
+                $ot .= "<span class='label {$css_limited_label}'>";
+                break;
+        }
+        $ot .= offer_type($oid);
+        $ot .= "</span></td>";
+        echo $ot;
+
+        if ($is_user_admin) {
+            $offer_actions .= $this->Html->link(
                     $flag_icon . ' Ανάρμοστη',
                     array('controller' => 'offers',
                           'action' => 'improper',
                            $active['id']),
                     array('escape' => false,
-                          'class' => 'btn btn-mini')
+                          'class' => 'btn btn-mini btn-danger')
             );
         }
 
-      echo '<br/>';
+        // check if we have available actions and show them
+        if (! empty($offer_actions)) {
+            echo "<td>{$offer_actions}</td>";
+        }
+        echo '</tr>';
     }
+    echo '</tbody></table></div>';
 }
 // end block that defines tab contents for id: offers-active
 echo '</div>';

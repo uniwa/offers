@@ -116,28 +116,28 @@ if (! empty($company['Image']) ) {
 
 echo "<div class='company-info-block'>";
 if (isset($comp['address']))
-    echo 'Διεύθυνση : '.$comp['address'].'<br/>';
+    echo '<span class="bold">Διεύθυνση : </span>'.$comp['address'].'<br/>';
 
 if (isset($comp['municipality']))
-    echo 'Δήμος : ' .$comp['municipality'].'<br />';
+    echo '<span class="bold">Δήμος : </span>' .$comp['municipality'].'<br />';
 
 if (isset($comp['postalcode']))
-    echo 'Ταχ. Κώδικας : '.$comp['postalcode'].'<br/>';
+    echo '<span class="bold">Ταχ. Κώδικας : </span>'.$comp['postalcode'].'<br/>';
 
 if (isset($company['User']['email']))
-    echo 'Email : '.$company['User']['email'].'<br/>';
+    echo '<span class="bold">Email : </span>'.$company['User']['email'].'<br/>';
 
 if (isset($comp['phone']))
-    echo 'Τηλέφωνο : '.$comp['phone'].'<br/>';
+    echo '<span class="bold">Τηλέφωνο : </span>'.$comp['phone'].'<br/>';
 
 if (isset($comp['fax']))
-    echo 'Φαξ : '.$comp['fax'].'<br/>';
+    echo '<span class="bold">Φαξ : </span>'.$comp['fax'].'<br/>';
 
 if (isset($comp['service_type']))
-    echo 'Είδος υπηρεσιών : '.$comp['service_type'].'<br/>';
+    echo '<span class="bold">Είδος υπηρεσιών : </span>'.$comp['service_type'].'<br/>';
 
 if (isset($comp['afm']))
-    echo 'ΑΦΜ : '.$comp['afm'].'<br/>';
+    echo '<span class="bold">ΑΦΜ :</span> '.$comp['afm'].'<br/>';
 
 if (isset($comp['working_hours']))
     echo 'Ωράριο λειτουργίας : '.$comp['working_hours'].'<br/>';

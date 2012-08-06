@@ -103,6 +103,8 @@ class OffersController extends AppController {
                     return true;
                 }
             }
+            // prevent admins from gaining access
+            return false;
         }
 
         // Only companies
@@ -110,6 +112,8 @@ class OffersController extends AppController {
             if ($role === ROLE_COMPANY) {
                 return true;
             }
+            // prevent admins from gaining access
+            return false;
         }
 
         return parent::is_authorized($user);

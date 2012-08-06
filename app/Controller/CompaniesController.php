@@ -33,9 +33,17 @@ class CompaniesController extends AppController {
             }
         }
 
-        // filter only enabled companies, but not for admin
+        // filter only enabled/non-banned companies, but not for admin or self
         if ($this->Auth->user('role') !== ROLE_ADMIN) {
-            $options['conditions'] += array('Company.is_enabled' => 1);
+            // a company should be displayed if its owner is not banned, unless
+            // it is the owner the one requesting the view
+            $or = array('User.is_banned' => false,
+                        'Company.user_id' => $this->Auth->user('id'));
+
+            // the above check does not need to be performed here, because a
+            // disabled company cannot login in the first place
+            $options['conditions'] += array('Company.is_enabled' => 1,
+                                            'OR' => $or);
         }
 
         $options['recursive'] = 1;
@@ -45,9 +53,10 @@ class CompaniesController extends AppController {
 
         // we need the company's working hours
         $this->Company->Behaviors->attach('Containable');
-        $this->Company->contain(array('WorkHour', 'Municipality'));
+        $this->Company->contain(array('WorkHour', 'Municipality', 'User.is_banned'));
 
         $company = $this->Company->find('first', $options);
+
         if (empty($company))
             throw new NotFoundException('Η συγκεκριμένη επιχείρηση δεν
                                         βρέθηκε.');
@@ -598,27 +607,25 @@ class CompaniesController extends AppController {
         $own = array('edit', 'imageedit');
         $admin_actions = array('enable','disable', 'ban', 'unban', 'emails');
 
-        if ($user['is_banned'] == 0) {
-            // all users can view company views that are not banned
-            if (in_array($this->action, $public)) {
-                return true;
-            }
+        // all users can view company views that are not banned
+        if (in_array($this->action, $public)) {
+            return true;
+        }
 
-            if (in_array($this->action, $own)) {
-                if (isset($user['role']) && $user['role'] === ROLE_COMPANY) {
-                    $company_id = $this->Session->read('Auth.Company.id');
-                    if ($this->Company->is_owned_by($company_id, $user['id'])) {
-                        return true;
-                    }
-                }
-                // admin cannot edit company profiles
-                return false;
-            }
-
-            if (in_array($this->action, $admin_actions)) {
-                if (isset($user['role']) && $user['role'] === ROLE_ADMIN) {
+        if (in_array($this->action, $own)) {
+            if (isset($user['role']) && $user['role'] === ROLE_COMPANY) {
+                $company_id = $this->Session->read('Auth.Company.id');
+                if ($this->Company->is_owned_by($company_id, $user['id'])) {
                     return true;
                 }
+            }
+            // admin cannot edit company profiles
+            return false;
+        }
+
+        if (in_array($this->action, $admin_actions)) {
+            if (isset($user['role']) && $user['role'] === ROLE_ADMIN) {
+                return true;
             }
         }
 

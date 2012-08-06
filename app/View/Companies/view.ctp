@@ -141,11 +141,6 @@ if (isset($comp['afm']))
 
 if (isset($comp['working_hours']))
     echo 'Ωράριο λειτουργίας : '.$comp['working_hours'].'<br/>';
-/*
-foreach ($company['Image'] as $image) {
-    echo $this->Html->image('/images/view/'.$image['id']).'<br/>';
-}
- */
 
 if (! empty($company['WorkHour'])) {
     echo '<ul>';
@@ -159,7 +154,6 @@ if (! empty($company['WorkHour'])) {
     }
     echo '</ul>';
 }
-echo '<br/>';
 echo "</div>";
 
 // ----------------------------------------------------------------------------

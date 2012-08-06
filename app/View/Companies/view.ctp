@@ -276,22 +276,7 @@ if (empty($company['Offer']['Active'])) {
         echo "<td>{$offer_link}</td>";
 
         // build offer type string with approproate color code
-        $ot = "<td>";
-        $oid = $active['offer_type_id'];
-        switch($oid) {
-            case TYPE_HAPPYHOUR:
-                $ot .= "<span class='label {$css_happy_hour_label}'>";
-                break;
-            case TYPE_COUPONS:
-                $ot .= "<span class='label {$css_coupons_label}'>";
-                break;
-            case TYPE_LIMITED:
-                $ot .= "<span class='label {$css_limited_label}'>";
-                break;
-        }
-        $ot .= offer_type($oid);
-        $ot .= "</span></td>";
-        echo $ot;
+        echo "<td>{$this->CouponsLayout->offer_label($active['offer_type_id'])}</td>";
 
         if ($is_user_admin) {
             $offer_actions .= $this->Html->link(

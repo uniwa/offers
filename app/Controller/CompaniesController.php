@@ -3,7 +3,7 @@
 class CompaniesController extends AppController {
 
     public $name = 'Companies';
-    public $helpers = array('Html', 'Form');
+    public $helpers = array('Html', 'Form', 'CouponsLayout');
     public $uses = array('Company', 'Offer', 'Municipality', 'StatsToday',
         'StatsTotal', 'User', 'Day', 'WorkHour', 'Image');
 

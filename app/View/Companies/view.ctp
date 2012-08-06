@@ -53,6 +53,9 @@ if ($is_user_admin) {
         echo $html;
 }
 
+// show company name
+echo "<div class='bold company-name'>{$comp['name']}</div>";
+
 if ($is_user_the_owner) {
     // offer actions
     echo "<div>";
@@ -109,9 +112,6 @@ if (! empty($company['Image']) ) {
     }
     echo $img;
 }
-
-if (isset($comp['name']))
-    echo 'Όνομα επιχείρησης : '.$comp['name'].'<br/>';
 
 if (isset($comp['address']))
     echo 'Διεύθυνση : '.$comp['address'].'<br/>';

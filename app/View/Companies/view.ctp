@@ -58,7 +58,7 @@ echo "<div class='bold company-name'>{$comp['name']}</div>";
 
 if ($is_user_the_owner) {
     // offer actions
-    echo "<div>";
+    echo "<div class='controls-block'>";
         echo "<h6>ΑΝΑΡΤΗΣΗ ΠΡΟΣΦΟΡΑΣ</h6>";
         echo "<ul class='unstyled inline-list company-btn'>";
         echo "<li>";
@@ -82,7 +82,7 @@ if ($is_user_the_owner) {
     echo "</div>";
 
     // edit actions
-    echo "<div>";
+    echo "<div class='controls-block'>";
         echo "<h6>ΠΡΟΦΙΛ</h6>";
         echo "<ul class='unstyled inline-list company-btn'>";
         echo "<li>";

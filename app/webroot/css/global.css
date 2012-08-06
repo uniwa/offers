@@ -158,3 +158,10 @@ footer ul li {
 .company-name {
     padding-bottom: 1em;
 }
+
+/* block which contain company controls-action, like image/ino edit
+ * or offer creation
+ */
+.controls-block {
+    padding-bottom: 1em;
+}

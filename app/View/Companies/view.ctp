@@ -174,12 +174,14 @@ if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
 
 $html_clock = "<i class='icon-time'></i>";
 
+// get the current datetime
+$time_now = new DateTime();
+
 // display Active offers
 if (empty($company['Offer']['Active'])) {
     echo 'Δεν υπάρχουν ενεργές προσφορές.<br/>';
 } else {
     echo 'Ενεργές προσφορές:<br/>';
-    $time_now = new DateTime();
     foreach ($company['Offer']['Active'] as $active) {
         $vote_plus = $active['vote_plus'];
         $vote_minus = $active['vote_minus'];

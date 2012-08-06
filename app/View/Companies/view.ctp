@@ -5,6 +5,11 @@ $comp = $company['Company'];
 $is_user_the_owner = $this->Session->read('Auth.User.id') == $comp['user_id'];
 $is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
 
+// setup mapping between bootstrap labels and offer types
+$css_happy_hour_label = 'label-info';
+$css_coupons_label = 'label-warning';
+$css_limited_label = 'label-success';
+
 if (isset($comp['latitude']) && isset($comp['longitude'])) {
     $lat = $comp['latitude'];
     $lng = $comp['longitude'];
@@ -53,9 +58,12 @@ if ($is_user_admin) {
         echo $html;
 }
 
+// show company name
+echo "<div class='bold company-name'>{$comp['name']}</div>";
+
 if ($is_user_the_owner) {
     // offer actions
-    echo "<div>";
+    echo "<div class='controls-block'>";
         echo "<h6>ΑΝΑΡΤΗΣΗ ΠΡΟΣΦΟΡΑΣ</h6>";
         echo "<ul class='unstyled inline-list company-btn'>";
         echo "<li>";
@@ -79,7 +87,7 @@ if ($is_user_the_owner) {
     echo "</div>";
 
     // edit actions
-    echo "<div>";
+    echo "<div class='controls-block'>";
         echo "<h6>ΠΡΟΦΙΛ</h6>";
         echo "<ul class='unstyled inline-list company-btn'>";
         echo "<li>";
@@ -101,53 +109,43 @@ if ($is_user_the_owner) {
 }
 
 if (! empty($company['Image']) ) {
-    $img = "";
+    $img = "<div class='company-image-block'>";
     foreach ($company['Image'] as $image) {
         $img .= "<div class='image_frame'>";
         $img .= $this->Html->image('/images/thumb/'.$image['Image']['id']);
         $img .= "</div>";
     }
+    $img .= "</div>";
     echo $img;
 }
 
-echo "<h4>Επιχείρηση {$comp['id']}</h4>";
-
-if (isset($comp['name']))
-    echo 'Όνομα επιχείρησης : '.$comp['name'].'<br/>';
-
+echo "<div class='company-info-block'>";
 if (isset($comp['address']))
-    echo 'Διεύθυνση : '.$comp['address'].'<br/>';
+    echo '<span class="bold">Διεύθυνση : </span>'.$comp['address'].'<br/>';
 
 if (isset($comp['municipality']))
-    echo 'Δήμος : ' .$comp['municipality'].'<br />';
+    echo '<span class="bold">Δήμος : </span>' .$comp['municipality'].'<br />';
 
 if (isset($comp['postalcode']))
-    echo 'Ταχ. Κώδικας : '.$comp['postalcode'].'<br/>';
+    echo '<span class="bold">Ταχ. Κώδικας : </span>'.$comp['postalcode'].'<br/>';
 
 if (isset($company['User']['email']))
-    echo 'Email : '.$company['User']['email'].'<br/>';
+    echo '<span class="bold">Email : </span>'.$company['User']['email'].'<br/>';
 
 if (isset($comp['phone']))
-    echo 'Τηλέφωνο : '.$comp['phone'].'<br/>';
+    echo '<span class="bold">Τηλέφωνο : </span>'.$comp['phone'].'<br/>';
 
 if (isset($comp['fax']))
-    echo 'Φαξ : '.$comp['fax'].'<br/>';
+    echo '<span class="bold">Φαξ : </span>'.$comp['fax'].'<br/>';
 
 if (isset($comp['service_type']))
-    echo 'Είδος υπηρεσιών : '.$comp['service_type'].'<br/>';
+    echo '<span class="bold">Είδος υπηρεσιών : </span>'.$comp['service_type'].'<br/>';
 
 if (isset($comp['afm']))
-    echo 'ΑΦΜ : '.$comp['afm'].'<br/>';
-
-if (isset($comp['working_hours']))
-    echo 'Ωράριο λειτουργίας : '.$comp['working_hours'].'<br/>';
-/*
-foreach ($company['Image'] as $image) {
-    echo $this->Html->image('/images/view/'.$image['id']).'<br/>';
-}
- */
+    echo '<span class="bold">ΑΦΜ :</span> '.$comp['afm'].'<br/>';
 
 if (! empty($company['WorkHour'])) {
+    echo '<span class="bold">Ωράριο λειτουργίας επιχείρησης</span><br/>';
     echo '<ul>';
     foreach($company['WorkHour'] as $wh) {
         echo "<li><span class=\"bold\">{$wh['name']}:</span> {$wh['time1']}";
@@ -159,8 +157,7 @@ if (! empty($company['WorkHour'])) {
     }
     echo '</ul>';
 }
-echo '<br/>';
-
+echo "</div>";
 
 // ----------------------------------------------------------------------------
 // Bootstrap togglable tab
@@ -173,9 +170,12 @@ echo '<br/>';
 <li class="active">
     <a href="#offers-active" data-toggle="tab">Ενεργές Προσφορές</a>
 </li>
-<li>
-    <a href="#offers-inactive" data-toggle="tab">Ανενεργές Προσφορές</a>
-</li>
+<?php
+if (($this->Session->read('Auth.User.id') == $comp['user_id'])
+    || ($this->Session->read('Auth.User.role') === ROLE_ADMIN)) {
+    echo '<li><a href="#offers-inactive" data-toggle="tab">Ανενεργές Προσφορές</a></li>';
+}
+?>
 <li>
     <a href="#offers-old" data-toggle="tab">Παλαιότερες Προσφορές</a>
 </li>
@@ -214,64 +214,118 @@ echo '<div class="tab-pane active" id="offers-active">'; // attach this content 
 if (empty($company['Offer']['Active'])) {
     echo 'Δεν υπάρχουν ενεργές προσφορές.<br/>';
 } else {
-    echo 'Ενεργές προσφορές:<br/>';
+    // setup table headers
+    ?>
+    <div class='company-table'>
+    <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Ψήφοι</th>
+            <th>Προσφορά</th>
+            <th>Τύπος</th>
+            <?php
+            if (($this->Session->read('Auth.User.id') == $comp['user_id'])
+                || ($this->Session->read('Auth.User.role') === ROLE_ADMIN)) {
+                    echo '<th>Ενέργειες</th>';
+                }
+            ?>
+        </tr>
+    </thead>
+    <tbody>
+    <?php
     foreach ($company['Offer']['Active'] as $active) {
+        echo '<tr>';
         $vote_plus = $active['vote_plus'];
         $vote_minus = $active['vote_minus'];
         $vote_count = $active['vote_count'];
         $votes = "<span class='votes green'>+{$vote_plus}</span> ";
         $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
         $votes .= "({$vote_count}) ";
-        echo $votes;
+        echo "<td>{$votes}</td>";
 
-        echo $this->Html->link($active['title'],
+        $offer_link = $this->Html->link($active['title'],
                                array('controller' => 'offers',
                                      'action' => 'view', $active['id'])
-                              );
+                                 );
 
+        // clear offer actions string here
+        $offer_actions = '';
+
+        // append clock icon to offer
         if ($is_user_the_owner) {
-            // display a clock next to offer if autoend time is set
             $time_end = new DateTime($active['autoend']);
             if ($time_end > $time_now) {
-                echo $html_clock;
+                $offer_link .= $html_clock;
             }
 
-            echo ' ' . $this->Html->link(
-            '[Τερματισμός]',
+
+            // setup offer actions
+            // start/end or flag spam if viewer is admin
+            $offer_actions .= $this->Html->link(
+            'Τερματισμός',
             array(
                 'controller' => 'offers',
                 'action' => 'terminate',
                 $active['id']),
-            null,
+            array('class' => 'btn btn-mini btn-danger'),
             'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. '.
             'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
-        } else if ($is_user_admin) {
-            echo $this->Html->link(
+        }
+
+        // show offer link
+        echo "<td>{$offer_link}</td>";
+
+        // build offer type string with approproate color code
+        $ot = "<td>";
+        $oid = $active['offer_type_id'];
+        switch($oid) {
+            case TYPE_HAPPYHOUR:
+                $ot .= "<span class='label {$css_happy_hour_label}'>";
+                break;
+            case TYPE_COUPONS:
+                $ot .= "<span class='label {$css_coupons_label}'>";
+                break;
+            case TYPE_LIMITED:
+                $ot .= "<span class='label {$css_limited_label}'>";
+                break;
+        }
+        $ot .= offer_type($oid);
+        $ot .= "</span></td>";
+        echo $ot;
+
+        if ($is_user_admin) {
+            $offer_actions .= $this->Html->link(
                     $flag_icon . ' Ανάρμοστη',
                     array('controller' => 'offers',
                           'action' => 'improper',
                            $active['id']),
                     array('escape' => false,
-                          'class' => 'btn btn-mini')
+                          'class' => 'btn btn-mini btn-danger')
             );
         }
 
-      echo '<br/>';
+        // check if we have available actions and show them
+        if (! empty($offer_actions)) {
+            echo "<td>{$offer_actions}</td>";
+        }
+        echo '</tr>';
     }
+    echo '</tbody></table></div>';
 }
 // end block that defines tab contents for id: offers-active
 echo '</div>';
 
-// start block that defines tab contents for id: offers-inactive
-echo '<div class="tab-pane" id="offers-inactive">';
 
 // display Drafts only for the owner of this company and admins
 if (($this->Session->read('Auth.User.id') == $comp['user_id'])
     || ($this->Session->read('Auth.User.role') === ROLE_ADMIN)) {
+
+    // start block that defines tab contents for id: offers-inactive
+    echo '<div class="tab-pane" id="offers-inactive">';
+
     if (empty($company['Offer']['Draft'])) {
         echo 'Δεν υπάρχουν μη ενεργοποιημένες προσφορές.<br/>';
     } else {
-        echo 'Μη ενεργοποιημένες προσφορές:<br/>';
         foreach ($company['Offer']['Draft'] as $draft) {
             $vote_plus = $draft['vote_plus'];
             $vote_minus = $draft['vote_minus'];
@@ -305,6 +359,8 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
             echo '<br/>';
         }
     }
+    // end block that defines tab contents for id: offers-inactive
+    echo '</div>';
 }
 
 // tag that creates the spam notification
@@ -314,8 +370,6 @@ $spam_tag_options = array('class' => 'label label-important',
 
 $spam_tag = $this->Html->tag('span', 'ΑΝΑΡΜΟΣΤΗ', $spam_tag_options);
 
-// end block that defines tab contents for id: offers-inactive
-echo '</div>';
 
 // start block that defines tab contents for id: offers-old
 echo '<div class="tab-pane" id="offers-old">';
@@ -325,7 +379,6 @@ echo '<div class="tab-pane" id="offers-old">';
 if (empty($company['Offer']['Inactive'])) {
     echo 'Δεν υπάρχουν παλαιότερες προσφορές.<br/>';
 } else {
-    echo 'Παλαιότερες προσφορές:<br/>';
     foreach ($company['Offer']['Inactive'] as $inactive) {
         $vote_plus = $inactive['vote_plus'];
         $vote_minus = $inactive['vote_minus'];

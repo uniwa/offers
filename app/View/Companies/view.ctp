@@ -114,6 +114,7 @@ if (! empty($company['Image']) ) {
     echo $img;
 }
 
+echo "<div class='company-info-block'>";
 if (isset($comp['address']))
     echo 'Διεύθυνση : '.$comp['address'].'<br/>';
 
@@ -159,7 +160,7 @@ if (! empty($company['WorkHour'])) {
     echo '</ul>';
 }
 echo '<br/>';
-
+echo "</div>";
 
 // ----------------------------------------------------------------------------
 // Bootstrap togglable tab

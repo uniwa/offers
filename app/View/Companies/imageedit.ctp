@@ -1,4 +1,5 @@
 <?php
+// duplicate code - TODO: make element to share between company/offer imagedit
 $html = '';
 $html .= "<p>Διαχείριση εικόνων επιχείρησης</p>";
 

@@ -171,9 +171,12 @@ echo '<br/>';
 <li class="active">
     <a href="#offers-active" data-toggle="tab">Ενεργές Προσφορές</a>
 </li>
-<li>
-    <a href="#offers-inactive" data-toggle="tab">Ανενεργές Προσφορές</a>
-</li>
+<?php
+if (($this->Session->read('Auth.User.id') == $comp['user_id'])
+    || ($this->Session->read('Auth.User.role') === ROLE_ADMIN)) {
+    echo '<li><a href="#offers-inactive" data-toggle="tab">Ανενεργές Προσφορές</a></li>';
+}
+?>
 <li>
     <a href="#offers-old" data-toggle="tab">Παλαιότερες Προσφορές</a>
 </li>
@@ -259,12 +262,14 @@ if (empty($company['Offer']['Active'])) {
 // end block that defines tab contents for id: offers-active
 echo '</div>';
 
-// start block that defines tab contents for id: offers-inactive
-echo '<div class="tab-pane" id="offers-inactive">';
 
 // display Drafts only for the owner of this company and admins
 if (($this->Session->read('Auth.User.id') == $comp['user_id'])
     || ($this->Session->read('Auth.User.role') === ROLE_ADMIN)) {
+
+    // start block that defines tab contents for id: offers-inactive
+    echo '<div class="tab-pane" id="offers-inactive">';
+
     if (empty($company['Offer']['Draft'])) {
         echo 'Δεν υπάρχουν μη ενεργοποιημένες προσφορές.<br/>';
     } else {
@@ -301,6 +306,8 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
             echo '<br/>';
         }
     }
+    // end block that defines tab contents for id: offers-inactive
+    echo '</div>';
 }
 
 // tag that creates the spam notification
@@ -310,8 +317,6 @@ $spam_tag_options = array('class' => 'label label-important',
 
 $spam_tag = $this->Html->tag('span', 'ΑΝΑΡΜΟΣΤΗ', $spam_tag_options);
 
-// end block that defines tab contents for id: offers-inactive
-echo '</div>';
 
 // start block that defines tab contents for id: offers-old
 echo '<div class="tab-pane" id="offers-old">';

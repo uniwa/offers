@@ -166,6 +166,10 @@ footer ul li {
     padding-bottom: 1em;
 }
 
+.company-info-block, .company-image-block {
+    padding-bottom: 1em;
+}
+
 #companyTab {
     clear: both;
 }

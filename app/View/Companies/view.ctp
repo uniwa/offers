@@ -104,7 +104,7 @@ if ($is_user_the_owner) {
 }
 
 if (! empty($company['Image']) ) {
-    $img = "<div class='image-block'>";
+    $img = "<div class='company-image-block'>";
     foreach ($company['Image'] as $image) {
         $img .= "<div class='image_frame'>";
         $img .= $this->Html->image('/images/thumb/'.$image['Image']['id']);

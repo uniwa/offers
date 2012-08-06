@@ -165,3 +165,7 @@ footer ul li {
 .controls-block {
     padding-bottom: 1em;
 }
+
+#companyTab {
+    clear: both;
+}

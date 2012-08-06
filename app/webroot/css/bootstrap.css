@@ -95,6 +95,7 @@ textarea {
   vertical-align: top;
 }
 body {
+  background: url(http://subtlepatterns.com/patterns/lil_fiber.png) repeat scroll 0% 0% transparent;
   margin: 0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 13px;
@@ -2534,14 +2535,20 @@ button.btn.small, input[type="submit"].btn.small {
   border-color: #ddd #ddd #ddd transparent;
   *border-left-color: #ffffff;
 }
+.sidebar-nav{
+  background: url(http://subtlepatterns.com/patterns/noise_lines.png) repeat scroll 0% 0% transparent;
+}
 .navbar {
   overflow: visible;
   margin-bottom: 18px;
 }
 .navbar-inner {
+  background: url(http://subtlepatterns.com/patterns/fake_brick.png) repeat scroll 0% 0% transparent;
+  height: 40px;
   padding-left: 20px;
   padding-right: 20px;
   background-color: #2c2c2c;
+/*
   background-image: -moz-linear-gradient(top, #333333, #222222);
   background-image: -ms-linear-gradient(top, #333333, #222222);
   background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#333333), to(#222222));
@@ -2550,6 +2557,7 @@ button.btn.small, input[type="submit"].btn.small {
   background-image: linear-gradient(top, #333333, #222222);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#333333', endColorstr='#222222', GradientType=0);
+*/
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
   border-radius: 4px;

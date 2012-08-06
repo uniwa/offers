@@ -25,5 +25,17 @@ if (isset($work_hours)) {
     $elem_html .= $this->element('work_hours', $work_hours);
 }
 
-$elem_html .= $this->Form->end('Αποθήκευση');
+// don't save - go back
+$back_options = array(
+    'name' => 'cancel',
+    'div' => array('class' => 'twobuttons'),
+    'class' => 'btn');
+$elem_html .= $this->Form->submit('Επιστροφή', $back_options);
+
+// save offer
+$end_options = array(
+    'label' => 'Αποθήκευση',
+    'class' => 'btn btn-success');
+$elem_html .= $this->Form->end($end_options);
+
 echo $elem_html;

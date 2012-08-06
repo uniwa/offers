@@ -161,25 +161,60 @@ if (! empty($company['WorkHour'])) {
 }
 echo '<br/>';
 
+
+// ----------------------------------------------------------------------------
+// Bootstrap togglable tab
+// ----------------------------------------------------------------------------
+// @see: http://twitter.github.com/bootstrap/javascript.html#tabs
+
+// tab element
+?>
+<ul class="nav nav-tabs" id="companyTab">
+<li class="active">
+    <a href="#offers-active" data-toggle="tab">Ενεργές Προσφορές</a>
+</li>
+<li>
+    <a href="#offers-inactive" data-toggle="tab">Ανενεργές Προσφορές</a>
+</li>
+<li>
+    <a href="#offers-old" data-toggle="tab">Παλαιότερες Προσφορές</a>
+</li>
+<?php
+if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
+    echo '<li><a href="#stats" data-toggle="tab">Επισκεψιμότητα</a></li>';
+}
+?>
+</ul>
+
+<?php
+// everthing below belong inside the togglable tab
+echo '<div class="tab-content">';
+//--
+
 // display total stats for all offers
 // only if visitor = owner and offer type = coupons
 if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
-    $html_stats = '';
+    $html_stats = '<div class="tab-pane" id="stats">';
     $html_stats .= "<p><strong>Σύνολο επισκέψεων για όλες τις προσφορές:";
     $html_stats .= "</strong> {$visits['total']}<br />";
     $html_stats .= "<strong>Σύνολο μοναδικών επισκεπτών (βάσει IP) για όλες τις προσφορές:";
     $html_stats .= "</strong> {$visits['unique']}</p><br />";
+    $html_stats .= "</div>";
     echo $html_stats;
 }
 
 $html_clock = "<i class='icon-time'></i>";
 
+// get the current datetime
+$time_now = new DateTime();
+
 // display Active offers
+echo '<div class="tab-pane active" id="offers-active">'; // attach this content to Tab
+
 if (empty($company['Offer']['Active'])) {
     echo 'Δεν υπάρχουν ενεργές προσφορές.<br/>';
 } else {
     echo 'Ενεργές προσφορές:<br/>';
-    $time_now = new DateTime();
     foreach ($company['Offer']['Active'] as $active) {
         $vote_plus = $active['vote_plus'];
         $vote_minus = $active['vote_minus'];
@@ -224,6 +259,11 @@ if (empty($company['Offer']['Active'])) {
       echo '<br/>';
     }
 }
+// end block that defines tab contents for id: offers-active
+echo '</div>';
+
+// start block that defines tab contents for id: offers-inactive
+echo '<div class="tab-pane" id="offers-inactive">';
 
 // display Drafts only for the owner of this company and admins
 if (($this->Session->read('Auth.User.id') == $comp['user_id'])
@@ -273,6 +313,13 @@ $spam_tag_options = array('class' => 'label label-important',
                           'title' => $spam_tag_title);
 
 $spam_tag = $this->Html->tag('span', 'ΑΝΑΡΜΟΣΤΗ', $spam_tag_options);
+
+// end block that defines tab contents for id: offers-inactive
+echo '</div>';
+
+// start block that defines tab contents for id: offers-old
+echo '<div class="tab-pane" id="offers-old">';
+
 
 // display Inactive offers
 if (empty($company['Offer']['Inactive'])) {
@@ -330,3 +377,13 @@ if (empty($company['Offer']['Inactive'])) {
         echo '<br/>';
     }
 }
+
+// end block that defines tab contents for id: offers-old
+echo '</div>';
+
+// close div defining table content boundaries
+echo '</div>';
+
+// ----------------------------------------------------------------------------
+// Bootstrap togglable tab end
+// ----------------------------------------------------------------------------

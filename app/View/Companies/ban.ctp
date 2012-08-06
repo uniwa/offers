@@ -13,9 +13,18 @@ $html .= $this->Form->input('Company.explanation', $options);
 $html .= "<br />";
 $confirm = _('Κλείδωμα');
 $cancel = _('Ακύρωση');
-$options = array(
+
+// don't ban - go back
+$submit_options = array(
     'name' => 'cancel',
-    'div' => array('class' => 'twobuttons'));
-$html .= $this->Form->submit($cancel, $options);
-$html .= $this->Form->end($confirm, $options);
+    'div' => array('class' => 'twobuttons'),
+    'class' => 'btn');
+$html .= $this->Form->submit($cancel, $submit_options);
+
+// Form->end() does not support 2 parameters
+// @see: http://api20.cakephp.org/class/form-helper#method-FormHelperend
+$end_options = array(
+    'label' => $confirm,
+    'class' => 'btn btn-danger');
+$html .= $this->Form->end($end_options);
 echo $html;

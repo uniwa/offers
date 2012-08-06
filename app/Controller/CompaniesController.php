@@ -607,30 +607,27 @@ class CompaniesController extends AppController {
         $own = array('edit', 'imageedit');
         $admin_actions = array('enable','disable', 'ban', 'unban', 'emails');
 
-#        if ($user['is_banned'] == 0) {
+        // all users can view company views that are not banned
+        if (in_array($this->action, $public)) {
+            return true;
+        }
 
-            // all users can view company views that are not banned
-            if (in_array($this->action, $public)) {
-                return true;
-            }
-
-            if (in_array($this->action, $own)) {
-                if (isset($user['role']) && $user['role'] === ROLE_COMPANY) {
-                    $company_id = $this->Session->read('Auth.Company.id');
-                    if ($this->Company->is_owned_by($company_id, $user['id'])) {
-                        return true;
-                    }
-                }
-                // admin cannot edit company profiles
-                return false;
-            }
-
-            if (in_array($this->action, $admin_actions)) {
-                if (isset($user['role']) && $user['role'] === ROLE_ADMIN) {
+        if (in_array($this->action, $own)) {
+            if (isset($user['role']) && $user['role'] === ROLE_COMPANY) {
+                $company_id = $this->Session->read('Auth.Company.id');
+                if ($this->Company->is_owned_by($company_id, $user['id'])) {
                     return true;
                 }
             }
-#        }
+            // admin cannot edit company profiles
+            return false;
+        }
+
+        if (in_array($this->action, $admin_actions)) {
+            if (isset($user['role']) && $user['role'] === ROLE_ADMIN) {
+                return true;
+            }
+        }
 
         // admin can see banned users too
         return parent::is_authorized($user);

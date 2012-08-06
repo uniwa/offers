@@ -755,6 +755,11 @@ class OffersController extends AppController {
 
         // Save modified offer
         if (!empty($this->request->data)) {
+            // first check if user wants to cancel the offer add action
+            if (isset($this->request->data['cancel'])) {
+                $this->redirect(array(
+                    'controller' => 'companies', 'action' => 'view'));
+            }
 
             // extract data from XML request
             if ($is_xml) {

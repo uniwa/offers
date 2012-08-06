@@ -28,6 +28,7 @@
     echo $this->Html->script('modal');
     echo $this->Html->script('transition');
     echo $this->Html->script('bootstrap-alert');
+    echo $this->Html->script('bootstrap-tab');
 ?>
 </head>
 <body>

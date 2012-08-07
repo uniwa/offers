@@ -310,7 +310,7 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
     } else {
         foreach ($company['Offer']['Draft'] as $draft) {
 
-            $offer_actions = '';
+            $offer_actions = array();
 
             // title
             $offer_link = $this->Html->link($draft['title'], array(
@@ -326,13 +326,42 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
                 }
 
                 // enable action
-                $offer_actions = $this->Html->link(
+                $offer_actions[] = $this->Html->link(
                     'Ενεργοποίηση',
                     array(
                         'controller' => 'offers',
                         'action' => 'activate',
                         $draft['id']),
                     array('class' => 'btn btn-mini btn-success'),
+                    'Οι ενεργοποιημένες προσφορές δεν είναι δυνατό να τροποποιηθούν.'
+                    .'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+
+                // edit action
+                $offer_actions[] = $this->Html->link(
+                    'Επεξεργασία',
+                    array(
+                        'controller' => 'offers',
+                        'action' => 'edit',
+                        $draft['id']),
+                    array('class' => 'btn btn-mini btn-info'));
+
+                // copy action
+                $offer_actions[] = $this->Html->link(
+                    'Αντιγραφή',
+                    array(
+                        'controller' => 'offers',
+                        'action' => 'copy',
+                        $draft['id']),
+                    array('class' => 'btn btn-mini btn-info'));
+
+                // image edit action
+                $offer_actions[] = $this->Html->link(
+                    'Φωτογραφίες',
+                    array(
+                        'controller' => 'offers',
+                        'action' => 'imageedit',
+                        $draft['id']),
+                    array('class' => 'btn btn-mini btn-info'),
                     'Οι ενεργοποιημένες προσφορές δεν είναι δυνατό να τροποποιηθούν.'
                     .'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
             }
@@ -342,7 +371,9 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
 
             // check if we have available actions and show them
             if (! empty($offer_actions)) {
-                echo "<td>{$offer_actions}</td>";
+                foreach($offer_actions as $action) {
+                    echo "<td>{$action}&nbsp;</td>";
+                }
             }
         }
     }

@@ -5,6 +5,65 @@ $comp = $company['Company'];
 $is_user_the_owner = $this->Session->read('Auth.User.id') == $comp['user_id'];
 $is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
 
+// define variables with button icons
+$flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag icon-white'));
+$edit_icon = $this->Html->tag('i', '', array('class' => 'icon-pencil icon-white'));
+$copy_icon = $this->Html->tag('i', '', array('class' => 'icon-repeat icon-white'));
+$imageedit_icon = $this->Html->tag('i', '', array('class' => 'icon-picture icon-white'));
+$disable_icon = $this->Html->tag('i', '', array('class' => 'icon-warning-sign icon-white'));
+$ban_icon = $this->Html->tag('i', '', array('class' => 'icon-lock icon-white'));
+$enable_icon = $unban_icon= $this->Html->tag('i', '', array('class' => 'icon-check icon-white'));
+
+// admin controls for company view - danger area
+if ($is_user_admin) {
+        $admin_controls = array();
+        if ($comp['is_enabled']) {
+            // completely disable company
+            $title = "{$disable_icon}&nbsp;Απενεργοποίηση";
+            $admin_controls[] = $this->Html->link($title, array(
+                'controller' => 'companies',
+                'action' => 'disable',
+                $comp['id']),
+                array('class' => 'btn btn-danger', 'escape' => false));
+
+            // if company is enabled make available the ban/unban controls
+            if ($company['User']['is_banned']) {
+                // unban
+                $title = "{$unban_icon}&nbsp;Ξεκλείδωμα";
+                $admin_controls[] = $this->Html->link($title, array(
+                    'controller' => 'companies',
+                    'action' => 'unban',
+                    $comp['id']),
+                    array('class' => 'btn btn-success', 'escape' => false));
+            } else {
+                // ban
+                $title = "{$ban_icon}&nbsp;Kλείδωμα";
+                $admin_controls[] = $this->Html->link($title, array(
+                    'controller' => 'companies',
+                    'action' => 'ban',
+                    $comp['id']),
+                    array('class' => 'btn btn-danger', 'escape' => false));
+            }
+        } else {
+            $title = "{$enable_icon}&nbsp;Ενεργοποίηση";
+            $admin_controls[] = $this->Html->link($title, array(
+                'controller' => 'companies',
+                'action' => 'enable',
+                $comp['id']),
+                array('class' => 'btn btn-success', 'escape' => false));
+        }
+        // show admin controls
+        echo '<div class="admin-company-controls well">';
+        echo "<h3>Λειτουργίες Διαχειριστή <i class='icon-warning-sign'></i></h3>";
+        echo '<div>';
+            foreach($admin_controls as $c) {
+                echo "{$c}&nbsp;";
+            }
+        echo '</div>';
+        echo '</div>';
+}
+
+// company map
 if (isset($comp['latitude']) && isset($comp['longitude'])) {
     $lat = $comp['latitude'];
     $lng = $comp['longitude'];
@@ -30,27 +89,6 @@ if (isset($comp['latitude']) && isset($comp['longitude'])) {
     echo "center={$lat},{$lng}&zoom=15&size={$map_width}x{$map_height}&";
     echo "markers={$lat},{$lng},ol-marker-gold' /><br/>";
     echo "</noscript>";
-}
-
-if ($is_user_admin) {
-    $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
-}
-
-if ($is_user_admin) {
-        if ($comp['is_enabled']) {
-            $enabled_title = "[Απενεργοποίηση]";
-            $enabled_action = 'disable';
-        } else {
-            $enabled_title = "[Ενεργοποίηση]";
-            $enabled_action = 'enable';
-        }
-
-        $html = $this->Html->link($enabled_title, array(
-            'controller' => 'companies',
-            'action' => $enabled_action,
-            $comp['id']));
-        $html .= '<br>';
-        echo $html;
 }
 
 // show company name
@@ -219,6 +257,8 @@ if (empty($company['Offer']['Active'])) {
             <th>Προσφορά</th>
             <th>Τύπος</th>
             <?php
+            // offer actions are only available on admin and offer owner
+            // so adjust table headers accordingly
             if (($this->Session->read('Auth.User.id') == $comp['user_id'])
                 || ($this->Session->read('Auth.User.role') === ROLE_ADMIN)) {
                     echo '<th>Ενέργειες</th>';
@@ -250,7 +290,7 @@ if (empty($company['Offer']['Active'])) {
         if ($is_user_the_owner) {
             $time_end = new DateTime($active['autoend']);
             if ($time_end > $time_now) {
-                $offer_link .= $html_clock;
+                $offer_link .= "&nbsp;".$html_clock;
             }
 
 
@@ -265,6 +305,17 @@ if (empty($company['Offer']['Active'])) {
             array('class' => 'btn btn-mini btn-danger'),
             'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. '.
             'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+
+            // space action buttons
+            $offer_actions .= "&nbsp;";
+
+            $offer_actions .= $this->Html->link(
+                $copy_icon . '&nbsp;Αντιγραφή',
+                array(
+                    'controller' => 'offers',
+                    'action' => 'copy',
+                    $active['id']),
+                array('class' => 'btn btn-mini btn-info', 'escape' => false));
         }
 
         // show offer link
@@ -290,7 +341,7 @@ if (empty($company['Offer']['Active'])) {
         }
         echo '</tr>';
     }
-    echo '</tbody></table></div>';
+    echo '</tbody></table></div>'; //div class: company-table
 }
 // end block that defines tab contents for id: offers-active
 echo '</div>';
@@ -306,39 +357,102 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
     if (empty($company['Offer']['Draft'])) {
         echo 'Δεν υπάρχουν μη ενεργοποιημένες προσφορές.<br/>';
     } else {
+        // offers table
+?>
+        <div class='company-table'>
+        <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Προσφορά</th>
+                <th>Τύπος</th>
+                <?php
+                // offer actions are only available offer owner (no Admin actions here)
+                // so adjust table headers accordingly
+                if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
+                        echo '<th>Ενέργειες</th>';
+                    }
+                ?>
+            </tr>
+        </thead>
+        <tbody>
+<?php
         foreach ($company['Offer']['Draft'] as $draft) {
-            $vote_plus = $draft['vote_plus'];
-            $vote_minus = $draft['vote_minus'];
-            $vote_count = $draft['vote_count'];
-            $votes = "<span class='votes green'>+{$vote_plus}</span> ";
-            $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
-            $votes .= "({$vote_count}) ";
-            echo $votes;
 
-            echo $this->Html->link($draft['title'],
-                                   array('controller' => 'offers',
-                                         'action' => 'view', $draft['id'])
-                                  );
+            $offer_actions = array();
+            echo '<tr>';
+
+            // title
+            $offer_link = $this->Html->link($draft['title'], array(
+                'controller' => 'offers',
+                'action' => 'view', $draft['id'])
+            );
 
             if ($is_user_the_owner) {
                 // display a clock next to offer if autostart time is set
                 $time_start = new DateTime($draft['autostart']);
                 if ($time_start > $time_now) {
-                    echo $html_clock;
+                    $offer_link .= "&nbsp;".$html_clock;
                 }
 
-                echo ' ' . $this->Html->link(
-                '[Ενεργοποίηση]',
-                array(
-                    'controller' => 'offers',
-                    'action' => 'activate',
-                    $draft['id']),
-                null,
-                'Οι ενεργοποιημένες προσφορές δεν είναι δυνατό να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+                // enable action
+                $offer_actions[] = $this->Html->link(
+                    'Ενεργοποίηση',
+                    array(
+                        'controller' => 'offers',
+                        'action' => 'activate',
+                        $draft['id']),
+                    array('class' => 'btn btn-mini btn-success'),
+                    'Οι ενεργοποιημένες προσφορές δεν είναι δυνατό να τροποποιηθούν.'
+                    .'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+
+                // edit action
+                $offer_actions[] = $this->Html->link(
+                    $edit_icon . '&nbsp;Επεξεργασία',
+                    array(
+                        'controller' => 'offers',
+                        'action' => 'edit',
+                        $draft['id']),
+                    array('class' => 'btn btn-mini btn-info', 'escape' => false));
+
+                // copy action
+                $offer_actions[] = $this->Html->link(
+                    $copy_icon . '&nbsp;Αντιγραφή',
+                    array(
+                        'controller' => 'offers',
+                        'action' => 'copy',
+                        $draft['id']),
+                    array('class' => 'btn btn-mini btn-info', 'escape' => false));
+
+                // image edit action
+                $offer_actions[] = $this->Html->link(
+                    $imageedit_icon . '&nbsp;Φωτογραφίες',
+                    array(
+                        'controller' => 'offers',
+                        'action' => 'imageedit',
+                        $draft['id']),
+                    array('class' => 'btn btn-mini btn-info', 'escape' => false));
             }
-            echo '<br/>';
+
+            // show offer link
+            echo "<td>{$offer_link}</td>";
+
+            // show offer type
+            echo "<td>{$this->CouponsLayout->offer_label($draft['offer_type_id'])}</td>";
+
+            // check if we have available actions and show them
+            if (! empty($offer_actions)) {
+                echo "<td>";
+                foreach($offer_actions as $action) {
+                    echo "{$action}&nbsp;";
+                }
+                echo "</td>";
+            }
+            echo '<tr>';
         }
+        // end block that defines draft offers table
+        echo '</tbody></table></div>'; //div class: company table
     }
+
     // end block that defines tab contents for id: offers-inactive
     echo '</div>';
 }
@@ -359,7 +473,30 @@ echo '<div class="tab-pane" id="offers-old">';
 if (empty($company['Offer']['Inactive'])) {
     echo 'Δεν υπάρχουν παλαιότερες προσφορές.<br/>';
 } else {
+    // inactive offers table
+?>
+    <div class='company-table'>
+    <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Ψήφοι</th>
+            <th>Προσφορά</th>
+            <th>Τύπος</th>
+            <?php
+            // offer actions are only available on admin and offer owner
+            // so adjust table headers accordingly
+            if (($this->Session->read('Auth.User.id') == $comp['user_id'])
+                || ($this->Session->read('Auth.User.role') === ROLE_ADMIN)) {
+                    echo '<th>Ενέργειες</th>';
+                }
+            ?>
+        </tr>
+    </thead>
+    <tbody>
+<?php
     foreach ($company['Offer']['Inactive'] as $inactive) {
+        echo '<tr>';
+        // setup votes
         $vote_plus = $inactive['vote_plus'];
         $vote_minus = $inactive['vote_minus'];
         $vote_count = $inactive['vote_count'];
@@ -367,49 +504,71 @@ if (empty($company['Offer']['Inactive'])) {
         $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
         $votes .= "({$vote_count}) ";
 
+        $offer_actions = '';
+
+        // offer link
+        $offer_link = $this->Html->link($inactive['title'], array(
+            'controller' => 'offers',
+            'action' => 'view', $inactive['id'])
+        );
+
         if ($inactive['is_spam']) {
 
-            echo $spam_tag;
+            // in case of a flagged (as spam) offer clear the offer link
+            // if current user is not the owner or an admin
+            if (! ($is_user_the_owner || $is_user_admin)) {
+                $offer_link = $inactive['title'];
+            }
 
-            // in case of a flagged (as spam) offer, link its title to its view
-            // iff authed user is either the owner or an admin
-            $should_link_title = $is_user_the_owner || $is_user_admin;
+            // prepend spam tag on either case
+            $offer_link = "{$spam_tag}&nbsp;{$offer_link}";
 
         } else {
-
-            $should_link_title = true;
+            // if offer is not spam the Admin may choose to flag it
+            // to prevent access to certain offers
+            // for user who view the company's history
             if ($is_user_admin) {
-
                 // offer a link to flag the offer as spam
-                $spamify = $this->Html->link(
-                    $flag_icon . ' Ανάρμοστη',
+                $offer_actions = $this->Html->link(
+                    $flag_icon . '&nbsp;Ανάρμοστη',
                     array('controller' => 'offers',
                           'action' => 'improper',
                            $inactive['id']),
                     array('escape' => false,
-                          'class' => 'btn btn-mini')
-            );
+                          'class' => 'btn btn-mini btn-danger')
+                );
             }
         }
 
-        echo $votes;
-
-        if ($should_link_title) {
-            echo $this->Html->link($inactive['title'],
-                                   array('controller' => 'offers',
-                                         'action' => 'view', $inactive['id'])
-            );
-        } else {
-            echo $inactive['title'];
+        if ($is_user_the_owner) {
+            // copy action
+            $offer_actions = $this->Html->link(
+                $copy_icon . '&nbsp;Αντιγραφή',
+                array(
+                    'controller' => 'offers',
+                    'action' => 'copy',
+                    $inactive['id']),
+                array('class' => 'btn btn-mini btn-info', 'escape' => false));
         }
 
-        if (isset($spamify)) {
-            echo $spamify;
-            unset($spamify);
+        // show votes
+        echo "<td>{$votes}</td>";
+
+        // show title link
+        echo "<td>{$offer_link}</td>";
+
+        // show the offer type
+        echo "<td>{$this->CouponsLayout->offer_label($inactive['offer_type_id'])}</td>";
+
+        // show actions
+        if (isset($offer_actions)) {
+            echo "<td>{$offer_actions}</td>";
         }
-        echo '<br/>';
+        echo '</tr>';
     }
 }
+// end block defininig Tab table for old offers
+echo '</tbody></table></div>';
 
 // end block that defines tab contents for id: offers-old
 echo '</div>';

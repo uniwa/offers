@@ -67,23 +67,63 @@ if (empty($offers)) {
         $tag_classes = array('info', 'warning', 'success');
         $tag_class = $tag_classes[$offer_type_id - 1];
         $tag_name = offer_type($offer_type_id);
-        $title = $offers[$key]['Offer']['title'];
+        $title = $offer['Offer']['title'];
         $label = "<span class='label label-{$tag_class}'>{$tag_name}</span>";
-        $vote_count = $offers[$key]['Offer']['vote_count'];
-        $vote_plus = $offers[$key]['Offer']['vote_plus'];
-        $vote_minus = $offers[$key]['Offer']['vote_minus'];
+        $vote_count = $offer['Offer']['vote_count'];
+        $vote_plus = $offer['Offer']['vote_plus'];
+        $vote_minus = $offer['Offer']['vote_minus'];
         $votes_html = "<span class='votes green'>+{$vote_plus}</span> ";
         $votes_html .= "<span class='votes red'>-{$vote_minus}</span> ";
         $postfix = ($vote_count == 1)?'ς':'ι';
-        $votes_html .= "({$vote_count} ψήφο{$postfix})";
-        $html .= "<p>";
-        $html .=  $this->Html->link($title,
-            array('action' => 'view', $offers[$key]['Offer']['id']));
-        $html .= " {$label} {$votes_html}";
+        $offer_class = '';
+        // only show number of votes to owner
+        if (($this->Session->read('Auth.User.role') === ROLE_COMPANY)
+            && ($this->Session->read('Auth.Company.id') === $offer['Offer']['company_id'])) {
+            $votes_html .= "({$vote_count} ψήφο{$postfix})";
+            $offer_class = 'offer-owner';
+        }
 
+        // offer tile container
+        $html .= "<div class='offer-tile {$offer_class}'>";
+        // offer thumb image or default logo
+        $html .= "<div class='offer-thumb'></div>";
+        // offer information
+        $html .= "<div class='offer-info'>";
+        $html .= "<div class='offer-header'>";
+
+        // offer title
+        $html .= "<div class='offer-name-cont'>";
+        $html .= "<div class='offer-name'>";
+        $html .=  $this->Html->link($title,
+            array('controller' => 'offers', 'action' => 'view', $offers[$key]['Offer']['id']));
+        $html .= "</div>";
+        $html .= "</div>";
+
+        // offer type label and votes
+        $html .= "<div class='offer-label'>{$label}</div>";
+        $html .= "<div class='offer-votes'>{$votes_html}</div>";
+        $html .= "</div>";
+
+        // Twitter settings
+        // TODO: create route 'http://coupons.teiath.gr/5' -> '[...]/offers/view/5'
+        //       and use it as url to tweet
+        $url = APP_URL."/offers/view/{$offer['Offer']['id']}";
+        $text = "{$offer['Offer']['title']},";
+        $count = "none";
+        $related = TWITTER_SCREEN_NAME.":".TWITTER_FULL_NAME;
+
+        $html .= "<div class='offer-tweet'>";
+        $html .= "<a href='https://twitter.com/share' data-count='{$count}' ";
+        $html .= "class='twitter-share-button' data-lang='el' ";
+        $html .= "data-related='{$related}' data-text='{$text}' ";
+        $html .= "data-url='{$url}'>Tweet</a>";
+        $html .= "</div>";
+
+        // if offer improper, display special tag (for admin)
         if ($show_flag_link) {
             $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
 
+            $html .= "<div class='offer-improper'>";
             $html .= $this->Html->link(
                     $flag_icon . ' Ανάρμοστη',
                     array('controller' => 'offers',
@@ -92,46 +132,28 @@ if (empty($offers)) {
                     array('escape' => false,
                           'class' => 'btn btn-mini')
             );
+            $html .= "</div>";
         }
-
-        $html .= "<br /><i>{$offer['Offer']['modified']}</i>";
-
-        // Twitter settings
-        // TODO: move to configuration?
-        // TODO: create route 'http://coupons.teiath.gr/5' -> '[...]/offers/view/5'
-        //       and use it as url to tweet
-        $screenname = "TEIATHCoupons";
-        $fullname = "TEIATH Coupons";
-        $baseurl = "http://coupons.edu.teiath.gr";
-        $url = "{$baseurl}/offers/view/{$offer['Offer']['id']}";
-        //$url = $baseurl.$this->Html->url(null);
-        $text = "Προσφορά: {$offer['Offer']['title']},";
-        $count = "none";
-        $related = $screenname.":".$fullname;
-
-        $html .= "<br />";
-        $html .= "<a href='https://twitter.com/share' data-count='{$count}' ";
-        $html .= "class='twitter-share-button' data-lang='el' ";
-        $html .= "data-related='{$related}' data-text='{$text}' data-url='{$url}'>Tweet</a>";
-        $html .= "<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];";
-        $html .= "if(!d.getElementById(id)){js=d.createElement(s);js.id=id;";
-        $html .= "js.src='//platform.twitter.com/widgets.js';";
-        $html .= "fjs.parentNode.insertBefore(js,fjs);}}";
-        $html .= "(document,'script','twitter-wjs');</script>";
 
         // print tags as links if available
         if ($offer['Offer']['tags'] == NULL){
-            $html .= "</p><br />";
-            continue;
+            $html .= "<div class='offer-tags'>&nbsp;</div>";
+        } else {
+            // where tag links should go
+            $tag_link = array('controller' => 'offers', 'action' => 'tag');
+            // use helper to generate tags
+            $tag_options = array('element' => 'div', 'link' => $tag_link, 'class' => 'offer-tags');
+            $html .= $this->Tag->generate($offer['Offer']['tags'], $tag_options);
         }
 
-        // where tag links should go
-        $tag_link = array('controller' => 'offers', 'action' => 'tag');
-        // use helper to generate tags
-        $tag_options = array('element' => 'p', 'link' => $tag_link);
-        $html .= $this->Tag->generate($offer['Offer']['tags'], $tag_options);
+        $html .= "</div>";
+        $html .= "</div>";
     }
 }
+
+// Twitter script
+$html .= $this->Html->script('twitter');
+
 $this->Paginator->options(array('url' => $this->passedArgs));
 $html .= "<div class = 'pagination'><ul>";
 $html .= $this->Paginator->numbers(array(

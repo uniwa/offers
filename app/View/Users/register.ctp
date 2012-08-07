@@ -12,7 +12,7 @@
                               );
 ?>
     <fieldset>
-        <legend><?php echo __('Εγγραφή χρήστη'); ?></legend>
+        <legend><?php echo __('Εγγραφή επιχείρησης'); ?></legend>
 <?php
     echo $this->Tb->input(array(
         'field' => 'User.username',

@@ -54,7 +54,7 @@
                     // show register link for guests
                     if (! $this->Session->check('Auth.User.id')) {
                         echo $this->Html->link(
-                            __('Εγγραφή'),
+                            __('Εγγραφή επιχείρησης'),
                             array('controller' => 'users', 'action' => 'register'));
                     }
                 ?>

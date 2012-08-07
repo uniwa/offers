@@ -309,13 +309,6 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
         echo 'Δεν υπάρχουν μη ενεργοποιημένες προσφορές.<br/>';
     } else {
         foreach ($company['Offer']['Draft'] as $draft) {
-            $vote_plus = $draft['vote_plus'];
-            $vote_minus = $draft['vote_minus'];
-            $vote_count = $draft['vote_count'];
-            $votes = "<span class='votes green'>+{$vote_plus}</span> ";
-            $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
-            $votes .= "({$vote_count}) ";
-            echo $votes;
 
             echo $this->Html->link($draft['title'],
                                    array('controller' => 'offers',

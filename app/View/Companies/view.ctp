@@ -425,7 +425,30 @@ echo '<div class="tab-pane" id="offers-old">';
 if (empty($company['Offer']['Inactive'])) {
     echo 'Δεν υπάρχουν παλαιότερες προσφορές.<br/>';
 } else {
+    // inactive offers table
+?>
+    <div class='company-table'>
+    <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Ψήφοι</th>
+            <th>Προσφορά</th>
+            <th>Τύπος</th>
+            <?php
+            // offer actions are only available on admin and offer owner
+            // so adjust table headers accordingly
+            if (($this->Session->read('Auth.User.id') == $comp['user_id'])
+                || ($this->Session->read('Auth.User.role') === ROLE_ADMIN)) {
+                    echo '<th>Ενέργειες</th>';
+                }
+            ?>
+        </tr>
+    </thead>
+    <tbody>
+<?php
     foreach ($company['Offer']['Inactive'] as $inactive) {
+        echo '<tr>';
+        // setup votes
         $vote_plus = $inactive['vote_plus'];
         $vote_minus = $inactive['vote_minus'];
         $vote_count = $inactive['vote_count'];
@@ -481,20 +504,23 @@ if (empty($company['Offer']['Inactive'])) {
         }
 
         // show votes
-        echo $votes;
+        echo "<td>{$votes}</td>";
 
         // show title link
-        echo $offer_link;
+        echo "<td>{$offer_link}</td>";
 
         // show the offer type
         echo "<td>{$this->CouponsLayout->offer_label($draft['offer_type_id'])}</td>";
 
         // show actions
         if (isset($offer_actions)) {
-            echo $offer_actions;
+            echo "<td>{$offer_actions}</td>";
         }
+        echo '</tr>';
     }
 }
+// end block defininig Tab table for old offers
+echo '</tbody></table></div>';
 
 // end block that defines tab contents for id: offers-old
 echo '</div>';

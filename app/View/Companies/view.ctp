@@ -412,9 +412,9 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
             }
             echo '<tr>';
         }
+        // end block that defines draft offers table
+        echo '</tbody></table></div>'; //div class: company table
     }
-    // end block that defines draft offers table
-    echo '</tbody></table></div>';
 
     // end block that defines tab contents for id: offers-inactive
     echo '</div>';

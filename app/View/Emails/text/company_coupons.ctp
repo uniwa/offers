@@ -9,7 +9,7 @@ $length = count($coupons);
 $i = 1;
 
 foreach($coupons as $c) {
-    printf('%6s   %s', $i, $c['serial_number']);
+    printf('%6s   %s', $i, $c['Coupon']['serial_number']);
     ++$i;
 }
 

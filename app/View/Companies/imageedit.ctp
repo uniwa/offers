@@ -14,7 +14,7 @@ if (!empty($company['Image'])) {
             $html .= "<p>$link_delete</p></div>";
     }
 } else {
-    $html .= "Δεν υπάρχουν εικόνες για αυτή την προσφορά";
+    $html .= "Δεν υπάρχουν εικόνες για αυτή την επιχείρηση.";
 }
 
 if (isset($input_elements)) {

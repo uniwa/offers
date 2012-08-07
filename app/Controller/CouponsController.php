@@ -575,6 +575,8 @@ class CouponsController extends AppController {
                         return true;
                     }
                 }
+                // prohibit admins and users with no permissions
+                return false;
             }
         }
 

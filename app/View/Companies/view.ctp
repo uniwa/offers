@@ -268,6 +268,17 @@ if (empty($company['Offer']['Active'])) {
             array('class' => 'btn btn-mini btn-danger'),
             'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. '.
             'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+
+            // space action buttons
+            $offer_actions .= "&nbsp;";
+
+            $offer_actions .= $this->Html->link(
+                $copy_icon . '&nbsp;Αντιγραφή',
+                array(
+                    'controller' => 'offers',
+                    'action' => 'copy',
+                    $active['id']),
+                array('class' => 'btn btn-mini btn-info', 'escape' => false));
         }
 
         // show offer link

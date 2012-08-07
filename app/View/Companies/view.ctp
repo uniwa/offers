@@ -433,47 +433,66 @@ if (empty($company['Offer']['Inactive'])) {
         $votes .= "<span class='votes red'>-{$vote_minus}</span> ";
         $votes .= "({$vote_count}) ";
 
+        $offer_actions = '';
+
+        // offer link
+        $offer_link = $this->Html->link($inactive['title'], array(
+            'controller' => 'offers',
+            'action' => 'view', $inactive['id'])
+        );
+
         if ($inactive['is_spam']) {
 
-            echo $spam_tag;
+            // in case of a flagged (as spam) offer clear the offer link
+            // if current user is not the owner or an admin
+            if (! ($is_user_the_owner || $is_user_admin)) {
+                $offer_link = $inactive['title'];
+            }
 
-            // in case of a flagged (as spam) offer, link its title to its view
-            // iff authed user is either the owner or an admin
-            $should_link_title = $is_user_the_owner || $is_user_admin;
+            // prepend spam tag on either case
+            $offer_link = "{$spam_tag}&nbsp;{$offer_link}";
 
         } else {
-
-            $should_link_title = true;
+            // if offer is not spam the Admin may choose to flag it
+            // to prevent access to certain offers
+            // for user who view the company's history
             if ($is_user_admin) {
-
                 // offer a link to flag the offer as spam
-                $spamify = $this->Html->link(
-                    $flag_icon . ' Ανάρμοστη',
+                $offer_actions = $this->Html->link(
+                    $flag_icon . '&nbsp;Ανάρμοστη',
                     array('controller' => 'offers',
                           'action' => 'improper',
                            $inactive['id']),
                     array('escape' => false,
-                          'class' => 'btn btn-mini')
-            );
+                          'class' => 'btn btn-mini btn-danger')
+                );
             }
         }
 
+        if ($is_user_the_owner) {
+            // copy action
+            $offer_actions = $this->Html->link(
+                $copy_icon . '&nbsp;Αντιγραφή',
+                array(
+                    'controller' => 'offers',
+                    'action' => 'copy',
+                    $draft['id']),
+                array('class' => 'btn btn-mini btn-info', 'escape' => false));
+        }
+
+        // show votes
         echo $votes;
 
-        if ($should_link_title) {
-            echo $this->Html->link($inactive['title'],
-                                   array('controller' => 'offers',
-                                         'action' => 'view', $inactive['id'])
-            );
-        } else {
-            echo $inactive['title'];
-        }
+        // show title link
+        echo $offer_link;
 
-        if (isset($spamify)) {
-            echo $spamify;
-            unset($spamify);
+        // show the offer type
+        echo "<td>{$this->CouponsLayout->offer_label($draft['offer_type_id'])}</td>";
+
+        // show actions
+        if (isset($offer_actions)) {
+            echo $offer_actions;
         }
-        echo '<br/>';
     }
 }
 

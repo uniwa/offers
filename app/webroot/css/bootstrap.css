@@ -96,7 +96,7 @@ textarea {
   vertical-align: top;
 }
 body {
-  background: url(http://subtlepatterns.com/patterns/lil_fiber.png) repeat scroll 0% 0% transparent;
+  background: url('../img/lil_fiber.png') repeat scroll 0% 0% transparent;
   margin: 0;
   padding-top: 60px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -2540,7 +2540,7 @@ button.btn.small, input[type="submit"].btn.small {
   *border-left-color: #ffffff;
 }
 .sidebar-nav{
-  background: url(http://subtlepatterns.com/patterns/noise_lines.png) repeat scroll 0% 0% transparent;
+  background: url('../img/noise_lines.png') repeat scroll 0% 0% transparent;
   padding: 9px 0;
 }
 .navbar {
@@ -2548,7 +2548,7 @@ button.btn.small, input[type="submit"].btn.small {
   margin-bottom: 18px;
 }
 .navbar-inner {
-  background: url(http://subtlepatterns.com/patterns/fake_brick.png) repeat scroll 0% 0% transparent;
+  background: url('../img/fake_brick.png') repeat scroll 0% 0% transparent;
   height: 40px;
   padding-left: 20px;
   padding-right: 20px;

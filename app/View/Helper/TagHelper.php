@@ -18,6 +18,11 @@ class TagHelper extends AppHelper {
 
         // generate html with tags as links
         $tags = explode($separator, trim($tag_string));
+
+        // remove duplicates
+        $tags = array_unique($tags);
+
+        // init counters
         $tag_num = count($tags);
         $tag_counter = 0;
 

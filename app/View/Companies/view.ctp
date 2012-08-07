@@ -309,9 +309,29 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
     if (empty($company['Offer']['Draft'])) {
         echo 'Δεν υπάρχουν μη ενεργοποιημένες προσφορές.<br/>';
     } else {
+        // offers table
+?>
+        <div class='company-table'>
+        <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Προσφορά</th>
+                <th>Τύπος</th>
+                <?php
+                // offer actions are only available offer owner (no Admin actions here)
+                // so adjust table headers accordingly
+                if ($this->Session->read('Auth.User.id') == $comp['user_id']) {
+                        echo '<th>Ενέργειες</th>';
+                    }
+                ?>
+            </tr>
+        </thead>
+        <tbody>
+<?php
         foreach ($company['Offer']['Draft'] as $draft) {
 
             $offer_actions = array();
+            echo '<tr>';
 
             // title
             $offer_link = $this->Html->link($draft['title'], array(
@@ -366,16 +386,25 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
             }
 
             // show offer link
-            echo $offer_link;
+            echo "<td>{$offer_link}</td>";
+
+            // show offer type
+            echo "<td>{$this->CouponsLayout->offer_label($draft['offer_type_id'])}</td>";
 
             // check if we have available actions and show them
             if (! empty($offer_actions)) {
+                echo "<td>";
                 foreach($offer_actions as $action) {
-                    echo "<td>{$action}&nbsp;</td>";
+                    echo "{$action}&nbsp;";
                 }
+                echo "</td>";
             }
+            echo '<tr>';
         }
     }
+    // end block that defines draft offers table
+    echo '</tbody></table></div>';
+
     // end block that defines tab contents for id: offers-inactive
     echo '</div>';
 }

@@ -304,7 +304,7 @@ if (empty($company['Offer']['Active'])) {
         }
         echo '</tr>';
     }
-    echo '</tbody></table></div>';
+    echo '</tbody></table></div>'; //div class: company-table
 }
 // end block that defines tab contents for id: offers-active
 echo '</div>';

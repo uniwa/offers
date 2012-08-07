@@ -5,33 +5,7 @@ $comp = $company['Company'];
 $is_user_the_owner = $this->Session->read('Auth.User.id') == $comp['user_id'];
 $is_user_admin = $this->Session->read('Auth.User.role') == ROLE_ADMIN;
 
-if (isset($comp['latitude']) && isset($comp['longitude'])) {
-    $lat = $comp['latitude'];
-    $lng = $comp['longitude'];
-    $api_key = "6e88be5b35b842dca178fb0beb724a32";
-    $images_path = "{$this->webroot}img/";
-    $map_width = 400;
-    $map_height = 280;
-    echo "<br /><div id='map'></div>";
-    echo "<script>var map = new L.Map('map');$('#map').css('width',{$map_width}).css('height',{$map_height});";
-    echo "var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/{$api_key}/997/256/{z}/{x}/{y}.png';";
-    echo "var cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18});";
-    echo "var company = new L.LatLng({$lat},{$lng});";
-    echo "map.setView(company, 15).addLayer(cloudmade);";
-    echo "var MyIcon = L.Icon.extend({iconUrl:'{$images_path}marker.png',";
-    echo "shadowUrl:'{$images_path}marker-shadow.png',iconSize:new L.Point(25,41),";
-    echo "shadowSize:new L.Point(41,41),iconAnchor: new L.Point(13,21),";
-    echo "popupAnchor:new L.Point(-3,-41)});";
-    echo "var icon = new MyIcon();";
-    echo "var marker = new L.Marker(company,{icon: icon});";
-    echo "map.addLayer(marker);</script>";
-    echo "<noscript>";
-    echo "<img src='http://staticmap.openstreetmap.de/staticmap.php?";
-    echo "center={$lat},{$lng}&zoom=15&size={$map_width}x{$map_height}&";
-    echo "markers={$lat},{$lng},ol-marker-gold' /><br/>";
-    echo "</noscript>";
-}
-
+// define variables with button icons
 $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag icon-white'));
 $edit_icon = $this->Html->tag('i', '', array('class' => 'icon-pencil icon-white'));
 $copy_icon = $this->Html->tag('i', '', array('class' => 'icon-repeat icon-white'));
@@ -40,6 +14,7 @@ $disable_icon = $this->Html->tag('i', '', array('class' => 'icon-warning-sign ic
 $ban_icon = $this->Html->tag('i', '', array('class' => 'icon-lock icon-white'));
 $enable_icon = $unban_icon= $this->Html->tag('i', '', array('class' => 'icon-check icon-white'));
 
+// admin controls for company view - danger area
 if ($is_user_admin) {
         $admin_controls = array();
         if ($comp['is_enabled']) {
@@ -79,13 +54,41 @@ if ($is_user_admin) {
         }
         // show admin controls
         echo '<div class="admin-company-controls well">';
-        echo '<h3>Λειτουργίες Διαχειριστή</h3>';
+        echo "<h3>Λειτουργίες Διαχειριστή <i class='icon-warning-sign'></i></h3>";
         echo '<div>';
             foreach($admin_controls as $c) {
                 echo "{$c}&nbsp;";
             }
         echo '</div>';
         echo '</div>';
+}
+
+// company map
+if (isset($comp['latitude']) && isset($comp['longitude'])) {
+    $lat = $comp['latitude'];
+    $lng = $comp['longitude'];
+    $api_key = "6e88be5b35b842dca178fb0beb724a32";
+    $images_path = "{$this->webroot}img/";
+    $map_width = 400;
+    $map_height = 280;
+    echo "<br /><div id='map'></div>";
+    echo "<script>var map = new L.Map('map');$('#map').css('width',{$map_width}).css('height',{$map_height});";
+    echo "var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/{$api_key}/997/256/{z}/{x}/{y}.png';";
+    echo "var cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18});";
+    echo "var company = new L.LatLng({$lat},{$lng});";
+    echo "map.setView(company, 15).addLayer(cloudmade);";
+    echo "var MyIcon = L.Icon.extend({iconUrl:'{$images_path}marker.png',";
+    echo "shadowUrl:'{$images_path}marker-shadow.png',iconSize:new L.Point(25,41),";
+    echo "shadowSize:new L.Point(41,41),iconAnchor: new L.Point(13,21),";
+    echo "popupAnchor:new L.Point(-3,-41)});";
+    echo "var icon = new MyIcon();";
+    echo "var marker = new L.Marker(company,{icon: icon});";
+    echo "map.addLayer(marker);</script>";
+    echo "<noscript>";
+    echo "<img src='http://staticmap.openstreetmap.de/staticmap.php?";
+    echo "center={$lat},{$lng}&zoom=15&size={$map_width}x{$map_height}&";
+    echo "markers={$lat},{$lng},ol-marker-gold' /><br/>";
+    echo "</noscript>";
 }
 
 // show company name

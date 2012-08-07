@@ -310,28 +310,40 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
     } else {
         foreach ($company['Offer']['Draft'] as $draft) {
 
-            echo $this->Html->link($draft['title'],
-                                   array('controller' => 'offers',
-                                         'action' => 'view', $draft['id'])
-                                  );
+            $offer_actions = '';
+
+            // title
+            $offer_link = $this->Html->link($draft['title'], array(
+                'controller' => 'offers',
+                'action' => 'view', $draft['id'])
+            );
 
             if ($is_user_the_owner) {
                 // display a clock next to offer if autostart time is set
                 $time_start = new DateTime($draft['autostart']);
                 if ($time_start > $time_now) {
-                    echo $html_clock;
+                    $offer_link .= "&nbsp;".$html_clock;
                 }
 
-                echo ' ' . $this->Html->link(
-                '[Ενεργοποίηση]',
-                array(
-                    'controller' => 'offers',
-                    'action' => 'activate',
-                    $draft['id']),
-                null,
-                'Οι ενεργοποιημένες προσφορές δεν είναι δυνατό να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+                // enable action
+                $offer_actions = $this->Html->link(
+                    'Ενεργοποίηση',
+                    array(
+                        'controller' => 'offers',
+                        'action' => 'activate',
+                        $draft['id']),
+                    array('class' => 'btn btn-mini btn-success'),
+                    'Οι ενεργοποιημένες προσφορές δεν είναι δυνατό να τροποποιηθούν.'
+                    .'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
             }
-            echo '<br/>';
+
+            // show offer link
+            echo $offer_link;
+
+            // check if we have available actions and show them
+            if (! empty($offer_actions)) {
+                echo "<td>{$offer_actions}</td>";
+            }
         }
     }
     // end block that defines tab contents for id: offers-inactive

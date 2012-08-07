@@ -219,6 +219,8 @@ if (empty($company['Offer']['Active'])) {
             <th>Προσφορά</th>
             <th>Τύπος</th>
             <?php
+            // offer actions are only available on admin and offer owner
+            // so adjust table headers accordingly
             if (($this->Session->read('Auth.User.id') == $comp['user_id'])
                 || ($this->Session->read('Auth.User.role') === ROLE_ADMIN)) {
                     echo '<th>Ενέργειες</th>';

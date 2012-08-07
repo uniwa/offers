@@ -510,7 +510,7 @@ if (empty($company['Offer']['Inactive'])) {
                 array(
                     'controller' => 'offers',
                     'action' => 'copy',
-                    $draft['id']),
+                    $inactive['id']),
                 array('class' => 'btn btn-mini btn-info', 'escape' => false));
         }
 
@@ -521,7 +521,7 @@ if (empty($company['Offer']['Inactive'])) {
         echo "<td>{$offer_link}</td>";
 
         // show the offer type
-        echo "<td>{$this->CouponsLayout->offer_label($draft['offer_type_id'])}</td>";
+        echo "<td>{$this->CouponsLayout->offer_label($inactive['offer_type_id'])}</td>";
 
         // show actions
         if (isset($offer_actions)) {

@@ -28,6 +28,7 @@ audio:not([controls]) {
   display: none;
 }
 html {
+  height: 100%;
   font-size: 100%;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
@@ -97,11 +98,13 @@ textarea {
 body {
   background: url(http://subtlepatterns.com/patterns/lil_fiber.png) repeat scroll 0% 0% transparent;
   margin: 0;
+  padding-top: 60px;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 13px;
   line-height: 18px;
   color: #333333;
   background-color: #ffffff;
+  height: 100%;
 }
 a {
   color: #0088cc;
@@ -1733,7 +1736,8 @@ table .span12 {
   min-width: 160px;
   max-width: 220px;
   _width: 160px;
-  padding: 4px 0;
+/*  padding: 4px 0;*/
+  padding: 0 6px;
   margin: 0;
   list-style: none;
   background-color: #ffffff;
@@ -2537,6 +2541,7 @@ button.btn.small, input[type="submit"].btn.small {
 }
 .sidebar-nav{
   background: url(http://subtlepatterns.com/patterns/noise_lines.png) repeat scroll 0% 0% transparent;
+  padding: 9px 0;
 }
 .navbar {
   overflow: visible;

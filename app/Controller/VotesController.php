@@ -26,6 +26,8 @@ class VotesController extends AppController {
             if ($role === ROLE_STUDENT) {
                 return true;
             }
+            // prevent admins from performing student actions
+            return false;
         }
 
         // admin can see banned users too

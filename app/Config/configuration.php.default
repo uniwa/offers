@@ -36,6 +36,9 @@ $config = array(
         'RADIUS_L' => 10,
         'START_YEAR' => 1970,
         'MONTHS_BACK_STATS' => 6,
+        'TWITTER_SCREEN_NAME' => 'TEIATHCoupons',
+        'TWITTER_FULL_NAME' => 'TEIATH Coupons',
+        'ESPA_TEXT' => "Με τη συγχρηματοδότηση της Ελλάδας και της Ευρωπαϊκής Ένωσης - Ευρωπαϊκό Ταμείο Περιφερειακής Ανάπτυξης",
     ),
     'Settings' => array(
         'offer_type' => array(

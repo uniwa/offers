@@ -6,22 +6,7 @@
     echo $this->Html->charset();
     echo $this->Html->css( 'bootstrap' );
     echo $this->Html->css( 'global' );
-?>
-<style type="text/css">
-  body {
-    padding-top: 60px;
-    padding-bottom: 40px;
-  }
-  .sidebar-nav {
-    padding: 9px 0;
-  }
 
-  .dropdown-menu {
-
-    padding: 0 6px;
-  }
-</style>
-<?php
     echo $this->Html->script('jquery');
     echo $this->Html->script('dropdown');
     echo $this->Html->script('global');
@@ -176,31 +161,31 @@
             <?php echo $content_for_layout;?>
             <!--modal snipet-->
         </div><!--/row-->
-
-
     </div><!--/.fluid-container-->
 
-
-        <!-- <hr id = "footer"> -->
-
-        <footer>
-        <ul>
-            <li>&copy; Τ.Ε.Ι Αθήνας <?php echo date('Y'); ?></li>
-            <li>
-            <?php echo $this->Html->link(
-                '',
-                array('controller' => 'offers', 'action' => 'index.rss'),
-                array('class' => 'footer-rss', 'title' => 'rss προσφορών')
-            );?>
-            </li>
-            <li>
-                <a href="http://umbra.edu.teiath.gr/coupons-docs/api.html">API</a>
-            </li>
-            <li>
-                <a href="http://umbra.edu.teiath.gr/coupons-docs/schema.html#xsd">XSD</a>
-            </li>
-        </ul>
-        </footer>
+    <footer>
+    <ul>
+        <li>&copy; Τ.Ε.Ι Αθήνας <?php echo date('Y'); ?></li>
+        <li>
+        <?php echo $this->Html->link(
+            '',
+            array('controller' => 'offers', 'action' => 'index.rss'),
+            array('class' => 'footer-rss', 'title' => 'rss προσφορών')
+        );?>
+        </li>
+        <li>
+            <a href="http://umbra.edu.teiath.gr/coupons-docs/api.html">API</a>
+        </li>
+        <li>
+            <a href="http://umbra.edu.teiath.gr/coupons-docs/schema.html#xsd">XSD</a>
+        </li>
+    </ul>
+    <div id='espa'>
+        <p><?php echo ESPA_TEXT; ?></p>
+        <img src='
+        <?php echo APP_URL; ?>/img/footer_logo.png' class='espa-logo' />
+    </div>
+    </footer>
 <!--will allow all scripts generated in layout elements to be output in one place-->
 <?php echo $this->Js->writeBuffer(); ?>
 </body>

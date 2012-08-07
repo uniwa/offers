@@ -36,22 +36,56 @@ $flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag icon-white'))
 $edit_icon = $this->Html->tag('i', '', array('class' => 'icon-pencil icon-white'));
 $copy_icon = $this->Html->tag('i', '', array('class' => 'icon-repeat icon-white'));
 $imageedit_icon = $this->Html->tag('i', '', array('class' => 'icon-picture icon-white'));
+$disable_icon = $this->Html->tag('i', '', array('class' => 'icon-warning-sign icon-white'));
+$ban_icon = $this->Html->tag('i', '', array('class' => 'icon-lock icon-white'));
+$enable_icon = $unban_icon= $this->Html->tag('i', '', array('class' => 'icon-check icon-white'));
 
 if ($is_user_admin) {
+        $admin_controls = array();
         if ($comp['is_enabled']) {
-            $enabled_title = "[Απενεργοποίηση]";
-            $enabled_action = 'disable';
-        } else {
-            $enabled_title = "[Ενεργοποίηση]";
-            $enabled_action = 'enable';
-        }
+            // completely disable company
+            $title = "{$disable_icon}&nbsp;Απενεργοποίηση";
+            $admin_controls[] = $this->Html->link($title, array(
+                'controller' => 'companies',
+                'action' => 'disable',
+                $comp['id']),
+                array('class' => 'btn btn-danger', 'escape' => false));
 
-        $html = $this->Html->link($enabled_title, array(
-            'controller' => 'companies',
-            'action' => $enabled_action,
-            $comp['id']));
-        $html .= '<br>';
-        echo $html;
+            // if company is enabled make available the ban/unban controls
+            if ($company['User']['is_banned']) {
+                // unban
+                $title = "{$unban_icon}&nbsp;Ξεκλείδωμα";
+                $admin_controls[] = $this->Html->link($title, array(
+                    'controller' => 'companies',
+                    'action' => 'unban',
+                    $comp['id']),
+                    array('class' => 'btn btn-success', 'escape' => false));
+            } else {
+                // ban
+                $title = "{$ban_icon}&nbsp;Kλείδωμα";
+                $admin_controls[] = $this->Html->link($title, array(
+                    'controller' => 'companies',
+                    'action' => 'ban',
+                    $comp['id']),
+                    array('class' => 'btn btn-danger', 'escape' => false));
+            }
+        } else {
+            $title = "{$enable_icon}&nbsp;Ενεργοποίηση";
+            $admin_controls[] = $this->Html->link($title, array(
+                'controller' => 'companies',
+                'action' => 'enable',
+                $comp['id']),
+                array('class' => 'btn btn-success', 'escape' => false));
+        }
+        // show admin controls
+        echo '<div class="admin-company-controls well">';
+        echo '<h3>Λειτουργίες Διαχειριστή</h3>';
+        echo '<div>';
+            foreach($admin_controls as $c) {
+                echo "{$c}&nbsp;";
+            }
+        echo '</div>';
+        echo '</div>';
 }
 
 // show company name

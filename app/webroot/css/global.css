@@ -179,3 +179,11 @@ footer ul li {
     padding: 0 1.2em;
 }
 
+/* admin controls for company view */
+.admin-company-controls {
+    clear: right;
+}
+
+.admin-company-controls h3 {
+    padding-bottom: 0.2em;
+}

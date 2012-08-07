@@ -252,7 +252,7 @@ if (empty($company['Offer']['Active'])) {
         if ($is_user_the_owner) {
             $time_end = new DateTime($active['autoend']);
             if ($time_end > $time_now) {
-                $offer_link .= $html_clock;
+                $offer_link .= "&nbsp;".$html_clock;
             }
 
 

@@ -383,7 +383,7 @@ class OffersController extends AppController {
                 'action' => 'login'
             );
             $flash_msg = '<a href="'.Router::url($login_url, true).'">Συνδεθείτε εδώ</a> για ';
-            $flash_msg .= 'να μπορέσετε να δεσμεύσετε και να ψηφήσετε προσφορές!';
+            $flash_msg .= 'να μπορέσετε να δεσμεύσετε κουπόνια και να ψηφίσετε προσφορές!';
             $this->Session->setFlash($flash_msg, 'default', array(), 'info');
         }
 

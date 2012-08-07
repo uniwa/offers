@@ -117,9 +117,22 @@ class StudentsController extends AppController {
     }
 
     public function is_authorized($user) {
-        // only students can see profiles
-        if ($user['role'] === ROLE_STUDENT) {
-            return true;
+        $own = array('subscribe', 'unsubscribe');
+
+        // allow view access to students
+        if ($this->action === 'view') {
+            if ($user['role'] === ROLE_STUDENT) {
+                return true;
+            }
+        }
+
+        // only students can perform manipulation actions to their profile
+        if (in_array($this->action, $own)) {
+            if ($user['role'] === ROLE_STUDENT) {
+                return true;
+            }
+            // prohibit admins from executing student actions
+            return false;
         }
 
         // Admin sees all, deny for everyone else

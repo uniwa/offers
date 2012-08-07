@@ -339,32 +339,30 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
 
                 // edit action
                 $offer_actions[] = $this->Html->link(
-                    'Επεξεργασία',
+                    $edit_icon . '&nbsp;Επεξεργασία',
                     array(
                         'controller' => 'offers',
                         'action' => 'edit',
                         $draft['id']),
-                    array('class' => 'btn btn-mini btn-info'));
+                    array('class' => 'btn btn-mini btn-info', 'escape' => false));
 
                 // copy action
                 $offer_actions[] = $this->Html->link(
-                    'Αντιγραφή',
+                    $copy_icon . '&nbsp;Αντιγραφή',
                     array(
                         'controller' => 'offers',
                         'action' => 'copy',
                         $draft['id']),
-                    array('class' => 'btn btn-mini btn-info'));
+                    array('class' => 'btn btn-mini btn-info', 'escape' => false));
 
                 // image edit action
                 $offer_actions[] = $this->Html->link(
-                    'Φωτογραφίες',
+                    $imageedit_icon . '&nbsp;Φωτογραφίες',
                     array(
                         'controller' => 'offers',
                         'action' => 'imageedit',
                         $draft['id']),
-                    array('class' => 'btn btn-mini btn-info'),
-                    'Οι ενεργοποιημένες προσφορές δεν είναι δυνατό να τροποποιηθούν.'
-                    .'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+                    array('class' => 'btn btn-mini btn-info', 'escape' => false));
             }
 
             // show offer link

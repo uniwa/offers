@@ -447,7 +447,7 @@ if (($this->Session->read('Auth.User.id') == $comp['user_id'])
                 }
                 echo "</td>";
             }
-            echo '<tr>';
+            echo '</tr>';
         }
         // end block that defines draft offers table
         echo '</tbody></table></div>'; //div class: company table

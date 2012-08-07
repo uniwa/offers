@@ -32,10 +32,10 @@ if (isset($comp['latitude']) && isset($comp['longitude'])) {
     echo "</noscript>";
 }
 
-$flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag'));
-$edit_icon = $this->Html->tag('i', '', array('class' => 'icon-pencil'));
-$copy_icon = $this->Html->tag('i', '', array('class' => 'icon-repeat'));
-$imageedit_icon = $this->Html->tag('i', '', array('class' => 'icon-picture'));
+$flag_icon = $this->Html->tag('i', '', array('class' => 'icon-flag icon-white'));
+$edit_icon = $this->Html->tag('i', '', array('class' => 'icon-pencil icon-white'));
+$copy_icon = $this->Html->tag('i', '', array('class' => 'icon-repeat icon-white'));
+$imageedit_icon = $this->Html->tag('i', '', array('class' => 'icon-picture icon-white'));
 
 if ($is_user_admin) {
         if ($comp['is_enabled']) {

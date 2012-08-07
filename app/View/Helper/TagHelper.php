@@ -27,9 +27,11 @@ class TagHelper extends AppHelper {
         $tag_counter = 0;
 
         if ($class === NULL) {
-            $html = "<{$element}>{$label}";
+//            $html = "<{$element}>{$label}";
+            $html = "<{$element}>";
         } else {
-            $html = "<{$element} class=\"{$class}\">{$label}";
+//            $html = "<{$element} class=\"{$class}\">{$label}";
+            $html = "<{$element} class=\"{$class}\">";
         }
 
         foreach ($tags as $tag) {

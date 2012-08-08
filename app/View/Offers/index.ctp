@@ -86,7 +86,12 @@ if (empty($offers)) {
         // offer tile container
         $html .= "<div class='offer-tile {$offer_class}'>";
         // offer thumb image or default logo
-        $html .= "<div class='offer-thumb'></div>";
+        $image_url = APP_URL."/img/logothumb.png";
+        if (!empty($offer['Image'])) {
+            $image_url = APP_URL."/images/view/".$offer['Image'][0]['id'];
+        }
+        $image_thumb = $this->Html->image($image_url);
+        $html .= "<div class='offer-thumb'>{$image_thumb}</div>";
         // offer information
         $html .= "<div class='offer-info'>";
         $html .= "<div class='offer-header'>";
@@ -95,7 +100,7 @@ if (empty($offers)) {
         $html .= "<div class='offer-name-cont'>";
         $html .= "<div class='offer-name'>";
         $html .=  $this->Html->link($title,
-            array('controller' => 'offers', 'action' => 'view', $offers[$key]['Offer']['id']));
+            array('controller' => 'offers', 'action' => 'view', $offer['Offer']['id']));
         $html .= "</div>";
         $html .= "</div>";
 

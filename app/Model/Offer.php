@@ -1,5 +1,7 @@
 <?php
 
+App::uses('CakeEmail', 'Network/Email');
+
 class Offer extends AppModel {
     public $name = 'Offer';
     public $belongsTo = array('Company', 'OfferCategory');
@@ -515,6 +517,51 @@ class Offer extends AppModel {
             // keep string from start till the space nearest to $limit
             $rec['Offer']['description'] =
                 mb_substr($desc, 0, $pos, 'UTF-8') . '…';
+        }
+    }
+
+    // Sends an e-mail, listing all coupons of the offer that corresponds to the
+    // supplied id to its owner-company.
+    //
+    // $id - offer id
+    public function email_coupon_list($offer_id) {
+
+        // we require the email address to send the coupon listing to, as well
+        // as the title of the offer (to use as email subject)
+        // also, we need to make sure the offer is indeed of type 'coupons'
+        $options = array('conditions' => array('Offer.id' => $offer_id),
+                         'fields' => array('Offer.title',
+                                           'User.email'));
+
+        $this->recursive = -1;
+        // custom finders run as 'findAll' and not 'findFirst' so to access the
+        // actual data, one must specify an index (in this case: 0)
+        $offer = $this->find('couponInfo', $options);
+
+        // fetch any available coupons
+        if (! empty($offer)) {
+            $coupons = $this->Coupon->get_offer_coupons($offer_id);
+
+            if (! empty($coupons)) {
+
+                $offer_title = $offer[0]['Offer']['title'];
+                $owner_email = $offer[0]['User']['email'];
+
+                $email = new CakeEmail('default');
+                // set parameters that are the same for all emails to be sent
+                $email = $email
+                    ->to($owner_email)
+                    ->subject(__("Κουπόνια προσφοράς «{$offer_title}»"))
+                    ->template('company_coupons', 'default')
+                    ->emailFormat('both')
+                    ->viewVars(array(
+                        'offer_title' => $offer_title,
+                        'coupons' => $coupons));
+
+                try {
+                    $email->send();
+                } catch(Exception $e) {}
+            }
         }
     }
 

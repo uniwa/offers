@@ -86,6 +86,7 @@ class CouponsController extends AppController {
             $coupon_total = $offer['Offer']['total_quantity'];
             if ($coupon_count >= $coupon_total) {
                 $this->Offer->terminate($id);
+                $this->Offer->email_coupon_list($id);
             }
         }
         else {

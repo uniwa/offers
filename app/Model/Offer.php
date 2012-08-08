@@ -31,10 +31,8 @@ class Offer extends AppModel {
                                                array('Offer.is_spam' => true));
         } else {
 
-            $query['conditions'] = array_merge($query['conditions'], array(
-                'Offer.offer_state_id' => STATE_ACTIVE,
-                'Offer.is_spam' => 0,
-                'Company.is_enabled' => 1));
+            $query['conditions'] = array_merge(
+                $query['conditions'], $this->conditionsValid);
         }
 
         if (isset($query['order'])) {

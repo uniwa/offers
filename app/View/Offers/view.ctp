@@ -1,6 +1,25 @@
 <?php
 $html = '';
-$html .= "<div id='big_image'></div>";
+$html_img = '';
+$big_image = '';
+
+if (!empty($offer['Image'])) {
+    // Set base url for javascript
+    $html .= "<script>var baseUrl = '".APP_URL."/images/view/';</script>";
+
+    $image_first = $offer['Image'][0]['id'];
+    $big_image = $this->Html->image('/images/view/'.$image_first);
+
+    $html_img .= "<div id='images'>";
+    foreach ($offer['Image'] as $image) {
+        $html_img .= "<div id='img{$image['id']}' class='image_frame'>";
+        $html_img .= $this->Html->image('/images/thumb/'.$image['id']);
+        $html_img .= "</div>";
+    }
+    $html_img .= "</div>";
+}
+
+$html .= "<div id='big_image'>{$big_image}</div>";
 
 // TODO: move to controller
 $offer_state_id = (int)$offer['Offer']['offer_state_id'];
@@ -206,18 +225,8 @@ if ($role === ROLE_STUDENT &&
     }
 }
 
-if (!empty($offer['Image'])) {
-    // Request geolocation iformation for logged user if not already set
-    $html .= "<script>var baseUrl = '".APP_URL."/images/view/';</script>";
-
-    $html .= "<div id='images'>";
-    foreach ($offer['Image'] as $image) {
-        $html .= "<div id='img{$image['id']}' class='image_frame'>";
-        $html .= $this->Html->image('/images/thumb/'.$image['id']);
-        $html .= "</div>";
-    }
-    $html .= "</div>";
-}
+// image thumbnails
+$html .= $html_img;
 
 echo $html;
 

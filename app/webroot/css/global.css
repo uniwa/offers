@@ -279,9 +279,14 @@ footer ul li {
     text-shadow: #fff 1px 1px 0;
 }
 
-.offer-label,.offer-votes,.offer-improper{
+.offer-label,.offer-votes{
     float: left;
     margin: 0 0 0 20px;
+}
+
+.offer-improper{
+    float: left;
+    margin: 0 12px 0 0;
 }
 
 .offer-tweet{

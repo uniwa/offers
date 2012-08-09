@@ -102,17 +102,24 @@ $searchbox .= $this->Form->end();
 
 ?>
     <div class="span3">
-          <div class="well sidebar-nav">
+        <div class="well sidebar-nav">
             <ul class="nav nav-list">
-              <li class="nav-header">Αναζητηση</li>
-              <li><?php echo $searchbox ?></li>
-              <?php if (isset($spam_link)) echo $spam_link ?>
-              <li class="nav-header">Ειδη Προσφορων</li>
-              <li class="menu-item"><?php echo $happyhour, " ($happyhour_count)", $happyhour_rss ?></li>
-              <li class="menu-item"><?php echo $coupons, " ($coupons_count)", $coupons_rss?></li>
-              <li class="menu-item"><?php echo $limited, " ($limited_count)", $limited_rss ?></li>
-              <li class="nav-header">Κατηγοριες Προσφορων</li>
-              <?php echo $html; ?>
+                <li class="nav-header">Αναζητηση</li>
+                <li><?php echo $searchbox ?></li>
+                <?php
+                    if (isset($spam_link)) {
+                        echo "<li class='menu-item'>{$spam_link}</li>";
+                    }
+                ?>
+                <li class="nav-header">Ειδη Προσφορων</li>
+                <li class="menu-item">
+                <?php echo $happyhour, " ($happyhour_count)", $happyhour_rss ?></li>
+                <li class="menu-item">
+                <?php echo $coupons, " ($coupons_count)", $coupons_rss?></li>
+                <li class="menu-item">
+                <?php echo $limited, " ($limited_count)", $limited_rss ?></li>
+                <li class="nav-header">Κατηγοριες Προσφορων</li>
+                <?php echo $html; ?>
             </ul>
-          </div><!--/.well -->
+        </div><!--/.well -->
     </div><!--/span-->

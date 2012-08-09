@@ -2290,12 +2290,18 @@ button.btn.small, input[type="submit"].btn.small {
   margin-bottom: 18px;
   list-style: none;
 }
+.nav > li.menu-item {
+  padding: 2px 2px 2px 6px;
+}
+.nav > li.menu-item:hover {
+  background-color: #acf;
+}
 .nav > li > a {
   display: block;
 }
 .nav > li > a:hover {
   text-decoration: none;
-  background-color: #eeeeee;
+  color: #fff;
 }
 .nav-list {
   padding-left: 14px;

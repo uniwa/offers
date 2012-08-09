@@ -63,7 +63,7 @@ if (isset($shows_spam)) {
 $html = '';
 foreach($offer_categories as $cat) {
     $id = $cat['id'];
-    $html .= "<li>";
+    $html .= "<li class='menu-item'>";
     $html .= $this->Html->link($cat['name'], array(
         'controller' => 'offers', 'action' => 'category', $id));
     $html .= " ({$cat['offer_count']})";
@@ -108,9 +108,9 @@ $searchbox .= $this->Form->end();
               <li><?php echo $searchbox ?></li>
               <?php if (isset($spam_link)) echo $spam_link ?>
               <li class="nav-header">Ειδη Προσφορων</li>
-              <li><?php echo $happyhour, " ($happyhour_count)", $happyhour_rss ?></li>
-              <li><?php echo $coupons, " ($coupons_count)", $coupons_rss?></li>
-              <li><?php echo $limited, " ($limited_count)", $limited_rss ?></li>
+              <li class="menu-item"><?php echo $happyhour, " ($happyhour_count)", $happyhour_rss ?></li>
+              <li class="menu-item"><?php echo $coupons, " ($coupons_count)", $coupons_rss?></li>
+              <li class="menu-item"><?php echo $limited, " ($limited_count)", $limited_rss ?></li>
               <li class="nav-header">Κατηγοριες Προσφορων</li>
               <?php echo $html; ?>
             </ul>

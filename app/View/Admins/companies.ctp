@@ -27,8 +27,7 @@
         'value' => $search_enabled,
     ));
 
-    $search_form .= $this->Form->submit();
-    $search_form .= $this->Form->end();
+    $search_form .= $this->Form->end(array('label' => 'Αναζήτηση', 'class' => 'btn'));
 
     // == companies listing ==
     // create sort order links; these will be placed as table headers
@@ -50,10 +49,14 @@
         }
     }
 ?>
+<!-- admin controls wrapper -->
+<div class='row-fluid'>
+    <div class='well span3'>
+        <h6>Αναζητηση επιχειρησεων</h6>
+        <?php echo $search_form; ?>
+    </div>
 
-<?php echo $search_form; ?>
-
-<div class="well">
+<div class="well span8">
     <h6>Ενημερωση επιχειρησεων</h6>
     <p>Όποτε επιθυμείτε τη μαζική ενημέρωση των εγγεγραμμένων επιχειρήσεων, χρησιμοποιείστε το παρακάτω πλήκτρο για να εμφανίσετε μία λίστα με τις διευθύνσεις ηλεκτρονικού ταχυδρομείου τους (e-mail).</p>
     <ol>
@@ -64,7 +67,9 @@
     <p><i class="icon-warning-sign"></i> Είναι σημαντικό να επικολλήσετε τις διευθύνσεις στο πεδίο «BCC» και όχι στο «Προς» για την τήρηση του ιδιωτικού απορρήτου των επιχειρήσεων!</p>
     <div><?php echo $this->Html->link('Προβολή e-mail', array('controller' => 'companies', 'action' => 'emails'), array('class' => 'btn')); ?></div>
 </div>
+</div> <!-- admin-controls-wrapper -->
 
+<div class="admin-results">
 <h6>Επιχειρησεις</h6>
 <table class="table table-condensed">
     <thead>
@@ -140,6 +145,7 @@
         ?>
     </tbody>
 </table>
+</div>
 <div class = 'pagination'>
     <ul>
         <?php echo $this->Paginator->numbers(array(

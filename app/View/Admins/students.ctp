@@ -19,8 +19,7 @@
         'value' => $search_banned,
     ));
 
-    $search_form .= $this->Form->submit();
-    $search_form .= $this->Form->end();
+    $search_form .= $this->Form->end(array('label' => 'Αναζήτηση', 'class' => 'btn'));
 
     // == students listing ==
     // create sort order links; these will be placed as table headers
@@ -43,8 +42,12 @@
     }
 ?>
 
+<div class='pull-left well'>
+<h6>Αναζητηση Σπουδαστων</h6>
 <?php echo $search_form; ?>
+</div>
 
+<div class='admin-results'>
 <h6>Σπουδαστές</h6>
 <table class="table table-condensed">
     <thead>
@@ -88,6 +91,7 @@
         ?>
     </tbody>
 </table>
+</div> <!-- admin results -->
 <div class = 'pagination'>
     <ul>
         <?php echo $this->Paginator->numbers(array(

@@ -255,6 +255,10 @@ class OffersController extends AppController {
     }
 
     public function spam() {
+        // Set page title
+        $page_title = __('Ανάρμοστες προσφορές');
+        $this->set('title_for_layout', $page_title);
+
         // make it easy to identify that spam is shown (so as to hide flag link)
         $this->set('shows_spam', true);
 

@@ -38,32 +38,52 @@
                 <?php
                     // show register link for guests
                     if (! $this->Session->check('Auth.User.id')) {
-                        echo $this->Html->link(
-                            __('Εγγραφή επιχείρησης'),
-                            array('controller' => 'users', 'action' => 'register'));
+                        $title = __('Εγγραφή επιχείρησης');
+                        $controller = 'users';
+                        $action = 'register';
+                        $link_div = "<div class='nav-link'>{$title}</div>";
+                        $link = $this->Html->link($link_div, array(
+                            'controller' => $controller, 'action' => $action),
+                            array('escape' => false));
+                        echo  "<li>$link</li>";
                     }
                 ?>
             </li>
             <li>
                 <?php
-                    echo $this->Html->link(
-                        __('Όροι χρήσης'),
-                        array('controller' => 'users', 'action' => 'terms'));
+                        $title = __('Όροι χρήσης');
+                        $controller = 'users';
+                        $action = 'terms';
+                        $link_div = "<div class='nav-link'>{$title}</div>";
+                        $link = $this->Html->link($link_div, array(
+                            'controller' => $controller, 'action' => $action),
+                            array('escape' => false));
+                        echo  "<li>$link</li>";
                 ?>
             </li>
             <li>
                 <?php
-                    echo $this->Html->link(
-                        __('Συχνές Ερωτήσεις'),
-                        array('controller' => 'users', 'action' => 'faq'));
+                        $title = __('Συχνές Ερωτήσεις');
+                        $controller = 'users';
+                        $action = 'faq';
+                        $link_div = "<div class='nav-link'>{$title}</div>";
+                        $link = $this->Html->link($link_div, array(
+                            'controller' => $controller, 'action' => $action),
+                            array('escape' => false));
+                        echo  "<li>$link</li>";
                 ?>
             </li>
             <li>
                 <?php
                     if ($this->Session->check('Auth.User.id')) {
-                        echo $this->Html->link(
-                            __('Αναφορά προβλήματος'),
-                            array('controller' => 'users', 'action' => 'help'));
+                        $title = __('Αναφορά προβλήματος');
+                        $controller = 'users';
+                        $action = 'help';
+                        $link_div = "<div class='nav-link'>{$title}</div>";
+                        $link = $this->Html->link($link_div, array(
+                            'controller' => $controller, 'action' => $action),
+                            array('escape' => false));
+                        echo  "<li>$link</li>";
                     }
                 ?>
             </li>
@@ -77,7 +97,7 @@
                     $username = $this->Session->read( 'Auth.User.username' );
                     $role = $this->Session->read( 'Auth.User.role' );
 
-                    $category_admin = null;
+                    $html = "<ul class='navbar-text pull-right navbar-elements'>";
                     if ($role !== ROLE_ADMIN) {
                         $title = __('Το προφίλ μου');
                         $action = 'view';
@@ -87,30 +107,48 @@
                         } else if ($role == ROLE_COMPANY) {
                             $controller = 'companies';
                         }
-                        $profile = $this->Html->link($title, array(
+                        $link_div = "<div class='nav-link'>{$title}</div>";
+                        $link = $this->Html->link($link_div, array(
                                                         'controller' => $controller,
-                                                        'action' => $action));
+                                                        'action' => $action),
+                                                        array('escape' => false));
+                        $html .= "<li>$link</li>";
                     } else {
-                        $category_admin = $this->Html->link(
-                                'Κατηγορίες',
-                                array('controller' => 'offercategories'));
+                        $title = __('Κατηγορίες');
+                        $link_div = "<div class='nav-link'>{$title}</div>";
+                        $link = $this->Html->link($link_div,
+                                array('controller' => 'offercategories'),
+                                array('escape' => false));
+                        $html .= "<li>$link</li>";
+
                         $controller = 'admins';
                         $title = __('Σπουδαστές');
                         $action = 'students';
-                        $profile = ' '.$this->Html->link($title, array(
+                        $link_div = "<div class='nav-link'>{$title}</div>";
+                        $link = $this->Html->link($link_div, array(
                                                         'controller' => $controller,
-                                                        'action' => $action));
+                                                        'action' => $action),
+                                                        array('escape' => false));
+                        $html .= "<li>$link</li>";
+
                         $title = __('Εταιρείες');
                         $action = 'companies';
-                        $profile .= ' '.$this->Html->link($title, array(
+                        $link_div = "<div class='nav-link'>{$title}</div>";
+                        $link = $this->Html->link($link_div, array(
                                                         'controller' => $controller,
-                                                        'action' => $action));
+                                                        'action' => $action),
+                                                        array('escape' => false));
+                        $html .= "<li>$link</li>";
                     }
 
-                    $logout = $this->Html->link(__('Αποσύνδεση '),
-                        array('controller' => 'users', 'action' => 'logout'));
-
-                    echo "<p class='navbar-text pull-right navbar-elements'>$category_admin $profile $logout( $username )</p>";
+                    $title = __('Αποσύνδεση');
+                    $link_div = "<div class='nav-link'>{$title}( {$username} )</div>";
+                    $link = $this->Html->link($link_div,
+                        array('controller' => 'users', 'action' => 'logout'),
+                        array('escape' => false));
+                    $html .= "<li>$link</li>";
+                    $html .= "</ul>";
+                    echo $html;
                 } else {
                     if (!isset($hide_dropdown) || !$hide_dropdown) {
             ?>

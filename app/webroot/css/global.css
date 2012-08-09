@@ -298,6 +298,26 @@ footer ul li {
     color: #07d;
 }
 
-.navbar-elements a {
-    padding-left: 1em;
+.navbar-elements {
+    list-style-type: none;
+}
+
+.navbar-elements li {
+    display: inline;
+    text-decoration: none;
+}
+
+.nav-link {
+    display: inline;
+    padding: 1em;
+    list-style-type: none;
+}
+
+.navbar-elements li a {
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    background: rgb(195, 225, 255);
+    background: rgba(195, 225, 255, 0.3);
 }

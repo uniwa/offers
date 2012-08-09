@@ -26,6 +26,10 @@ class AdminsController extends AppController {
 
     public function students($id = null) {
 
+        // Set page title
+        $page_title = __('Διαχείριση σπουδστών');
+        $this->set('title_for_layout', $page_title);
+
         // == force a redirect so as to display pretty options ==
         if (! empty($this->request->data)) {
 
@@ -116,6 +120,10 @@ class AdminsController extends AppController {
     }
 
     public function companies($id = null) {
+
+        // Set page title
+        $page_title = __('Διαχείριση εταιρειών');
+        $this->set('title_for_layout', $page_title);
 
         // == force a redirect so as to display pretty options ==
         if (! empty($this->request->data)) {

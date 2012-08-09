@@ -110,7 +110,7 @@
                     $logout = $this->Html->link(__('Αποσύνδεση '),
                         array('controller' => 'users', 'action' => 'logout'));
 
-                    echo "<p class='navbar-text pull-right'>$category_admin $profile $logout( $username )</p>";
+                    echo "<p class='navbar-text pull-right navbar-elements'>$category_admin $profile $logout( $username )</p>";
                 } else {
                     if (!isset($hide_dropdown) || !$hide_dropdown) {
             ?>

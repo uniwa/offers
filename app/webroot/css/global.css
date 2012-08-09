@@ -288,3 +288,7 @@ footer ul li {
 .offer-tags a{
     color: #07d;
 }
+
+.navbar-elements a {
+    padding-left: 1em;
+}

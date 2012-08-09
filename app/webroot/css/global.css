@@ -207,6 +207,11 @@ footer ul li {
     padding-bottom: 0.2em;
 }
 
+/* admin controls in admin pages */
+.admin-results {
+    clear: both;
+}
+
 .offer-tile{
     border-width: 3px 0 0 0;
     border-style: solid;
@@ -287,4 +292,8 @@ footer ul li {
 
 .offer-tags a{
     color: #07d;
+}
+
+.navbar-elements a {
+    padding-left: 1em;
 }

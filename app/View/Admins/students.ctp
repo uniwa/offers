@@ -19,8 +19,7 @@
         'value' => $search_banned,
     ));
 
-    $search_form .= $this->Form->submit();
-    $search_form .= $this->Form->end();
+    $search_form .= $this->Form->end(array('label' => 'Αναζήτηση', 'class' => 'btn'));
 
     // == students listing ==
     // create sort order links; these will be placed as table headers
@@ -43,8 +42,12 @@
     }
 ?>
 
+<div class='pull-left well'>
+<h6>Αναζητηση Σπουδαστων</h6>
 <?php echo $search_form; ?>
+</div>
 
+<div class='admin-results'>
 <h6>Σπουδαστές</h6>
 <table class="table table-condensed">
     <thead>
@@ -53,7 +56,6 @@
             <?php echo "<th>{$student_header}</th>" ?>
             <?php echo "<th>{$user_header}</th>" ?>
             <th>Διεύθυνση e-mail</th>
-            <th>είναι κλειδωμένος;</th>
         </tr>
     </thead>
     <tbody>
@@ -80,7 +82,6 @@
                 echo "<td>{$this->Html->link($student_name, $student_url)}</td>";
                 echo "<td>$user_name</td>";
                 echo "<td>$user_email</td>";
-                echo "<td>$user_state</td>";
                 echo '</tr>';
 
                 ++$counter;
@@ -88,6 +89,7 @@
         ?>
     </tbody>
 </table>
+</div> <!-- admin results -->
 <div class = 'pagination'>
     <ul>
         <?php echo $this->Paginator->numbers(array(

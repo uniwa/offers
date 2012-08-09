@@ -27,8 +27,7 @@
         'value' => $search_enabled,
     ));
 
-    $search_form .= $this->Form->submit();
-    $search_form .= $this->Form->end();
+    $search_form .= $this->Form->end(array('label' => 'Αναζήτηση', 'class' => 'btn'));
 
     // == companies listing ==
     // create sort order links; these will be placed as table headers
@@ -50,10 +49,14 @@
         }
     }
 ?>
+<!-- admin controls wrapper -->
+<div class='row-fluid'>
+    <div class='well span3'>
+        <h6>Αναζητηση επιχειρησεων</h6>
+        <?php echo $search_form; ?>
+    </div>
 
-<?php echo $search_form; ?>
-
-<div class="well">
+<div class="well span8">
     <h6>Ενημερωση επιχειρησεων</h6>
     <p>Όποτε επιθυμείτε τη μαζική ενημέρωση των εγγεγραμμένων επιχειρήσεων, χρησιμοποιείστε το παρακάτω πλήκτρο για να εμφανίσετε μία λίστα με τις διευθύνσεις ηλεκτρονικού ταχυδρομείου τους (e-mail).</p>
     <ol>
@@ -64,7 +67,9 @@
     <p><i class="icon-warning-sign"></i> Είναι σημαντικό να επικολλήσετε τις διευθύνσεις στο πεδίο «BCC» και όχι στο «Προς» για την τήρηση του ιδιωτικού απορρήτου των επιχειρήσεων!</p>
     <div><?php echo $this->Html->link('Προβολή e-mail', array('controller' => 'companies', 'action' => 'emails'), array('class' => 'btn')); ?></div>
 </div>
+</div> <!-- admin-controls-wrapper -->
 
+<div class="admin-results">
 <h6>Επιχειρησεις</h6>
 <table class="table table-condensed">
     <thead>
@@ -73,20 +78,26 @@
             <?php echo "<th>{$comp_header}</th>" ?>
             <?php echo "<th>{$user_header}</th>" ?>
             <th>Διεύθυνση e-mail</th>
-            <th>είναι κλειδωμένος;</th>
-            <th>έχει ενεργοποιηθεί;</th>
+            <th>κλείδωμα / ξεκλείδωμα</th>
+            <th>ενεργοποίηση / απενεργοποίηση</th>
         </tr>
     </thead>
     <tbody>
         <?php
 
-            $enabled_title = "[απενεργοποίηση]";
-            $enabled_action = 'disable';
-            $disabled_title = "[ενεργοποίηση]";
-            $disabled_action = 'enable';
-            $ban_title = "[κλείδωμα]";
+            // css options for buttons
+            $disable_icon = $this->Html->tag('i', '', array('class' => 'icon-warning-sign icon-white'));
+            $ban_icon = $this->Html->tag('i', '', array('class' => 'icon-lock icon-white'));
+            $btn_green = 'btn-mini btn-success';
+            $btn_red = 'btn-mini btn-danger';
+
+            $disable_title = "{$disable_icon}&nbsp;απενεργοποίηση";
+            $disable_action = 'disable';
+            $enable_title = "ενεργοποίηση";
+            $enable_action = 'enable';
+            $ban_title = "{$ban_icon}&nbsp;κλείδωμα";
             $ban_action = 'ban';
-            $unban_title = "[ξεκλείδωμα]";
+            $unban_title = "ξεκλείδωμα";
             $unban_action = 'unban';
 
             // incremental id; start counting from current's page 1st result
@@ -98,33 +109,37 @@
                                   'action' => 'view',
                                   $r['Company']['id']);
 
-                $link_disable = $this->Html->link($enabled_title, array(
+                $link_disable = $this->Html->link($disable_title, array(
                     'controller' => 'companies',
-                    'action' => $enabled_action,
-                    $r['Company']['id']));
-                $link_enable = $this->Html->link($disabled_title, array(
+                    'action' => $disable_action,
+                    $r['Company']['id']),
+                    array('class' => $btn_red, 'escape' => false)
+                );
+                $link_enable = $this->Html->link($enable_title, array(
                     'controller' => 'companies',
-                    'action' => $disabled_action,
-                    $r['Company']['id']));
+                    'action' => $enable_action,
+                    $r['Company']['id']),
+                    array('class' => $btn_green)
+                );
                 $link_ban = $this->Html->link($ban_title, array(
                     'controller' => 'companies',
                     'action' => $ban_action,
-                    $r['Company']['id']));
+                    $r['Company']['id']),
+                    array('class' => $btn_red, 'escape' => false)
+                );
                 $link_unban = $this->Html->link($unban_title, array(
                     'controller' => 'companies',
                     'action' => $unban_action,
-                    $r['Company']['id']));
+                    $r['Company']['id']),
+                    array('class' => $btn_green)
+                );
 
-                $comp_state = $r['Company']['is_enabled']
-                                    ? '<i class="icon-ok"></i> '.$link_disable
-                                    : '<i class="icon-remove"></i> '.$link_enable;
+                $comp_state = $r['Company']['is_enabled'] ? $link_disable : $link_enable;
 
                 $user_name = $r['User']['username'];
                 $user_email = $r['User']['email'];
 
-                $user_state = $r['User']['is_banned']
-                                    ? '<i class="icon-ok"></i> '.$link_unban
-                                    : '<i class="icon-remove"></i> '.$link_ban;
+                $user_state = $r['User']['is_banned'] ? $link_unban : $link_ban;
 
                 echo '<tr>';
                 echo "<td>$counter</td>";
@@ -140,6 +155,7 @@
         ?>
     </tbody>
 </table>
+</div>
 <div class = 'pagination'>
     <ul>
         <?php echo $this->Paginator->numbers(array(

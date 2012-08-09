@@ -247,6 +247,26 @@ class CompaniesController extends AppController {
     }
 
     public function disable($id = null, $view = null) {
+        // check if company has active offers
+        $conditions = array(
+            'company_id' => $id,
+            'offer_state_id' => STATE_ACTIVE
+        );
+        $offers = $this->Offer->find('count', array(
+            'conditions' => $conditions)
+        );
+
+        if ($offers !== 0) {
+            $flashmsg = _("ΠΡΟΣΟΧΗ: Είναι αδύνατη η απενεργοποίηση της επιχείρησης
+                διότι διαθέτει ενεργές προσφορές.
+                Για την διακοπή των προσφορών επικοινωνήστε με την επιχείρηση.
+                Εάν η επιχείρηση έχει κάνει κάτι μεμπτό χρησιμοποιείστε την επιλογή
+                'κλείδωμα' πριν την απενεργοποίηση.");
+            $this->Session->setFlash($flashmsg,
+                'default', array(), 'error');
+
+            $this->redirect($this->referer());
+        }
         $this->alter($id, $view, false);
     }
 

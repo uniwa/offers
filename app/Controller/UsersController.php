@@ -13,6 +13,10 @@ class UsersController extends AppController {
     }
 
     function login() {
+        // Set page title
+        $page_title = __('Σύνδεση χρήστη');
+        $this->set('title_for_layout', $page_title);
+
         if ($this->Auth->user())
             return $this->notify('Έχετε ήδη συνδεθεί', array('/'));
 
@@ -114,6 +118,10 @@ class UsersController extends AppController {
     }
 
     function register() {
+        // Set page title
+        $page_title = __('Εγγραφή επιχείρησης');
+        $this->set('title_for_layout', $page_title);
+
         if ($this->Auth->user()) $this->redirect('/');
 
         if (!empty( $this->request->data)) {
@@ -230,6 +238,10 @@ class UsersController extends AppController {
 
     //Terms of use action
     public function terms() {
+        // Set page title
+        $page_title = __('Όροι χρήσης');
+        $this->set('title_for_layout', $page_title);
+
         $data = $this->request->data;
         if (!empty($data)) {
             $accept = $data['User']['accept'];
@@ -261,6 +273,9 @@ class UsersController extends AppController {
 
     // Frequently asked questions
     public function faq() {
+        // Set page title
+        $page_title = __('Συχνές ερωτήσεις');
+        $this->set('title_for_layout', $page_title);
     }
 
     public function request_passwd () {
@@ -345,6 +360,10 @@ https://my.teiath.gr</a>'),
     }
 
     public function reset_passwd ($token = null) {
+        // Set page title
+        $page_title = __('Ανάκτηση κωδικού');
+        $this->set('title_for_layout', $page_title);
+
         if ($this->Auth->User('id') != null) {
             throw new ForbiddenException();
         }
@@ -412,6 +431,10 @@ https://my.teiath.gr</a>'),
     }
 
     function help(){
+        // Set page title
+        $page_title = __('Αναφορά προβλήματος');
+        $this->set('title_for_layout', $page_title);
+
         if (! $this->Auth->user('id') ) {
             throw new ForbiddenException();
         }

@@ -76,14 +76,16 @@
             <li>
                 <?php
                     if ($this->Session->check('Auth.User.id')) {
-                        $title = __('Αναφορά προβλήματος');
-                        $controller = 'users';
-                        $action = 'help';
-                        $link_div = "<div class='nav-link'>{$title}</div>";
-                        $link = $this->Html->link($link_div, array(
-                            'controller' => $controller, 'action' => $action),
-                            array('escape' => false));
-                        echo  "<li>$link</li>";
+                        if ($this->Session->read('Auth.User.role') !== ROLE_ADMIN) {
+                            $title = __('Αναφορά προβλήματος');
+                            $controller = 'users';
+                            $action = 'help';
+                            $link_div = "<div class='nav-link'>{$title}</div>";
+                            $link = $this->Html->link($link_div, array(
+                                'controller' => $controller, 'action' => $action),
+                                array('escape' => false));
+                            echo  "<li>$link</li>";
+                        }
                     }
                 ?>
             </li>

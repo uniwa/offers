@@ -120,6 +120,10 @@ class OffersController extends AppController {
     }
 
     public function index() {
+        // Set page title
+        $page_title = __('Όλες οι προσφορές');
+        $this->set('title_for_layout', $page_title);
+
         $params = array('valid');
 
         $this->Offer->Behaviors->attach('Containable');

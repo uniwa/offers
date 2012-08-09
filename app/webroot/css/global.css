@@ -230,15 +230,21 @@ footer ul li {
     border: 1px solid #fff;
     background-color: #ddd;
     margin: 0 24px 0 6px;
+    padding: 1px;
     width: 100px;
+    height: 60px;
+    overflow: hidden;
+}
+
+.offer-info-cont{
+    float: left;
+    margin: 0;
+    width: 640px;
     height: 60px;
 }
 
 .offer-info{
     position: relative;
-    margin: 0;
-    width: 640px;
-    height: 60px;
 }
 
 .offer-header{
@@ -266,13 +272,13 @@ footer ul li {
 
 .offer-label,.offer-votes,.offer-improper{
     float: left;
-    margin: 0 0 0 18px;
+    margin: 0 0 0 20px;
 }
 
 .offer-tweet{
     position: absolute;
     top: 22px;
-    left: 430px;
+    left: 300px;
 }
 
 .offer-tags{

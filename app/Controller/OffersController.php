@@ -124,7 +124,7 @@ class OffersController extends AppController {
 
         $this->Offer->Behaviors->attach('Containable');
         // WorkHour is required for the webservice api
-        $this->Offer->contain(array('WorkHour', 'Company', 'OfferCategory'));
+        $this->Offer->contain(array('WorkHour', 'Company', 'OfferCategory', 'Image.id'));
 
         $this->ordering($params);
         $this->display($params);
@@ -268,11 +268,11 @@ class OffersController extends AppController {
 
     // Displays offers in list according to passed criteria and sorting params
     private function display($params) {
-        $pagination_limit = 10;
+        $pagination_limit = LIMIT_PAGINATE;
         $params = array_merge($params, array('limit' => $pagination_limit));
         $this->paginate = $params;
         $offers = $this->paginate();
-        $this->Offer->minify_desc($offers, 160);
+        $this->Offer->minify_desc($offers, LIMIT_DESCRIPTION);
         if ($this->is_webservice) {
             switch ($this->webservice_type) {
                 case 'js':

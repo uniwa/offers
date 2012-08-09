@@ -86,8 +86,20 @@ if (empty($offers)) {
         // offer tile container
         $html .= "<div class='offer-tile {$offer_class}'>";
         // offer thumb image or default logo
-        $html .= "<div class='offer-thumb'></div>";
+        $image_url = APP_URL."/img/logothumb.png";
+        if (!empty($offer['Image'])) {
+            $image_url = APP_URL."/images/thumb/".$offer['Image'][0]['id'];
+        }
+        $html .= "<div class='offer-thumb'>";
+        $image_thumb = $this->Html->image($image_url,
+            array('alt' => $offer['Offer']['title']));
+        $html .=  $this->Html->link($image_thumb,
+            array('controller' => 'offers', 'action' => 'view', $offer['Offer']['id']),
+            array('escape' => false));
+        $html .= "</div>";
+
         // offer information
+        $html .= "<div class='offer-info-cont'>";
         $html .= "<div class='offer-info'>";
         $html .= "<div class='offer-header'>";
 
@@ -95,14 +107,13 @@ if (empty($offers)) {
         $html .= "<div class='offer-name-cont'>";
         $html .= "<div class='offer-name'>";
         $html .=  $this->Html->link($title,
-            array('controller' => 'offers', 'action' => 'view', $offers[$key]['Offer']['id']));
+            array('controller' => 'offers', 'action' => 'view', $offer['Offer']['id']));
         $html .= "</div>";
         $html .= "</div>";
 
         // offer type label and votes
         $html .= "<div class='offer-label'>{$label}</div>";
         $html .= "<div class='offer-votes'>{$votes_html}</div>";
-        $html .= "</div>";
 
         // Twitter settings
         // TODO: create route 'http://coupons.teiath.gr/5' -> '[...]/offers/view/5'
@@ -117,6 +128,8 @@ if (empty($offers)) {
         $html .= "class='twitter-share-button' data-lang='el' ";
         $html .= "data-related='{$related}' data-text='{$text}' ";
         $html .= "data-url='{$url}'>Tweet</a>";
+        $html .= "</div>";
+        $html .= "</div>";
         $html .= "</div>";
 
         // if offer improper, display special tag (for admin)

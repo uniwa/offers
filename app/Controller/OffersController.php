@@ -131,6 +131,10 @@ class OffersController extends AppController {
     }
 
     public function search($search = null) {
+        // Set page title
+        $page_title = __('Αποτελέσματα αναζήτησης προσφορών');
+        $this->set('title_for_layout', $page_title);
+
         $params = null;
         $contains = null;
         $munic_id = null;
@@ -192,18 +196,33 @@ class OffersController extends AppController {
     }
 
     public function happyhour() {
+        // Set page title
+        $page_title = __('Προσφορές');
+        $page_title .= " Happy Hour";
+        $this->set('title_for_layout', $page_title);
+
         $params = array('happyhour');
         $this->ordering($params);
         $this->display($params);
     }
 
     public function coupons() {
+        // Set page title
+        $page_title = __('Προσφορές');
+        $page_title .= " Coupons";
+        $this->set('title_for_layout', $page_title);
+
         $params = array('coupons');
         $this->ordering($params);
         $this->display($params);
     }
 
     public function limited() {
+        // Set page title
+        $page_title = __('Προσφορές');
+        $page_title .= " Limited";
+        $this->set('title_for_layout', $page_title);
+
         $params = array('limited');
         if (!$this->RequestHandler->isRss())
             $params['orderby'] = 'autoend';
@@ -212,6 +231,11 @@ class OffersController extends AppController {
     }
 
     public function tag($tag) {
+        // Set page title
+        $page_title = __('Προσφορές');
+        $page_title .= " για '{$tag}'";
+        $this->set('title_for_layout', $page_title);
+
         $params = array('tag', 'tag' => $tag);
         $this->ordering($params);
         $this->display($params);
@@ -371,6 +395,10 @@ class OffersController extends AppController {
         if (empty($offer)) {
             throw new NotFoundException('Η προσφορά δεν βρέθηκε');
         }
+
+        // Set page title
+        $page_title = $offer['Offer']['title'];
+        $this->set('title_for_layout', $page_title);
 
         $this->set('offer', $offer);
         $offer_type_id = $offer['Offer']['offer_type_id'];
@@ -696,14 +724,26 @@ class OffersController extends AppController {
 
     // Wrapper functions for 'add offer' action
     public function add_happyhour() {
+        // Set page title
+        $page_title = __('Προσθήκη νέας προσφοράς Happy Hour');
+        $this->set('title_for_layout', $page_title);
+
         $this->modify(TYPE_HAPPYHOUR, OFFER_ADD);
     }
 
     public function add_coupons() {
+        // Set page title
+        $page_title = __('Προσθήκη νέας προσφοράς Coupons');
+        $this->set('title_for_layout', $page_title);
+
         $this->modify(TYPE_COUPONS, OFFER_ADD);
     }
 
     public function add_limited() {
+        // Set page title
+        $page_title = __('Προσθήκη νέας προσφοράς Limited');
+        $this->set('title_for_layout', $page_title);
+
         $this->modify(TYPE_LIMITED, OFFER_ADD);
     }
 
@@ -739,11 +779,19 @@ class OffersController extends AppController {
 
     // Wrapper function for 'edit offer' action
     public function edit($id = null) {
+        // Set page title
+        $page_title = __('Επεξεργασία προσφοράς');
+        $this->set('title_for_layout', $page_title);
+
         $this->modify(null, $id);
     }
 
     // Wrapper function for 'clone offer' action
     public function copy($id = null) {
+        // Set page title
+        $page_title = __('Αντιγραφή προσφοράς');
+        $this->set('title_for_layout', $page_title);
+
         $this->modify(OFFER_COPY, $id);
     }
 
@@ -1172,6 +1220,10 @@ class OffersController extends AppController {
 
     // Images administration
     public function imageedit($id = null) {
+        // Set page title
+        $page_title = __('Διαχείριση εικόνων προσφοράς');
+        $this->set('title_for_layout', $page_title);
+
         if (is_null($id))
             throw new BadRequestException();
 
@@ -1424,7 +1476,7 @@ class OffersController extends AppController {
     // Computes the haversine distance between the to supplied locations. Each
     // parameter must be an array that contains the keys 'latitude' and
     // 'longitude'. If the [to] parameter is omitted (i.d., is_null on it
-    // returns true), the TEI of Athen's coordinates, will be used.
+    // returns true), the TEI of Athens coordinates, will be used.
     private function haversine_distance($from, $to=null) {
         if (is_null($to)) {
             if (is_null($this->Session->read('Auth.User.geolocation')))

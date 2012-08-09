@@ -56,7 +56,6 @@
             <?php echo "<th>{$student_header}</th>" ?>
             <?php echo "<th>{$user_header}</th>" ?>
             <th>Διεύθυνση e-mail</th>
-            <th>είναι κλειδωμένος;</th>
         </tr>
     </thead>
     <tbody>
@@ -83,7 +82,6 @@
                 echo "<td>{$this->Html->link($student_name, $student_url)}</td>";
                 echo "<td>$user_name</td>";
                 echo "<td>$user_email</td>";
-                echo "<td>$user_state</td>";
                 echo '</tr>';
 
                 ++$counter;

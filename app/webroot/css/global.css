@@ -236,11 +236,15 @@ footer ul li {
     overflow: hidden;
 }
 
-.offer-info{
+.offer-info-cont{
     float: left;
     margin: 0;
     width: 640px;
     height: 60px;
+}
+
+.offer-info{
+    position: relative;
 }
 
 .offer-header{
@@ -268,13 +272,13 @@ footer ul li {
 
 .offer-label,.offer-votes,.offer-improper{
     float: left;
-    margin: 0 0 0 18px;
+    margin: 0 0 0 20px;
 }
 
 .offer-tweet{
     position: absolute;
     top: 22px;
-    left: 430px;
+    left: 300px;
 }
 
 .offer-tags{

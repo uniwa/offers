@@ -99,6 +99,7 @@ if (empty($offers)) {
         $html .= "</div>";
 
         // offer information
+        $html .= "<div class='offer-info-cont'>";
         $html .= "<div class='offer-info'>";
         $html .= "<div class='offer-header'>";
 
@@ -113,7 +114,6 @@ if (empty($offers)) {
         // offer type label and votes
         $html .= "<div class='offer-label'>{$label}</div>";
         $html .= "<div class='offer-votes'>{$votes_html}</div>";
-        $html .= "</div>";
 
         // Twitter settings
         // TODO: create route 'http://coupons.teiath.gr/5' -> '[...]/offers/view/5'
@@ -128,6 +128,8 @@ if (empty($offers)) {
         $html .= "class='twitter-share-button' data-lang='el' ";
         $html .= "data-related='{$related}' data-text='{$text}' ";
         $html .= "data-url='{$url}'>Tweet</a>";
+        $html .= "</div>";
+        $html .= "</div>";
         $html .= "</div>";
 
         // if offer improper, display special tag (for admin)

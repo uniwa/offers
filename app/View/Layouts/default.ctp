@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title><?php echo $title_for_layout?></title>
+<title><?php echo APP_NAME.' - '.$title_for_layout ?></title>
 <?php
     echo $this->Html->charset();
     echo $this->Html->css( 'bootstrap' );
@@ -63,7 +63,7 @@
             </li>
             <li>
                 <?php
-                        $title = __('Συχνές Ερωτήσεις');
+                        $title = __('Συχνές ερωτήσεις');
                         $controller = 'users';
                         $action = 'faq';
                         $link_div = "<div class='nav-link'>{$title}</div>";

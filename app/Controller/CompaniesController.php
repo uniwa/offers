@@ -66,6 +66,10 @@ class CompaniesController extends AppController {
             $company['Company']['municipality'] = $company['Municipality']['name'];
         }
 
+        // Set page title
+        $page_title = $company['Company']['name'];
+        $this->set('title_for_layout', $page_title);
+
         // format working hours
         $wh_tmp = array();
         foreach($company['WorkHour'] as $wh) {
@@ -123,6 +127,10 @@ class CompaniesController extends AppController {
 
 
     public function edit ($id = null) {
+
+        // Set page title
+        $page_title = __('Επεξεργασία στοιχείων επιχείρησης');
+        $this->set('title_for_layout', $page_title);
 
         if ($id == null) throw new BadRequestException();
         $this->set('municipalities', $this->Municipality->getHierarchy());
@@ -271,6 +279,10 @@ class CompaniesController extends AppController {
     }
 
     public function ban($id = null) {
+        // Set page title
+        $page_title = __('Κλείδωμα επιχείρησης');
+        $this->set('title_for_layout', $page_title);
+
         $this->Company->recursive = 0;
         $company = $this->Company->findById($id);
 
@@ -428,6 +440,10 @@ class CompaniesController extends AppController {
     }
 
     public function imageedit() {
+        // Set page title
+        $page_title = __('Επεξεργασία εικόνων επιχείρησης');
+        $this->set('title_for_layout', $page_title);
+
         // Get company info
         $company_id = $this->Session->read('Auth.Company.id');
         if (is_null($company_id))

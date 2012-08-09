@@ -206,6 +206,11 @@ class CouponsController extends AppController {
             throw new ForbiddenException('Η προσφορά για την οποία έχει'
                 .' δεσμευθεί το κουπόνι σας έχει χαρακτηριστεί σαν SPAM.');
 
+        // Set page title
+        $page_title = __('Κουπόνι για την προσφορά ');
+        $page_title .="'{$coupon['Offer']['title']}'";
+        $this->set('title_for_layout', $page_title);
+
         if ($this->is_webservice) {
             switch ($this->webservice_type) {
                 case 'js':

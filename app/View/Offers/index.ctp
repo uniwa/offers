@@ -88,10 +88,16 @@ if (empty($offers)) {
         // offer thumb image or default logo
         $image_url = APP_URL."/img/logothumb.png";
         if (!empty($offer['Image'])) {
-            $image_url = APP_URL."/images/view/".$offer['Image'][0]['id'];
+            $image_url = APP_URL."/images/thumb/".$offer['Image'][0]['id'];
         }
-        $image_thumb = $this->Html->image($image_url);
-        $html .= "<div class='offer-thumb'>{$image_thumb}</div>";
+        $html .= "<div class='offer-thumb'>";
+        $image_thumb = $this->Html->image($image_url,
+            array('alt' => $offer['Offer']['title']));
+        $html .=  $this->Html->link($image_thumb,
+            array('controller' => 'offers', 'action' => 'view', $offer['Offer']['id']),
+            array('escape' => false));
+        $html .= "</div>";
+
         // offer information
         $html .= "<div class='offer-info'>";
         $html .= "<div class='offer-header'>";

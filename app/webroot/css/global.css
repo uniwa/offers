@@ -230,12 +230,14 @@ footer ul li {
     border: 1px solid #fff;
     background-color: #ddd;
     margin: 0 24px 0 6px;
+    padding: 1px;
     width: 100px;
     height: 60px;
+    overflow: hidden;
 }
 
 .offer-info{
-    position: relative;
+    float: left;
     margin: 0;
     width: 640px;
     height: 60px;

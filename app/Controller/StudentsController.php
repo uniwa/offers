@@ -37,6 +37,11 @@ class StudentsController extends AppController {
             throw new NotFoundException('Το συγκεκριμένο profile χρήστη δεν
                                         βρέθηκε.');
 
+        // Set page title
+        $page_title = __('Προφίλ χρήστη');
+        $page_title .= " '{$user['User']['username']}'";
+        $this->set('title_for_layout', $page_title);
+
         $this->set('user', array('firstname' => $user['Student']['firstname'],
                                  'lastname' => $user['Student']['lastname'],
                                  'username' => $user['User']['username'],
@@ -139,4 +144,3 @@ class StudentsController extends AppController {
         return parent::is_authorized($user);
     }
 }
-

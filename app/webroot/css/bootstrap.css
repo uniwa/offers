@@ -2300,6 +2300,8 @@ button.btn.small, input[type="submit"].btn.small {
   display: block;
 }
 .nav > li > a:hover {
+  background: rgb(195, 225, 255);
+  background: rgba(60, 120, 255, 0.6);
   text-decoration: none;
   color: #fff;
 }

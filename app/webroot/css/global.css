@@ -47,10 +47,6 @@
     height: 24px;
 }
 
-.rss-category:hover{
-    background-image: url('../img/rss-orange-small.png');
-}
-
 .bold {
     font-weight: bold;
 }

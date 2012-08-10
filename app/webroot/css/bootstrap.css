@@ -2293,17 +2293,26 @@ button.btn.small, input[type="submit"].btn.small {
 .nav > li.menu-item {
   padding: 2px 2px 2px 6px;
 }
-.nav > li.menu-item:hover {
-  background-color: #acf;
-}
 .nav > li > a {
   display: block;
 }
 .nav > li > a:hover {
-  background: rgb(195, 225, 255);
+  background: rgb(60, 120, 255);
   background: rgba(60, 120, 255, 0.6);
   text-decoration: none;
   color: #fff;
+}
+.nav > li.menu-item:hover {
+  background-color: #acf;
+}
+.nav > li.menu-item a:hover {
+  background-color: transparent;
+  text-decoration: none;
+  color: #fff;
+}
+.nav > li.menu-item a.rss-category:hover{
+    background-image: url('../img/rss-orange-small.png');
+    background-repeat: no-repeat;
 }
 .nav-list {
   padding-left: 14px;

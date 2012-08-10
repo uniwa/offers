@@ -18,7 +18,7 @@ EOTS;
 
 foreach($coupons as $c) {
     $serial = $c['Coupon']['serial_number'];
-    echo "<tr><td $s>$i</td><td $s><pre>$serial</pre></td></tr>";
+    echo "<tr><td $s><pre>$i</pre></td><td $s><pre>$serial</pre></td></tr>";
     ++$i;
 }
 

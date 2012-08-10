@@ -2314,6 +2314,18 @@ button.btn.small, input[type="submit"].btn.small {
     background-image: url('../img/rss-orange-small.png');
     background-repeat: no-repeat;
 }
+.nav > li.menu-item a.rss-happyhour:hover{
+    background-image: url('../img/rss-blue-small.png');
+    background-repeat: no-repeat;
+}
+.nav > li.menu-item a.rss-coupons:hover{
+    background-image: url('../img/rss-orange-small.png');
+    background-repeat: no-repeat;
+}
+.nav > li.menu-item a.rss-limited:hover{
+    background-image: url('../img/rss-green-small.png');
+    background-repeat: no-repeat;
+}
 .nav-list {
   padding-left: 14px;
   padding-right: 14px;

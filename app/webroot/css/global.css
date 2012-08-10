@@ -322,3 +322,8 @@ footer ul li {
     background: rgb(195, 225, 255);
     background: rgba(195, 225, 255, 0.3);
 }
+
+/* offer view */
+.offer-details {
+    clear: left;
+}

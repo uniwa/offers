@@ -33,51 +33,73 @@ $role = $this->Session->read('Auth.User.role');
 
 // Offer actions (copy,images, etc.)
 if ($is_user_the_owner) {
-    $html .= $this->Html->link('Αντιγραφή', array(
+    // wrap all controls in a div
+    $html .= "<div class='well pull-left'>";
+    $html .= "<h6>Ενεργειες Ιδιοκτητη Προσφορας</h6><br />";
+
+    // icon vars
+    $edit_icon = $this->Html->tag('i', '', array('class' => 'icon-pencil icon-white'));
+    $copy_icon = $this->Html->tag('i', '', array('class' => 'icon-repeat icon-white'));
+    $imageedit_icon = $this->Html->tag('i', '', array('class' => 'icon-picture icon-white'));
+    $delete_icon = $this->Html->tag('i', '', array('class' => 'icon-trash icon-white'));
+
+    $link_copy = $this->Html->link("{$copy_icon}&nbsp;Αντιγραφή", array(
         'controller' => 'offers',
         'action' => 'copy',
-        $offer['Offer']['id']));
-    $html .= '<br>';
+        $offer['Offer']['id']),
+        array('class' => 'btn-small btn-info', 'escape' => false)
+    );
+
+    $html .= "<p>{$link_copy}</p>";
 
     if ($is_offer_draft) {
-        $html .= $this->Html->link('Διαγραφή', array(
+        $link_delete = $this->Html->link("{$delete_icon}&nbsp;Διαγραφή", array(
             'controller' => 'offers',
             'action' => 'delete',
             $offer['Offer']['id']),
-            array(), 'Να διαγραφεί η προσφορα;');
-        $html .= '<br>';
+            array('class' => 'btn-small btn-danger', 'escape' => false),
+            'Να διαγραφεί η προσφορα;');
 
-        $html .= $this->Html->link('Επεξεργασία', array(
+        $link_edit = $this->Html->link("{$edit_icon}&nbsp;Επεξεργασία", array(
             'controller' => 'offers',
             'action' => 'edit',
-            $offer['Offer']['id']));
-        $html .= '<br>';
+            $offer['Offer']['id']),
+            array('class' => 'btn-small btn-info', 'escape' => false));
 
-        $html .= $this->Html->link(
-          '[Ενεργοποίηση]', array(
+        $link_activate = $this->Html->link('Ενεργοποίηση', array(
                 'controller' => 'offers',
                 'action' => 'activate',
-                $offer['Offer']['id']), null,
-                'Οι ενεργοποιημένες προσφορές δε δύνανται να τροποποιηθούν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
-        $html .= '<br>';
-    }
+                $offer['Offer']['id']),
+                array('class' => 'btn-small btn-success'),
+                'Οι ενεργοποιημένες προσφορές δε δύνανται να τροποποιηθούν. '
+                . 'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
 
-    if ($is_offer_draft) {
-        $html .= $this->Html->link('Εικόνες', array(
+        $link_imageedit = $this->Html->link("{$imageedit_icon}&nbsp;Φωτογραφίες", array(
             'controller' => 'offers',
             'action' => 'imageedit',
-            $offer['Offer']['id']));
-        $html .= '<br>';
+            $offer['Offer']['id']),
+            array('class' => 'btn-small btn-info', 'escape' => false));
 
-        $html .= $this->Html->link('[Τερματισμός]', array(
+        $html .= "<p>{$link_activate}&nbsp;{$link_edit}&nbsp;{$link_imageedit}&nbsp;{$link_delete}</p>";
+    }
+
+    if ($is_offer_active) {
+        $link_terminate = $this->Html->link('Τερματισμός', array(
             'controller' => 'offers',
             'action' => 'terminate',
-            $offer['Offer']['id']), null,
-            'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+            $offer['Offer']['id']),
+            array('class' => 'btn-small btn-danger'),
+            'Ο τερματισμός μίας προσφοράς δεν μπορεί να αναιρεθεί. '
+            . 'Είστε βέβαιοι ότι θέλετε να συνεχίσετε;');
+
+        $html .= "<p>{$link_terminate}</p>";
     }
+
+    $html .= "</div>"; //end wrapper controlls div
 
 }
 
+$html .= "<div class='offer-details'>";
 // set offer title
 $html .= "<h2>{$offer['Offer']['title']}</h1>";
 
@@ -93,7 +115,6 @@ switch($offer['Offer']['offer_type_id']){
         $label_class = 'label-success';
         break;
 }
-
 $html .= "<p><span class='label {$label_class}'>{$label_text}</span>";
 if ($is_offer_inactive) {
     $html .= " <span class='label'>ΕΛΗΞΕ</span>";
@@ -227,7 +248,7 @@ if ($role === ROLE_STUDENT &&
 
 // image thumbnails
 $html .= $html_img;
-
+$html .= "</div>"; //end class: offer-details
 echo $html;
 
 // title of link to redeem/re_enable a coupon

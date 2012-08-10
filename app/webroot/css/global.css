@@ -327,3 +327,31 @@ footer ul li {
 .offer-details {
     clear: left;
 }
+
+.stats-table{
+    border: 1px solid #0088CC;
+    text-align:center;
+}
+
+.stats-table th{
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #0088CC;
+    background: url("../img/fake_brick.png") repeat scroll 0 0 #2C2C2C;
+    color: #fff;
+}
+
+.stats-table td{
+    border-width: 0 1px;
+    border-style: solid;
+    border-color: #0088CC;
+}
+
+.stats-table tr.stats-line{
+    background: rgb(195, 225, 255);
+    background: rgba(195, 225, 255, 0.6);
+}
+
+.stats-month,.stats-visits,.stats-visitors{
+    width: 96px;
+}

@@ -264,28 +264,31 @@ $redeem_title = array('title' => $click_to_change);
 // only if visitor = owner and offer type = coupons
 if (isset($is_user_the_owner) && $is_user_the_owner) {
     $html_stats = '';
-    $html_stats .= "<br /><strong>Σύνολο επισκέψεων σήμερα:";
+    $html_stats .= "<br /><p><strong>Σύνολο επισκέψεων σήμερα:";
     $html_stats .= "</strong> {$visits['today']['total']}<br />";
     $html_stats .= "<strong>Σύνολο μοναδικών επισκεπτών σήμερα (βάσει IP):";
-    $html_stats .= "</strong> {$visits['today']['unique']}<br />";
-    $html_stats .= "<br /><strong>Σύνολο επισκέψεων:";
+    $html_stats .= "</strong> {$visits['today']['unique']}</p>";
+    $html_stats .= "<p><strong>Σύνολο επισκέψεων:";
     $html_stats .= "</strong> {$visits['past']['total']}<br />";
     $html_stats .= "<strong>Σύνολο μοναδικών επισκεπτών (βάσει IP):";
-    $html_stats .= "</strong> {$visits['past']['unique']}<br />";
-    $html_stats .= "<br /><strong>Σύνολο επισκέψεων αυτό το μήνα:";
-    $html_stats .= "</strong> {$visits['monthly'][0]['stats']['total']}<br />";
-    $html_stats .= "<strong>Σύνολο μοναδικών επισκεπτών αυτό το μήνα (βάσει IP):";
-    $html_stats .= "</strong> {$visits['monthly'][0]['stats']['unique']}<br />";
+    $html_stats .= "</strong> {$visits['past']['unique']}</p>";
+    $html_stats .= "<p><strong>Στατιστικά επισκέψεων ανα μήνα:<strong></p>";
+    $html_stats .= "<table class='stats-table'><tr>";
+    $html_stats .= "<th class='stats-month'>μήνας</th>";
+    $html_stats .= "<th class='stats-visits'>επισκέψεις</th>";
+    $html_stats .= "<th class='stats-visitors'>επισκέπτες</th></tr>";
     foreach (range(1, MONTHS_BACK_STATS - 1) as $i) {
-        $html_stats .= "<br /><strong>Σύνολο επισκέψεων για το μήνα ";
-        $html_stats .= "{$visits['monthly'][$i]['month']}-";
-        $html_stats .= "{$visits['monthly'][$i]['year']}:";
-        $html_stats .= "</strong> {$visits['monthly'][$i]['stats']['total']}<br />";
-        $html_stats .= "<strong>Σύνολο μοναδικών επισκεπτών για το μήνα ";
-        $html_stats .= "{$visits['monthly'][$i]['month']}-";
-        $html_stats .= "{$visits['monthly'][$i]['year']} (βάσει IP):";
-        $html_stats .= "</strong> {$visits['monthly'][$i]['stats']['unique']}<br />";
+        $odd_line = ($i%2)?'':'stats-line';
+        $html_stats .= "<tr class='$odd_line'><td class='stats-month'>";
+        $html_stats .= "{$visits['monthly'][$i]['month']} / ";
+        $html_stats .= "{$visits['monthly'][$i]['year']}</td>";
+        $html_stats .= "<td class='stats-visits'>";
+        $html_stats .= "{$visits['monthly'][$i]['stats']['total']}</td>";
+        $html_stats .= "<td class='stats-visitors'>";
+        $html_stats .= "{$visits['monthly'][$i]['stats']['unique']}</td></tr>";
     }
+    $html_stats .= "</table>";
+
     echo $html_stats;
 
     if ($offer_type_id === TYPE_COUPONS) {

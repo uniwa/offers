@@ -58,7 +58,7 @@ class OffersController extends AppController {
     public function is_authorized($user) {
         $role = $this->Auth->user('role');
         $allow = array('index', 'category', 'view', 'happyhour', 'coupons',
-            'limited', 'tag', 'search', 'statistics');
+            'limited', 'tag', 'search', 'statistics', 'home');
         $owner = array('edit', 'delete', 'imageedit', 'activate', 'terminate',
             'copy');
         $companies = array('add_happyhour', 'add_coupons', 'add_limited',
@@ -117,6 +117,31 @@ class OffersController extends AppController {
         }
 
         return parent::is_authorized($user);
+    }
+
+    public function home(){
+        // Set page title
+        $page_title = __('Αρχική');
+        $this->set('title_for_layout', $page_title);
+
+        $params = array('valid');
+
+        $this->Offer->Behaviors->attach('Containable');
+        // WorkHour is required for the webservice api
+        $this->Offer->contain(array('WorkHour', 'Company', 'OfferCategory', 'Image.id'));
+
+        $this->ordering($params);
+
+        $pagination_limit = 5;
+        $params = array_merge($params, array('limit' => $pagination_limit));
+        $this->paginate = $params;
+        $offers = $this->paginate();
+        $this->Offer->minify_desc($offers, LIMIT_DESCRIPTION);
+
+        $this->set('municipalities', $this->Municipality->getHierarchy());
+        $this->set('offer_categories',
+                   $this->OfferCategory->find('countOffers'));
+        $this->set('offers', $offers);
     }
 
     public function index() {

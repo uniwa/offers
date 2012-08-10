@@ -86,9 +86,9 @@ if (empty($offers)) {
         // offer tile container
         $html .= "<div class='offer-tile {$offer_class}'>";
         // offer thumb image or default logo
-        $image_url = APP_URL."/img/logothumb.png";
+        $image_url = "/img/logothumb.png";
         if (!empty($offer['Image'])) {
-            $image_url = APP_URL."/images/thumb/".$offer['Image'][0]['id'];
+            $image_url = "/images/thumb/".$offer['Image'][0]['id'];
         }
         $html .= "<div class='offer-thumb'>";
         $image_thumb = $this->Html->image($image_url,

@@ -222,8 +222,8 @@
     </ul>
     <div id='espa'>
         <p><?php echo ESPA_TEXT; ?></p>
-        <img src='
-        <?php echo APP_URL; ?>/img/footer_logo.png' class='espa-logo' />
+        <?php echo $this->Html->image('/img/footer_logo.png',
+                array('class' => 'espa-logo', 'alt' => 'espa-logo')); ?>
     </div>
     </footer>
 <!--will allow all scripts generated in layout elements to be output in one place-->

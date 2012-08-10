@@ -309,8 +309,11 @@ class CompaniesController extends AppController {
             $errors = $this->Company->validationErrors;
 
             if (!isset($errors['explanation'])) {
-                $this->change_company_state($id, true,
-                    $this->request->data['Company']['explanation']);
+                $expl = $this->request->data['Company']['explanation'];
+                $this->change_company_state($id, true, $expl);
+                // set explanation to $company so as to use it when sending
+                // the notification email
+                $company['Company']['explanation'] = $expl;
                 $this->company_ban_notification($company, $email);
                 $this->redirect($target);
             }

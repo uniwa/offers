@@ -174,6 +174,7 @@ $html .= $this->Paginator->numbers(array(
     'last' => 2,
     'modulus' => 3,
     'separator' => ' ',
+    'ellipsis' => "<li><a>...</a></li>",
     'tag' => 'li'));
 $html .= "</ul></div></div>";
 

@@ -94,6 +94,7 @@
     <ul>
         <?php echo $this->Paginator->numbers(array(
                                             'separator' => ' ',
+                                            'ellipsis' => "<li><a>...</a></li>",
                                             'tag' => 'li')); ?>
     </ul>
 </div>

@@ -84,7 +84,7 @@ class NotifyImproperShell extends AppShell {
         // set parameters that are the same for all emails to be sent
         $email = $email
             ->subject(__("Ειδοποίηση ανάρμοστης προσφοράς"))
-            ->template('spam_notify', 'default')
+            ->template('improper_notify', 'default')
             ->emailFormat('both')
             ->viewVars(array('for_student' => true));
 

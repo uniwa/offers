@@ -1531,7 +1531,7 @@ class OffersController extends AppController {
         $cake_email = $cake_email
             ->to($owner)
             ->subject($subject)
-            ->template('spam_notify', 'default')
+            ->template('improper_notify', 'default')
             ->emailFormat('both')
             ->viewVars(array('url' => $url,'title' => $title,'explanation' => $explanation));
         try {

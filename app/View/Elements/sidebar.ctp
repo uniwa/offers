@@ -45,6 +45,21 @@ foreach ($type_stats as $stats) {
     }
 }
 
+// this is a bit of a hack, but what the hell..
+$all_offers_count = $happyhour_count + $coupons_count + $limited_count;
+
+// set a link for all offers
+$all_offers_link = $this->Html->link(
+    'Όλες οι προσφορές',
+    array('controller' => 'offers', 'action' => 'index')
+);
+
+$all_offers_rss = $this->Html->link(
+    '',
+    array('controller' => 'offers', 'action' => 'index.rss'),
+    // re-use the rss-category icon (gray) here
+    array('class' => 'rss-category', 'title' => 'RSS feed για όλες τις προσφορές')
+);
 
 if (isset($shows_spam)) {
     // if `shows_spam' has been set to true, then only spam offers are currently
@@ -108,10 +123,13 @@ $searchbox .= $this->Form->end();
                 <li><?php echo $searchbox ?></li>
                 <?php
                     if (isset($spam_link)) {
+                        echo "<li class='nav-header'>Λειτουργιες Διαχειριστη</li>";
                         echo "<li class='menu-item'>{$spam_link}</li>";
                     }
                 ?>
                 <li class="nav-header">Ειδη Προσφορων</li>
+                <li class="menu-item">
+                <?php echo $all_offers_link, " ($all_offers_count)", $all_offers_rss?></li>
                 <li class="menu-item">
                 <?php echo $happyhour, " ($happyhour_count)", $happyhour_rss ?></li>
                 <li class="menu-item">

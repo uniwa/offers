@@ -21,7 +21,16 @@ $html = '';
 $html .= $this->element('sidebar', $sidebar_params);
 $html .= "<div class='span9'>";
 $offers_count = $this->Paginator->counter(array('format' => '%count%'));
-$html .= "<p>Βρέθηκαν <span class='bold'>{$offers_count}</span> προσφορές</p>";
+$html .= "<p>Βρέθηκαν <span class='bold'>{$offers_count}</span> προσφορές";
+
+// show relevant message if currently viewing spam offers (admin-only)
+if ($this->Session->read('Auth.User.role') == ROLE_ADMIN) {
+    if ($shows_spam) {
+        $html .= " οι οποίες έχουν σημανθεί ως <span class='label label-important'>αναρμοστες</span>";
+    }
+}
+
+$html .= "</p>";
 
 if (empty($offers)) {
     $html .= $this->element('alert', array(

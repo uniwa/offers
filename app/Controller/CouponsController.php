@@ -392,6 +392,10 @@ class CouponsController extends AppController {
             // replace true/false in json to be consistent with XML
             $coupon_data['coupon']['reinserted'] = $coupon_data['coupon']['reinserted'] ? 1 : 0;
 
+            if (isset($coupon_data['offer']['is_spam'])) {
+                $coupon_data['offer']['is_spam'] = $coupon_data['offer']['is_spam'] ? '1' : '0';
+            }
+
             if ($is_xml) {
                 $this->xml_alter_view($coupon_data);
             }
@@ -470,6 +474,8 @@ class CouponsController extends AppController {
             'Offer.vote_plus',
             'Offer.vote_minus',
             'Offer.company_id',
+            'Offer.is_spam',
+            'Offer.offer_state_id'
         );
         $this->Coupon->recursive = 0;
 

@@ -108,6 +108,7 @@ $searchbox .= $this->Form->end();
                 <li><?php echo $searchbox ?></li>
                 <?php
                     if (isset($spam_link)) {
+                        echo "<li class='nav-header'>Λειτουργιες Διαχειριστη</li>";
                         echo "<li class='menu-item'>{$spam_link}</li>";
                     }
                 ?>

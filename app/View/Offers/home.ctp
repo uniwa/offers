@@ -122,5 +122,5 @@ if (empty($offers)) {
         )
         .' για όλες τις προσφορές.</div>';
 }
-
+$html .= "</div>";
 echo $html;

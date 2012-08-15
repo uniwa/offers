@@ -391,11 +391,12 @@ class OffersController extends AppController {
             $this->Offer->validates();
             $errors = $this->Offer->validationErrors;
             if (!isset($errors['explanation'])){
-                $this->flag($id, $this->request->data['Offer']['explanation']);
+                $expl = $this->request->data['Offer']['explanation'];
+                $this->flag($id, $expl);
 
                 $owner = $this->Offer->get_company_email($id);
-                $students = $this->Offer->get_student_emails($id);
-                $this->improper_offer_notification($offer, $owner, $students);
+                $offer['Offer']['explanation'] = $expl;
+                $this->improper_offer_notification($offer, $owner);
                 $this->redirect($target);
             }
         }
@@ -1543,7 +1544,7 @@ class OffersController extends AppController {
 
     // Send email notification to company
     // when one of their offers has been flagged as improper
-    private function improper_offer_notification ($offer = null, $owner = null, $students = array()) {
+    private function improper_offer_notification ($offer = null, $owner = null) {
         if (is_null($offer) || is_null($owner)) {
             throw new BadRequestException();
         }

@@ -27,8 +27,7 @@
           </a>
           <?php
             echo $this->Html->link(
-                __('Coupons'),
-                array( 'controller'=>'offers', 'action'=>'index'),
+                __('Coupons'), '/',
                 array( 'class'=>'brand'));
           ?>
           <div class="nav-collapse">

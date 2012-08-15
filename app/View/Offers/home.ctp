@@ -1,8 +1,18 @@
 <?php
 $html = '';
+
+// show sidebar in front pagee too
+$sidebar_params = array('offer_categories' => $offer_categories,
+                        'municipalities' => $municipalities,
+                        'type_stats' => $type_stats);
+$show_flag_link = false;
+$html .= $this->element('sidebar', $sidebar_params);
+
+
 $html .= "<div class='span9'>";
 
 $html .= "<div id='home-text' class='well'>";
+$html .= "<h3>Επεξηγησεις για τα ειδη προσφορων.</h3>";
 $html .= "<span class='label label-info'>Happy Hour</span>";
 $html .= "<p>Οι προσφορές τύπου Happy Hour επαναλαμβάνονται κάθε εβδομάδα σε συγκεκριμένες μέρες και ώρες</p>";
 $html .= "<span class='label label-warning'>Coupons</span>";
@@ -11,7 +21,8 @@ $html .= " Στη συνέχεια μπορούν να τα εξαργυρώσο
 $html .= "<span class='label label-success'>Limited</span>";
 $html .= "<p>Οι προσφορές τύπου Limited έχουν περιορισμένη διάρκεια.</p>";
 $html .= "</div>";
-$html .= "<p><h4>Πρόσφατες προσφορές:</h4></p>";
+$html .= "<h3>Πρόσφατες προσφορές&nbsp;<i title='Οι τελευταίες 5 αναρτημένες προσφορές' 
+    class='icon-info-sign'></i></h3><br />";
 if (empty($offers)) {
     $html .= $this->element('alert', array(
         'type' => 'info',
@@ -105,6 +116,11 @@ if (empty($offers)) {
         $html .= "</div>";
         $html .= "</div>";
     }
+    $html .= '<div class="well bold">Πατήστε '
+        . $this->Html->link('εδώ', array(
+            'controller' => 'offers', 'action' => 'index')
+        )
+        .' για όλες τις προσφορές.</div>';
 }
 
 echo $html;

@@ -142,6 +142,7 @@ class OffersController extends AppController {
         $this->set('offer_categories',
                    $this->OfferCategory->find('countOffers'));
         $this->set('offers', $offers);
+        $this->set('type_stats', $this->Offer->find('typeStats'));
     }
 
     public function index() {

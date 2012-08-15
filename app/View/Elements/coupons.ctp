@@ -121,7 +121,8 @@
             } else {
                 $strikethrough['pre'] = "";
                 $strikethrough['post'] = "";
-                $pdf = $pdf_link;
+                // hide down-link for flagged offers
+                if ($c['Offer']['is_spam'] != true) $pdf = $pdf_link;
             }
             // coupon link - don't allow coupon view if spam
             $html .= "<td>{$strikethrough['pre']}";

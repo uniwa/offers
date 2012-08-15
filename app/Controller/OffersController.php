@@ -288,7 +288,9 @@ class OffersController extends AppController {
         // make it easy to identify that spam is shown (so as to hide flag link)
         $this->set('shows_spam', true);
 
-        $this->Offer->recursive = 0;
+        $this->Offer->Behaviors->attach('Containable');
+        $this->Offer->contain(array('Company', 'OfferCategory', 'Image.id'));
+
         $params = array('all',
                         // this goes through to the intrinsic _findAll()
                         'conditions' => array('Offer.is_spam' => true),

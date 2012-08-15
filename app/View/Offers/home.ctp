@@ -116,6 +116,11 @@ if (empty($offers)) {
         $html .= "</div>";
         $html .= "</div>";
     }
+    $html .= '<div class="well bold">Πατήστε '
+        . $this->Html->link('εδώ', array(
+            'controller' => 'offers', 'action' => 'index')
+        )
+        .' για όλες τις προσφορές.</div>';
 }
 
 echo $html;

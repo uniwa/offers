@@ -517,11 +517,11 @@ class CouponsController extends AppController {
         $offer_id = $this->Coupon->field('offer_id', array(
             'id' => $id));
 
-        // check if offer has ended
-        $has_ended = $this->Offer->field('ended', array(
+        // check if offer is inactive
+        $offer_state = $this->Offer->field('offer_state_id', array(
             'id' => $offer_id));
 
-        if (! $has_ended) {
+        if ($offer_state != STATE_INACTIVE) {
             throw new ForbiddenException();
         }
 

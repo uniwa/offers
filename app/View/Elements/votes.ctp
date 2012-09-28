@@ -20,13 +20,17 @@
                         $icon = '<i class="icon-chevron-up"></i>';
                     }
                 }
-                // sort url for votes
-                echo $this->Html->link('Η ψήφος μου '.$icon, array(
-                    'controller' => 'students',
-                    'action' => 'view',
-                    'order' => $order),
-                    array('escape' => false)
-                );
+                // sort url for votes - available only for users
+                if ( $this->Session->read('Auth.User.role') === ROLE_ADMIN ) {
+                    echo 'Η ψήφος μου';
+                } else {
+                    echo $this->Html->link('Η ψήφος μου '.$icon, array(
+                        'controller' => 'students',
+                        'action' => 'view',
+                        'order' => $order),
+                        array('escape' => false)
+                    );
+                }
                 ?>
                 </th>
             </tr>

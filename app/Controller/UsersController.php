@@ -28,17 +28,31 @@ class UsersController extends AppController {
                     $options['conditions'] = array(
                         'User.id' => $this->Auth->user('id')
                     );
-                    $options['fields'] = array('Company.is_enabled');
+                    $options['fields'] =
+                        array('Company.is_enabled', 'User.email_verified');
                     $options['recusive'] = 0;
 
-                    $enabled = $this->User->find('first', $options);
-                    $enabled = Set::extract($enabled, 'Company.is_enabled');
+                    $user = $this->User->find('first', $options);
+                    $enabled = $user['Company']['is_enabled'];
+                    $verified = $user['User']['email_verified'];
 
                     if (! $enabled) {
                         $this->Auth->logout();
                         $this->notify(
                             array(
                                 __("Ο λογαριασμός σας δεν έχει ενεργοποιηθεί"),
+                                'default',
+                                array(),
+                                "error"),
+                            null, 403);
+                        return;
+                    }
+
+                    if (! $verified) {
+                        $this->Auth->logout();
+                        $this->notify(
+                            array(
+                                __("Το email σας δεν έχει επιβεβαιωθεί"),
                                 'default',
                                 array(),
                                 "error"),

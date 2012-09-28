@@ -42,6 +42,7 @@ $config = array(
         'TWITTER_SCREEN_NAME' => 'TEIATHCoupons',
         'TWITTER_FULL_NAME' => 'TEIATH Coupons',
         'ESPA_TEXT' => "Με τη συγχρηματοδότηση της Ελλάδας και της Ευρωπαϊκής Ένωσης - Ευρωπαϊκό Ταμείο Περιφερειακής Ανάπτυξης",
+        'TOKEN_LENGTH' => 40,
     ),
     'Settings' => array(
         'offer_type' => array(

@@ -528,9 +528,9 @@ class CompaniesController extends AppController {
     }
 
     public function email_confirm($token = null, $email = null) {
-        $token_len = 40;
         $length = strlen($token);
-        if ($length === $token_len) {
+
+        if ($length === TOKEN_LENGTH) {
             $result = $this->User->email_confirm($token, $email);
             if ($result) {
                 $msg = __('Η διεύθυνση ηλεκτρονικής αλληλογραφίας επικυρώθηκε.');

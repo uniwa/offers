@@ -154,17 +154,19 @@ class User extends AppModel {
         $conditions = array('User.token' => $token);
         $id = $this->field('id', $conditions);
         $user_email = $this->field('email', $conditions);
+
         $result = false;
-        if ($user_email)
+        if ($user_email) {
             if ($user_email === $email) {
                 $email_verified = $this->field('email_verified', $conditions);
-                if (!$email_verified) {
+                if (! $email_verified) {
                     $this->id = $id;
                     $saved = $this->saveField('email_verified', true, false);
 
-                    $result = $id;
+                    $result = $saved;
                 }
             }
+        }
 
         return $result;
     }

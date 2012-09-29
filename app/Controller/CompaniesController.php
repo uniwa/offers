@@ -536,7 +536,7 @@ class CompaniesController extends AppController {
                 $msg = __('Η διεύθυνση ηλεκτρονικής αλληλογραφίας επικυρώθηκε.');
                 $flash_type = "success";
                 $http = 200;
-                $this->new_company_notification($result);
+                $this->new_company_notification($result['User']['id']);
             } else {
                 $msg = __('Δεν ήταν δυνατή η επικύρωση της διεύθυνσης ηλεκτρονικής αλληλογραφίας.');
                 $flash_type = "error";

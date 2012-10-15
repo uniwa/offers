@@ -14,6 +14,7 @@
     echo $this->Html->script('transition');
     echo $this->Html->script('bootstrap-alert');
     echo $this->Html->script('bootstrap-tab');
+    echo $this->Html->script('piwik');
 ?>
 </head>
 <body>

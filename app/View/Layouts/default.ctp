@@ -14,7 +14,6 @@
     echo $this->Html->script('transition');
     echo $this->Html->script('bootstrap-alert');
     echo $this->Html->script('bootstrap-tab');
-    echo $this->Html->script('piwik');
 ?>
 </head>
 <body>
@@ -224,6 +223,9 @@
         <p><?php echo ESPA_TEXT; ?></p>
         <?php echo $this->Html->image('/img/footer_logo.png',
                 array('class' => 'espa-logo', 'alt' => 'espa-logo')); ?>
+    </div>
+    <div>
+        <?php echo $this->element('piwik'); ?>
     </div>
     </footer>
 <!--will allow all scripts generated in layout elements to be output in one place-->

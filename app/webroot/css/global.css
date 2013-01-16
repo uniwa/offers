@@ -355,3 +355,7 @@ footer ul li {
 .stats-month,.stats-visits,.stats-visitors{
     width: 96px;
 }
+
+.offers-logo{
+    vertical-align: middle;
+}

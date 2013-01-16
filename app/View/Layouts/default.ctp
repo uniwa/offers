@@ -26,9 +26,11 @@
             <span class="icon-bar"></span>
           </a>
           <?php
-            echo $this->Html->link(
-                __('Coupons'), '/',
-                array( 'class'=>'brand'));
+            $offersLogo = $this->Html->image('/img/offers-icon.png',
+                array('class' => 'offers-logo', 'alt' => 'offers-logo'));
+            $linkTitle = $offersLogo." Offers";
+            echo $this->Html->link($linkTitle, '/',
+                array('class'=>'brand', 'escape' => false));
           ?>
           <div class="nav-collapse">
             <ul class="nav">

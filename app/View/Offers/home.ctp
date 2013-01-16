@@ -1,14 +1,6 @@
 <?php
 $html = '';
 
-// show sidebar in front pagee too
-$sidebar_params = array('offer_categories' => $offer_categories,
-                        'municipalities' => $municipalities,
-                        'type_stats' => $type_stats);
-$show_flag_link = false;
-//$html .= $this->element('sidebar', $sidebar_params);
-
-
 $html .= "<div class='span7'>";
 
 $html .= "<div id='home-text' class='well'>";

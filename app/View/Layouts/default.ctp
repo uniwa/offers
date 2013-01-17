@@ -220,6 +220,15 @@
         <li>
             <a href="http://umbra.edu.teiath.gr/coupons-docs/schema.html#xsd">XSD</a>
         </li>
+        <li>
+            <a href="http://www.apple.com/itunes/"><img src='img/ios.png' alt='iOS' /></a>
+        </li>
+        <li>
+            <a href="http://www.facebook.com"><img src='img/facebook.png' alt='Facebook' /></a>
+        </li>
+        <li>
+            <a href="http://twitter.com"><img src='img/twitter.png' alt='twitter' /></a>
+        </li>
     </ul>
     <div id='espa'>
         <p><?php echo ESPA_TEXT; ?></p>

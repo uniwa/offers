@@ -37,6 +37,16 @@
 
             <li>
                 <?php
+                    $teiathLogo = $this->Html->image('/img/teiath.png',
+                        array('alt' => 'ΤΕΙ Αθήνας'));
+                    $link_div = "<div class='nav-link'>{$teiathLogo}</div>";
+                    $link = $this->Html->link($link_div, "http://www.teiath.gr/",
+                        array('escape' => false));
+                    echo  "$link";
+                ?>
+            </li>
+            <li>
+                <?php
                     // show register link for guests
                     if (! $this->Session->check('Auth.User.id')) {
                         $title = __('Εγγραφή επιχείρησης');
@@ -46,7 +56,7 @@
                         $link = $this->Html->link($link_div, array(
                             'controller' => $controller, 'action' => $action),
                             array('escape' => false));
-                        echo  "<li>$link</li>";
+                        echo  "$link";
                     }
                 ?>
             </li>
@@ -59,7 +69,7 @@
                         $link = $this->Html->link($link_div, array(
                             'controller' => $controller, 'action' => $action),
                             array('escape' => false));
-                        echo  "<li>$link</li>";
+                        echo  "$link";
                 ?>
             </li>
             <li>
@@ -71,7 +81,7 @@
                         $link = $this->Html->link($link_div, array(
                             'controller' => $controller, 'action' => $action),
                             array('escape' => false));
-                        echo  "<li>$link</li>";
+                        echo  "$link";
                 ?>
             </li>
             <li>
@@ -85,7 +95,7 @@
                             $link = $this->Html->link($link_div, array(
                                 'controller' => $controller, 'action' => $action),
                                 array('escape' => false));
-                            echo  "<li>$link</li>";
+                            echo  "$link";
                         }
                     }
                 ?>

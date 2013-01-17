@@ -47,6 +47,21 @@
             </li>
             <li>
                 <?php
+                    // show offers link for guests
+                    if (! $this->Session->check('Auth.User.id')) {
+                        $title = __('Αναζήτηση προσφορών');
+                        $controller = 'offers';
+                        $action = 'index';
+                        $link_div = "<div class='nav-link'>{$title}</div>";
+                        $link = $this->Html->link($link_div, array(
+                            'controller' => $controller, 'action' => $action),
+                            array('escape' => false));
+                        echo  "$link";
+                    }
+                ?>
+            </li>
+            <li>
+                <?php
                     // show register link for guests
                     if (! $this->Session->check('Auth.User.id')) {
                         $title = __('Εγγραφή επιχείρησης');

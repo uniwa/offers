@@ -58,7 +58,7 @@ class OffersController extends AppController {
     public function is_authorized($user) {
         $role = $this->Auth->user('role');
         $allow = array('index', 'category', 'view', 'happyhour', 'coupons',
-            'limited', 'tag', 'search', 'statistics', 'home');
+            'limited', 'tag', 'search', 'statistics', 'home', 'offertypes');
         $owner = array('edit', 'delete', 'imageedit', 'activate', 'terminate',
             'copy');
         $companies = array('add_happyhour', 'add_coupons', 'add_limited',
@@ -1340,6 +1340,9 @@ class OffersController extends AppController {
                     'controller' => 'offers', 'action' => 'imageedit', $id));
             }
         }
+    }
+    
+    public function offertypes() {
     }
 
     private function upload_error($id, $error) {

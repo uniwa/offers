@@ -221,13 +221,28 @@
             <a href="http://umbra.edu.teiath.gr/coupons-docs/schema.html#xsd">XSD</a>
         </li>
         <li>
-            <a href="http://www.apple.com/itunes/"><img src='img/ios.png' alt='iOS' /></a>
+            <?php
+                $ios_link = $this->Html->image('/img/ios.png',
+                    array('alt' => 'iOS'));
+                echo $this->Html->link($ios_link, "http://www.apple.com/itunes/",
+                    array('escape' => false));
+            ?>
         </li>
         <li>
-            <a href="http://www.facebook.com"><img src='img/facebook.png' alt='Facebook' /></a>
+            <?php
+                $fb_link = $this->Html->image('/img/facebook.png',
+                    array('alt' => 'Facebook'));
+                echo $this->Html->link($fb_link, "http://www.facebook.com",
+                    array('escape' => false));
+            ?>
         </li>
         <li>
-            <a href="http://twitter.com"><img src='img/twitter.png' alt='twitter' /></a>
+            <?php
+                $twitter_link = $this->Html->image('/img/twitter.png',
+                    array('alt' => 'twitter'));
+                echo $this->Html->link($twitter_link, "http://twitter.com",
+                    array('escape' => false));
+            ?>
         </li>
     </ul>
     <div id='espa'>

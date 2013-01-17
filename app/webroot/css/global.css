@@ -363,3 +363,22 @@ footer ul li {
 img{
     vertical-align: middle;
 }
+
+#home-text{
+    float: left;
+    width: 560px;
+    margin: 20px 30px 20px 30px;
+    font-size: 14px;
+}
+
+#login-form{
+    float: left;
+    width: 220px;
+    padding: 10px;
+    margin: 10px 30px 10px 10px;
+    border: 2px solid #8bf;
+}
+
+.clear-both{
+    clear: both;
+}

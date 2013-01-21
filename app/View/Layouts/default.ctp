@@ -265,7 +265,7 @@
             <?php
                 $twitter_link = $this->Html->image('/img/twitter.png',
                     array('alt' => 'twitter'));
-                echo $this->Html->link($twitter_link, "http://twitter.com",
+                echo $this->Html->link($twitter_link, "https://twitter.com/TEIATHCoupons",
                     array('escape' => false));
             ?>
         </li>

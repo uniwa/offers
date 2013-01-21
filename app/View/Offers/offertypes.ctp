@@ -1,6 +1,6 @@
 <?php
     $html = "<div id='home-text' class='well'>";
-    $html .= "<h3>Επεξηγησεις για τα ειδη προσφορων.</h3>";
+    $html .= "<h3>είδη προσφορών.</h3>";
     $html .= "<span class='label label-info'>Happy Hour</span>";
     $html .= "<p>Οι προσφορές τύπου Happy Hour επαναλαμβάνονται κάθε εβδομάδα σε συγκεκριμένες μέρες και ώρες</p>";
     $html .= "<span class='label label-warning'>Coupons</span>";

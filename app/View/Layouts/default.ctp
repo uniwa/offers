@@ -240,10 +240,12 @@
         );?>
         </li>
         <li>
-            <a href="http://umbra.edu.teiath.gr/coupons-docs/api.html">API</a>
+            <?php $apidoc = APP_URL . "/apidoc/index.html" ?>
+            <a href="<?php echo $apidoc ?>">API</a>
         </li>
         <li>
-            <a href="http://umbra.edu.teiath.gr/coupons-docs/schema.html#xsd">XSD</a>
+            <?php $schema = APP_URL . "/apidoc/index.html#xsd" ?>
+            <a href="<?php echo $schema ?>">XSD</a>
         </li>
         <li>
             <?php

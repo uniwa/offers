@@ -364,6 +364,10 @@ img{
     vertical-align: middle;
 }
 
+#home-cont{
+    width: 960px;
+}
+
 #home-text{
     float: left;
     width: 560px;

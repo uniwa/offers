@@ -80,6 +80,11 @@ class LdapUtil {
         $result = ldap_search( $this->ldap, $this->baseDN, $filter, $attributes );
         $entries = ldap_get_entries( $this->ldap, $result );
         $entries[0]['username'][0] = $username;
+
+        if (!isset($entries[0]['mail'][0]) || empty($entries[0]['mail'][0])) {
+            return false;
+        }
+
         return $this->formatInfo( $entries );
     }
 

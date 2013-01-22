@@ -13,6 +13,11 @@ class LdapAuthenticate extends BaseAuthenticate {
 
         if ($ldap->auth($username, $password)) {
             $user_info = $ldap->getInfo($username);
+            /* user binded to ldap but not authorized - refuse authentication */
+            if ($user_info == false) {
+                return false;
+            }
+
             $user = $this->_findUser($username,$password);
             if (empty($user)) {
                 return $this->saveLdapInfo($user_info);

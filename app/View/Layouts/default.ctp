@@ -273,9 +273,21 @@
         </li>
     </ul>
     <div id='espa'>
-        <p><?php echo ESPA_TEXT; ?></p>
-        <?php echo $this->Html->image('/img/footer_logo.png',
-                array('class' => 'espa-logo', 'alt' => 'espa-logo')); ?>
+        <?php
+            $euflag = $this->Html->image('/img/euflag.png',
+                array('class' => 'espa-logos', 'alt' => 'EU flag'));
+            echo $this->Html->link($euflag,
+                "http://europa.eu/", array('escape' => false));
+            $digigrlogo = $this->Html->image('/img/digigrlogo.png',
+                array('class' => 'espa-logos', 'alt' => 'Ψηφιακή Ελλάδα'));
+            echo $this->Html->link($digigrlogo,
+                "http://www.digitalplan.gov.gr/portal/", array('escape' => false));
+            $espalogo = $this->Html->image('/img/espalogo.png',
+                array('class' => 'espa-logos', 'alt' => 'Ε.Σ.Π.Α.'));
+            echo $this->Html->link($espalogo,
+                "http://www.espa.gr/el/Pages/Default.aspx", array('escape' => false));
+            echo "<p>".ESPA_TEXT."</p>";
+        ?>
     </div>
     <div>
         <?php echo $this->element('piwik'); ?>

@@ -92,11 +92,10 @@ footer ul li {
     text-align: center;
 }
 
-.espa-logo{
-    border: 1px solid #bbb;
+.espa-logos{
+    display: inline;
     margin: 24px auto;
     padding: 1px;
-    display:block;
 }
 
 .profile-votes ul {

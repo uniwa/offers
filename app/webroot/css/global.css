@@ -219,6 +219,7 @@ footer ul li {
     background: rgba(200, 200, 200, 0.1);
     margin: 0 0 12px 0;
     padding: 6px 6px 6px 12px;
+    width: 860px;
     height: 60px;
     white-space: nowrap;
 }

@@ -137,4 +137,8 @@ if (empty($offers)) {
         .' για όλες τις προσφορές.</div>';
 }
 $html .= "</div>";
+
+// Twitter script
+$html .= $this->Html->script('twitter');
+
 echo $html;

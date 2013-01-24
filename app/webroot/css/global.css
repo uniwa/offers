@@ -86,7 +86,7 @@ footer ul li {
     display: block;
     background: url('../img/noise_lines.png') repeat scroll 0% 0% transparent;
     margin: 0 auto;
-    padding: 12px 0 64px 0;
+    padding: 0 0 64px 0;
     width: 100%;
     color: #333;
     text-align: center;
@@ -94,7 +94,7 @@ footer ul li {
 
 .espa-logos{
     display: inline;
-    margin: 24px auto;
+    margin: 12px auto;
     padding: 1px;
 }
 

@@ -299,11 +299,6 @@ footer ul li {
     color: #07d;
 }
 
-.nav-link {
-    color: #fff;
-    font-weight: bold;
-}
-
 .navbar-elements {
     list-style-type: none;
 }
@@ -317,7 +312,8 @@ footer ul li {
     display: inline;
     padding: 1em;
     list-style-type: none;
-
+    color: #fff;
+    font-weight: bold;
 }
 
 .navbar-elements li a {

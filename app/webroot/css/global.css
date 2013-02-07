@@ -309,20 +309,26 @@ footer ul li {
 }
 
 .nav-link {
-    display: inline;
+    display: inline-block;
     padding: 1em;
     list-style-type: none;
     color: #fff;
     font-weight: bold;
+    font-size: 14px;
+}
+
+.nav-link img {
+    margin: -16px 0 0 0;
 }
 
 .navbar-elements li a {
     text-decoration: none;
 }
 
-.nav-link:hover {
+.nav li:hover {
     background: rgb(195, 225, 255);
     background: rgba(195, 225, 255, 0.3);
+    text-decoration: none;
 }
 
 /* offer view */

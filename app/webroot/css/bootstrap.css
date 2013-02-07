@@ -199,6 +199,7 @@ a:hover {
   margin-left: 900px;
 }
 .row-fluid {
+  margin-top: 24px;
   width: 100%;
   *zoom: 1;
 }
@@ -2578,7 +2579,7 @@ button.btn.small, input[type="submit"].btn.small {
 }
 .navbar-inner {
   background: url('../img/fake_brick.png') repeat scroll 0% 0% transparent;
-  height: 40px;
+  height: 64px;
   padding-left: 20px;
   padding-right: 20px;
   background-color: #2c2c2c;
@@ -2765,12 +2766,15 @@ button.btn.small, input[type="submit"].btn.small {
 .navbar .nav {
   position: relative;
   left: 0;
-  display: block;
+  display: inline-block;
   float: left;
   margin: 0 10px 0 0;
 }
 .navbar .nav.pull-right {
+  display: inline-block;
   float: right;
+  margin-top: 14px;
+  font-size: 14px;
 }
 .navbar .nav > li {
   display: block;

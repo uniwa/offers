@@ -37,7 +37,7 @@
 
             <li>
                 <?php
-                    $teiathLogo = $this->Html->image('/img/teiath.png',
+                    $teiathLogo = $this->Html->image('/img/teiath-icon.png',
                         array('alt' => 'ΤΕΙ Αθήνας'));
                     $link_div = "<div class='nav-link'>{$teiathLogo}</div>";
                     $link = $this->Html->link($link_div, "http://www.teiath.gr/",
@@ -49,7 +49,7 @@
                 <?php
                     // show offers link for guests
                     if (! $this->Session->check('Auth.User.id')) {
-                        $title = __('Αναζήτηση προσφορών');
+                        $title = __('Αναζήτηση');
                         $controller = 'offers';
                         $action = 'index';
                         $link_div = "<div class='nav-link'>{$title}</div>";
@@ -64,7 +64,7 @@
                 <?php
                     // show register link for guests
                     if (! $this->Session->check('Auth.User.id')) {
-                        $title = __('Εγγραφή επιχείρησης');
+                        $title = __('Εγγραφή');
                         $controller = 'users';
                         $action = 'register';
                         $link_div = "<div class='nav-link'>{$title}</div>";

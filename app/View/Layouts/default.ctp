@@ -250,7 +250,7 @@
         <li>
             <?php
                 $ios_link = $this->Html->image('/img/ios.png',
-                    array('alt' => 'iOS'));
+                    array('alt' => 'iOS', 'title' => 'iOS app'));
                 echo $this->Html->link($ios_link, "http://www.apple.com/itunes/",
                     array('escape' => false));
             ?>
@@ -258,7 +258,7 @@
         <li>
             <?php
                 $fb_link = $this->Html->image('/img/facebook.png',
-                    array('alt' => 'Facebook'));
+                    array('alt' => 'Facebook', 'title' => 'Facebook'));
                 echo $this->Html->link($fb_link, "http://www.facebook.com",
                     array('escape' => false));
             ?>
@@ -266,7 +266,7 @@
         <li>
             <?php
                 $twitter_link = $this->Html->image('/img/twitter.png',
-                    array('alt' => 'twitter'));
+                    array('alt' => 'twitter', 'title' => 'twitter'));
                 echo $this->Html->link($twitter_link,
                     "https://twitter.com/".TWITTER_SCREEN_NAME,
                     array('escape' => false));

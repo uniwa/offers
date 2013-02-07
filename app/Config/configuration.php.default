@@ -3,7 +3,7 @@ $config = array(
     'Constants' => array(
         // NO trailing slash here
         'APP_URL' => 'http://localhost',
-        'APP_NAME' => 'Coupons',
+        'APP_NAME' => 'Offers',
         'ISSUE_URL' => 'http://redmine.edu.teiath.gr/issues.xml',
         'ISSUE_TOKEN' => '7806cada9458077b3251b341ff3ffc072987e5bc:password',
         'ISSUE_PROJECT_ID' => '0',
@@ -39,8 +39,10 @@ $config = array(
         'RADIUS_L' => 10,
         'START_YEAR' => 1970,
         'MONTHS_BACK_STATS' => 6,
-        'TWITTER_SCREEN_NAME' => 'TEIATHCoupons',
-        'TWITTER_FULL_NAME' => 'TEIATH Coupons',
+        'TWITTER_SCREEN_NAME' => 'TEIATHOffers',
+        'TWITTER_FULL_NAME' => 'TEIATH Offers',
+        'CONTACT_EMAIL' => 'offers@teiath.gr',
+        'CONTACT_SUBJECT' => 'Offers',
         'ESPA_TEXT' => "Με τη συγχρηματοδότηση της Ελλάδας και της Ευρωπαϊκής Ένωσης - Ευρωπαϊκό Ταμείο Περιφερειακής Ανάπτυξης",
         'TOKEN_LENGTH' => 40,
     ),

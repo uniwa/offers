@@ -161,17 +161,12 @@ if ($role === ROLE_STUDENT) {
 }
 
 // Twitter settings
-// TODO: move to configuration?
 // TODO: create route 'http://coupons.teiath.gr/5' -> '[...]/offers/view/5'
 //       and use it as url to tweet
-$screenname = "TEIATHCoupons";
-$fullname = "TEIATH Coupons";
-$baseurl = "http://coupons.edu.teiath.gr";
-$url = "{$baseurl}/offers/view/{$offer['Offer']['id']}";
-//$url = $baseurl.$this->Html->url(null);
+$url = APP_URL."/offers/view/{$offer['Offer']['id']}";
 $text = "Προσφορά: {$offer['Offer']['title']},";
 $count = "none";
-$related = $screenname.":".$fullname;
+$related = TWITTER_SCREEN_NAME.":".TWITTER_FULL_NAME;
 
 $html .= "<p><a href='https://twitter.com/share' data-count='{$count}' ";
 $html .= "class='twitter-share-button' data-lang='el' ";

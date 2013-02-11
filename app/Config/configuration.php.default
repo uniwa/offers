@@ -41,6 +41,8 @@ $config = array(
         'MONTHS_BACK_STATS' => 6,
         'TWITTER_SCREEN_NAME' => 'TEIATHOffers',
         'TWITTER_FULL_NAME' => 'TEIATH Offers',
+        'IOS_APP_URL' => 'https://itunes.apple.com/gr/app/prosphores/id594776690?mt=8',
+        'FACEBOOK_PAGE_URL' => 'http://www.facebook.com',
         'CONTACT_EMAIL' => 'offers@teiath.gr',
         'CONTACT_SUBJECT' => 'Offers',
         'ESPA_TEXT' => "Με τη συγχρηματοδότηση της Ελλάδας και της Ευρωπαϊκής Ένωσης - Ευρωπαϊκό Ταμείο Περιφερειακής Ανάπτυξης",

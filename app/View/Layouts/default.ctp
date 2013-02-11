@@ -251,7 +251,7 @@
             <?php
                 $ios_link = $this->Html->image('/img/ios.png',
                     array('alt' => 'iOS', 'title' => 'iOS app'));
-                echo $this->Html->link($ios_link, "http://www.apple.com/itunes/",
+                echo $this->Html->link($ios_link, IOS_APP_URL,
                     array('escape' => false));
             ?>
         </li>
@@ -259,7 +259,7 @@
             <?php
                 $fb_link = $this->Html->image('/img/facebook.png',
                     array('alt' => 'Facebook', 'title' => 'Facebook'));
-                echo $this->Html->link($fb_link, "http://www.facebook.com",
+                echo $this->Html->link($fb_link, FACEBOOK_PAGE_URL,
                     array('escape' => false));
             ?>
         </li>

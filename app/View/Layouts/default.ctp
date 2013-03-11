@@ -247,10 +247,22 @@
             <?php $schema = APP_URL . "/apidoc/index.html#xsd" ?>
             <a href="<?php echo $schema ?>">XSD</a>
         </li>
+        <?php
+            // only show user manual link for students and company
+            if (false) { // remove line to show user manual link
+            if (isset($role) && (!is_null($role)) && ($role !== ROLE_ADMIN)) {
+                if ($role === ROLE_STUDENT)
+                    $manual_path = APP_URL.MANUAL_STUDENT;
+                if ($role === ROLE_COMPANY)
+                    $manual_path = APP_URL.MANUAL_COMPANY;
+        ?>
         <li>
-            <?php $schema = APP_URL.MANUAL_PATH ?>
-            <a href="<?php echo $schema ?>">Εγχειρίδιο χρήσης</a>
+            <a href="<?php echo $manual_path ?>">Εγχειρίδιο χρήσης</a>
         </li>
+        <?php
+            }
+            } // remove line to show user manual link
+        ?>
         <li>
             <?php
                 $ios_link = $this->Html->image('/img/ios.png',

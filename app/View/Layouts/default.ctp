@@ -248,6 +248,10 @@
             <a href="<?php echo $schema ?>">XSD</a>
         </li>
         <li>
+            <?php $schema = APP_URL.MANUAL_PATH ?>
+            <a href="<?php echo $schema ?>">Εγχειρίδιο χρήσης</a>
+        </li>
+        <li>
             <?php
                 $ios_link = $this->Html->image('/img/ios.png',
                     array('alt' => 'iOS', 'title' => 'iOS app'));

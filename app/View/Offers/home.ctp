@@ -16,23 +16,29 @@ $offer_link_html = $this->Html->link("Happy Hour, Coupons, Limited",
 $html .= "<p>Τα είδη των φοιτητικών προσφορών είναι {$offer_link_html}.</p>";
 $html .= "<p>Η πρόσβαση στην εφαρμογή μπορεί να γίνεται και μέσω εφαρμογής κινητού τηλεφώνου (iPhone)</p>";
 $html .= "</div>";
-$html .= "<div id='login-form'>";
-$html .= $this->Form->create('User', array('action' => 'login', 'id' => ''));
-$html .= "<div><p>Αν είστε φοιτητής εισάγετε τα στοιχεία πρόσβασης των δικτυακών υπηρεσιών του ΤΕΙ Αθήνας (e-mail, wifi, εύδοξος):</p></div>";
-$html .= "<div><div>";
-$html .= $this->Form->input('username', array('label' => 'Όνομα χρήστη',
-    'type' => 'text', 'autofocus' => 'autofocus'));
-$html .= "</div><div>";
-$html .= $this->Form->input('password', array('label' => 'Συνθηματικό'));
-$html .= "</div><div>";
-$html .= $this->Form->submit('Είσοδος', array('name' => 'login',
-    'class' => 'button'));
-$html .= "</div></div><div><p></p><p>Αν είστε επιχείρηση θα πρέπει να έχετε ήδη εγγραφεί στην υπηρεσία μέσω της επιλογής ";
-$html .= $this->Html->link('εγγραφή επιχείρησης',
-    array('controller' => 'users', 'action' => 'register'));
-$html .= "</p></div>";
-$html .= $this->Form->end();
-$html .= "</div></div><div class='clear-both'></div>";
+
+// do not show login form if user is logged in
+if (is_null($role)) {
+    $html .= "<div id='login-form'>";
+    $html .= $this->Form->create('User', array('action' => 'login', 'id' => ''));
+    $html .= "<div><p>Αν είστε φοιτητής εισάγετε τα στοιχεία πρόσβασης των δικτυακών υπηρεσιών του ΤΕΙ Αθήνας (e-mail, wifi, εύδοξος):</p></div>";
+    $html .= "<div><div>";
+    $html .= $this->Form->input('username', array('label' => 'Όνομα χρήστη',
+        'type' => 'text', 'autofocus' => 'autofocus'));
+    $html .= "</div><div>";
+    $html .= $this->Form->input('password', array('label' => 'Συνθηματικό'));
+    $html .= "</div><div>";
+    $html .= $this->Form->submit('Είσοδος', array('name' => 'login',
+        'class' => 'button'));
+    $html .= "</div></div><div><p></p><p>Αν είστε επιχείρηση θα πρέπει να έχετε ήδη εγγραφεί στην υπηρεσία μέσω της επιλογής ";
+    $html .= $this->Html->link('εγγραφή επιχείρησης',
+        array('controller' => 'users', 'action' => 'register'));
+    $html .= "</p></div>";
+    $html .= $this->Form->end();
+    $html .= "</div>";
+}
+
+$html .= "</div><div class='clear-both'></div>";
 
 $html .= "<h3>Πρόσφατες προσφορές&nbsp;<i title='Οι τελευταίες 5 αναρτημένες προσφορές' 
     class='icon-info-sign'></i></h3><br />";

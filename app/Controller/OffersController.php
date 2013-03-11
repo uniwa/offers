@@ -124,6 +124,9 @@ class OffersController extends AppController {
         $page_title = __('Αρχική');
         $this->set('title_for_layout', $page_title);
 
+        $role = $this->Auth->User('role');
+        $this->set('role', $role);
+
         $params = array('valid');
 
         $this->Offer->Behaviors->attach('Containable');

@@ -39,6 +39,7 @@ $config = array(
         'RADIUS_L' => 10,
         'START_YEAR' => 1970,
         'MONTHS_BACK_STATS' => 6,
+        'MANUAL_PATH' => '/apidoc/offers_manual.pdf',
         'TWITTER_SCREEN_NAME' => 'TEIATHOffers',
         'TWITTER_FULL_NAME' => 'TEIATH Offers',
         'IOS_APP_URL' => 'https://itunes.apple.com/gr/app/prosphores/id594776690?mt=8',

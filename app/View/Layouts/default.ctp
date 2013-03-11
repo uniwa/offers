@@ -277,7 +277,7 @@
                 $contact_link = $this->Html->image('/img/email_icon.png',
                     array('alt' => 'επικοινωνία', 'title' => 'επικοινωνία'));
                 echo $this->Html->link($contact_link,
-                    "mailto://".CONTACT_EMAIL."?Subject=".CONTACT_SUBJECT,
+                    "mailto:".CONTACT_EMAIL."?Subject=".CONTACT_SUBJECT,
                     array('escape' => false));
             ?>
         </li>

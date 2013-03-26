@@ -294,14 +294,14 @@ databases. The default database created is named <tt class="docutils literal"><s
 </pre></div>
 </div>
 <p>Sample XML request:</p>
-<div class="highlight-python"><pre>$ curl -X POST http://offers.teiath.gr/api/users/login \
+<div class="highlight-python"><pre>$ curl -X POST https://offers.teiath.gr/api/users/login \
     -H &quot;Content-Type: application/xml&quot; \
     -H &quot;Accept: application/xml&quot; \
     -d &quot;&lt;User&gt;&lt;username&gt;foo&lt;/username&gt;&lt;password&gt;bar&lt;/password&gt;&lt;/User&gt;&quot; \
     -c /tmp/cookie</pre>
 </div>
 <p>Sample JSON request:</p>
-<div class="highlight-python"><pre>$ curl -X POST http://offers.teiath.gr/api/users/login \
+<div class="highlight-python"><pre>$ curl -X POST https://offers.teiath.gr/api/users/login \
     -H &quot;Content-Type: application/json&quot; \
     -H &quot;Accept: application/json&quot; \
     -d &#x27;{&quot;User&quot;: {&quot;username&quot;: &quot;foo&quot;, &quot;password&quot;: &quot;bar&quot;}}&#x27; \
@@ -503,7 +503,7 @@ databases. The default database created is named <tt class="docutils literal"><s
 <p class="last">Από προεπιλογή επιστρέφεται μόνο η πρώτη σελίδα αποτελεσμάτων.</p>
 </div>
 <p>Sample JSON request with options:</p>
-<div class="highlight-python"><pre>$ curl -X GET http://offers.teiath.gr/api/offers/index/orderby:rank/page:2 -H &quot;Accept: application/json&quot;</pre>
+<div class="highlight-python"><pre>$ curl -X GET https://offers.teiath.gr/api/offers/index/orderby:rank/page:2 -H &quot;Accept: application/json&quot;</pre>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -828,7 +828,7 @@ databases. The default database created is named <tt class="docutils literal"><s
 </tbody>
 </table>
 <p>Sample JSON request</p>
-<div class="highlight-python"><pre>$ curl -X GET http://offers.teiath.gr/api/coupon/1 \
+<div class="highlight-python"><pre>$ curl -X GET https://offers.teiath.gr/api/coupon/1 \
     -H &quot;Accept: application/json&quot; \
     -b /tmp/cookie</pre>
 </div>
@@ -989,7 +989,7 @@ databases. The default database created is named <tt class="docutils literal"><s
 </tbody>
 </table>
 <p>Sample JSON request</p>
-<div class="highlight-python"><pre>$ curl -s -X GET http://offers.teiath.gr/api/coupons \
+<div class="highlight-python"><pre>$ curl -s -X GET https://offers.teiath.gr/api/coupons \
     -H &quot;Accept: application/json&quot; \
     -b /tmp/cookie</pre>
 </div>
@@ -1071,7 +1071,7 @@ databases. The default database created is named <tt class="docutils literal"><s
 }</pre>
 </div>
 <p>Sample XML request</p>
-<div class="highlight-python"><pre>$ curl -s -X GET http://offers.teiath.gr/api/coupons \
+<div class="highlight-python"><pre>$ curl -s -X GET https://offers.teiath.gr/api/coupons \
     -H &quot;Accept: application/xml&quot; \
     -b /tmp/cookie</pre>
 </div>
@@ -1285,7 +1285,7 @@ databases. The default database created is named <tt class="docutils literal"><s
 <p>Αποδεσμεύει το κουπόνι. Ο χρήστης παύει να είναι ο κάτοχος του κουπονιού και
 η ισχύς του κουπονιού ακυρώνεται. Απαιτείται αυθεντικοποίηση.</p>
 <p>Sample JSON request</p>
-<div class="highlight-python"><pre>$ curl -X GET http://offers.teiath.gr/api/coupons/reinsert/10
+<div class="highlight-python"><pre>$ curl -X GET https://offers.teiath.gr/api/coupons/reinsert/10
     -H &quot;Accept: application/json&quot; \
     -b /tmp/cookie</pre>
 </div>
@@ -1384,7 +1384,7 @@ databases. The default database created is named <tt class="docutils literal"><s
 </tbody>
 </table>
 <p>Sample JSON request</p>
-<div class="highlight-python"><pre>$ curl -X GET http://offers.teiath.gr/api/users/radius/5 \
+<div class="highlight-python"><pre>$ curl -X GET https://offers.teiath.gr/api/users/radius/5 \
     -H &quot;Accept: application/json&quot; \
     -b /tmp/cookie</pre>
 </div>
@@ -1396,7 +1396,7 @@ databases. The default database created is named <tt class="docutils literal"><s
 </pre></div>
 </div>
 <p>Sample XML request</p>
-<div class="highlight-python"><pre>$ curl -X GET http://offers.teiath.gr/api/users/radius/5 \
+<div class="highlight-python"><pre>$ curl -X GET https://offers.teiath.gr/api/users/radius/5 \
     -H &quot;Accept: application/xml&quot; \
     -b /tmp/cookie</pre>
 </div>
@@ -1512,7 +1512,7 @@ databases. The default database created is named <tt class="docutils literal"><s
 <p class="last">Απαιτείται αυθεντικοποίηση.</p>
 </div>
 <p>Sample JSON request:</p>
-<div class="highlight-python"><pre>$ curl -s -X GET &#x27;http://offers.teiath.gr/api/votes/&#x27; \
+<div class="highlight-python"><pre>$ curl -s -X GET &#x27;https://offers.teiath.gr/api/votes/&#x27; \
     -H &quot;Accept: application/json&quot; -b /tmp/cookie</pre>
 </div>
 <p>Sample JSON response:</p>
@@ -1548,7 +1548,7 @@ databases. The default database created is named <tt class="docutils literal"><s
 </pre></div>
 </div>
 <p>Sample XML request:</p>
-<div class="highlight-python"><pre>$ curl -s -X GET &#x27;http://offers.teiath.gr/api/votes/&#x27; \
+<div class="highlight-python"><pre>$ curl -s -X GET &#x27;https://offers.teiath.gr/api/votes/&#x27; \
     -H &quot;Accept: application/xml&quot; -b /tmp/cookie</pre>
 </div>
 <p>Sample XML response:</p>
@@ -1605,7 +1605,7 @@ databases. The default database created is named <tt class="docutils literal"><s
 </tbody>
 </table>
 <p>Sample JSON request:</p>
-<div class="highlight-python"><pre>curl -s -X GET http://offers.teiath.gr/api/offers/statistics \
+<div class="highlight-python"><pre>curl -s -X GET https://offers.teiath.gr/api/offers/statistics \
     -H &quot;Accept: application/json&quot;</pre>
 </div>
 <p>Sample JSON response:</p>

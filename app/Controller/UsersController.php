@@ -146,7 +146,14 @@ class UsersController extends AppController {
             $token = $this->Token->generate($email);
             $this->request->data['User']['token'] = $token;
 
-            if ($this->User->saveAssociated($this->request->data))
+            // Disable validation of company empty fields before saving
+            unset($this->User->Company->validate['fax']);
+            unset($this->User->Company->validate['service_type']);
+            unset($this->User->Company->validate['address']);
+            unset($this->User->Company->validate['postalcode']);
+            
+            $save_result = $this->User->saveAssociated($this->request->data);
+            if ($save_result)
                 $this->send_email_confirmation($token, $email);
             else
                 $this->Session->setFlash(__('Η εγγραφή δεν ολοκληρώθηκε'),

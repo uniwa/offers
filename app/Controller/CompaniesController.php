@@ -412,7 +412,9 @@ class CompaniesController extends AppController {
                 ?"Η επιχείρηση '{$company_name}' ενεργοποιήθηκε."
                 :"Η επιχείρηση '{$company_name}' απενεργοποιήθηκε.";
             $this->Session->setFlash($success_message, 'default', array(), "success");
-            $this->company_enabled_notification ($company, $email);
+            if ($enable) {
+                $this->company_enabled_notification ($company, $email);
+            }
         }
 
         $this->redirect($referer);

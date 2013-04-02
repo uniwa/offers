@@ -425,9 +425,8 @@ class CompaniesController extends AppController {
         }
 
         $subject = __("Ειδοποίηση ενεργοποίησης λογαριασμού");
-        $url = APP_URL."/companies/view/";
+        $url = APP_URL;
         $name = $company['Company']['name'];
-        $email = $company['Company']['email'];
 
         $cake_email = new CakeEmail('default');
         $cake_email = $cake_email

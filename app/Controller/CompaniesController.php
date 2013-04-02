@@ -386,10 +386,11 @@ class CompaniesController extends AppController {
         if ($id == null) throw new BadRequestException();
 
         $options['conditions'] = array('Company.id' => $id);
-        $options['recursive'] = -1;
+        $options['recursive'] = 0;
         $company = $this->Company->find('first', $options);
         if (empty($company))
             throw new NotFoundException('Η συγκεκριμένη επιχείρηση δε βρέθηκε.');
+        $email = $company['User']['email'];
 
         $data = array('id' => $id, 'is_enabled' => $enable);
 
@@ -411,9 +412,36 @@ class CompaniesController extends AppController {
                 ?"Η επιχείρηση '{$company_name}' ενεργοποιήθηκε."
                 :"Η επιχείρηση '{$company_name}' απενεργοποιήθηκε.";
             $this->Session->setFlash($success_message, 'default', array(), "success");
+            $this->company_enabled_notification ($company, $email);
         }
 
         $this->redirect($referer);
+    }
+
+    // Send email notification to company when they have been enabled
+    private function company_enabled_notification ($company = null, $email = null) {
+        if (is_null($company) || is_null($email)) {
+            throw new BadRequestException();
+        }
+
+        $subject = __("Ειδοποίηση ενεργοποίησης λογαριασμού");
+        $url = APP_URL."/companies/view/";
+        $name = $company['Company']['name'];
+        $email = $company['Company']['email'];
+
+        $cake_email = new CakeEmail('default');
+        $cake_email = $cake_email
+            ->to($email)
+            ->subject($subject)
+            ->template('enabled_notify', 'default')
+            ->emailFormat('both')
+            ->viewVars(array('url' => $url,'name' => $name));
+        try {
+            $cake_email->send();
+        } catch (Exception $e) {
+            return false;
+        }
+        return true;
     }
 
     // Send email notification to company when they have been banned

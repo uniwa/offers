@@ -1,7 +1,7 @@
 Documentation
 -------------
 
-API documentation and installation instructions can be found [here][1].
+API documentation and installation instructions can be found in [read the docs][1].
 Documentation source is generated using sphinx and is hosted on [github][2].
 
 Submodules
@@ -27,6 +27,6 @@ License
 
 See `LICENSE`.
 
-[1]: https://offers.teiath.gr/apidoc/
+[1]: https://offers.readthedocs.org/en/latest/
 [2]: https://github.com/teiath/offers-docs
 

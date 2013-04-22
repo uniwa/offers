@@ -240,12 +240,10 @@
         );?>
         </li>
         <li>
-            <?php $apidoc = APP_URL . "/apidoc/index.html" ?>
-            <a href="<?php echo $apidoc ?>">API</a>
+            <a href="https://offers.readthedocs.org/en/latest/api.html">API</a>
         </li>
         <li>
-            <?php $schema = APP_URL . "/apidoc/index.html#xsd" ?>
-            <a href="<?php echo $schema ?>">XSD</a>
+            <a href="https://offers.readthedocs.org/en/latest/schema.html">XSD</a>
         </li>
         <?php
             // only show user manual link for students and company

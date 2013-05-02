@@ -174,7 +174,7 @@ if (isset($comp['fax']))
 if (isset($comp['service_type']))
     echo '<span class="bold">Είδος υπηρεσιών : </span>'.$comp['service_type'].'<br/>';
 
-if (isset($comp['afm']))
+if (isset($comp['afm']) && ($is_user_the_owner || $is_user_admin))
     echo '<span class="bold">ΑΦΜ :</span> '.$comp['afm'].'<br/>';
 
 if (! empty($company['WorkHour'])) {

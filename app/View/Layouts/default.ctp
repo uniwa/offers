@@ -17,7 +17,7 @@
 ?>
 </head>
 <body>
-    <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-static-top">
       <div class="navbar-inner">
         <div class="container-fluid">
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -32,18 +32,17 @@
             echo $this->Html->link($linkTitle, '/',
                 array('class'=>'brand', 'escape' => false));
           ?>
-          <div class="nav-collapse">
+          <div>
             <ul class="nav">
-
             <li>
-                <?php
-                    $teiathLogo = $this->Html->image('/img/teiath-icon.png',
-                        array('alt' => 'ΤΕΙ Αθήνας'));
-                    $link_div = "<div class='nav-link'>{$teiathLogo}</div>";
-                    $link = $this->Html->link($link_div, "http://www.teiath.gr/",
-                        array('escape' => false));
-                    echo  "$link";
-                ?>
+            <?php
+                $teiathLogo = $this->Html->image('/img/teiath-icon.png',
+                    array('alt' => 'ΤΕΙ Αθήνας'));
+                $link_div = "<div>{$teiathLogo}</div>";
+                $link = $this->Html->link($link_div, "http://www.teiath.gr/",
+                    array('escape' => false));
+                echo  "$link";
+            ?>
             </li>
             <li>
                 <?php
@@ -125,7 +124,7 @@
                     $username = $this->Session->read( 'Auth.User.username' );
                     $role = $this->Session->read( 'Auth.User.role' );
 
-                    $html = "<ul class='navbar-text pull-right navbar-elements'>";
+                    $html = "<ul class='nav pull-right'>";
                     if ($role !== ROLE_ADMIN) {
                         $title = __('Το προφίλ μου');
                         $action = 'view';
@@ -182,7 +181,7 @@
             ?>
                    <!--TODO all inside element -->
                     <ul class="nav pull-right">
-                        <li class="dropdown" id="login">
+                        <li class="dropdown nav-link" id="login">
                             <?php
                                 echo $this->Html->link(
                                     'Σύνδεση<span class="caret"></span>',

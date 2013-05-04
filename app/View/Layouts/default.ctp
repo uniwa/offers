@@ -46,34 +46,30 @@
             </li>
             <li>
                 <?php
-                    // show offers link for guests
-                    if (! $this->Session->check('Auth.User.id')) {
-                        $title = __('Αναζήτηση');
-                        $controller = 'offers';
-                        $action = 'index';
-                        $link_div = "<div class='nav-link'>{$title}</div>";
-                        $link = $this->Html->link($link_div, array(
-                            'controller' => $controller, 'action' => $action),
-                            array('escape' => false));
-                        echo  "$link";
-                    }
+                    // show offers link for everybody
+                    $title = __('Αναζήτηση');
+                    $controller = 'offers';
+                    $action = 'index';
+                    $link_div = "<div class='nav-link'>{$title}</div>";
+                    $link = $this->Html->link($link_div, array(
+                        'controller' => $controller, 'action' => $action),
+                        array('escape' => false));
+                    echo  "$link";
                 ?>
             </li>
-            <li>
-                <?php
-                    // show register link for guests
-                    if (! $this->Session->check('Auth.User.id')) {
-                        $title = __('Εγγραφή');
-                        $controller = 'users';
-                        $action = 'register';
-                        $link_div = "<div class='nav-link'>{$title}</div>";
-                        $link = $this->Html->link($link_div, array(
-                            'controller' => $controller, 'action' => $action),
-                            array('escape' => false));
-                        echo  "$link";
-                    }
-                ?>
-            </li>
+            <?php
+                // show register link for guests
+                if (! $this->Session->check('Auth.User.id')) {
+                    $title = __('Εγγραφή');
+                    $controller = 'users';
+                    $action = 'register';
+                    $link_div = "<div class='nav-link'>{$title}</div>";
+                    $link = $this->Html->link($link_div, array(
+                        'controller' => $controller, 'action' => $action),
+                        array('escape' => false));
+                    echo  "<li>$link</li>";
+                }
+            ?>
             <li>
                 <?php
                         $title = __('Όροι χρήσης');
@@ -98,22 +94,20 @@
                         echo  "$link";
                 ?>
             </li>
-            <li>
-                <?php
-                    if ($this->Session->check('Auth.User.id')) {
-                        if ($this->Session->read('Auth.User.role') !== ROLE_ADMIN) {
-                            $title = __('Αναφορά προβλήματος');
-                            $controller = 'users';
-                            $action = 'help';
-                            $link_div = "<div class='nav-link'>{$title}</div>";
-                            $link = $this->Html->link($link_div, array(
-                                'controller' => $controller, 'action' => $action),
-                                array('escape' => false));
-                            echo  "$link";
-                        }
+            <?php
+                if ($this->Session->check('Auth.User.id')) {
+                    if ($this->Session->read('Auth.User.role') !== ROLE_ADMIN) {
+                        $title = __('Αναφορά προβλήματος');
+                        $controller = 'users';
+                        $action = 'help';
+                        $link_div = "<div class='nav-link'>{$title}</div>";
+                        $link = $this->Html->link($link_div, array(
+                            'controller' => $controller, 'action' => $action),
+                            array('escape' => false));
+                        echo "<li>$link</li>";
                     }
-                ?>
-            </li>
+                }
+            ?>
             </ul>
 
             <!--Block dropdown form when user is inside login action-->

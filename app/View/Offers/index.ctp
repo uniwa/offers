@@ -31,6 +31,24 @@ if (isset($filter)) {
         case 'none':
             $html .= ' συνολικά';
             break;
+        case 'type':
+            switch ($value) {
+                case TYPE_HAPPYHOUR: $class = 'label-info';    break;
+                case TYPE_COUPONS  : $class = 'label-warning'; break;
+                case TYPE_LIMITED  : $class = 'label-success';
+            }
+            $type = offer_type($value);
+            $html .= " <span class='label $class'>$type</span>";
+            break;
+        case 'cat':
+            $html .= " στην κατηγορία &laquo;$value&raquo;";
+            break;
+        case 'tag':
+            $html .= " που έχουν τη λέξη-κλειδί &laquo;$value&raquo;";
+            break;
+        case 'spam':
+            $html .= ' που έχουν σημανθεί ως' .
+                     ' <span class="label label-important">αναρμοστες</span>';
     }
 }
 

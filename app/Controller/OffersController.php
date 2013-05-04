@@ -235,6 +235,7 @@ class OffersController extends AppController {
         $page_title .= " Happy Hour";
         $this->set('title_for_layout', $page_title);
 
+        $this->set('filter', array('for' => 'type', 'value' => TYPE_HAPPYHOUR));
         $params = array('happyhour');
         $this->ordering($params);
         $this->display($params);
@@ -246,6 +247,7 @@ class OffersController extends AppController {
         $page_title .= " Coupons";
         $this->set('title_for_layout', $page_title);
 
+        $this->set('filter', array('for' => 'type', 'value' => TYPE_COUPONS));
         $params = array('coupons');
         $this->ordering($params);
         $this->display($params);
@@ -257,6 +259,7 @@ class OffersController extends AppController {
         $page_title .= " Limited";
         $this->set('title_for_layout', $page_title);
 
+        $this->set('filter', array('for' => 'type', 'value' => TYPE_LIMITED));
         $params = array('limited');
         if (!$this->RequestHandler->isRss())
             $params['orderby'] = 'autoend';
@@ -271,6 +274,7 @@ class OffersController extends AppController {
         $this->set('title_for_layout', $page_title);
 
         $params = array('tag', 'tag' => $tag);
+        $this->set('filter', array('for' => 'tag', 'value' => $tag));
         $this->ordering($params);
         $this->display($params);
     }
@@ -280,6 +284,11 @@ class OffersController extends AppController {
         $id = (int)$id; // Sanitize id input
         $conditions['Offer.offer_category_id'] = $id;
         $params = array('valid', 'conditions' => $conditions);
+
+        $category = $this->OfferCategory->findById($id);
+        if ($category !== false) {
+            $this->set('filter', array('for' => 'cat', 'value' => $category['OfferCategory']['name']));
+        }
         $this->ordering($params);
         $this->display($params);
     }
@@ -300,6 +309,8 @@ class OffersController extends AppController {
                         'conditions' => array('Offer.is_spam' => true),
                         // this persists the options in custom process_find()
                         'show_spam' => true);
+
+        $this->set('filter', array('for' => 'spam', 'value' => null));
         $this->ordering($params);
         $this->display($params);
     }

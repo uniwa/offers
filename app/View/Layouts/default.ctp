@@ -69,7 +69,6 @@
             <li>
                 <?php
                         $title = __('Όροι χρήσης');
-
                         $controller = 'users';
                         $action = 'terms';
                         $link_div = "<div class='nav-link'>{$title}</div>";

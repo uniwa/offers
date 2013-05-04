@@ -46,12 +46,18 @@ if (isset($filter)) {
         case 'tag':
             $html .= " που έχουν τη λέξη-κλειδί &laquo;$value&raquo;";
             break;
+        case 'search':
+            if (isset($filter['value']['municipality']))
+                $html .= " στο δήμο {$value['municipality']}";
+
+            if (isset($filter['value']['alphanum']))
+                $html .= " που περιέχουν: {$value['alphanum']}";
+            break;
         case 'spam':
             $html .= ' που έχουν σημανθεί ως' .
                      ' <span class="label label-important">αναρμοστες</span>';
     }
 }
-
 $html .= "</p>";
 
 if (empty($offers)) {

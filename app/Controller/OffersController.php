@@ -219,12 +219,24 @@ class OffersController extends AppController {
         $this->set('municipality_id', $munic_id);
 
         $params = array('search');
-        if ($alphanum != null)
+
+        // helps to create a more specific text for the new results
+        $filter = array('for' => 'search');
+
+        if ($alphanum != null) {
             $params['words'] = array_unique(explode(' ', $alphanum));
+            $filter['value']['alphanum'] = $alphanum;
+        }
 
-        if ($munic_id != null)
+        if ($munic_id != null) {
             $params['conditions'] = array('Company.municipality_id' => $munic_id);
+            $municipality = $this->Municipality->findById($munic_id);
+            if ($municipality !== false) {
+                $filter['value']['municipality'] = $municipality['Municipality']['name'];
+            }
+        }
 
+        $this->set('filter', $filter);
         $this->ordering($params);
         $this->display($params);
     }

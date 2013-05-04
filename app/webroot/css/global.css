@@ -134,7 +134,10 @@ footer ul li {
 
 #big_image {
     float: right;
-    max-width: 50%;
+}
+
+.offer_image {
+    max-height: 400px;
 }
 
 #images{

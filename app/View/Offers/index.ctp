@@ -23,10 +23,14 @@ $html .= "<div class='span9'>";
 $offers_count = $this->Paginator->counter(array('format' => '%count%'));
 $html .= "<p>Βρέθηκαν <span class='bold'>{$offers_count}</span> προσφορές";
 
-// show relevant message if currently viewing spam offers (admin-only)
-if ($this->Session->read('Auth.User.role') == ROLE_ADMIN) {
-    if ($shows_spam) {
-        $html .= " οι οποίες έχουν σημανθεί ως <span class='label label-important'>αναρμοστες</span>";
+// determine what text to append to the above statement describing the filters
+// currently applied to the search
+if (isset($filter)) {
+    $value = $filter['value'];
+    switch ($filter['for']) {
+        case 'none':
+            $html .= ' συνολικά';
+            break;
     }
 }
 

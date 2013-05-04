@@ -159,6 +159,7 @@ class OffersController extends AppController {
         // WorkHour is required for the webservice api
         $this->Offer->contain(array('WorkHour', 'Company', 'OfferCategory', 'Image.id'));
 
+        $this->set('filter', array('for' => 'none', 'value' => null));
         $this->ordering($params);
         $this->display($params);
     }

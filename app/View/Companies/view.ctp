@@ -144,8 +144,10 @@ if ($is_user_the_owner) {
 if (! empty($company['Image']) ) {
     $img = "<div class='company-image-block'>";
     foreach ($company['Image'] as $image) {
+        $img_id = $image['Image']['id'];
         $img .= "<div class='image_frame'>";
-        $img .= $this->Html->image('/images/thumb/'.$image['Image']['id']);
+        $img .= $this->Html->image('/images/thumb/'.$img_id,
+                                   array('url' => '/images/view/' . $img_id));
         $img .= "</div>";
     }
     $img .= "</div>";

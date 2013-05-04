@@ -47,17 +47,15 @@
             </li>
             <li>
                 <?php
-                    // show offers link for guests
-                    if (! $this->Session->check('Auth.User.id')) {
-                        $title = __('Αναζήτηση');
-                        $controller = 'offers';
-                        $action = 'index';
-                        $link_div = "<div class='nav-link'>{$title}</div>";
-                        $link = $this->Html->link($link_div, array(
-                            'controller' => $controller, 'action' => $action),
-                            array('escape' => false));
-                        echo  "$link";
-                    }
+                    // show offers link
+                    $title = __('Αναζήτηση');
+                    $controller = 'offers';
+                    $action = 'index';
+                    $link_div = "<div class='nav-link'>{$title}</div>";
+                    $link = $this->Html->link($link_div, array(
+                        'controller' => $controller, 'action' => $action),
+                        array('escape' => false));
+                    echo  "$link";
                 ?>
             </li>
             <li>

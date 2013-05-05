@@ -31,19 +31,15 @@
             $linkTitle = $offersLogo." Offers";
             echo $this->Html->link($linkTitle, '/',
                 array('class'=>'brand', 'escape' => false));
+
+            echo $this->Html->image('/img/teiath-icon.png',
+                array('alt' => 'ΤΕΙ Αθήνας',
+                      'url' => 'http://www.teiath.gr/',
+                      'escape' => false,
+                      'class' => 'brand'));
           ?>
           <div>
             <ul class="nav">
-            <li>
-            <?php
-                $teiathLogo = $this->Html->image('/img/teiath-icon.png',
-                    array('alt' => 'ΤΕΙ Αθήνας'));
-                $link_div = "<div>{$teiathLogo}</div>";
-                $link = $this->Html->link($link_div, "http://www.teiath.gr/",
-                    array('escape' => false));
-                echo  "$link";
-            ?>
-            </li>
             <li>
                 <?php
                     // show offers link for everybody

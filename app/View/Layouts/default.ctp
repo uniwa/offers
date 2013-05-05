@@ -159,7 +159,7 @@
                     }
 
                     $title = __('Αποσύνδεση');
-                    $link_div = "<div class='nav-link'>{$title}( {$username} )</div>";
+                    $link_div = "<div class='nav-link'>{$title}(&nbsp;{$username}&nbsp;)</div>";
                     $link = $this->Html->link($link_div,
                         array('controller' => 'users', 'action' => 'logout'),
                         array('escape' => false));

@@ -1220,7 +1220,7 @@ class OffersController extends AppController {
             $new_elem = array();
             $new_elem['title'] = 'Offer.autostart';
             $new_elem['options']['label'] = 'Ημ/νία & ώρα έναρξης προσφοράς';
-            $new_elem['options']['separator'] = ' ';
+            $new_elem['options']['separator'] = ' / ';
             $new_elem['options']['dateFormat'] = 'DMY';
             $new_elem['options']['minYear'] = date('Y');
             $new_elem['options']['maxYear'] = date('Y') + 1;
@@ -1228,7 +1228,7 @@ class OffersController extends AppController {
             $new_elem['options']['timeFormat'] = '24';
             $new_elem['options']['interval'] = '15';
             $new_elem['options']['empty'] = true;
-            $new_elem['options']['class'] = 'span2';
+            $new_elem['options']['monthNames'] = Configure::read('Settings.month');
             $input_elements[] = $new_elem;
         }
 
@@ -1237,7 +1237,7 @@ class OffersController extends AppController {
             $new_elem = array();
             $new_elem['title'] = 'Offer.autoend';
             $new_elem['options']['label'] = 'Ημ/νία & ώρα λήξης προσφοράς';
-            $new_elem['options']['separator'] = ' ';
+            $new_elem['options']['separator'] = ' / ';
             $new_elem['options']['dateFormat'] = 'DMY';
             $new_elem['options']['minYear'] = date('Y');
             $new_elem['options']['maxYear'] = date('Y') + 1;
@@ -1245,7 +1245,7 @@ class OffersController extends AppController {
             $new_elem['options']['timeFormat'] = '24';
             $new_elem['options']['interval'] = '15';
             $new_elem['options']['empty'] = true;
-            $new_elem['options']['class'] = 'span2';
+            $new_elem['options']['monthNames'] = Configure::read('Settings.month');
             $input_elements[] = $new_elem;
         }
 

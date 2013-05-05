@@ -727,16 +727,10 @@ class OffersController extends AppController {
                 $offer['Offer']['coupon_terms'];
             $offer_info[] = $new_elem;
         }
-        if ($offer_type_id == TYPE_LIMITED) {
+        if ($offer_type_id == TYPE_LIMITED && $offer['Offer']['autoend'] != NULL) {
             App::uses('CakeTime', 'Utility');
             $new_elem['label'] = "Λήξη προσφοράς";
-            $expiry = $offer['Offer']['autoend'];
-            if ($expiry == NULL) {
-                $expiry = 'αόριστο';
-            } else {
-                $expiry = CakeTime::format('d-m-Y H:i',
-                    $offer['Offer']['autoend']);
-            }
+            $expiry = CakeTime::format('d-m-Y H:i', $offer['Offer']['autoend']);
             $new_elem['value'] = $expiry;
             $offer_info[] = $new_elem;
         }

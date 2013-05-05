@@ -198,7 +198,7 @@ a:hover {
   margin-left: 900px;
 }
 .row-fluid {
-  margin-top: 24px;
+/*  margin-top: 24px;*/
   width: 100%;
   *zoom: 1;
 }

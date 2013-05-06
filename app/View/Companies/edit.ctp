@@ -38,9 +38,11 @@ echo <<< __EOF__
     };
 
     function onMarkerDragEnd(e) {
-        popup.setLatLng(marker.getLatLng());
-        $('#comp-longitude').val(marker.getLatLng()['lng']);
-        $('#comp-latitude').val(marker.getLatLng()['lat']);
+        coords = marker.getLatLng();
+        popup.setLatLng(coords);
+        map.panTo(coords);
+        $('#comp-longitude').val(coords.lng);
+        $('#comp-latitude').val(coords.lat);
     }
 
     // show map

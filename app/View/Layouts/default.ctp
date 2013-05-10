@@ -17,7 +17,7 @@
 ?>
 </head>
 <body>
-    <div class="navbar navbar-fixed-top">
+    <div class="navbar navbar-static-top">
       <div class="navbar-inner">
         <div class="container-fluid">
           <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -31,23 +31,18 @@
             $linkTitle = $offersLogo." Offers";
             echo $this->Html->link($linkTitle, '/',
                 array('class'=>'brand', 'escape' => false));
-          ?>
-          <div class="nav-collapse">
-            <ul class="nav">
 
+            echo $this->Html->image('/img/teiath-icon.png',
+                array('alt' => 'ΤΕΙ Αθήνας',
+                      'url' => 'http://www.teiath.gr/',
+                      'escape' => false,
+                      'class' => 'brand'));
+          ?>
+          <div>
+            <ul class="nav">
             <li>
                 <?php
-                    $teiathLogo = $this->Html->image('/img/teiath-icon.png',
-                        array('alt' => 'ΤΕΙ Αθήνας'));
-                    $link_div = "<div class='nav-link'>{$teiathLogo}</div>";
-                    $link = $this->Html->link($link_div, "http://www.teiath.gr/",
-                        array('escape' => false));
-                    echo  "$link";
-                ?>
-            </li>
-            <li>
-                <?php
-                    // show offers link
+                    // show offers link for everybody
                     $title = __('Αναζήτηση');
                     $controller = 'offers';
                     $action = 'index';
@@ -58,21 +53,19 @@
                     echo  "$link";
                 ?>
             </li>
-            <li>
-                <?php
-                    // show register link for guests
-                    if (! $this->Session->check('Auth.User.id')) {
-                        $title = __('Εγγραφή');
-                        $controller = 'users';
-                        $action = 'register';
-                        $link_div = "<div class='nav-link'>{$title}</div>";
-                        $link = $this->Html->link($link_div, array(
-                            'controller' => $controller, 'action' => $action),
-                            array('escape' => false));
-                        echo  "$link";
-                    }
-                ?>
-            </li>
+            <?php
+                // show register link for guests
+                if (! $this->Session->check('Auth.User.id')) {
+                    $title = __('Εγγραφή');
+                    $controller = 'users';
+                    $action = 'register';
+                    $link_div = "<div class='nav-link'>{$title}</div>";
+                    $link = $this->Html->link($link_div, array(
+                        'controller' => $controller, 'action' => $action),
+                        array('escape' => false));
+                    echo  "<li>$link</li>";
+                }
+            ?>
             <li>
                 <?php
                         $title = __('Όροι χρήσης');
@@ -97,22 +90,20 @@
                         echo  "$link";
                 ?>
             </li>
-            <li>
-                <?php
-                    if ($this->Session->check('Auth.User.id')) {
-                        if ($this->Session->read('Auth.User.role') !== ROLE_ADMIN) {
-                            $title = __('Αναφορά προβλήματος');
-                            $controller = 'users';
-                            $action = 'help';
-                            $link_div = "<div class='nav-link'>{$title}</div>";
-                            $link = $this->Html->link($link_div, array(
-                                'controller' => $controller, 'action' => $action),
-                                array('escape' => false));
-                            echo  "$link";
-                        }
+            <?php
+                if ($this->Session->check('Auth.User.id')) {
+                    if ($this->Session->read('Auth.User.role') !== ROLE_ADMIN) {
+                        $title = __('Αναφορά προβλήματος');
+                        $controller = 'users';
+                        $action = 'help';
+                        $link_div = "<div class='nav-link'>{$title}</div>";
+                        $link = $this->Html->link($link_div, array(
+                            'controller' => $controller, 'action' => $action),
+                            array('escape' => false));
+                        echo "<li>$link</li>";
                     }
-                ?>
-            </li>
+                }
+            ?>
             </ul>
 
             <!--Block dropdown form when user is inside login action-->
@@ -123,7 +114,7 @@
                     $username = $this->Session->read( 'Auth.User.username' );
                     $role = $this->Session->read( 'Auth.User.role' );
 
-                    $html = "<ul class='navbar-text pull-right navbar-elements'>";
+                    $html = "<ul class='nav pull-right'>";
                     if ($role !== ROLE_ADMIN) {
                         $title = __('Το προφίλ μου');
                         $action = 'view';
@@ -168,7 +159,7 @@
                     }
 
                     $title = __('Αποσύνδεση');
-                    $link_div = "<div class='nav-link'>{$title}( {$username} )</div>";
+                    $link_div = "<div class='nav-link'>{$title}(&nbsp;{$username}&nbsp;)</div>";
                     $link = $this->Html->link($link_div,
                         array('controller' => 'users', 'action' => 'logout'),
                         array('escape' => false));
@@ -180,7 +171,7 @@
             ?>
                    <!--TODO all inside element -->
                     <ul class="nav pull-right">
-                        <li class="dropdown" id="login">
+                        <li class="dropdown nav-link" id="login">
                             <?php
                                 echo $this->Html->link(
                                     'Σύνδεση<span class="caret"></span>',

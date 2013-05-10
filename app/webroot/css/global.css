@@ -128,13 +128,20 @@ footer ul li {
     margin: 3px 6px;
 }
 
+.datetime select {
+    width: auto;
+}
+
 .error-message {
     color: #B94A48;
 }
 
 #big_image {
     float: right;
-    max-width: 50%;
+}
+
+.offer_image {
+    max-height: 400px;
 }
 
 #images{

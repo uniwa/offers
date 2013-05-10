@@ -31,41 +31,56 @@ echo <<< __EOF__
             var address=$("#address-field").val();
             address_lookup(url, address);
          });
-     });
-   // map callback functions
-    function onMarkerClick(e) {
+
+        // map callback functions
+        function onMarkerClick(e) {
+            map.openPopup(popup);
+        };
+
+        function onMarkerDragEnd(e) {
+            coords = marker.getLatLng();
+            popup.setLatLng(coords);
+            map.panTo(coords);
+            $('#comp-longitude').val(coords.lng);
+            $('#comp-latitude').val(coords.lat);
+        }
+
+        // show map
+        var map = new L.Map('map');$('#map').css('width',{$map_width}).css('height',{$map_height});
+        var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/{$api_key}/997/256/{z}/{x}/{y}.png';
+        var cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18});
+
+        // display coords that may have been set in the form but not yet updated
+        // on the server (eg, when a form error occurs, the marker should stay
+        // where it was set by the user and not the server)
+        var lat = $('#comp-latitude').val();
+        var lng = $('#comp-longitude').val();
+        if (lat == '' || lng == '') {
+            // use server coords, if none is available by the user
+            lat = $lat;
+            lng = $lng;
+        }
+
+        var company = new L.LatLng(lat,lng);
+        map.setView(company, 15).addLayer(cloudmade);
+
+        // show marker
+        var MyIcon = L.Icon.extend({iconUrl:'{$images_path}marker.png',
+            shadowUrl:'{$images_path}marker-shadow.png',iconSize:new L.Point(25,41),
+            shadowSize:new L.Point(41,41),iconAnchor: new L.Point(13,21),
+            popupAnchor:new L.Point(-3,-41)});
+        var icon = new MyIcon();
+        var marker = new L.Marker(company, {icon: icon, draggable: true});
+        map.addLayer(marker);
+
+        // show popup
+        var popup = new L.Popup({maxWidth: 400, offset: new L.Point(0, -20)});
+        popup.setLatLng(new L.LatLng(lat, lng));
+        popup.setContent("Σύρετε τον δείκτη για να καταδείξετε την επιχείρησή σας.");
         map.openPopup(popup);
-    };
-
-    function onMarkerDragEnd(e) {
-        popup.setLatLng(marker.getLatLng());
-        $('#comp-longitude').val(marker.getLatLng()['lng']);
-        $('#comp-latitude').val(marker.getLatLng()['lat']);
-    }
-
-    // show map
-    var map = new L.Map('map');$('#map').css('width',{$map_width}).css('height',{$map_height});
-    var cloudmadeUrl = 'http://{s}.tile.cloudmade.com/{$api_key}/997/256/{z}/{x}/{y}.png';
-    var cloudmade = new L.TileLayer(cloudmadeUrl, {maxZoom: 18});
-    var company = new L.LatLng({$lat},{$lng});
-    map.setView(company, 15).addLayer(cloudmade);
-
-    // show marker
-    var MyIcon = L.Icon.extend({iconUrl:'{$images_path}marker.png',
-        shadowUrl:'{$images_path}marker-shadow.png',iconSize:new L.Point(25,41),
-        shadowSize:new L.Point(41,41),iconAnchor: new L.Point(13,21),
-        popupAnchor:new L.Point(-3,-41)});
-    var icon = new MyIcon();
-    var marker = new L.Marker(company, {icon: icon, draggable: true});
-    map.addLayer(marker);
-
-    // show popup
-    var popup = new L.Popup({maxWidth: 400, offset: new L.Point(0, -20)});
-    popup.setLatLng(new L.LatLng({$lat}, ${lng}));
-    popup.setContent("Σύρετε τον δείκτη για να καταδείξετε την επιχείρησή σας.");
-    map.openPopup(popup);
-    marker.on('click', onMarkerClick);
-    marker.on('dragend', onMarkerDragEnd);
+        marker.on('click', onMarkerClick);
+        marker.on('dragend', onMarkerDragEnd);
+     });
 </script>
 __EOF__;
 

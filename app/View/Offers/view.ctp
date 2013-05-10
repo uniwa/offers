@@ -7,8 +7,10 @@ if (!empty($offer['Image'])) {
     // Set base url for javascript
     $html .= "<script>var baseUrl = '".APP_URL."/images/view/';</script>";
 
-    $image_first = $offer['Image'][0]['id'];
-    $big_image = $this->Html->image('/images/view/'.$image_first);
+    $image_link = '/images/view/' . $offer['Image'][0]['id'];
+    $big_image = $this->Html->image($image_link,
+                                    array('class' => 'offer_image',
+                                          'url' => $image_link));
 
     $html_img .= "<div id='images'>";
     foreach ($offer['Image'] as $image) {

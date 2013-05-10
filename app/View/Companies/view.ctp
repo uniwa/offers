@@ -144,8 +144,10 @@ if ($is_user_the_owner) {
 if (! empty($company['Image']) ) {
     $img = "<div class='company-image-block'>";
     foreach ($company['Image'] as $image) {
+        $img_id = $image['Image']['id'];
         $img .= "<div class='image_frame'>";
-        $img .= $this->Html->image('/images/thumb/'.$image['Image']['id']);
+        $img .= $this->Html->image('/images/thumb/'.$img_id,
+                                   array('url' => '/images/view/' . $img_id));
         $img .= "</div>";
     }
     $img .= "</div>";
@@ -174,7 +176,7 @@ if (isset($comp['fax']))
 if (isset($comp['service_type']))
     echo '<span class="bold">Είδος υπηρεσιών : </span>'.$comp['service_type'].'<br/>';
 
-if (isset($comp['afm']))
+if (isset($comp['afm']) && ($is_user_the_owner || $is_user_admin))
     echo '<span class="bold">ΑΦΜ :</span> '.$comp['afm'].'<br/>';
 
 if (! empty($company['WorkHour'])) {

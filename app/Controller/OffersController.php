@@ -159,6 +159,7 @@ class OffersController extends AppController {
         // WorkHour is required for the webservice api
         $this->Offer->contain(array('WorkHour', 'Company', 'OfferCategory', 'Image.id'));
 
+        $this->set('filter', array('for' => 'none', 'value' => null));
         $this->ordering($params);
         $this->display($params);
     }
@@ -218,12 +219,24 @@ class OffersController extends AppController {
         $this->set('municipality_id', $munic_id);
 
         $params = array('search');
-        if ($alphanum != null)
+
+        // helps to create a more specific text for the new results
+        $filter = array('for' => 'search');
+
+        if ($alphanum != null) {
             $params['words'] = array_unique(explode(' ', $alphanum));
+            $filter['value']['alphanum'] = $alphanum;
+        }
 
-        if ($munic_id != null)
+        if ($munic_id != null) {
             $params['conditions'] = array('Company.municipality_id' => $munic_id);
+            $municipality = $this->Municipality->findById($munic_id);
+            if ($municipality !== false) {
+                $filter['value']['municipality'] = $municipality['Municipality']['name'];
+            }
+        }
 
+        $this->set('filter', $filter);
         $this->ordering($params);
         $this->display($params);
     }
@@ -234,6 +247,7 @@ class OffersController extends AppController {
         $page_title .= " Happy Hour";
         $this->set('title_for_layout', $page_title);
 
+        $this->set('filter', array('for' => 'type', 'value' => TYPE_HAPPYHOUR));
         $params = array('happyhour');
         $this->ordering($params);
         $this->display($params);
@@ -245,6 +259,7 @@ class OffersController extends AppController {
         $page_title .= " Coupons";
         $this->set('title_for_layout', $page_title);
 
+        $this->set('filter', array('for' => 'type', 'value' => TYPE_COUPONS));
         $params = array('coupons');
         $this->ordering($params);
         $this->display($params);
@@ -256,6 +271,7 @@ class OffersController extends AppController {
         $page_title .= " Limited";
         $this->set('title_for_layout', $page_title);
 
+        $this->set('filter', array('for' => 'type', 'value' => TYPE_LIMITED));
         $params = array('limited');
         if (!$this->RequestHandler->isRss())
             $params['orderby'] = 'autoend';
@@ -270,6 +286,7 @@ class OffersController extends AppController {
         $this->set('title_for_layout', $page_title);
 
         $params = array('tag', 'tag' => $tag);
+        $this->set('filter', array('for' => 'tag', 'value' => $tag));
         $this->ordering($params);
         $this->display($params);
     }
@@ -279,6 +296,11 @@ class OffersController extends AppController {
         $id = (int)$id; // Sanitize id input
         $conditions['Offer.offer_category_id'] = $id;
         $params = array('valid', 'conditions' => $conditions);
+
+        $category = $this->OfferCategory->findById($id);
+        if ($category !== false) {
+            $this->set('filter', array('for' => 'cat', 'value' => $category['OfferCategory']['name']));
+        }
         $this->ordering($params);
         $this->display($params);
     }
@@ -299,6 +321,8 @@ class OffersController extends AppController {
                         'conditions' => array('Offer.is_spam' => true),
                         // this persists the options in custom process_find()
                         'show_spam' => true);
+
+        $this->set('filter', array('for' => 'spam', 'value' => null));
         $this->ordering($params);
         $this->display($params);
     }
@@ -703,11 +727,11 @@ class OffersController extends AppController {
                 $offer['Offer']['coupon_terms'];
             $offer_info[] = $new_elem;
         }
-        if ($offer_type_id == TYPE_LIMITED) {
+        if ($offer_type_id == TYPE_LIMITED && $offer['Offer']['autoend'] != NULL) {
             App::uses('CakeTime', 'Utility');
             $new_elem['label'] = "Λήξη προσφοράς";
-            $new_elem['value'] = CakeTime::format('d-m-Y H:i',
-                $offer['Offer']['autoend']);
+            $expiry = CakeTime::format('d-m-Y H:i', $offer['Offer']['autoend']);
+            $new_elem['value'] = $expiry;
             $offer_info[] = $new_elem;
         }
 
@@ -1190,7 +1214,7 @@ class OffersController extends AppController {
             $new_elem = array();
             $new_elem['title'] = 'Offer.autostart';
             $new_elem['options']['label'] = 'Ημ/νία & ώρα έναρξης προσφοράς';
-            $new_elem['options']['separator'] = ' ';
+            $new_elem['options']['separator'] = ' / ';
             $new_elem['options']['dateFormat'] = 'DMY';
             $new_elem['options']['minYear'] = date('Y');
             $new_elem['options']['maxYear'] = date('Y') + 1;
@@ -1198,7 +1222,7 @@ class OffersController extends AppController {
             $new_elem['options']['timeFormat'] = '24';
             $new_elem['options']['interval'] = '15';
             $new_elem['options']['empty'] = true;
-            $new_elem['options']['class'] = 'span2';
+            $new_elem['options']['monthNames'] = Configure::read('Settings.month');
             $input_elements[] = $new_elem;
         }
 
@@ -1207,7 +1231,7 @@ class OffersController extends AppController {
             $new_elem = array();
             $new_elem['title'] = 'Offer.autoend';
             $new_elem['options']['label'] = 'Ημ/νία & ώρα λήξης προσφοράς';
-            $new_elem['options']['separator'] = ' ';
+            $new_elem['options']['separator'] = ' / ';
             $new_elem['options']['dateFormat'] = 'DMY';
             $new_elem['options']['minYear'] = date('Y');
             $new_elem['options']['maxYear'] = date('Y') + 1;
@@ -1215,7 +1239,7 @@ class OffersController extends AppController {
             $new_elem['options']['timeFormat'] = '24';
             $new_elem['options']['interval'] = '15';
             $new_elem['options']['empty'] = true;
-            $new_elem['options']['class'] = 'span2';
+            $new_elem['options']['monthNames'] = Configure::read('Settings.month');
             $input_elements[] = $new_elem;
         }
 

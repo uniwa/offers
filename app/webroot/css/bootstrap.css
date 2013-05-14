@@ -266,8 +266,8 @@ a:hover {
   clear: both;
 }
 .container-fluid {
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 10px;
+  padding-right: 10px;
   *zoom: 1;
 }
 .container-fluid:before, .container-fluid:after {
@@ -2656,7 +2656,7 @@ button.btn.small, input[type="submit"].btn.small {
 .navbar .brand {
   float: left;
   display: block;
-  padding: 10px 20px;
+  padding: 5px;
   margin-left: 0;
   font-size: 20px;
   font-weight: 200;
@@ -2766,7 +2766,7 @@ button.btn.small, input[type="submit"].btn.small {
   left: 0;
   display: inline-block;
   float: left;
-  margin: 0 10px 0 0;
+  margin: 0 3.5px 0 0;
 }
 .navbar .nav.pull-right {
   display: inline-block;
@@ -2779,7 +2779,7 @@ button.btn.small, input[type="submit"].btn.small {
 }
 .navbar .nav > li > a {
   float: none;
-  padding: 10.5px 10px;
+  padding: 5.5px 6.5px;
   line-height: 19px;
   color: #fff;
   font-weight: bold;
@@ -2806,7 +2806,7 @@ button.btn.small, input[type="submit"].btn.small {
   border-right: 1px solid #333333;
 }
 .navbar .nav.pull-right {
-  margin-left: 10px;
+  margin-left: 3.5px;
   margin-right: 0;
 }
 .navbar .dropdown-menu {

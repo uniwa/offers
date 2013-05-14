@@ -236,7 +236,6 @@
         </li>
         <?php
             // only show user manual link for students and company
-            if (false) { // remove line to show user manual link
             if (isset($role) && (!is_null($role)) && ($role !== ROLE_ADMIN)) {
                 if ($role === ROLE_STUDENT)
                     $manual_path = APP_URL.MANUAL_STUDENT;
@@ -248,7 +247,6 @@
         </li>
         <?php
             }
-            } // remove line to show user manual link
         ?>
         <li>
             <?php

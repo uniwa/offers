@@ -1,0 +1,12 @@
+1.2.1
+-----
+* add changelog and update readme
+* minor layout updates
+
+1.2.0
+-----
+* css improvements to make layout more responsive
+* move documentation out of the source tree
+* add greek month literals
+* search results improvements
+* various bugfixes
